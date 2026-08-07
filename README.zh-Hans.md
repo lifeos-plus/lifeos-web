@@ -2,15 +2,11 @@
 
 [English](README.md)
 
-`lifeos-web` 是 LifeOS 的第一方 React Web UI，基于 Vite/React 构建，通过
-[`lifeos-cli`](https://github.com/lifeos-plus/lifeos-cli) 提供的 LifeOS Web
-API 与同一数据库交互。Web API 实现保留在 `lifeos-cli` 中，本仓库只包含浏览器
-界面及其构建、验证和依赖管理工具链。
+`lifeos-web` 是 LifeOS 的第一方 React Web UI，基于 Vite/React 构建，通过 [`lifeos-cli`](https://github.com/lifeos-plus/lifeos-cli) 提供的 LifeOS Web API 与同一数据库交互。Web API 实现保留在 `lifeos-cli` 中，本仓库只包含浏览器 界面及其构建、验证和依赖管理工具链。
 
 ## 当前范围
 
-默认导航覆盖 LifeOS 已实现的面：愿景、习惯、规划、时间记录、财务、统计、
-日程/日历、笔记、人员与设置。
+默认导航覆盖 LifeOS 已实现的面：愿景、习惯、规划、时间记录、财务、统计、 日程/日历、笔记、人员与设置。
 
 ## 本地开发
 
@@ -47,8 +43,7 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 - `openapi.json` 是已提交并固定的传输契约基线。
 - `src/services/api/generated/schema.ts` 由基线生成，请勿手工编辑。
 - `npm run api:check` 会在提交的 `schema.ts` 过期时失败。
-- `lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh`
-  刷新固定契约；可用 `LIFEOS_CLI_SCHEMA_VERSION` 指定明确的发布标签。
+- `lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh` 刷新固定契约；可用 `LIFEOS_CLI_SCHEMA_VERSION` 指定明确的发布标签。
 
 ## 验证
 

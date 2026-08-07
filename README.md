@@ -2,15 +2,9 @@
 
 [简体中文版](README.zh-Hans.md)
 
-`lifeos-web` is the first-party React Web UI for LifeOS. It is a Vite/React
-workspace for browser workflows over the LifeOS Web API provided by
-[`lifeos-cli`](https://github.com/lifeos-plus/lifeos-cli).
+`lifeos-web` is the first-party React Web UI for LifeOS. It is a Vite/React workspace for browser workflows over the LifeOS Web API provided by [`lifeos-cli`](https://github.com/lifeos-plus/lifeos-cli).
 
-The frontend is intentionally local-first: it talks to the same configured
-database as the terminal-native CLI through the LifeOS Web API and the
-generated OpenAPI transport contract. The Web API implementation stays in
-`lifeos-cli`; this repository ships only the browser UI and its build,
-validation, and dependency tooling.
+The frontend is intentionally local-first: it talks to the same configured database as the terminal-native CLI through the LifeOS Web API and the generated OpenAPI transport contract. The Web API implementation stays in `lifeos-cli`; this repository ships only the browser UI and its build, validation, and dependency tooling.
 
 ## Current Scope
 
@@ -27,10 +21,7 @@ Default navigation keeps LifeOS-backed surfaces visible:
 - People
 - Settings / Config
 
-Unsupported reference-product modules such as food diary, cloud auth,
-invitations, agent sessions, cardbox, notifications, export APIs, and sage
-maxims are intentionally absent until LifeOS exposes matching local
-capabilities.
+Unsupported reference-product modules such as food diary, cloud auth, invitations, agent sessions, cardbox, notifications, export APIs, and sage maxims are intentionally absent until LifeOS exposes matching local capabilities.
 
 ## Requirements
 
@@ -69,34 +60,25 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 
 ## Generated API Types
 
-The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth
-for transport request and response types in `src/services/api/`.
+The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth for transport request and response types in `src/services/api/`.
 
 - `openapi.json` is the committed, pinned baseline of the transport contract.
-- `src/services/api/generated/schema.ts` is generated from that baseline; do
-  not hand-edit either file.
-- `npm run api:check` regenerates the contract and fails when the committed
-  `schema.ts` was stale.
+- `src/services/api/generated/schema.ts` is generated from that baseline; do not hand-edit either file.
+- `npm run api:check` regenerates the contract and fails when the committed `schema.ts` was stale.
 
-Refresh the pinned contract after a `lifeos-cli` release publishes a new
-`openapi.json` release asset:
+Refresh the pinned contract after a `lifeos-cli` release publishes a new `openapi.json` release asset:
 
 ```bash
 npm run api:refresh
 ```
 
-Set `LIFEOS_CLI_SCHEMA_VERSION` to pin an explicit release tag instead of
-`latest`. Before the first pinned release exists, refresh `openapi.json`
-manually from a `lifeos-cli` checkout:
+Set `LIFEOS_CLI_SCHEMA_VERSION` to pin an explicit release tag instead of `latest`. Before the first pinned release exists, refresh `openapi.json` manually from a `lifeos-cli` checkout:
 
 ```bash
 uv run --extra web python scripts/export_web_openapi.py --output ../lifeos-web/openapi.json
 ```
 
-Frontend-only query filters, form drafts, cache projections, and aggregate view
-models may be derived with `Pick`, `Omit`, intersections, or explicit adapters.
-Types passed to and returned from the HTTP boundary must come from the
-generated OpenAPI contract.
+Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters. Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract.
 
 ## Validation
 
@@ -106,9 +88,7 @@ For repository changes, run the primary validation entrypoint:
 bash ./scripts/validate.sh
 ```
 
-The baseline installs locked dependencies, rejects high- and critical-severity
-`npm audit` findings, verifies generated API types, validates translation
-catalogs, builds the app, lints, and runs the test suite.
+The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite.
 
 ## Project Policies
 

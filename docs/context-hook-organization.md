@@ -1,18 +1,14 @@
 # Context and Hook Organization
 
-This document defines the expected placement rules for frontend contexts,
-providers, consumer hooks, and page orchestration logic.
+This document defines the expected placement rules for frontend contexts, providers, consumer hooks, and page orchestration logic.
 
 ## Core Rules
 
 1. Keep app-level shared state in `src/contexts`.
-2. Define the React context object and its consumer hook in the same context
-   module.
-3. Keep the provider in a dedicated `*Provider.tsx` file when the provider owns
-   state or effects.
+2. Define the React context object and its consumer hook in the same context module.
+3. Keep the provider in a dedicated `*Provider.tsx` file when the provider owns state or effects.
 4. Keep cross-feature reusable hooks in `src/hooks`.
-5. Keep page orchestration, feature-local controllers, and feature-local
-   contexts in `src/features/*/controller`.
+5. Keep page orchestration, feature-local controllers, and feature-local contexts in `src/features/*/controller`.
 
 ## Placement Guide
 
@@ -62,18 +58,15 @@ Examples:
 - advanced interaction coordinators
 - feature-local context modules
 
-Pages should prefer importing one or a few controller hooks from their feature
-instead of composing many unrelated domain hooks inline.
+Pages should prefer importing one or a few controller hooks from their feature instead of composing many unrelated domain hooks inline.
 
 ## Query and Mutation Placement
 
-Use the following rules for TanStack Query, cache invalidation, and server-state
-orchestration.
+Use the following rules for TanStack Query, cache invalidation, and server-state orchestration.
 
 ### Shared query hooks in `src/hooks`
 
-Keep query or mutation hooks in `src/hooks` only when they are shared across
-multiple features or represent reusable infrastructure.
+Keep query or mutation hooks in `src/hooks` only when they are shared across multiple features or represent reusable infrastructure.
 
 Allowed examples:
 - `hooks/queries/useAreas.ts`
@@ -89,8 +82,7 @@ These hooks may own:
 - shared optimistic update logic
 - reusable selector-source loading
 
-Do not keep a hook here if it mainly exists to support one page, one modal, or
-one feature flow.
+Do not keep a hook here if it mainly exists to support one page, one modal, or one feature flow.
 
 ### Feature-local query orchestration in `src/features/*/controller`
 
@@ -125,16 +117,11 @@ Pages may still own:
 
 Shared components should stay presentation-first.
 
-Avoid putting feature-owned query, mutation, polling, or cache orchestration in
-top-level shared components under `src/components`.
+Avoid putting feature-owned query, mutation, polling, or cache orchestration in top-level shared components under `src/components`.
 
-If a component needs feature-owned server-state behavior, move that behavior to
-`src/features/*/controller` and pass the resulting state and handlers down.
+If a component needs feature-owned server-state behavior, move that behavior to `src/features/*/controller` and pass the resulting state and handlers down.
 
-Feature-scoped components that live under `src/features/*/components` may keep
-small read-only queries when the ownership is obvious and the logic is tightly
-coupled to that leaf component, but prefer a controller once the component owns
-any of the following:
+Feature-scoped components that live under `src/features/*/components` may keep small read-only queries when the ownership is obvious and the logic is tightly coupled to that leaf component, but prefer a controller once the component owns any of the following:
 - more than one query or mutation
 - cache invalidation
 - polling or retry coordination
@@ -147,10 +134,8 @@ Follow this dependency direction whenever possible:
 
 1. `contexts` can depend on shared hooks and utilities.
 2. `hooks` can depend on services, utilities, and shared contexts.
-3. `features/*/controller` can depend on shared hooks, shared contexts,
-   services, and feature-local modules.
-4. `pages` should depend on `features/*/controller`, presentational components,
-   and a limited number of shared hooks.
+3. `features/*/controller` can depend on shared hooks, shared contexts, services, and feature-local modules.
+4. `pages` should depend on `features/*/controller`, presentational components, and a limited number of shared hooks.
 
 Avoid the reverse direction:
 - shared hooks depending on feature controllers
@@ -161,18 +146,15 @@ Avoid the reverse direction:
 
 1. Use `*Context.ts` or `*Context.tsx` for context modules.
 2. Use `*Provider.tsx` for provider components.
-3. Use `use*Controller.ts` or `use*PageData.ts` inside
-   `features/*/controller` when the hook is feature-local.
+3. Use `use*Controller.ts` or `use*PageData.ts` inside `features/*/controller` when the hook is feature-local.
 4. Use `use*` names in `src/hooks` only for reusable shared hooks.
 
 ## Anti-Patterns
 
 Avoid these patterns:
 
-1. The same concern exposing multiple import paths across `hooks` and
-   `contexts`.
-2. Putting a feature-local page orchestration hook in the root `src/hooks`
-   directory.
+1. The same concern exposing multiple import paths across `hooks` and `contexts`.
+2. Putting a feature-local page orchestration hook in the root `src/hooks` directory.
 3. Adding wide barrel exports that blur ownership boundaries.
 4. Moving code only for symmetry when the ownership boundary stays unchanged.
 5. Leaving cache invalidation or polling logic inside shared UI components.
@@ -183,12 +165,9 @@ Avoid these patterns:
 Use this checklist when adding or reviewing new frontend code.
 
 1. Does this context belong to app-level shared state or to one feature only?
-2. If this hook uses TanStack Query, is it shared infrastructure or
-   feature-owned orchestration?
-3. If this logic is only used by one page, modal, or feature flow, should it
-   move into `features/*/controller`?
-4. Is any shared component under `src/components` owning cache invalidation,
-   polling, or multi-entity server-state composition?
+2. If this hook uses TanStack Query, is it shared infrastructure or feature-owned orchestration?
+3. If this logic is only used by one page, modal, or feature flow, should it move into `features/*/controller`?
+4. Is any shared component under `src/components` owning cache invalidation, polling, or multi-entity server-state composition?
 5. Is the import path exposing one clear ownership boundary?
 
 ## Current Reference Examples
