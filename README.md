@@ -99,7 +99,7 @@ Types passed to and returned from the HTTP boundary must come from the
 generated OpenAPI contract.
 
 See
-[`lifeos-cli` `docs/frontend-split-plan.md`](https://github.com/lifeos-plus/lifeos-cli/blob/main/docs/frontend-split-plan.md)
+[`lifeos-cli` issue 251](https://github.com/lifeos-plus/lifeos-cli/issues/251)
 for the cross-repository schema publishing, API compatibility, artifact
 delivery, and CI boundary policy.
 
