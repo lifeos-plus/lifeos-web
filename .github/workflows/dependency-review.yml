@@ -1,0 +1,28 @@
+name: Review Frontend Dependencies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 1 * *"
+
+permissions:
+  contents: read
+
+jobs:
+  npm-dependency-health:
+    name: Audit Frontend Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Run npm dependency health checks
+        run: bash ./scripts/dependency-health.sh
