@@ -98,11 +98,6 @@ models may be derived with `Pick`, `Omit`, intersections, or explicit adapters.
 Types passed to and returned from the HTTP boundary must come from the
 generated OpenAPI contract.
 
-See
-[`lifeos-cli` issue 251](https://github.com/lifeos-plus/lifeos-cli/issues/251)
-for the cross-repository schema publishing, API compatibility, artifact
-delivery, and CI boundary policy.
-
 ## Validation
 
 For repository changes, run the primary validation entrypoint:

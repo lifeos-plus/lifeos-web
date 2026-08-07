@@ -50,9 +50,6 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 - `lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh`
   刷新固定契约；可用 `LIFEOS_CLI_SCHEMA_VERSION` 指定明确的发布标签。
 
-跨仓库的 schema 发布、API 兼容、制品交付与双仓 CI 策略见
-[`lifeos-cli` issue 251](https://github.com/lifeos-plus/lifeos-cli/issues/251)。
-
 ## 验证
 
 ```bash
