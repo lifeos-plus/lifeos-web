@@ -45,7 +45,7 @@ Prefer `npm ci` for local validation runs that should not rewrite the lockfile, 
   npm run api:refresh
   ```
 
-  Set `LIFEOS_CLI_SCHEMA_VERSION` to pin an explicit release tag instead of `latest`.
+  The default pinned release is `v1.0.0`. Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
 
 ## Dependency Maintenance

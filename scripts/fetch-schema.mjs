@@ -11,7 +11,7 @@ import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const DEFAULT_SCHEMA_VERSION = "latest";
+const DEFAULT_SCHEMA_VERSION = "v1.0.0";
 
 function schemaReleaseUrl(version) {
   return `https://github.com/lifeos-plus/lifeos-cli/releases/download/${version}/openapi.json`;
