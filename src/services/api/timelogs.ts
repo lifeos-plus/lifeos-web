@@ -26,7 +26,6 @@ export type TimelogTaskSummary = Omit<
   parent_task_id?: UUID | null;
   status?: string;
   vision_id: UUID | null;
-  vision_summary?: { id: UUID; name: string } | null;
 };
 export type Timelog = Omit<
   TimelogTransport,

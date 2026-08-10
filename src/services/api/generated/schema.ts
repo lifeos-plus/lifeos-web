@@ -2783,6 +2783,13 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** ParentTaskSummaryResponse */
+        ParentTaskSummaryResponse: {
+            /** Content */
+            content: string;
+            /** Id */
+            id: string;
+        };
         /** PersonActivityMeta */
         PersonActivityMeta: {
             /** Activity Type */
@@ -3494,12 +3501,14 @@ export interface components {
             content: string;
             /** Id */
             id: string;
+            parent_summary?: components["schemas"]["ParentTaskSummaryResponse"] | null;
             /** Parent Task Id */
             parent_task_id: string | null;
             /** Status */
             status: string;
             /** Vision Id */
             vision_id: string;
+            vision_summary?: components["schemas"]["VisionSummaryResponse"] | null;
         };
         /** TaskTreeResponse */
         TaskTreeResponse: {

@@ -24,10 +24,7 @@ import {
 } from "@/components/tooltips";
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "@/components/icons";
-import {
-  resolveTaskTooltipData,
-  type TooltipLookups,
-} from "@/components/tooltips/tooltipData";
+import { resolveTaskTooltipData } from "@/components/tooltips/tooltipData";
 
 type NoteAssociationTooltipPayload =
   | { type: "person"; person: PersonSummary }
@@ -51,7 +48,6 @@ interface NoteItemProps {
   onTagClick: (tag: Tag) => void;
   onPersonClick: (person: PersonSummary) => void;
   onTaskClick: (taskId: UUID) => void;
-  tooltipLookups?: TooltipLookups;
   isSelectMode?: boolean;
   isSelected?: boolean;
   onSelectChange?: (noteId: UUID, checked: boolean) => void;
@@ -70,7 +66,6 @@ const NoteItem = React.memo<NoteItemProps>(
     onTagClick,
     onPersonClick,
     onTaskClick,
-    tooltipLookups,
     isSelectMode = false,
     isSelected = false,
     onSelectChange,
@@ -399,9 +394,7 @@ const NoteItem = React.memo<NoteItemProps>(
             return null;
           }
           return (
-            <TaskTooltipContent
-              task={resolveTaskTooltipData(task, tooltipLookups)}
-            />
+            <TaskTooltipContent task={resolveTaskTooltipData(task)} />
           );
         }
         case "timelog":
@@ -420,7 +413,6 @@ const NoteItem = React.memo<NoteItemProps>(
               }}
               task={resolveTaskTooltipData(
                 associationTooltip.payload.timelog.task_summary,
-                tooltipLookups,
               )}
               areaMap={areaMap}
               timezone={timezone}
@@ -459,7 +451,7 @@ const NoteItem = React.memo<NoteItemProps>(
         default:
           return null;
       }
-    }, [associationTooltip, areaMap, t, timezone, tooltipLookups]);
+    }, [associationTooltip, areaMap, t, timezone]);
 
     // 复制笔记内容到剪贴板
     const handleCopy = async () => {

@@ -69,7 +69,6 @@ function NotesPage() {
     noteCollapsePreference,
     noteFilters,
     tasksForAdvancedSearch,
-    tooltipLookups,
     notesAdvancedSearch,
     notesAdvancedSearchRef,
     advancedSearchParams,
@@ -577,7 +576,6 @@ function NotesPage() {
                 onPersonClick={handlePersonClick}
                 onTaskClick={handleTaskClick}
                 onLoadMore={isAdvancedMode ? () => {} : loadMoreNotes}
-                tooltipLookups={tooltipLookups}
                 isSelectMode={isAdvancedMode ? isSelectMode : false}
                 selectedNoteIds={isAdvancedMode ? selectedNoteIds : undefined}
                 onSelectChange={isAdvancedMode ? handleSelectNote : undefined}

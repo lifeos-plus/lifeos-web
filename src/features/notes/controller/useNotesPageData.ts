@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
 import type { UUID } from "@/types/primitive";
 import {
   type Note as ApiNote,
@@ -14,18 +13,12 @@ import {
   type NotesAdvancedSearchParams,
 } from "@/hooks/queries/useNotesAdvancedSearch";
 import { useAllTasks } from "@/hooks/queries/useTasks";
-import { tasksApi } from "@/services/api/tasks";
-import { useVisions } from "@/hooks/queries/useVisions";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
 import type { QueryMode } from "@/hooks/useQueryMode";
 import type { PersonSummary, Task as ApiTask } from "@/services/api";
 import { createDateBoundaries } from "@/utils/datetime";
 import type { Note } from "@/types/newNotes";
-import {
-  buildTooltipLookups,
-  type TooltipLookups,
-} from "@/components/tooltips/tooltipData";
 
 export const NOTES_ADVANCED_PAGE_SIZE = 100;
 
@@ -61,7 +54,6 @@ export interface NotesPageData {
   noteCollapsePreference: ReturnType<typeof useNoteCollapsePreference>;
   noteFilters: ReturnType<typeof useNoteFilters>;
   tasksForAdvancedSearch: Array<{ id: UUID; name: string }>;
-  tooltipLookups: TooltipLookups;
   notesAdvancedSearch: ReturnType<typeof useNotesAdvancedSearchWithPagination>;
   notesAdvancedSearchRef: React.MutableRefObject<{
     search: (params: NotesAdvancedSearchParams) => void;
@@ -184,53 +176,6 @@ export function useNotesPageData(
     enabled: shouldLoadTasks,
   });
   const allFlatTasks = useMemo(() => allFlatTasksRaw ?? [], [allFlatTasksRaw]);
-
-  // tips 需要父任务名称：仅定向补拉已加载笔记引用的缺失直接父任务，
-  // 不扩大列表接口载荷（上限保护，静默失败时 tips 降级显示无父任务）。
-  const allFlatTaskIds = useMemo(
-    () => new Set(allFlatTasks.map((task) => String(task.id))),
-    [allFlatTasks],
-  );
-  const missingParentIds = useMemo(() => {
-    const ids = new Set<string>();
-    notes.forEach((note) => {
-      const parentId = note.task?.parent_task_id;
-      if (parentId && !allFlatTaskIds.has(String(parentId))) {
-        ids.add(String(parentId));
-      }
-    });
-    return Array.from(ids).slice(0, 30);
-  }, [notes, allFlatTaskIds]);
-  const parentTasksQuery = useQuery({
-    queryKey: ["notes", "tooltip-parents", missingParentIds] as const,
-    queryFn: async () => {
-      const results = await Promise.allSettled(
-        missingParentIds.map((id) => tasksApi.getByIdQuiet(id as UUID)),
-      );
-      return results
-        .filter(
-          (result): result is PromiseFulfilledResult<ApiTask> =>
-            result.status === "fulfilled",
-        )
-        .map((result) => result.value);
-    },
-    enabled: missingParentIds.length > 0,
-    staleTime: 5 * 60 * 1000,
-  });
-  const tooltipParentTasks = useMemo(
-    () => parentTasksQuery.data ?? [],
-    [parentTasksQuery.data],
-  );
-
-  const { visions } = useVisions();
-  const tooltipLookups = useMemo(
-    () =>
-      buildTooltipLookups({
-        visions,
-        tasks: [...allFlatTasks, ...tooltipParentTasks],
-      }),
-    [visions, allFlatTasks, tooltipParentTasks],
-  );
 
   const noteFilterInput = useMemo(
     () =>
@@ -366,7 +311,6 @@ export function useNotesPageData(
     noteCollapsePreference,
     noteFilters,
     tasksForAdvancedSearch,
-    tooltipLookups,
     notesAdvancedSearch,
     notesAdvancedSearchRef,
     advancedSearchParams,

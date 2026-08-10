@@ -24,6 +24,11 @@ const buildEntry = (overrides: Partial<ProcessedEntry> = {}): ProcessedEntry => 
     parent_task_id: null,
     content: "Focus task",
     status: "in_progress",
+    vision_summary: {
+      id: "vision-1" as UUID,
+      name: "Deep Vision",
+      status: "active",
+    },
   },
   linked_notes: [],
   linked_notes_count: 0,
@@ -59,14 +64,8 @@ const renderTable = (
 };
 
 describe("TimeEntriesTable tooltip", () => {
-  it("renders linked task, status and vision from entry.task with lookups", async () => {
-    renderTable({
-      tooltipLookups: {
-        visionMap: new Map([
-          ["vision-1", { name: "Deep Vision" }],
-        ]),
-      },
-    });
+  it("renders linked task, status and vision from entry.task summary fields", async () => {
+    renderTable();
 
     const descriptionCell = screen
       .getByText("Deep work")

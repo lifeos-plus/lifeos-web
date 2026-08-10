@@ -3669,6 +3669,25 @@
         "title": "Pagination",
         "type": "object"
       },
+      "ParentTaskSummaryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "content"
+        ],
+        "title": "ParentTaskSummaryResponse",
+        "type": "object"
+      },
       "PersonActivityMeta": {
         "additionalProperties": false,
         "properties": {
@@ -6279,6 +6298,16 @@
             "title": "Id",
             "type": "string"
           },
+          "parent_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParentTaskSummaryResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "parent_task_id": {
             "anyOf": [
               {
@@ -6297,6 +6326,16 @@
           "vision_id": {
             "title": "Vision Id",
             "type": "string"
+          },
+          "vision_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisionSummaryResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [

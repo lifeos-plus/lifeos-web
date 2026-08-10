@@ -26,7 +26,6 @@ import { createModalSessionId } from "@/utils/session";
 import { SelectorSpecialValue } from "./selects/selectorTypes";
 import {
   resolveTaskTooltipData,
-  type TooltipLookups,
 } from "./tooltips/tooltipData";
 
 interface TimeEntriesTableProps {
@@ -46,8 +45,6 @@ interface TimeEntriesTableProps {
   queryMode: QueryMode;
   areaMap: Map<UUID, { name: string; color: string }>;
   preloadedTasks: TaskWithSubtasks[];
-  /** 客户端已加载的愿景/任务查找表，用于 tips 解析关联任务信息 */
-  tooltipLookups?: TooltipLookups;
   /** 是否禁用快捷添加功能，通常在编辑模式下使用 */
   disableQuickEntry?: boolean;
   /** 领域筛选相关属性 */
@@ -74,7 +71,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
   queryMode,
   areaMap,
   preloadedTasks,
-  tooltipLookups,
   disableQuickEntry = false,
   selectedAreaId,
   onAreaChange,
@@ -193,7 +189,7 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
   }, [hideTooltip]);
 
   const hoveredTaskTooltipData = hoveredEntry
-    ? resolveTaskTooltipData(hoveredEntry.task ?? null, tooltipLookups)
+    ? resolveTaskTooltipData(hoveredEntry.task ?? null)
     : null;
 
   const tooltipContent = hoveredEntry ? (
