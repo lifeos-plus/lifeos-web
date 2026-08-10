@@ -398,6 +398,22 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       openCreateVision: handleCreateVision,
     }));
 
+    const visionEditModal = (
+      <VisionEditModal
+        isOpen={showVisionModal}
+        onClose={handleVisionModalClose}
+        onSave={handleVisionSave}
+        vision={editingVision}
+        onRequestDelete={(v) => {
+          // 关闭编辑态并触发外层删除流程
+          handleVisionModalClose();
+          if (v) {
+            handleDeleteVision(v);
+          }
+        }}
+      />
+    );
+
     if (loading) {
       return <LoadingSpinner message={t("common.loading")} />;
     }
@@ -422,18 +438,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
             description={t("visions.emptyState.description")}
             onAction={handleCreateVision}
           />
-          <VisionEditModal
-            isOpen={showVisionModal}
-            onClose={handleVisionModalClose}
-            onSave={handleVisionSave}
-            vision={editingVision}
-            onRequestDelete={(v) => {
-              handleVisionModalClose();
-              if (v) {
-                handleDeleteVision(v);
-              }
-            }}
-          />
+          {visionEditModal}
         </>
       );
     }
@@ -676,19 +681,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
         </div>
 
         {/* Modals */}
-        <VisionEditModal
-          isOpen={showVisionModal}
-          onClose={handleVisionModalClose}
-          onSave={handleVisionSave}
-          vision={editingVision}
-          onRequestDelete={(v) => {
-            // 关闭编辑态并触发外层删除流程
-            handleVisionModalClose();
-            if (v) {
-              handleDeleteVision(v);
-            }
-          }}
-        />
+        {visionEditModal}
 
         {taskModalSessionId && (
           <TaskEditModal
