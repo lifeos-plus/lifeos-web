@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v9
+        uses: astral-sh/setup-uv@v9.0.0
 
       - name: Install LifeOS CLI with Web API extras
         run: uv tool install lifeos-cli --extra web --extra postgres
