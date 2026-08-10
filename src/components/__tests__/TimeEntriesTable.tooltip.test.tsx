@@ -27,7 +27,6 @@ const buildEntry = (overrides: Partial<ProcessedEntry> = {}): ProcessedEntry => 
     vision_summary: {
       id: "vision-1" as UUID,
       name: "Deep Vision",
-      status: "active",
     },
   },
   linked_notes: [],

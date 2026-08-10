@@ -6330,7 +6330,7 @@
           "vision_summary": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/VisionSummaryResponse"
+                "$ref": "#/components/schemas/VisionNameSummaryResponse"
               },
               {
                 "type": "null"
@@ -7925,6 +7925,26 @@
           "status_filter"
         ],
         "title": "VisionListMeta",
+        "type": "object"
+      },
+      "VisionNameSummaryResponse": {
+        "additionalProperties": false,
+        "description": "Vision identity for tooltip task summaries; only the consumed fields.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "VisionNameSummaryResponse",
         "type": "object"
       },
       "VisionRecomputeResponse": {

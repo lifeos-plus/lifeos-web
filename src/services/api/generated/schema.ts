@@ -3508,7 +3508,7 @@ export interface components {
             status: string;
             /** Vision Id */
             vision_id: string;
-            vision_summary?: components["schemas"]["VisionSummaryResponse"] | null;
+            vision_summary?: components["schemas"]["VisionNameSummaryResponse"] | null;
         };
         /** TaskTreeResponse */
         TaskTreeResponse: {
@@ -3939,6 +3939,16 @@ export interface components {
         VisionListMeta: {
             /** Status Filter */
             status_filter: string | null;
+        };
+        /**
+         * VisionNameSummaryResponse
+         * @description Vision identity for tooltip task summaries; only the consumed fields.
+         */
+        VisionNameSummaryResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
         };
         /** VisionRecomputeResponse */
         VisionRecomputeResponse: {
