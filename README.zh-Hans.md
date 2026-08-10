@@ -51,8 +51,6 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 bash ./scripts/validate.sh
 ```
 
-基线流程会安装锁定依赖、拒绝高危 `npm audit` 结果、校验生成的 API 类型与翻译目录、构建前端、执行 lint，并运行测试套件。
-
 ## 项目政策
 
 - 贡献流程：[CONTRIBUTING.md](CONTRIBUTING.md)
