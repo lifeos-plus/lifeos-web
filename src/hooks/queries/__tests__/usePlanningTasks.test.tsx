@@ -167,7 +167,7 @@ describe("usePlanningTasks", () => {
     const getByIdMock = vi
       .spyOn(
         await import("@/services/api/tasks").then((m) => m.tasksApi),
-        "getById",
+        "getByIdQuiet",
       )
       .mockResolvedValue(parent);
 

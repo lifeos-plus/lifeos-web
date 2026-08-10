@@ -91,20 +91,7 @@ function collectLookupTasks(
   tasks.forEach((task) => {
     const key = toKey(task.id);
     if (key) {
-      target.set(key, {
-        id: task.id,
-        content: task.content ?? null,
-        status: task.status ?? null,
-        priority: task.priority ?? null,
-        planning_cycle_type: task.planning_cycle_type ?? null,
-        planning_cycle_start_date: task.planning_cycle_start_date ?? null,
-        actual_effort_total: task.actual_effort_total ?? null,
-        actual_effort_self: task.actual_effort_self ?? null,
-        created_at: task.created_at ?? null,
-        updated_at: task.updated_at ?? null,
-        vision_id: task.vision_id ?? null,
-        parent_task_id: task.parent_task_id ?? null,
-      });
+      target.set(key, toTooltipLookupEntry(task));
     }
     if (task.subtasks?.length) {
       collectLookupTasks(task.subtasks, target);

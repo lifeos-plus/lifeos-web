@@ -62,6 +62,8 @@ async function request<T>(
     query?: QueryParams;
     body?: unknown;
     signal?: AbortSignal;
+    /** 后台探测类请求失败时跳过全局错误事件（如 tips 补拉数据），仍会抛出异常。 */
+    silent?: boolean;
   },
 ): Promise<T> {
   const isAbortError = (error: unknown): boolean => {
@@ -105,12 +107,14 @@ async function request<T>(
     if (isAbortError(error)) {
       throw error;
     }
-    if (error instanceof ApiError) {
-      emitApiError({ title: error.title, message: error.message });
-    } else {
-      emitApiError({
-        message: error instanceof Error ? error.message : String(error),
-      });
+    if (!options?.silent) {
+      if (error instanceof ApiError) {
+        emitApiError({ title: error.title, message: error.message });
+      } else {
+        emitApiError({
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
     throw error;
   }
@@ -120,8 +124,13 @@ export const http = {
   get: <T>(
     pathname: string,
     params?: QueryParams,
-    options?: { signal?: AbortSignal },
-  ) => request<T>("GET", pathname, { query: params, signal: options?.signal }),
+    options?: { signal?: AbortSignal; silent?: boolean },
+  ) =>
+    request<T>("GET", pathname, {
+      query: params,
+      signal: options?.signal,
+      silent: options?.silent,
+    }),
   post: <T>(pathname: string, body?: unknown, params?: QueryParams) =>
     request<T>("POST", pathname, { query: params, body }),
   put: <T>(pathname: string, body?: unknown, params?: QueryParams) =>

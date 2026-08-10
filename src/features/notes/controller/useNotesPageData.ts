@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { UUID } from "@/types/primitive";
 import {
   type Note as ApiNote,
@@ -13,6 +14,7 @@ import {
   type NotesAdvancedSearchParams,
 } from "@/hooks/queries/useNotesAdvancedSearch";
 import { useAllTasks } from "@/hooks/queries/useTasks";
+import { tasksApi } from "@/services/api/tasks";
 import { useVisions } from "@/hooks/queries/useVisions";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
@@ -111,7 +113,7 @@ export interface NotesPageData {
 }
 
 export function useNotesPageData(
-  _options: { queryMode?: QueryMode } = {},
+  options: { queryMode?: QueryMode } = {},
 ): NotesPageData {
   const [filters, setFilters] = useState<{
     tag_id?: UUID;
@@ -175,18 +177,59 @@ export function useNotesPageData(
     notesAdvancedSearch.refetch,
   ]);
 
-  // tips 需要关联任务的愿景名与父任务名；该查询为 basic 字段、共享缓存，
-  // 两种查询模式都启用，避免为 tips 扩大 API 载荷。
-  const shouldLoadTasks = true;
+  const shouldLoadTasks =
+    options.queryMode !== undefined ? options.queryMode === "advanced" : true;
   const { data: allFlatTasksRaw } = useAllTasks({
     excludeStatus: ["done", "cancelled"],
     enabled: shouldLoadTasks,
   });
   const allFlatTasks = useMemo(() => allFlatTasksRaw ?? [], [allFlatTasksRaw]);
+
+  // tips 需要父任务名称：仅定向补拉已加载笔记引用的缺失直接父任务，
+  // 不扩大列表接口载荷（上限保护，静默失败时 tips 降级显示无父任务）。
+  const allFlatTaskIds = useMemo(
+    () => new Set(allFlatTasks.map((task) => String(task.id))),
+    [allFlatTasks],
+  );
+  const missingParentIds = useMemo(() => {
+    const ids = new Set<string>();
+    notes.forEach((note) => {
+      const parentId = note.task?.parent_task_id;
+      if (parentId && !allFlatTaskIds.has(String(parentId))) {
+        ids.add(String(parentId));
+      }
+    });
+    return Array.from(ids).slice(0, 30);
+  }, [notes, allFlatTaskIds]);
+  const parentTasksQuery = useQuery({
+    queryKey: ["notes", "tooltip-parents", missingParentIds] as const,
+    queryFn: async () => {
+      const results = await Promise.allSettled(
+        missingParentIds.map((id) => tasksApi.getByIdQuiet(id as UUID)),
+      );
+      return results
+        .filter(
+          (result): result is PromiseFulfilledResult<ApiTask> =>
+            result.status === "fulfilled",
+        )
+        .map((result) => result.value);
+    },
+    enabled: missingParentIds.length > 0,
+    staleTime: 5 * 60 * 1000,
+  });
+  const tooltipParentTasks = useMemo(
+    () => parentTasksQuery.data ?? [],
+    [parentTasksQuery.data],
+  );
+
   const { visions } = useVisions();
   const tooltipLookups = useMemo(
-    () => buildTooltipLookups({ visions, tasks: allFlatTasks }),
-    [visions, allFlatTasks],
+    () =>
+      buildTooltipLookups({
+        visions,
+        tasks: [...allFlatTasks, ...tooltipParentTasks],
+      }),
+    [visions, allFlatTasks, tooltipParentTasks],
   );
 
   const noteFilterInput = useMemo(

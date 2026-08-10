@@ -101,7 +101,8 @@ async function fetchPlanningTaskSet(
   const extraParents: Task[] = [];
   if (missingParentIds.length > 0) {
     const results = await Promise.allSettled(
-      missingParentIds.map((parentId) => tasksApi.getById(parentId)),
+      // 后台补拉：失败不触发全局错误提示，tips 降级显示无父任务
+      missingParentIds.map((parentId) => tasksApi.getByIdQuiet(parentId)),
     );
     results.forEach((result, index) => {
       if (result.status === "fulfilled") {

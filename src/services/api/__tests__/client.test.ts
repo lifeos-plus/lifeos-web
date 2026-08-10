@@ -82,4 +82,19 @@ describe("local web http client", () => {
     expect(listener).not.toHaveBeenCalled();
     unsubscribe();
   });
+
+  it("does not emit global errors for silent requests", async () => {
+    const listener = vi.fn();
+    const unsubscribe = subscribeApiError(listener);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("Not found", { status: 404, statusText: "Not Found" }),
+    );
+
+    await expect(
+      http.get("/api/v1/tasks/missing", undefined, { silent: true }),
+    ).rejects.toBeInstanceOf(ApiError);
+
+    expect(listener).not.toHaveBeenCalled();
+    unsubscribe();
+  });
 });
