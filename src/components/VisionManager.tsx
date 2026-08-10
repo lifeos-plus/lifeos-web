@@ -408,19 +408,33 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
 
     if (filteredVisions.length === 0) {
       return (
-        <EmptyState
-          icon={
-            <Icon
-              name="sparkles"
-              size={40}
-              className="text-primary"
-              aria-hidden
-            />
-          }
-          title={t("visions.emptyState.title")}
-          description={t("visions.emptyState.description")}
-          onAction={handleCreateVision}
-        />
+        <>
+          <EmptyState
+            icon={
+              <Icon
+                name="sparkles"
+                size={40}
+                className="text-primary"
+                aria-hidden
+              />
+            }
+            title={t("visions.emptyState.title")}
+            description={t("visions.emptyState.description")}
+            onAction={handleCreateVision}
+          />
+          <VisionEditModal
+            isOpen={showVisionModal}
+            onClose={handleVisionModalClose}
+            onSave={handleVisionSave}
+            vision={editingVision}
+            onRequestDelete={(v) => {
+              handleVisionModalClose();
+              if (v) {
+                handleDeleteVision(v);
+              }
+            }}
+          />
+        </>
       );
     }
 

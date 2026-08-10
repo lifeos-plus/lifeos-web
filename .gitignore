@@ -29,3 +29,8 @@ dist-ssr
 .env
 # Ignore coverage output
 coverage/
+
+# Playwright artifacts
+playwright-report/
+test-results/
+blob-report/

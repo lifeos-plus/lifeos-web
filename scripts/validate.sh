@@ -24,3 +24,9 @@ npm run lint
 
 echo "[validate] run frontend tests"
 npm test
+
+echo "[validate] ensure Playwright browsers"
+npx playwright install chromium
+
+echo "[validate] run frontend E2E tests"
+npm run test:e2e
