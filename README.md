@@ -84,24 +84,7 @@ For repository changes, run the primary validation entrypoint:
 bash ./scripts/validate.sh
 ```
 
-The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, runs the unit/component test suite, and runs the Playwright E2E suite.
-
-## E2E Testing
-
-E2E tests live in `e2e/` and cover the core user loop (create a vision, add a task, record a timelog, inspect insights). They run against a real LifeOS Web API (`lifeos-cli web serve`) backed by a throwaway SQLite database in an isolated temporary HOME, so the exercised HTTP transport matches the pinned OpenAPI contract instead of a mock. Your configured database is never touched.
-
-Requirements:
-
-- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]"`
-- Playwright Chromium browser: `npm run test:e2e:install`
-
-Run the suite on demand:
-
-```bash
-npm run test:e2e
-```
-
-Playwright starts both servers automatically: a temporary LifeOS Web API (`scripts/e2e/start-api.sh`, default port 8765) and the Vite dev server (default port 5173, API proxied to the temporary server). Override ports with `E2E_API_PORT` and `E2E_WEB_PORT`. CI installs browsers with OS dependencies and caches them; runs use 2 workers, 2 retries, and keep a trace on first retry plus an HTML report on failure (`playwright-report/`).
+The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite.
 
 ## Project Policies
 

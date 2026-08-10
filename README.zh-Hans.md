@@ -51,24 +51,7 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 bash ./scripts/validate.sh
 ```
 
-基线流程会安装锁定依赖、拒绝高危 `npm audit` 结果、校验生成的 API 类型与翻译目录、构建前端、执行 lint、运行单元/组件测试，并运行 Playwright E2E 测试。
-
-## E2E 测试
-
-E2E 测试位于 `e2e/`，覆盖核心用户闭环（创建愿景 → 添加任务 → 记录时间 → 查看洞察统计）。测试面向真实的 LifeOS Web API（`lifeos-cli web serve`），后端使用隔离的临时 HOME 与一次性 SQLite 数据库，保证被测 HTTP 传输与固定的 OpenAPI 契约一致而非 mock，且绝不会触碰开发者本机配置的数据库。
-
-前置要求：
-
-- 安装带 Web 扩展的 `lifeos` CLI：`uv tool install "lifeos-cli[web,postgres]"`
-- 安装 Playwright Chromium 浏览器：`npm run test:e2e:install`
-
-按需运行：
-
-```bash
-npm run test:e2e
-```
-
-Playwright 会自动启动两个服务：临时 LifeOS Web API（`scripts/e2e/start-api.sh`，默认端口 8765）和 Vite 开发服务器（默认端口 5173，`/api` 代理到临时 API）。可通过 `E2E_API_PORT` 与 `E2E_WEB_PORT` 覆盖端口。CI 中浏览器安装含系统依赖并启用缓存；使用 2 个 worker、2 次重试，失败时保留首次重试 trace 与 HTML 报告（`playwright-report/`）。
+基线流程会安装锁定依赖、拒绝高危 `npm audit` 结果、校验生成的 API 类型与翻译目录、构建前端、执行 lint，并运行测试套件。
 
 ## 项目政策
 

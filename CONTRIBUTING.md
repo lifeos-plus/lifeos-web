@@ -31,9 +31,26 @@ Run the default validation baseline before opening a PR:
 bash ./scripts/validate.sh
 ```
 
-The validation baseline installs the locked npm workspace, rejects high- and critical-severity `npm audit` findings, verifies that the generated OpenAPI types are current (`npm run api:check`), validates the translation catalogs, builds the Vite app, runs ESLint, and executes the Vitest suite.
+The validation baseline installs the locked npm workspace, rejects high- and critical-severity `npm audit` findings, verifies that the generated OpenAPI types are current (`npm run api:check`), validates the translation catalogs, builds the Vite app, runs ESLint, executes the Vitest suite, and runs the Playwright E2E suite.
 
 Prefer `npm ci` for local validation runs that should not rewrite the lockfile, and use the npm version declared by `package.json` when updating `package-lock.json`.
+
+### E2E Testing
+
+E2E tests live in `e2e/` and cover the core user loop (create a vision, add a task, record a timelog, inspect insights) plus a navigation smoke test. They run against a real LifeOS Web API (`lifeos-cli web serve`) backed by a throwaway SQLite database in an isolated temporary HOME, so the exercised HTTP transport matches the pinned OpenAPI contract instead of a mock. Your configured database is never touched.
+
+Requirements:
+
+- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]"`
+- Playwright Chromium browser: `npm run test:e2e:install`
+
+Run the suite on demand:
+
+```bash
+npm run test:e2e
+```
+
+Playwright starts both servers automatically: a temporary LifeOS Web API (`scripts/e2e/start-api.sh`, default port 8765) and the Vite dev server (default port 5173, API proxied to the temporary server). Override ports with `E2E_API_PORT` and `E2E_WEB_PORT`. CI installs browsers with OS dependencies and caches them; runs use 2 workers, 2 retries, and keep a trace on first retry plus an HTML report on failure (`playwright-report/`).
 
 ## API Contract Policy
 
