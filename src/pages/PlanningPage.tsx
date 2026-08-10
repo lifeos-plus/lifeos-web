@@ -43,6 +43,7 @@ const PlanningPage: React.FC = () => {
 
   const {
     tasks: tasksForView,
+    taskLookup,
     query: tasksQuery,
     prefetch,
   } = usePlanningTasks(viewType, normalizedDate, {
@@ -171,6 +172,7 @@ const PlanningPage: React.FC = () => {
                   key={group.id}
                   group={group}
                   visions={referenceVisions}
+                  taskLookup={taskLookup}
                   onTaskUpdate={async () => {
                     await tasksQuery.refetch();
                   }}

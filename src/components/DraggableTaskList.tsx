@@ -45,6 +45,12 @@ import {
 import type { UUID } from "@/types/primitive";
 import HoverTooltipOverlay from "./HoverTooltipOverlay";
 import { TaskTooltipContent } from "./tooltips";
+import {
+  buildTooltipLookups,
+  resolveTaskTooltipData,
+  type TooltipLookups,
+  type TaskTooltipLookupEntry,
+} from "./tooltips/tooltipData";
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "./icons";
 
@@ -66,6 +72,11 @@ interface DraggableTaskListProps {
   // Vision information for planning page
   visions?: Vision[];
   showVisionInfo?: boolean;
+  /**
+   * 外部补充的任务查找表（例如 planning 页为跨周期父任务补拉的数据）。
+   * 用于 tips 解析父任务名称等字段。
+   */
+  taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
   // Context for different pages
   isPlanningPage?: boolean;
 }
@@ -75,7 +86,6 @@ interface SortableTaskItemProps {
   depth: number;
   isExpanded: boolean;
   hasSubtasks: boolean;
-  parentTask?: TaskWithSubtasks | null;
   onEditTask: (task: TaskWithSubtasks) => void;
   onDeleteTask: (task: TaskWithSubtasks) => void;
   onStatusUpdate: (task: TaskWithSubtasks, newStatus: string) => void;
@@ -89,6 +99,7 @@ interface SortableTaskItemProps {
   // Vision information for planning page
   visions?: Vision[];
   showVisionInfo?: boolean;
+  tooltipLookups?: TooltipLookups;
   // Context for different pages
   isPlanningPage?: boolean;
 }
@@ -204,7 +215,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   depth,
   isExpanded,
   hasSubtasks,
-  parentTask,
   onEditTask,
   onDeleteTask,
   onStatusUpdate,
@@ -217,6 +227,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   habitTaskAssociations,
   visions,
   showVisionInfo,
+  tooltipLookups,
   isPlanningPage,
 }) => {
   const { t } = useTranslation();
@@ -278,22 +289,30 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
     focusOffset: (rect) => ({ x: -rect.width / 2, y: -16 }),
   });
 
+  const tooltipData = useMemo(
+    () => resolveTaskTooltipData(task, tooltipLookups),
+    [task, tooltipLookups],
+  );
+
   const tooltipContent = useMemo(() => {
     const noneLabel = t("draggableTaskList.tooltip.none");
     const priorityIndex = Math.max(
       0,
       Math.min(
         PRIORITY.length - 1,
-        Number.isFinite(task.priority) ? task.priority : 0,
+        Number.isFinite(tooltipData?.priority) ? tooltipData?.priority ?? 0 : 0,
       ),
     );
     const priorityInfo = PRIORITY[priorityIndex] ?? PRIORITY[0];
     const statusLabel =
-      TASK_STATUS_LABELS[task.status as keyof typeof TASK_STATUS_LABELS] ??
-      task.status;
+      (tooltipData?.status &&
+        TASK_STATUS_LABELS[
+          tooltipData.status as keyof typeof TASK_STATUS_LABELS
+        ]) ||
+      tooltipData?.status;
 
     const planningCycleValue = (() => {
-      if (!task.planning_cycle_type) return null;
+      if (!tooltipData?.planningCycleType) return null;
       const cycleTypeMap: Record<string, string> = {
         day: t("draggableTaskList.planningCycle.day"),
         week: t("draggableTaskList.planningCycle.week"),
@@ -302,9 +321,12 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         "7years": t("draggableTaskList.planningCycle.7years"),
       };
       const periodText =
-        cycleTypeMap[task.planning_cycle_type] || task.planning_cycle_type;
-      if (task.planning_cycle_start_date) {
-        const formattedStart = formatDate(task.planning_cycle_start_date);
+        cycleTypeMap[tooltipData.planningCycleType] ||
+        tooltipData.planningCycleType;
+      if (tooltipData.planningCycleStartDate) {
+        const formattedStart = formatDate(
+          tooltipData.planningCycleStartDate,
+        );
         return t("draggableTaskList.tooltip.planningCycleValueWithDate", {
           period: periodText,
           date: formattedStart,
@@ -313,22 +335,29 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
       return periodText;
     })();
 
-    const totalEffort = formatDuration(task.actual_effort_total ?? 0);
-    const selfEffort = formatDuration(task.actual_effort_self ?? 0);
-    const createdAt = formatDateTime(task.created_at ?? "") || noneLabel;
-    const updatedAt = formatDateTime(task.updated_at ?? "") || noneLabel;
+    const totalEffort = formatDuration(tooltipData?.actualEffortTotal ?? 0);
+    const selfEffort = formatDuration(tooltipData?.actualEffortSelf ?? 0);
+    const createdAt =
+      (tooltipData?.createdAt &&
+        formatDateTime(tooltipData.createdAt)) ||
+      noneLabel;
+    const updatedAt =
+      (tooltipData?.updatedAt && formatDateTime(tooltipData.updatedAt)) ||
+      noneLabel;
 
     const lines = [
       t("draggableTaskList.tooltip.vision", {
-        vision: associatedVision?.name ?? noneLabel,
+        vision: tooltipData?.visionName ?? noneLabel,
       }),
       t("draggableTaskList.tooltip.parent", {
-        parent: parentTask?.content ?? noneLabel,
+        parent: tooltipData?.parentContent ?? noneLabel,
       }),
       t("draggableTaskList.tooltip.priority", {
         priority: priorityInfo.label,
       }),
-      t("draggableTaskList.tooltip.status", { status: statusLabel }),
+      t("draggableTaskList.tooltip.status", {
+        status: statusLabel ?? noneLabel,
+      }),
       t("draggableTaskList.tooltip.planningCycle", {
         planning: planningCycleValue ?? noneLabel,
       }),
@@ -339,24 +368,14 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
     ];
 
     return {
-      title: t("draggableTaskList.tooltip.title", { name: task.content }),
+      title: t("draggableTaskList.tooltip.title", {
+        name: tooltipData?.content ?? noneLabel,
+      }),
       lines,
-      visionName: associatedVision?.name ?? null,
-      parentName: parentTask?.content ?? null,
     };
   }, [
     t,
-    task.priority,
-    task.status,
-    task.planning_cycle_type,
-    task.planning_cycle_start_date,
-    task.actual_effort_total,
-    task.actual_effort_self,
-    task.created_at,
-    task.updated_at,
-    task.content,
-    associatedVision,
-    parentTask,
+    tooltipData,
   ]);
 
   const handleTaskMouseEnter = useCallback(
@@ -680,11 +699,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         offset={taskTooltipState?.offset}
         className="text-sm leading-relaxed max-w-sm"
       >
-        <TaskTooltipContent
-          task={task}
-          visionName={tooltipContent.visionName}
-          parentTaskName={tooltipContent.parentName}
-        />
+        <TaskTooltipContent task={tooltipData} />
       </HoverTooltipOverlay>
     </>
   );
@@ -707,6 +722,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
   habitTaskAssociations,
   visions,
   showVisionInfo,
+  taskLookup,
   isPlanningPage,
 }) => {
   const { t } = useTranslation();
@@ -715,6 +731,16 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     new Set(),
   );
   const expandedTasks = externalExpandedTasks ?? internalExpandedTasks;
+
+  const tooltipLookups = useMemo(
+    () =>
+      buildTooltipLookups({
+        visions: visions ?? [],
+        tasks,
+        taskOverrides: taskLookup ?? null,
+      }),
+    [visions, tasks, taskLookup],
+  );
 
   // Memoized hierarchy manager
   const hierarchyManager = useMemo(
@@ -866,7 +892,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     (
       task: TaskWithSubtasks,
       depth: number = 0,
-      parent: TaskWithSubtasks | null = null,
     ) => {
       const hasSubtasks = task.subtasks?.length > 0;
       const isExpanded = expandedTasks.has(task.id);
@@ -878,7 +903,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
             depth={depth}
             isExpanded={isExpanded}
             hasSubtasks={hasSubtasks}
-            parentTask={parent}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
             onStatusUpdate={onStatusUpdate}
@@ -891,6 +915,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
             habitTaskAssociations={habitTaskAssociations}
             visions={visions}
             showVisionInfo={showVisionInfo}
+            tooltipLookups={tooltipLookups}
             isPlanningPage={isPlanningPage}
           />
 
@@ -904,7 +929,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
                 <div className="space-y-2">
                   {task.subtasks.map((subtask) => (
                     <div key={subtask.id} className="relative">
-                      {renderTaskNode(subtask, depth + 1, task)}
+                      {renderTaskNode(subtask, depth + 1)}
                     </div>
                   ))}
                 </div>
@@ -929,6 +954,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
       isPlanningPage,
       showVisionInfo,
       visions,
+      tooltipLookups,
     ],
   );
 

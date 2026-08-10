@@ -4,9 +4,11 @@ import { useTimeLogData } from "@/features/timeLog/controller/useTimeLogData";
 import { useAdvancedSearchWithPagination } from "@/hooks/queries/useAdvancedSearch";
 import { useAllTasks } from "@/hooks/queries/useTasks";
 import { useAreas } from "@/hooks/queries/useAreas";
+import { useVisions } from "@/hooks/queries/useVisions";
 import { createDateBoundaries } from "@/utils/datetime";
 import type { UUID } from "@/types/primitive";
 import type { Task as ApiTask } from "@/services/api";
+import type { Vision } from "@/services/api";
 import type { QueryMode } from "@/hooks/useQueryMode";
 
 interface TimeLogPageDataOptions {
@@ -44,6 +46,7 @@ export interface TimeLogPageData extends TimeLogDataResult {
   advancedSearch: ReturnType<typeof useAdvancedSearchWithPagination>;
   tasksForAdvancedSearch: Array<{ id: UUID; name: string }>;
   allFlatTasks: ApiTask[];
+  visions: Vision[];
   areasFromCache: ReturnType<typeof useAreas>["areas"];
   areaMap: ReturnType<typeof useAreas>["areaMap"];
 }
@@ -125,6 +128,7 @@ export function useTimeLogPageData(
     [allFlatTasks],
   );
 
+  const { visions } = useVisions();
   const { areas: areasFromCache, areaMap } = useAreas();
 
   return {
@@ -136,6 +140,7 @@ export function useTimeLogPageData(
     advancedSearch,
     tasksForAdvancedSearch,
     allFlatTasks,
+    visions,
     areasFromCache,
     areaMap,
   };

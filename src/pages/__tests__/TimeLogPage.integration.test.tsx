@@ -225,6 +225,10 @@ vi.mock("@/hooks/queries/useAreas", () => ({
   useAreas: () => ({ areas: [], areaMap: new Map() }),
 }));
 
+vi.mock("@/hooks/queries/useVisions", () => ({
+  useVisions: () => ({ visions: [], loading: false, error: null }),
+}));
+
 const useTimeLogUIStateMock = vi.fn();
 vi.mock("@/features/timeLog/controller/useTimeLogUIState", () => ({
   useTimeLogUIState: () => useTimeLogUIStateMock(),

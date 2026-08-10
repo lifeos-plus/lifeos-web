@@ -668,6 +668,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
                                 taskManagement.actions.handleTasksReorder
                               }
                               habitTaskAssociations={habitTaskAssociations}
+                              visions={[vision]}
                             />
                           )}
                         </>

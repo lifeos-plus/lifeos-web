@@ -8,10 +8,12 @@ import type {
 import type { UUID } from "@/types/primitive";
 import { usePlanningTaskGroup } from "@/hooks/planning/usePlanningTaskGroup";
 import { TaskGroupCard } from "./planning/TaskGroupCard";
+import type { TaskTooltipLookupEntry } from "./tooltips/tooltipData";
 
 interface PlanningTaskListProps {
   group: PlanningGroup;
   visions: Vision[];
+  taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
   onTaskUpdate?: () => void;
   onTaskStatusUpdate?: (taskId: UUID, newStatus: string) => Promise<void>;
   planningCycleType?: PlanningViewType;
@@ -60,6 +62,7 @@ const PlanningTaskList: React.FC<PlanningTaskListProps> = (props) => {
     <TaskGroupCard
       group={props.group}
       visions={props.visions}
+      taskLookup={props.taskLookup}
       planningCycleType={props.planningCycleType}
       statusFilter={statusFilter}
       statusFilterOptions={statusFilterOptions}

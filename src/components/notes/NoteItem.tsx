@@ -24,6 +24,10 @@ import {
 } from "@/components/tooltips";
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "@/components/icons";
+import {
+  resolveTaskTooltipData,
+  type TooltipLookups,
+} from "@/components/tooltips/tooltipData";
 
 type NoteAssociationTooltipPayload =
   | { type: "person"; person: PersonSummary }
@@ -47,6 +51,7 @@ interface NoteItemProps {
   onTagClick: (tag: Tag) => void;
   onPersonClick: (person: PersonSummary) => void;
   onTaskClick: (taskId: UUID) => void;
+  tooltipLookups?: TooltipLookups;
   isSelectMode?: boolean;
   isSelected?: boolean;
   onSelectChange?: (noteId: UUID, checked: boolean) => void;
@@ -65,6 +70,7 @@ const NoteItem = React.memo<NoteItemProps>(
     onTagClick,
     onPersonClick,
     onTaskClick,
+    tooltipLookups,
     isSelectMode = false,
     isSelected = false,
     onSelectChange,
@@ -394,9 +400,7 @@ const NoteItem = React.memo<NoteItemProps>(
           }
           return (
             <TaskTooltipContent
-              task={task}
-              visionName={task.vision_summary?.name ?? null}
-              parentTaskName={task.parent_summary?.content ?? null}
+              task={resolveTaskTooltipData(task, tooltipLookups)}
             />
           );
         }
@@ -413,9 +417,11 @@ const NoteItem = React.memo<NoteItemProps>(
                 area_summary:
                   associationTooltip.payload.timelog.area_summary ??
                   undefined,
-                task_summary:
-                  associationTooltip.payload.timelog.task_summary ?? undefined,
               }}
+              task={resolveTaskTooltipData(
+                associationTooltip.payload.timelog.task_summary,
+                tooltipLookups,
+              )}
               areaMap={areaMap}
               timezone={timezone}
             />
@@ -453,7 +459,7 @@ const NoteItem = React.memo<NoteItemProps>(
         default:
           return null;
       }
-    }, [associationTooltip, areaMap, t, timezone]);
+    }, [associationTooltip, areaMap, t, timezone, tooltipLookups]);
 
     // 复制笔记内容到剪贴板
     const handleCopy = async () => {

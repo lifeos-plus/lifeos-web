@@ -37,6 +37,7 @@ import { createModalSessionId } from "@/utils/session";
 import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import { timelogsApi } from "@/services/api/timelogs";
 import { timelogsKeys } from "@/services/api/queryKeys";
+import { buildTooltipLookups } from "@/components/tooltips/tooltipData";
 
 const TimeLogPage = () => {
   const { t } = useTranslation();
@@ -78,6 +79,7 @@ const TimeLogPage = () => {
     advancedSearch,
     tasksForAdvancedSearch,
     allFlatTasks,
+    visions,
     areasFromCache,
     areaMap,
   } = useTimeLogPageData({
@@ -114,6 +116,11 @@ const TimeLogPage = () => {
       people: activeTimelogForNotes.people,
     });
   }, [activeTimelogForNotes]);
+
+  const tooltipLookups = useMemo(
+    () => buildTooltipLookups({ visions, tasks: allFlatTasks }),
+    [visions, allFlatTasks],
+  );
 
   const latestTimelogEndTimeQuery = useQuery({
     queryKey: timelogsKeys.latestEndTime(),
@@ -629,6 +636,7 @@ const TimeLogPage = () => {
               queryMode={queryMode}
               areaMap={areaMap}
               preloadedTasks={allFlatTasks as unknown as TaskWithSubtasks[]}
+              tooltipLookups={tooltipLookups}
               disableQuickEntry={showEntryModal || queryMode === "advanced"}
               selectedAreaId={
                 queryMode === "advanced" ? null : selectedAreaId

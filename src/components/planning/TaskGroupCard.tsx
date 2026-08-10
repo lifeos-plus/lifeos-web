@@ -13,10 +13,12 @@ import { TaskSelectorPanel } from "./TaskSelectorPanel";
 import { CarryForwardPanel } from "./CarryForwardPanel";
 import { HabitActionsCard } from "./HabitActionsCard";
 import { TaskListSection } from "./TaskListSection";
+import type { TaskTooltipLookupEntry } from "@/components/tooltips/tooltipData";
 
 interface TaskGroupCardProps {
   group: PlanningGroup;
   visions: Vision[];
+  taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
   planningCycleType?: PlanningViewType;
   statusFilter: string;
   statusFilterOptions: StatusFilterOption[];
@@ -53,6 +55,7 @@ interface TaskGroupCardProps {
 export const TaskGroupCard: React.FC<TaskGroupCardProps> = ({
   group,
   visions,
+  taskLookup,
   planningCycleType,
   statusFilter,
   statusFilterOptions,
@@ -151,6 +154,7 @@ export const TaskGroupCard: React.FC<TaskGroupCardProps> = ({
       <TaskListSection
         groupId={group.id}
         visions={visions}
+        taskLookup={taskLookup}
         filteredTasks={filteredTasks}
         sortedTasks={sortedTasks}
         statusFilter={statusFilter}

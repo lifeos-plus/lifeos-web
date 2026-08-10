@@ -13,12 +13,17 @@ import {
   type NotesAdvancedSearchParams,
 } from "@/hooks/queries/useNotesAdvancedSearch";
 import { useAllTasks } from "@/hooks/queries/useTasks";
+import { useVisions } from "@/hooks/queries/useVisions";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
 import type { QueryMode } from "@/hooks/useQueryMode";
 import type { PersonSummary, Task as ApiTask } from "@/services/api";
 import { createDateBoundaries } from "@/utils/datetime";
 import type { Note } from "@/types/newNotes";
+import {
+  buildTooltipLookups,
+  type TooltipLookups,
+} from "@/components/tooltips/tooltipData";
 
 export const NOTES_ADVANCED_PAGE_SIZE = 100;
 
@@ -54,6 +59,7 @@ export interface NotesPageData {
   noteCollapsePreference: ReturnType<typeof useNoteCollapsePreference>;
   noteFilters: ReturnType<typeof useNoteFilters>;
   tasksForAdvancedSearch: Array<{ id: UUID; name: string }>;
+  tooltipLookups: TooltipLookups;
   notesAdvancedSearch: ReturnType<typeof useNotesAdvancedSearchWithPagination>;
   notesAdvancedSearchRef: React.MutableRefObject<{
     search: (params: NotesAdvancedSearchParams) => void;
@@ -105,7 +111,7 @@ export interface NotesPageData {
 }
 
 export function useNotesPageData(
-  options: { queryMode?: QueryMode } = {},
+  _options: { queryMode?: QueryMode } = {},
 ): NotesPageData {
   const [filters, setFilters] = useState<{
     tag_id?: UUID;
@@ -169,13 +175,19 @@ export function useNotesPageData(
     notesAdvancedSearch.refetch,
   ]);
 
-  const shouldLoadTasks =
-    options.queryMode !== undefined ? options.queryMode === "advanced" : true;
+  // tips 需要关联任务的愿景名与父任务名；该查询为 basic 字段、共享缓存，
+  // 两种查询模式都启用，避免为 tips 扩大 API 载荷。
+  const shouldLoadTasks = true;
   const { data: allFlatTasksRaw } = useAllTasks({
     excludeStatus: ["done", "cancelled"],
     enabled: shouldLoadTasks,
   });
   const allFlatTasks = useMemo(() => allFlatTasksRaw ?? [], [allFlatTasksRaw]);
+  const { visions } = useVisions();
+  const tooltipLookups = useMemo(
+    () => buildTooltipLookups({ visions, tasks: allFlatTasks }),
+    [visions, allFlatTasks],
+  );
 
   const noteFilterInput = useMemo(
     () =>
@@ -311,6 +323,7 @@ export function useNotesPageData(
     noteCollapsePreference,
     noteFilters,
     tasksForAdvancedSearch,
+    tooltipLookups,
     notesAdvancedSearch,
     notesAdvancedSearchRef,
     advancedSearchParams,

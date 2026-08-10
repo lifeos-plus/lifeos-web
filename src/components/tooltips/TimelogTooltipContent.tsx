@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import AreaBadge from "@/components/AreaBadge";
 import { formatDurationFromTimes, formatTime } from "@/utils/datetime";
 import type { UUID } from "@/types/primitive";
+import type { TaskTooltipData } from "./tooltipData";
 
 interface TimelogTooltipContentProps {
   entry: {
@@ -14,20 +15,15 @@ interface TimelogTooltipContentProps {
       name?: string | null;
       color?: string | null;
     } | null;
-    task_summary?: {
-      content?: string | null;
-      status?: string | null;
-      vision_summary?: {
-        name?: string | null;
-      } | null;
-    } | null;
   };
+  task: TaskTooltipData | null;
   areaMap: Map<UUID, { name: string; color: string }>;
   timezone?: string;
 }
 
 const TimelogTooltipContent: React.FC<TimelogTooltipContentProps> = ({
   entry,
+  task,
   areaMap,
   timezone,
 }) => {
@@ -60,10 +56,9 @@ const TimelogTooltipContent: React.FC<TimelogTooltipContentProps> = ({
   const areaColor =
     areaSummary?.color ?? areaMapEntry?.color ?? undefined;
 
-  const visionName =
-    entry.task_summary?.vision_summary?.name ?? t("common.none");
-  const taskContent = entry.task_summary?.content ?? t("common.none");
-  const statusKey = entry.task_summary?.status;
+  const visionName = task?.visionName ?? t("common.none");
+  const taskContent = task?.content ?? t("common.none");
+  const statusKey = task?.status;
   const statusLabel = statusKey
     ? (() => {
         const key = `status.${statusKey}`;

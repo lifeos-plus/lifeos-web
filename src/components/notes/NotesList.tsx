@@ -8,6 +8,7 @@ import { Icon } from "@/components/icons";
 import type { Note } from "@/types/newNotes";
 import type { Tag, PersonSummary } from "@/services/api";
 import type { UUID } from "@/types/primitive";
+import type { TooltipLookups } from "@/components/tooltips/tooltipData";
 
 interface NotesListProps {
   notes: Note[];
@@ -22,6 +23,7 @@ interface NotesListProps {
   onPersonClick: (person: PersonSummary) => void;
   onTaskClick: (taskId: UUID) => void;
   onLoadMore: () => void;
+  tooltipLookups?: TooltipLookups;
   isSelectMode?: boolean;
   selectedNoteIds?: Set<UUID>;
   onSelectChange?: (noteId: UUID, checked: boolean) => void;
@@ -42,6 +44,7 @@ export function NotesList({
   onPersonClick,
   onTaskClick,
   onLoadMore,
+  tooltipLookups,
   isSelectMode = false,
   selectedNoteIds,
   onSelectChange,
@@ -93,6 +96,7 @@ export function NotesList({
             onTagClick={onTagClick}
             onPersonClick={onPersonClick}
             onTaskClick={onTaskClick}
+            tooltipLookups={tooltipLookups}
             isSelectMode={isSelectMode}
             isSelected={selectedNoteIds ? selectedNoteIds.has(note.id) : false}
             onSelectChange={onSelectChange}
