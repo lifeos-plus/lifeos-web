@@ -398,6 +398,22 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       openCreateVision: handleCreateVision,
     }));
 
+    const visionEditModal = (
+      <VisionEditModal
+        isOpen={showVisionModal}
+        onClose={handleVisionModalClose}
+        onSave={handleVisionSave}
+        vision={editingVision}
+        onRequestDelete={(v) => {
+          // 关闭编辑态并触发外层删除流程
+          handleVisionModalClose();
+          if (v) {
+            handleDeleteVision(v);
+          }
+        }}
+      />
+    );
+
     if (loading) {
       return <LoadingSpinner message={t("common.loading")} />;
     }
@@ -408,19 +424,22 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
 
     if (filteredVisions.length === 0) {
       return (
-        <EmptyState
-          icon={
-            <Icon
-              name="sparkles"
-              size={40}
-              className="text-primary"
-              aria-hidden
-            />
-          }
-          title={t("visions.emptyState.title")}
-          description={t("visions.emptyState.description")}
-          onAction={handleCreateVision}
-        />
+        <>
+          <EmptyState
+            icon={
+              <Icon
+                name="sparkles"
+                size={40}
+                className="text-primary"
+                aria-hidden
+              />
+            }
+            title={t("visions.emptyState.title")}
+            description={t("visions.emptyState.description")}
+            onAction={handleCreateVision}
+          />
+          {visionEditModal}
+        </>
       );
     }
 
@@ -662,19 +681,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
         </div>
 
         {/* Modals */}
-        <VisionEditModal
-          isOpen={showVisionModal}
-          onClose={handleVisionModalClose}
-          onSave={handleVisionSave}
-          vision={editingVision}
-          onRequestDelete={(v) => {
-            // 关闭编辑态并触发外层删除流程
-            handleVisionModalClose();
-            if (v) {
-              handleDeleteVision(v);
-            }
-          }}
-        />
+        {visionEditModal}
 
         {taskModalSessionId && (
           <TaskEditModal

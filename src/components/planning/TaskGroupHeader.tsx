@@ -119,7 +119,9 @@ export const TaskGroupHeader: React.FC<TaskGroupHeaderProps> = ({
         <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
           {canCreateTask && (
             <ActionButton
-              label=""
+              label={t("planning.taskActions.createTask", {
+                period: groupLabel,
+              })}
               icon={
                 isCreatingTask ? (
                   <LoadingDot className="border-success" />

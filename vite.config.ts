@@ -92,7 +92,7 @@ export default defineConfig(({ mode }) => {
       host: true,
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:8765',
+          target: process.env.E2E_API_PROXY_TARGET || 'http://127.0.0.1:8765',
           changeOrigin: true,
           secure: false,
           ws: true, // 支持 WebSocket

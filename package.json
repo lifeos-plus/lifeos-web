@@ -13,6 +13,7 @@
     "api:generate": "node scripts/generate-api-types.mjs",
     "api:refresh": "npm run api:fetch && npm run api:generate",
     "dev": "vite",
+    "test:e2e": "playwright test",
     "build": "tsc -b && npm run typecheck:test && vite build",
     "build-prod": "tsc -b && npm run typecheck:test && NODE_OPTIONS=--max-old-space-size=1536 vite build",
     "i18n:check": "node scripts/check-i18n.mjs",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "1.62.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/router-vite-plugin": "^1.167.19",
     "@testing-library/jest-dom": "^6.9.1",
