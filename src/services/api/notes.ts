@@ -9,14 +9,9 @@ type NoteTransport = components["schemas"]["NoteResponse"];
 type TaskSummaryTransport = components["schemas"]["TaskSummaryResponse"];
 type TimelogSummaryTransport = components["schemas"]["TimelogSummaryResponse"];
 export type TaskSummary = TaskSummaryTransport & {
-  actual_effort_total?: number | null;
-  actual_effort_self?: number | null;
-  created_at?: string;
   estimated_effort?: number | null;
   notes_count?: number;
-  priority?: number | null;
   timelogs_count?: number;
-  updated_at?: string;
 };
 export type NoteTimelogSummary = TimelogSummaryTransport & {
   area_id?: UUID | null;

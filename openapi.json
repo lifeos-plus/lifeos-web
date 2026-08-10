@@ -6290,9 +6290,42 @@
       "TaskSummaryResponse": {
         "additionalProperties": false,
         "properties": {
+          "actual_effort_self": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Effort Self"
+          },
+          "actual_effort_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Effort Total"
+          },
           "content": {
             "title": "Content",
             "type": "string"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
           },
           "id": {
             "title": "Id",
@@ -6319,9 +6352,53 @@
             ],
             "title": "Parent Task Id"
           },
+          "planning_cycle_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planning Cycle Start Date"
+          },
+          "planning_cycle_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planning Cycle Type"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
           "status": {
             "title": "Status",
             "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
           },
           "vision_id": {
             "title": "Vision Id",
