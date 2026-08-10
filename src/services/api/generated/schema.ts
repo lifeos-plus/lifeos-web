@@ -2783,6 +2783,13 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** ParentTaskSummaryResponse */
+        ParentTaskSummaryResponse: {
+            /** Content */
+            content: string;
+            /** Id */
+            id: string;
+        };
         /** PersonActivityMeta */
         PersonActivityMeta: {
             /** Activity Type */
@@ -3490,16 +3497,32 @@ export interface components {
         };
         /** TaskSummaryResponse */
         TaskSummaryResponse: {
+            /** Actual Effort Self */
+            actual_effort_self?: number | null;
+            /** Actual Effort Total */
+            actual_effort_total?: number | null;
             /** Content */
             content: string;
+            /** Created At */
+            created_at?: string | null;
             /** Id */
             id: string;
+            parent_summary?: components["schemas"]["ParentTaskSummaryResponse"] | null;
             /** Parent Task Id */
             parent_task_id: string | null;
+            /** Planning Cycle Start Date */
+            planning_cycle_start_date?: string | null;
+            /** Planning Cycle Type */
+            planning_cycle_type?: string | null;
+            /** Priority */
+            priority?: number | null;
             /** Status */
             status: string;
+            /** Updated At */
+            updated_at?: string | null;
             /** Vision Id */
             vision_id: string;
+            vision_summary?: components["schemas"]["VisionNameSummaryResponse"] | null;
         };
         /** TaskTreeResponse */
         TaskTreeResponse: {
@@ -3930,6 +3953,16 @@ export interface components {
         VisionListMeta: {
             /** Status Filter */
             status_filter: string | null;
+        };
+        /**
+         * VisionNameSummaryResponse
+         * @description Vision identity for tooltip task summaries; only the consumed fields.
+         */
+        VisionNameSummaryResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
         };
         /** VisionRecomputeResponse */
         VisionRecomputeResponse: {

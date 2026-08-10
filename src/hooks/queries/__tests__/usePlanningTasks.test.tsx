@@ -146,4 +146,49 @@ describe("usePlanningTasks", () => {
       planning_cycle_start_date: "2025-01-01",
     });
   });
+
+  it("fetches cross-cycle parents for tooltip lookup without changing the displayed tree", async () => {
+    const child = createTask({
+      id: "task-child",
+      parent_task_id: "task-week-parent",
+      planning_cycle_type: "day",
+    });
+    const parent = createTask({
+      id: "task-week-parent",
+      content: "Weekly parent",
+      planning_cycle_type: "week",
+    });
+
+    tasksGetAllMock.mockResolvedValue({
+      items: [child],
+      pagination: { page: 1, size: 100, total: 1, pages: 1 },
+      meta: {},
+    });
+    const getByIdMock = vi
+      .spyOn(
+        await import("@/services/api/tasks").then((m) => m.tasksApi),
+        "getByIdQuiet",
+      )
+      .mockResolvedValue(parent);
+
+    const { result } = renderHook(
+      () => usePlanningTasks("day", new Date("2025-01-01T00:00:00Z")),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.tasks.length).toBeGreaterThan(0));
+
+    // 展示树保持不变：跨周期父任务不成为可见根节点
+    expect(result.current.tasks).toHaveLength(1);
+    expect(result.current.tasks[0].id).toBe("task-child");
+    expect(result.current.tasks[0].subtasks).toHaveLength(0);
+
+    // tips 查找表包含补拉的父任务
+    expect(result.current.taskLookup.get("task-week-parent")?.content).toBe(
+      "Weekly parent",
+    );
+    expect(getByIdMock).toHaveBeenCalledWith("task-week-parent");
+
+    getByIdMock.mockRestore();
+  });
 });

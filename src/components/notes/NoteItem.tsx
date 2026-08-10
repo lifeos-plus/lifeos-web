@@ -24,6 +24,7 @@ import {
 } from "@/components/tooltips";
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "@/components/icons";
+import { resolveTaskTooltipData } from "@/components/tooltips/tooltipData";
 
 type NoteAssociationTooltipPayload =
   | { type: "person"; person: PersonSummary }
@@ -393,11 +394,7 @@ const NoteItem = React.memo<NoteItemProps>(
             return null;
           }
           return (
-            <TaskTooltipContent
-              task={task}
-              visionName={task.vision_summary?.name ?? null}
-              parentTaskName={task.parent_summary?.content ?? null}
-            />
+            <TaskTooltipContent task={resolveTaskTooltipData(task)} />
           );
         }
         case "timelog":
@@ -413,9 +410,10 @@ const NoteItem = React.memo<NoteItemProps>(
                 area_summary:
                   associationTooltip.payload.timelog.area_summary ??
                   undefined,
-                task_summary:
-                  associationTooltip.payload.timelog.task_summary ?? undefined,
               }}
+              task={resolveTaskTooltipData(
+                associationTooltip.payload.timelog.task_summary,
+              )}
               areaMap={areaMap}
               timezone={timezone}
             />

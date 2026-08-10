@@ -8,10 +8,12 @@ import DraggableTaskList from "@/components/DraggableTaskList";
 import type { TaskWithSubtasks, Vision } from "@/services/api";
 import { TASK_STATUS_LABELS } from "@/utils/constants";
 import type { UUID } from "@/types/primitive";
+import type { TaskTooltipLookupEntry } from "@/components/tooltips/tooltipData";
 
 interface TaskListSectionProps {
   groupId: string;
   visions: Vision[];
+  taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
   filteredTasks: TaskWithSubtasks[];
   sortedTasks: TaskWithSubtasks[];
   statusFilter: string;
@@ -26,6 +28,7 @@ interface TaskListSectionProps {
 export const TaskListSection: React.FC<TaskListSectionProps> = ({
   groupId,
   visions,
+  taskLookup,
   filteredTasks,
   sortedTasks,
   statusFilter,
@@ -120,6 +123,7 @@ export const TaskListSection: React.FC<TaskListSectionProps> = ({
               onTasksReorder={taskManagement.actions.handleTasksReorder}
               habitTaskAssociations={{}}
               visions={visions}
+              taskLookup={taskLookup}
               showVisionInfo
               isPlanningPage
             />

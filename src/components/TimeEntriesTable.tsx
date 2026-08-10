@@ -24,6 +24,9 @@ import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "./icons";
 import { createModalSessionId } from "@/utils/session";
 import { SelectorSpecialValue } from "./selects/selectorTypes";
+import {
+  resolveTaskTooltipData,
+} from "./tooltips/tooltipData";
 
 interface TimeEntriesTableProps {
   entries: ProcessedEntry[];
@@ -185,9 +188,14 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
     hideTooltip();
   }, [hideTooltip]);
 
+  const hoveredTaskTooltipData = hoveredEntry
+    ? resolveTaskTooltipData(hoveredEntry.task ?? null)
+    : null;
+
   const tooltipContent = hoveredEntry ? (
     <TimelogTooltipContent
       entry={hoveredEntry}
+      task={hoveredTaskTooltipData}
       areaMap={areaMap}
       timezone={timezone}
     />

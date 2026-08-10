@@ -9,16 +9,9 @@ type NoteTransport = components["schemas"]["NoteResponse"];
 type TaskSummaryTransport = components["schemas"]["TaskSummaryResponse"];
 type TimelogSummaryTransport = components["schemas"]["TimelogSummaryResponse"];
 export type TaskSummary = TaskSummaryTransport & {
-  actual_effort_total?: number | null;
-  actual_effort_self?: number | null;
-  created_at?: string;
   estimated_effort?: number | null;
   notes_count?: number;
-  parent_summary?: { id: UUID; content: string; status?: string | null } | null;
-  priority?: number | null;
   timelogs_count?: number;
-  updated_at?: string;
-  vision_summary?: { id: UUID; name: string; status?: string | null } | null;
 };
 export type NoteTimelogSummary = TimelogSummaryTransport & {
   area_id?: UUID | null;

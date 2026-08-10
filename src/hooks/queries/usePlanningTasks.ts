@@ -8,8 +8,17 @@ import {
 } from "@/services/api/tasks";
 import { tasksKeys } from "@/services/api/queryKeys";
 import type { UUID } from "@/types/primitive";
+import {
+  toTooltipLookupEntry,
+  type TaskTooltipLookupEntry,
+} from "@/components/tooltips/tooltipData";
+import { logger } from "@/utils/core";
 
 type PlanningCycleType = "7years" | "year" | "month" | "week" | "day";
+
+/** tips 只消费父任务名称等少量字段，补拉数量做上限保护。 */
+const MAX_PARENT_LOOKUP_FETCHES = 30;
+
 function buildTaskHierarchy(flatTasks: Task[]): TaskWithSubtasks[] {
   const taskMap = new Map<UUID, TaskWithSubtasks>();
   const rootTasks: TaskWithSubtasks[] = [];
@@ -41,6 +50,78 @@ function buildTaskHierarchy(flatTasks: Task[]): TaskWithSubtasks[] {
   return rootTasks;
 }
 
+function buildTaskLookup(
+  flatTasks: Task[],
+  extraParents: Task[],
+): Map<string, TaskTooltipLookupEntry> {
+  const lookup = new Map<string, TaskTooltipLookupEntry>();
+  [...flatTasks, ...extraParents].forEach((task) => {
+    lookup.set(String(task.id), toTooltipLookupEntry(task));
+  });
+  return lookup;
+}
+
+/**
+ * 拉取规划视图任务，并轻量补拉不在结果集中的直接父任务。
+ *
+ * planning 查询按 planning_cycle_type 过滤，跨周期父任务不在返回集中，
+ * 导致任务树中这类任务成为孤立根节点、tips 拿不到父任务数据。
+ * 这里只补拉 tips 明确消费的字段（任务名称等），不扩大列表接口的载荷。
+ */
+async function fetchPlanningTaskSet(
+  type: PlanningCycleType,
+  selectedDate?: Date,
+  size: number = 100,
+) {
+  const response = await tasksApi.getAll(undefined, undefined, {
+    planning_cycle_type: type,
+    planning_cycle_start_date: toISODate(selectedDate),
+    fields: "full",
+    size,
+  });
+  const tasks = response.items ?? [];
+  // filter out deleted if any
+  const filtered = tasks.filter(
+    (t) =>
+      (t as unknown as { deleted_at?: string | null }).deleted_at == null,
+  );
+
+  const fetchedIds = new Set(filtered.map((task) => String(task.id)));
+  const missingParentIds = Array.from(
+    new Set(
+      filtered
+        .map((task) => task.parent_task_id)
+        .filter(
+          (parentId): parentId is UUID =>
+            parentId != null && !fetchedIds.has(String(parentId)),
+        ),
+    ),
+  ).slice(0, MAX_PARENT_LOOKUP_FETCHES);
+
+  const extraParents: Task[] = [];
+  if (missingParentIds.length > 0) {
+    const results = await Promise.allSettled(
+      // 后台补拉：失败不触发全局错误提示，tips 降级显示无父任务
+      missingParentIds.map((parentId) => tasksApi.getByIdQuiet(parentId)),
+    );
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        extraParents.push(result.value);
+      } else {
+        logger.warn(
+          `Failed to load parent task ${missingParentIds[index]} for tooltip:`,
+          result.reason,
+        );
+      }
+    });
+  }
+
+  return {
+    tasks: buildTaskHierarchy(filtered),
+    taskLookup: buildTaskLookup(filtered, extraParents),
+  };
+}
+
 export function usePlanningTasks(
   viewType: PlanningCycleType,
   selectedDate?: Date,
@@ -65,19 +146,7 @@ export function usePlanningTasks(
       size,
     }),
     queryFn: async () => {
-      const response = await tasksApi.getAll(undefined, undefined, {
-        planning_cycle_type: viewType,
-        planning_cycle_start_date: toISODate(selectedDate),
-        fields: "full",
-        size,
-      });
-      const tasks = response.items ?? [];
-      // filter out deleted if any
-      const filtered = tasks.filter(
-        (t) =>
-          (t as unknown as { deleted_at?: string | null }).deleted_at == null,
-      );
-      return buildTaskHierarchy(filtered);
+      return fetchPlanningTaskSet(viewType, selectedDate, size);
     },
     staleTime,
     gcTime,
@@ -94,19 +163,7 @@ export function usePlanningTasks(
           size,
         }),
         queryFn: async () => {
-          const response = await tasksApi.getAll(undefined, undefined, {
-            planning_cycle_type: type,
-            planning_cycle_start_date: toISODate(prefetchDate),
-            fields: "full",
-            size,
-          });
-          const tasks = response.items ?? [];
-          const filtered = tasks.filter(
-            (t) =>
-              (t as unknown as { deleted_at?: string | null }).deleted_at ==
-              null,
-          );
-          return buildTaskHierarchy(filtered);
+          return fetchPlanningTaskSet(type, prefetchDate, size);
         },
         staleTime,
         gcTime,
@@ -121,7 +178,8 @@ export function usePlanningTasks(
   );
 
   return {
-    tasks: (query.data as TaskWithSubtasks[] | undefined) ?? [],
+    tasks: (query.data?.tasks as TaskWithSubtasks[] | undefined) ?? [],
+    taskLookup: query.data?.taskLookup ?? new Map(),
     query,
     prefetch,
   };

@@ -3669,6 +3669,25 @@
         "title": "Pagination",
         "type": "object"
       },
+      "ParentTaskSummaryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "content"
+        ],
+        "title": "ParentTaskSummaryResponse",
+        "type": "object"
+      },
       "PersonActivityMeta": {
         "additionalProperties": false,
         "properties": {
@@ -6271,13 +6290,56 @@
       "TaskSummaryResponse": {
         "additionalProperties": false,
         "properties": {
+          "actual_effort_self": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Effort Self"
+          },
+          "actual_effort_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Effort Total"
+          },
           "content": {
             "title": "Content",
             "type": "string"
           },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
           "id": {
             "title": "Id",
             "type": "string"
+          },
+          "parent_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParentTaskSummaryResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "parent_task_id": {
             "anyOf": [
@@ -6290,13 +6352,67 @@
             ],
             "title": "Parent Task Id"
           },
+          "planning_cycle_start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planning Cycle Start Date"
+          },
+          "planning_cycle_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planning Cycle Type"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
           "status": {
             "title": "Status",
             "type": "string"
           },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
           "vision_id": {
             "title": "Vision Id",
             "type": "string"
+          },
+          "vision_summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisionNameSummaryResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -7886,6 +8002,26 @@
           "status_filter"
         ],
         "title": "VisionListMeta",
+        "type": "object"
+      },
+      "VisionNameSummaryResponse": {
+        "additionalProperties": false,
+        "description": "Vision identity for tooltip task summaries; only the consumed fields.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "VisionNameSummaryResponse",
         "type": "object"
       },
       "VisionRecomputeResponse": {

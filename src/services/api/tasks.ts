@@ -206,6 +206,16 @@ export const tasksApi = {
     return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id));
   },
 
+  /**
+   * 静默读取单个任务，用于 tips 等后台补拉场景：
+   * 失败时不触发全局错误提示，调用方负责降级处理。
+   */
+  async getByIdQuiet(id: UUID): Promise<Task> {
+    return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), undefined, {
+      silent: true,
+    });
+  },
+
   async getWithSubtasks(id: UUID): Promise<TaskWithSubtasks> {
     return http.get<TaskTreeTransport>(ENDPOINTS.TASKS.WITH_SUBTASKS(id));
   },
