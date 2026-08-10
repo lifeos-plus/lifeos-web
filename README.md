@@ -92,7 +92,7 @@ E2E tests live in `e2e/` and cover the core user loop (create a vision, add a ta
 
 Requirements:
 
-- `lifeos` CLI with Web extras: `uv tool install lifeos-cli --extra web --extra postgres`
+- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]"`
 - Playwright Chromium browser: `npm run test:e2e:install`
 
 Run the suite on demand:

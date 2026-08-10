@@ -59,7 +59,7 @@ E2E 测试位于 `e2e/`，覆盖核心用户闭环（创建愿景 → 添加任�
 
 前置要求：
 
-- 安装带 Web 扩展的 `lifeos` CLI：`uv tool install lifeos-cli --extra web --extra postgres`
+- 安装带 Web 扩展的 `lifeos` CLI：`uv tool install "lifeos-cli[web,postgres]"`
 - 安装 Playwright Chromium 浏览器：`npm run test:e2e:install`
 
 按需运行：
