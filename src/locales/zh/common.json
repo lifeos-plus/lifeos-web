@@ -630,10 +630,10 @@
         "sans": "无衬线",
         "serif": "衬线",
         "mono": "等宽",
-        "yahei": "微软雅黑优先",
-        "pingfang": "苹方优先",
+        "yahei": "微软雅黑",
+        "pingfang": "苹方",
         "noto": "思源黑体（Noto Sans SC）",
-        "songti": "宋体优先"
+        "songti": "宋体"
       }
     }
   },
