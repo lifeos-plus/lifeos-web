@@ -2,12 +2,20 @@
  * Interface font options.
  *
  * Fonts are plain CSS font-family stacks (no web-font downloads needed), so
- * the app stays local-first. Options are generic typefaces (sans / serif /
- * mono) with a Latin-first stack and a CJK fallback tail, so both English and
- * Simplified Chinese pick up a comfortable font on Windows / macOS / Linux.
+ * the app stays local-first. The catalog covers generic typefaces (sans /
+ * serif / mono) as well as named fonts optimized for Simplified Chinese, so
+ * the choice is useful for every locale on Windows / macOS / Linux.
  */
 export interface FontOption {
-  id: "system" | "sans" | "serif" | "mono";
+  id:
+    | "system"
+    | "sans"
+    | "serif"
+    | "mono"
+    | "yahei"
+    | "pingfang"
+    | "noto"
+    | "songti";
   stack: string;
 }
 
@@ -15,7 +23,7 @@ export const FONT_CATALOG: FontOption[] = [
   {
     id: "system",
     stack:
-      'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      'ui-sans-serif, system-ui, sans-serif, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Noto Sans SC", "Source Han Sans SC", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   },
   {
     id: "sans",
@@ -31,6 +39,26 @@ export const FONT_CATALOG: FontOption[] = [
     id: "mono",
     stack:
       'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Noto Sans Mono CJK SC", "Source Han Mono SC", "PingFang SC", "Microsoft YaHei", "微软雅黑"',
+  },
+  {
+    id: "yahei",
+    stack:
+      '"Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "pingfang",
+    stack:
+      '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Noto Sans SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "noto",
+    stack:
+      '"Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif',
+  },
+  {
+    id: "songti",
+    stack:
+      '"Songti SC", "SimSun", "宋体", "Noto Serif SC", "Source Han Serif SC", ui-serif, Georgia, serif',
   },
 ];
 

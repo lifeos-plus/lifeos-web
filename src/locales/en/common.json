@@ -624,12 +624,16 @@
     "font": {
       "label": "Interface Font",
       "placeholder": "Please select a font...",
-      "description": "Choose a generic interface typeface. Each option covers Latin text first and falls back to suitable CJK fonts for Chinese.",
+      "description": "Choose an interface typeface. Options cover generic Latin-first categories as well as named fonts optimized for Simplified Chinese.",
       "options": {
         "system": "System Default",
         "sans": "Sans-Serif",
         "serif": "Serif",
-        "mono": "Monospace"
+        "mono": "Monospace",
+        "yahei": "Microsoft YaHei",
+        "pingfang": "PingFang SC",
+        "noto": "Noto Sans SC",
+        "songti": "Songti (SimSun)"
       }
     }
   },

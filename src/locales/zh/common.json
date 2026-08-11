@@ -624,12 +624,16 @@
     "font": {
       "label": "界面字体",
       "placeholder": "请选择字体...",
-      "description": "选择通用的界面字体类别。每个选项先覆盖拉丁文本，再回退到适合中文的 CJK 字体。",
+      "description": "选择界面字体。选项包含通用字体类别，以及针对简体中文优化的指定字体。",
       "options": {
         "system": "系统默认",
         "sans": "无衬线",
         "serif": "衬线",
-        "mono": "等宽"
+        "mono": "等宽",
+        "yahei": "微软雅黑优先",
+        "pingfang": "苹方优先",
+        "noto": "思源黑体（Noto Sans SC）",
+        "songti": "宋体优先"
       }
     }
   },
