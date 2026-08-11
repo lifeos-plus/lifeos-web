@@ -476,7 +476,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                 {/* Vision Badge for Planning Page */}
                 {associatedVision && (
                   <span
-                    className="inline-flex max-w-[min(12rem,60vw)] flex-shrink-0 items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-base  text-primary"
+                    className="inline-flex max-w-[min(12rem,60vw)] flex-shrink-0 items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-sm  text-primary"
                     title={`${t("draggableTaskList.vision.label")}: ${associatedVision.name}`}
                   >
                     <Icon
@@ -491,7 +491,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
 
                 <div className="flex min-w-0 max-w-full basis-full flex-col overflow-hidden sm:basis-auto sm:flex-1 sm:flex-row sm:items-center">
                   <h4
-                    className="w-full min-w-0 flex-1 overflow-hidden text-base font-normal text-base-content"
+                    className="w-full min-w-0 flex-1 overflow-hidden text-sm font-normal text-base-content"
                     onMouseEnter={handleTaskMouseEnter}
                     onMouseMove={handleTaskMouseMove}
                     onMouseLeave={handleTaskMouseLeave}
@@ -654,19 +654,19 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     {associatedHabits.map((habit) => (
                       <div key={habit.id} className="space-y-2">
                         <div className="flex items-center space-x-2">
-                          <h5 className="text-base  text-primary">
+                          <h5 className="text-sm  text-primary">
                             {habit.title}
                           </h5>
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-base  bg-primary/10 text-primary">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm  bg-primary/10 text-primary">
                             {habit.status}
                           </span>
                         </div>
                         {habit.description && (
-                          <p className="text-base text-primary">
+                          <p className="text-sm text-primary">
                             {habit.description}
                           </p>
                         )}
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base text-primary">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-primary">
                           <span className="inline-flex items-center gap-1">
                             <Icon name="calendar" size={16} aria-hidden />
                             {t("draggableTaskList.habit.start")}:{" "}
@@ -971,7 +971,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
         <h3 className="text-lg   mb-1 text-base-content">
           {t("draggableTaskList.empty.title")}
         </h3>
-        <p className="text-base text-base-content">
+        <p className="text-sm text-base-content">
           {t("draggableTaskList.empty.description")}
         </p>
       </div>

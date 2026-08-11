@@ -243,13 +243,13 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       errorDisplayMode="inline"
     >
       {entityType === "task" && task && (
-        <p className="text-base text-base-content mb-4">
+        <p className="text-sm text-base-content mb-4">
           {t("taskNotes.taskLabel")}
           {task.content}
         </p>
       )}
       {entityType === "habit_action" && habitActionLabel && (
-        <p className="text-base text-base-content mb-4">
+        <p className="text-sm text-base-content mb-4">
           {t("habitActionNotes.actionLabel")}
           {habitActionLabel}
         </p>

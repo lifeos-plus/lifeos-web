@@ -143,13 +143,13 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
             </div>
 
             {area.description && (
-              <p className="text-base text-base-content mb-2">
+              <p className="text-sm text-base-content mb-2">
                 {area.description}
               </p>
             )}
 
             {area.icon && (
-              <div className="text-base text-base-content/60">
+              <div className="text-sm text-base-content/60">
                 {t("areaManager.iconLabel")}{" "}
                 {iconOptions.find((opt) => opt.value === area.icon)
                   ?.label || area.icon}

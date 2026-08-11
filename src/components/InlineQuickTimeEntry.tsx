@@ -747,7 +747,7 @@ export default function InlineQuickTimeEntry({
   return (
     <div className="min-w-0 max-w-full rounded-lg border border-primary/30 bg-base-100 p-4 shadow-sm">
       <div className="mb-3">
-        <h4 className="text-base  text-base-content flex items-center justify-between">
+        <h4 className="text-sm  text-base-content flex items-center justify-between">
           <span className="inline-flex items-center gap-2">
             <Icon name="bolt" size={20} aria-hidden />
             {t("quickTimeEntry.title")}
@@ -763,7 +763,7 @@ export default function InlineQuickTimeEntry({
             value={selectedTaskId}
             onChange={setSelectedTaskId}
             disabled={loading}
-            className="text-base"
+            className="text-sm"
             filterStatus={useMemo(() => ACTIVE_TASK_STATUSES, [])}
             allowedTaskIds={allowedTaskIds}
             onTaskSelect={handleTaskSelect}
@@ -785,7 +785,7 @@ export default function InlineQuickTimeEntry({
             />
           </div>
           {templatesLoading ? (
-            <div className="text-base bg-base-100 border border-base-200 rounded px-3 py-2 text-right">
+            <div className="text-sm bg-base-100 border border-base-200 rounded px-3 py-2 text-right">
               {t("common.loading")}
             </div>
           ) : sortedTemplates.length === 0 ? (
@@ -969,7 +969,7 @@ export default function InlineQuickTimeEntry({
               multiple={true}
               variant="compact"
               disabled={loading}
-              className="text-base"
+              className="text-sm"
               idPrefix={`${idPrefix}-persons`}
               placeholder={t("common.none")}
               selectedListMaxHeight={120}

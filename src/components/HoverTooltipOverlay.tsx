@@ -24,7 +24,7 @@ interface HoverTooltipOverlayProps {
 }
 
 const baseClasses =
-  "fixed pointer-events-none z-modal bg-base-200 text-base-content/70 text-base px-4 py-3 rounded-lg shadow-xl max-w-64 border border-base-200";
+  "fixed pointer-events-none z-modal bg-base-200 text-base-content/70 text-sm px-4 py-3 rounded-lg shadow-xl max-w-64 border border-base-200";
 
 const HoverTooltipOverlay: React.FC<HoverTooltipOverlayProps> = ({
   visible,

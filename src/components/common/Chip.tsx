@@ -26,8 +26,8 @@ const baseClassName =
 
 const sizeClassMap: Record<ChipSize, string> = {
   sm: "px-2 py-0.5 text-sm rounded-md",
-  md: "px-2.5 py-1 text-base rounded-md",
-  lg: "px-3 py-1.5 text-base rounded-lg",
+  md: "px-2.5 py-1 text-sm rounded-md",
+  lg: "px-3 py-1.5 text-sm rounded-lg",
 };
 
 const toneClassMap: Record<

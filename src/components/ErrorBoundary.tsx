@@ -21,7 +21,7 @@ const ErrorDisplay: React.FC = () => {
         <h1 className="text-xl  mb-2">
           {t("errorBoundary.title")}
         </h1>
-        <p className="text-base text-base-content mb-4">
+        <p className="text-sm text-base-content mb-4">
           {t("errorBoundary.message")}
         </p>
         <ActionButton

@@ -48,7 +48,7 @@ const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
       maxHeight="fit"
       padding="none"
     >
-      <div className={`${paddingClasses[padding]} ${contentClasses} text-base`}>
+      <div className={`${paddingClasses[padding]} ${contentClasses} text-sm`}>
         {children}
       </div>
     </Container>

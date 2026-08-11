@@ -379,7 +379,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
           </div>
         }
         emptyState={
-          <div className="p-8 text-center text-base text-base-content/60">
+          <div className="p-8 text-center text-sm text-base-content/60">
             {t("personManager.noContacts")}
           </div>
         }
@@ -475,7 +475,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
                   onClick={() => handlePersonSelect(person)}
                 >
                   <div className={`px-4 py-3 border-b border-base-300 ${PERSON_ROW_CELL_HOVER_CLASS}`}>
-                    <div className="text-base  text-base-content">
+                    <div className="text-sm  text-base-content">
                       {person.display_name}
                     </div>
                   </div>
@@ -526,7 +526,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
                       </div>
                     )}
                   </div>
-                  <div className={`px-4 py-3 border-b border-base-300 text-base text-base-content whitespace-nowrap ${PERSON_ROW_CELL_HOVER_CLASS}`}>
+                  <div className={`px-4 py-3 border-b border-base-300 text-sm text-base-content whitespace-nowrap ${PERSON_ROW_CELL_HOVER_CLASS}`}>
                     {person.birth_date || ""}
                   </div>
                   <div className={`px-4 py-3 border-b border-base-300 ${PERSON_ROW_CELL_HOVER_CLASS}`}>

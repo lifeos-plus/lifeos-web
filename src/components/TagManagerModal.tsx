@@ -1055,7 +1055,7 @@ const TagManager: React.FC<TagManagerProps> = ({
                       aria-hidden
                     />
                   </div>
-                  <p className="text-base  text-base-content/70 mb-1">
+                  <p className="text-sm  text-base-content/70 mb-1">
                     {t("tagManager.noTags")}
                   </p>
                   <p className="text-sm text-base-content/50">
@@ -1093,7 +1093,7 @@ const TagManager: React.FC<TagManagerProps> = ({
             return (
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base  text-base-content">
+                  <h3 className="text-sm  text-base-content">
                     {getCategoryDisplayName(activeCategory, categoryLabelMap)}
                   </h3>
                   <span className="text-xs  text-base-content/70 bg-base-200 px-2 py-1 rounded-full">
@@ -1502,7 +1502,7 @@ const TagGroup: React.FC<TagGroupProps> = ({
               aria-hidden
             />
           </div>
-          <h4 className="text-base   text-base-content">
+          <h4 className="text-sm   text-base-content">
             {group.displayName}
           </h4>
         </div>

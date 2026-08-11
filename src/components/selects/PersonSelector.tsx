@@ -198,7 +198,7 @@ const PersonSelector: React.FC<PersonSelectorProps> = ({
           onClick={select}
           className={`w-full px-3 ${
             variant === "compact" ? "py-1.5" : "py-2"
-          } text-left text-base transition-colors flex items-center justify-between ${
+          } text-left text-sm transition-colors flex items-center justify-between ${
             isSelected
               ? "bg-primary/15 text-primary"
               : "hover:bg-base-200 text-base-content"

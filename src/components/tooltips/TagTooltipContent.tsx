@@ -16,7 +16,7 @@ const TagTooltipContent: React.FC<TagTooltipContentProps> = ({ tag }) => {
 
   return (
     <div className="space-y-2">
-      <div className="text-base  text-base-content">
+      <div className="text-sm  text-base-content">
         {t("notes.tooltip.tag.title", { name: tag.name })}
       </div>
       <dl className="space-y-1 text-sm text-base-content/80">

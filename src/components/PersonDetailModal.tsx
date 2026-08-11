@@ -101,7 +101,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
             <label className={FORM_LABEL_MUTED_CLASS}>
               {t("personDetail.name")}
             </label>
-            <p className="text-base">{person.name}</p>
+            <p className="text-sm">{person.name}</p>
           </div>
         )}
 
@@ -142,7 +142,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
             <label className={FORM_LABEL_MUTED_CLASS}>
               {t("personDetail.birthDate")}
             </label>
-            <p className="text-base">{person.birth_date}</p>
+            <p className="text-sm">{person.birth_date}</p>
           </div>
         )}
 
@@ -257,7 +257,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
               >
                 <div>
                   <span className="">{anniversary.name}</span>
-                  <span className="text-base ml-2">{anniversary.date}</span>
+                  <span className="text-sm ml-2">{anniversary.date}</span>
                 </div>
                 <ActionButton
                   label={t("common.edit")}

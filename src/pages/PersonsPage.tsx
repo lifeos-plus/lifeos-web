@@ -201,7 +201,7 @@ const PersonsPage: React.FC = () => {
           setTagFiltersExpanded((isExpanded) => !isExpanded)
         }
         title={
-          <h3 className="text-base  text-base-content">
+          <h3 className="text-sm  text-base-content">
             {t("personManager.tagFiltersTitle")}
           </h3>
         }

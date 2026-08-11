@@ -503,7 +503,7 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
                 "px-3",
                 "py-2",
                 "text-left",
-                "text-base",
+                "text-sm",
                 "transition-colors",
                 "focus:outline-none",
                 option.disabled
@@ -548,7 +548,7 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
             {hasMoreOptions && (
               <button
                 type="button"
-                className="w-full px-3 py-2 text-center text-base text-primary hover:bg-base-200 disabled:opacity-60"
+                className="w-full px-3 py-2 text-center text-sm text-primary hover:bg-base-200 disabled:opacity-60"
                 disabled={isLoadingMore}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {

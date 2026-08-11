@@ -102,7 +102,7 @@ function HabitItem({
     <div className="space-y-3">
       {/* 习惯标题 + 状态标签 */}
       <div className="flex items-center space-x-3 min-w-0">
-        <h2 className="text-xl lg:text-2xl  whitespace-nowrap flex items-center gap-2">
+        <h2 className="text-xl  whitespace-nowrap flex items-center gap-2">
           <Icon name="repeat" size={20} aria-hidden className="text-primary" />
           {habit.title}
         </h2>
@@ -111,7 +111,7 @@ function HabitItem({
 
       {/* 习惯描述 */}
       {habit.description && (
-        <p className="text-base lg:text-lg text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
+        <p className="text-sm lg:text-lg text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
           {habit.description}
         </p>
       )}
@@ -120,7 +120,7 @@ function HabitItem({
 
   // 构建元数据容器
   const metadataContainer = (
-    <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm lg:text-base text-base-content/70 font-normal text-left w-full">
+    <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm text-base-content/70 font-normal text-left w-full">
       <div className="flex items-center gap-1 min-w-0">
         <span className="text-base-content/50 flex-shrink-0">
           {t("habits.habit.startDate")}
@@ -214,7 +214,7 @@ function HabitItem({
           {effectiveStats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-base-200 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl  text-primary">
+                <div className="text-xl  text-primary">
                   {effectiveStats.total_actions}
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -222,7 +222,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl  text-success">
+                <div className="text-xl  text-success">
                   {completionRate.toFixed(1)}%
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -230,7 +230,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl  text-info">
+                <div className="text-xl  text-info">
                   {effectiveStats.current_streak}
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -238,7 +238,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl  text-warning">
+                <div className="text-xl  text-warning">
                   {effectiveStats.longest_streak}
                 </div>
                 <div className="text-sm text-base-content/70">

@@ -136,7 +136,7 @@ function NavigationRail({ onItemClick }: NavigationRailProps) {
                     aria-hidden
                   />
                 ) : null}
-                <span className="truncate text-base-content text-base">
+                <span className="truncate text-base-content text-sm">
                   {item.navLabel}
                 </span>
               </Link>
@@ -219,7 +219,7 @@ function AppBar({ onMenuClick }: AppBarProps) {
                 {title}
               </div>
               {subtitle && (
-                <div className="truncate text-base-content text-xs md:text-sm lg:text-base hidden sm:block flex-shrink min-w-0">
+                <div className="truncate text-base-content text-xs md:text-sm hidden sm:block flex-shrink min-w-0">
                   {subtitle}
                 </div>
               )}

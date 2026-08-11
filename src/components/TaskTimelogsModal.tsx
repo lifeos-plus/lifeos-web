@@ -163,7 +163,7 @@ const TaskTimelogsModal: React.FC<TaskTimelogsModalProps> = ({
       <div className="space-y-3">
         {!isLoading && !error && (
           <div className="flex flex-wrap items-center justify-between gap-2 px-2 pt-4 pb-2">
-            <div className="min-w-0 text-base">
+            <div className="min-w-0 text-sm">
               {task && (
                 <span className="line-clamp-2">
                   {t("taskTimelogs.taskLabel")} {task.content}
@@ -298,7 +298,7 @@ const TaskTimelogsModal: React.FC<TaskTimelogsModalProps> = ({
                           name={areaName}
                           color={areaColor}
                           showLabel
-                          labelClassName="text-base"
+                          labelClassName="text-sm"
                           ariaLabel={areaName}
                         />
                       </div>

@@ -1,6 +1,6 @@
 export const financeTextClass = {
-  moduleTitle: "text-base  text-base-content",
-  sectionTitle: "text-base  text-base-content",
+  moduleTitle: "text-sm  text-base-content",
+  sectionTitle: "text-sm  text-base-content",
   rowTitle: " text-base-content",
   treeNodeTitle: "text-sm  text-base-content",
   treeNodeSymbol: "text-xs",

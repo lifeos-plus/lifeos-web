@@ -279,7 +279,7 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
         "px-3",
         "py-2",
         "text-left",
-        "text-base",
+        "text-sm",
         "transition-colors",
         "focus:outline-none",
         isSelected

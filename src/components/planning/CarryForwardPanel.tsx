@@ -27,7 +27,7 @@ export const CarryForwardPanel: React.FC<CarryForwardPanelProps> = ({
       tone="warning"
     >
       <div className="mb-4">
-        <p className="text-base text-warning mb-2">
+        <p className="text-sm text-warning mb-2">
           {t("planning.carryForward.message", { count: tasks.length })}
         </p>
         <div className="max-h-32 overflow-y-auto bg-base-100 border border-warning/30 rounded p-2">

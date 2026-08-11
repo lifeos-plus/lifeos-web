@@ -585,7 +585,7 @@ function NotesPage() {
 
               {isAdvancedMode && advancedTotalCount > 0 && (
                 <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                  <div className="text-base text-base-content/70">
+                  <div className="text-sm text-base-content/70">
                     {t("notes.advancedSearch.paginationSummary", {
                       start: advancedRangeStart,
                       end: advancedRangeEnd,
@@ -603,7 +603,7 @@ function NotesPage() {
                         !notesAdvancedSearch.hasPreviousPage || advancedLoading
                       }
                     />
-                    <span className="text-base text-base-content/80">
+                    <span className="text-sm text-base-content/80">
                       {t("notes.advancedSearch.pageIndicator", {
                         page: notesAdvancedSearch.currentPage,
                         total: notesAdvancedSearch.totalPages,

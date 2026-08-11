@@ -530,7 +530,7 @@ export function HabitActionList({
                   }`}
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <div className="min-w-0 text-base">
+                    <div className="min-w-0 text-sm">
                       {isDailyCadence && (
                         <span className=" text-base-content">
                           {(() => {
@@ -556,7 +556,7 @@ export function HabitActionList({
                     </div>
 
                     {!action && (
-                      <span className="min-w-0 break-words text-base text-base-content/50">
+                      <span className="min-w-0 break-words text-sm text-base-content/50">
                         {t("habits.actionList.notRecorded")}
                       </span>
                     )}

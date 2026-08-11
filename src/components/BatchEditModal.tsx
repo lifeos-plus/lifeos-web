@@ -317,7 +317,7 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
         <h2 className="text-xl  text-base-content">
           {getModalTitle()}
         </h2>
-        <p className="text-base mt-1">{t("batchEdit.description")}</p>
+        <p className="text-sm mt-1">{t("batchEdit.description")}</p>
         {selectedEntryIds.size > 100 && (
           <div className="mt-3 p-3 bg-primary/10 rounded-lg">
             <div className="flex items-start gap-2">
@@ -334,7 +334,7 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-base text-primary">
+              <p className="text-sm text-primary">
                 {t("batchEdit.warning.largeBatch", {
                   count: selectedEntryIds.size,
                   batchSize: 100,

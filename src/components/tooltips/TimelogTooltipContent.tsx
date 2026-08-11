@@ -69,7 +69,7 @@ const TimelogTooltipContent: React.FC<TimelogTooltipContentProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="text-base  text-base-content">
+      <div className="text-sm  text-base-content">
         {entry.title || t("common.placeholder")}
       </div>
       <dl className="space-y-1 text-sm">

@@ -7,10 +7,10 @@ import Container from "./Container";
 const getCardStyles = (size: string, className: string) => {
   const titleSizeClass =
     {
-      sm: "text-base",
-      md: "text-base",
+      sm: "text-sm",
+      md: "text-sm",
       lg: "text-lg",
-    }[size] || "text-base";
+    }[size] || "text-sm";
 
   const buttonSize = ({
     sm: "sm",

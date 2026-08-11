@@ -711,7 +711,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
           </div>
         </div>
         {rows.length === 0 ? (
-          <p className="text-base text-base-content/70">
+          <p className="text-sm text-base-content/70">
             {t("timeLog.bulkImport.emptyPreview")}
           </p>
         ) : (
@@ -738,7 +738,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
         )}
         {rows.some((row) => row.errors.length > 0) && (
           <div className="mt-6 border-t border-base-300 pt-4">
-            <h4 className=" text-base">
+            <h4 className=" text-sm">
               {t("timeLog.bulkImport.errorListTitle")}
             </h4>
             <ul className="mt-2 space-y-1 text-sm text-error">

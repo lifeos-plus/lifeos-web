@@ -132,7 +132,7 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
     <div className="flex items-center gap-3">
       {/* 日期 - 使用常规大小 */}
       <div
-        className="w-32 text-base  text-base-content/80 flex-shrink-0 flex items-center justify-center"
+        className="w-32 text-sm  text-base-content/80 flex-shrink-0 flex items-center justify-center"
         title={labelTitle ?? displayLabel}
       >
         {displayLabel}
@@ -788,14 +788,14 @@ function InsightsPage() {
                 <Icon name="refresh" size={16} aria-hidden />
               )
             }
-            className="font-normal text-base"
+            className="font-normal text-sm"
             size="sm"
           />
         </div>
       </ToolbarContainer>
 
       {/* 视图模式和对比选项 - 响应式布局 */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-4 text-base text-base-content">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-4 text-sm text-base-content">
         <div className="flex items-center gap-4 flex-wrap">
           <RadioGroup
             direction="horizontal"
@@ -1007,7 +1007,7 @@ function InsightsPage() {
               <h3 className="text-lg   mb-2 text-base-content">
                 {t("insights.noStats")}
               </h3>
-              <p className="text-base text-base-content/60">
+              <p className="text-sm text-base-content/60">
                 {t("insights.noStatsDescription")}
               </p>
             </div>

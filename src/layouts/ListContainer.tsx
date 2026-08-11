@@ -60,7 +60,7 @@ const ListContainer: React.FC<ListContainerProps> = ({
 
   // 标题尺寸
   const titleSizeClass =
-    size === "sm" ? "text-base" : size === "lg" ? "text-lg" : "text-base";
+    size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-sm";
   const contentClasses = `min-w-0 flex-1 text-sm ${contentClassName || "overflow-auto"}`;
 
   // 获取列对齐样式

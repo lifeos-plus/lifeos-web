@@ -425,7 +425,7 @@ const NoteItem = React.memo<NoteItemProps>(
               <span className="badge badge-info badge-sm">
                 {t("habitActionNotes.typeLabel")}
               </span>
-              <div className="text-base  text-base-content">
+              <div className="text-sm  text-base-content">
                 {habitAction.habit_title?.trim() ||
                   t("habitForm.fields.title")}
               </div>

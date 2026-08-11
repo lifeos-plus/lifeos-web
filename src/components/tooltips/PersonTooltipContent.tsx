@@ -16,7 +16,7 @@ const PersonTooltipContent: React.FC<PersonTooltipContentProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="text-base  text-base-content">
+      <div className="text-sm  text-base-content">
         {t("notes.tooltip.person.title", { name: person.display_name })}
       </div>
       <dl className="space-y-1 text-sm text-base-content/80">

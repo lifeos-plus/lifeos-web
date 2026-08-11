@@ -111,7 +111,7 @@ function resolveSizeClasses(size: ActionSize): string {
     case "md":
       return "text-sm sm:text-base"; // default size with responsive text
     case "lg":
-      return "btn-lg text-base sm:text-lg";
+      return "btn-lg text-sm sm:text-lg";
     default:
       return "text-sm sm:text-base";
   }

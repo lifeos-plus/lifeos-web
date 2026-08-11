@@ -110,13 +110,13 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
               aria-label={t("entryRow.selectRecord", { id: entry.id })}
             />
           ) : (
-            <span className="text-base text-base-content/50">-</span>
+            <span className="text-sm text-base-content/50">-</span>
           )}
         </td>
       )}
 
       <td className="px-4 py-3 whitespace-nowrap">
-        <div className="text-base  text-base-content">
+        <div className="text-sm  text-base-content">
           {getDisplayDate()}
         </div>
       </td>
@@ -130,7 +130,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
       </td>
 
       <td className="px-4 py-3 whitespace-nowrap">
-        <span className="text-base font-mono text-base-content">
+        <span className="text-sm font-mono text-base-content">
           {formatDurationFromTimes(entry.start_time, entry.end_time)}
         </span>
       </td>
@@ -182,16 +182,16 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
           onBlurTooltip?.();
         }}
       >
-        <div className="text-base  text-base-content">
+        <div className="text-sm  text-base-content">
           {entry.title}
         </div>
       </td>
 
       <td className="px-4 py-3 whitespace-nowrap">
         {!entry.isPlaceholder && entry.task ? (
-          <div className="text-base">
+          <div className="text-sm">
             <div className="flex items-center">
-              <span className="text-base text-base-content/80">
+              <span className="text-sm text-base-content/80">
                 {entry.task.content.length > 15
                   ? `${entry.task.content.substring(0, 15)}...`
                   : entry.task.content}
@@ -199,7 +199,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
             </div>
           </div>
         ) : (
-          <span className="text-base text-base-content/50">-</span>
+          <span className="text-sm text-base-content/50">-</span>
         )}
       </td>
 
@@ -207,7 +207,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
         {!entry.isPlaceholder ? (
           <PersonsList people={entry.people} />
         ) : (
-          <span className="text-base text-base-content/50">-</span>
+          <span className="text-sm text-base-content/50">-</span>
         )}
       </td>
 
