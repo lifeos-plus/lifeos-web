@@ -119,7 +119,7 @@ export function NotesList({
         )}
 
       {notes.length > 0 && (
-        <div className="mt-8 text-center text-base text-base-content/60">
+        <div className="mt-8 text-center text-sm text-base-content/60">
           {t("notes.totalNotes", { count: notes.length })}
           {selectedFilterTag && (
             <span className="ml-2 text-primary">

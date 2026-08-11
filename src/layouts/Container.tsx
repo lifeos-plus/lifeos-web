@@ -88,10 +88,10 @@ function Container({
       : padding === "sm"
         ? "p-2"
         : padding === "md"
-          ? "p-4"
+          ? "p-3"
           : padding === "lg"
-            ? "p-6"
-            : "p-2 md:p-4 lg:p-6", // responsive
+            ? "p-4"
+            : "p-2 md:p-3 lg:p-4", // responsive
     borderVariant === "subtle" ? "border border-base-200" : "",
     shadow === "none"
       ? "shadow-none"

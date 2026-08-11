@@ -32,7 +32,7 @@ jobs:
         uses: astral-sh/setup-uv@v9.0.0
 
       - name: Install LifeOS CLI with Web API extras
-        run: uv tool install "lifeos-cli[web,postgres]==1.0.1"
+        run: uv tool install "lifeos-cli[web,postgres]==1.0.2"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v6

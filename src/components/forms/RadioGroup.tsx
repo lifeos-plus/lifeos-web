@@ -179,7 +179,7 @@ export default function RadioGroup({
                     .join(" ")}
                 />
                 <div className="space-y-1">
-                  <div className="font-medium text-sm text-base-content">
+                  <div className=" text-sm text-base-content">
                     {option.label}
                   </div>
                   {option.description ? (

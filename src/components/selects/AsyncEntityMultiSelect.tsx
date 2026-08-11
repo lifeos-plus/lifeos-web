@@ -363,7 +363,7 @@ const AsyncEntityMultiSelect = forwardRef<
 
   const containerClassName = [
     "relative",
-    "form-control",
+    "flex flex-col",
     className,
     multiple ? "" : "w-full",
   ]
@@ -372,7 +372,6 @@ const AsyncEntityMultiSelect = forwardRef<
 
   const inputWrapperClasses = [
     "input",
-    "input-bordered",
     sizeClass,
     "flex",
     showSelectedInline ? "flex-wrap" : "",
@@ -422,7 +421,7 @@ const AsyncEntityMultiSelect = forwardRef<
   const createContent: ReactNode = (
     <button
       type="button"
-      className="w-full px-3 py-2 text-left text-base transition-colors hover:bg-base-200"
+      className="w-full px-3 py-2 text-left text-sm transition-colors hover:bg-base-200"
       onMouseDown={(event) => event.preventDefault()}
       onClick={() => void handleCreate()}
       disabled={creating}
@@ -455,7 +454,7 @@ const AsyncEntityMultiSelect = forwardRef<
       {showClearOption && selectedIds.length > 0 && (
         <button
           type="button"
-          className="w-full px-3 py-2 text-left text-base hover:bg-base-200 transition-colors"
+          className="w-full px-3 py-2 text-left text-sm hover:bg-base-200 transition-colors"
           onMouseDown={(event) => event.preventDefault()}
           onClick={handleClear}
         >
@@ -502,13 +501,13 @@ const AsyncEntityMultiSelect = forwardRef<
               "px-3",
               "py-2",
               "text-left",
-              "text-base",
+              "text-sm",
               "transition-colors",
               "focus:outline-none",
               option.disabled
                 ? "opacity-50 cursor-not-allowed"
                 : isSelected
-                  ? "bg-primary text-primary-content cursor-pointer"
+                  ? "bg-primary/15 text-primary cursor-pointer"
                   : isActive
                     ? "bg-base-200 cursor-pointer"
                     : "cursor-pointer hover:bg-base-200",

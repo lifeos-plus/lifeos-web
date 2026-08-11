@@ -1310,12 +1310,12 @@ function FinanceNodeFormModal({
             placeholder={t("finance.tree.nodeNamePlaceholder")}
           />
         </FormField>
-        <label className="form-control">
+        <label className="flex flex-col">
           <span className={SELECT_LABEL_TEXT_CLASS}>
             {t("finance.tree.parent")}
           </span>
           <select
-            className="select select-bordered select-sm"
+            className="select select-sm"
             value={parentId}
             onChange={(event) => setParentId(event.target.value as UUID | "")}
             disabled={isEditing}

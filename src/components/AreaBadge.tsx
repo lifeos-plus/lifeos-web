@@ -27,7 +27,7 @@ const AreaBadgeComponent: React.FC<AreaBadgeProps> = ({
   color,
   showLabel = true,
   className,
-  labelClassName = "text-base",
+  labelClassName = "text-sm",
   size = "md",
   ariaLabel,
 }) => {

@@ -193,7 +193,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         onMouseEnter={highlight}
         onMouseDown={(event) => event.preventDefault()}
         onClick={select}
-        className="w-full px-3 py-2 text-left text-base transition-colors hover:bg-base-200"
+        className="w-full px-3 py-2 text-left text-sm transition-colors hover:bg-base-200"
       >
         {option.label}
       </button>

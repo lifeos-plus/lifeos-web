@@ -22,7 +22,7 @@ export function NotesModeBanner({
       <div className="flex items-start gap-3 text-primary">
         <Icon name={iconName} className="mt-1" />
         <div>
-          <p className="text-base font-semibold">{title}</p>
+          <p className="text-sm ">{title}</p>
           {description && (
             <p className="text-sm text-base-content/70">{description}</p>
           )}

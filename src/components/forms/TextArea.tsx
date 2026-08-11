@@ -31,7 +31,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       y: "resize-y",
     };
 
-    const baseClasses = `textarea textarea-bordered w-full ${sizeClasses[size]} ${resizeClasses[resize]}`;
+    const baseClasses = `textarea w-full ${sizeClasses[size]} ${resizeClasses[resize]}`;
     const finalClasses = `${baseClasses} ${className}`.trim();
 
     return (

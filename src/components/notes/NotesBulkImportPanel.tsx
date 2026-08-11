@@ -247,7 +247,7 @@ export function NotesBulkImportPanel({
       className="space-y-6"
     >
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-base-content">
+        <h2 className="text-xl  text-base-content">
           {t("notes.bulkImport.sectionTitle")}
         </h2>
         <p className="text-base-content/70">
@@ -330,7 +330,7 @@ export function NotesBulkImportPanel({
         {hasPreview ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg ">
                 {t("notes.bulkImport.previewTitle", {
                   count: previewNotes.length,
                 })}

@@ -69,24 +69,24 @@ const TimelogTooltipContent: React.FC<TimelogTooltipContentProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="text-base font-semibold text-base-content">
+      <div className="text-sm  text-base-content">
         {entry.title || t("common.placeholder")}
       </div>
       <dl className="space-y-1 text-sm">
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.timeRange")}:
           </dt>
           <dd className="text-base-content">{timeRange}</dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.duration")}:
           </dt>
           <dd className="text-base-content">{durationLabel}</dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.area")}:
           </dt>
           <dd className="text-base-content">
@@ -100,19 +100,19 @@ const TimelogTooltipContent: React.FC<TimelogTooltipContentProps> = ({
           </dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.vision")}:
           </dt>
           <dd className="text-base-content">{visionName}</dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.task")}:
           </dt>
           <dd className="text-base-content">{taskContent}</dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("timeLog.tooltip.status")}:
           </dt>
           <dd className="text-base-content">{statusLabel}</dd>

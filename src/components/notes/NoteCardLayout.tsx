@@ -52,42 +52,42 @@ interface NoteCardLayoutProps {
 }
 
 const associationBaseClass =
-  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1";
+  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs  transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1";
 
 const associationPalette = {
   person: {
     base: "bg-success/10 text-success border-success/20 hover:bg-success/20 hover:border-success/30",
     active:
-      "bg-success text-success-content border-success shadow-sm hover:bg-success",
+      "bg-success/15 text-success border-success/30 hover:bg-success/25",
     focus: "focus-visible:ring-success/40",
   },
   tag: {
     base: "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30",
     active:
-      "bg-primary text-primary-content border-primary shadow-sm hover:bg-primary",
+      "bg-primary/15 text-primary border-primary/30 hover:bg-primary/25",
     focus: "focus-visible:ring-primary/40",
   },
   task: {
     base: "bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20 hover:border-secondary/30",
     active:
-      "bg-secondary text-secondary-content border-secondary shadow-sm hover:bg-secondary",
+      "bg-secondary/15 text-secondary border-secondary/30 hover:bg-secondary/25",
     focus: "focus-visible:ring-secondary/40",
   },
   timelog: {
     base: "bg-info/10 text-info border-info/20 hover:bg-info/20 hover:border-info/30",
-    active: "bg-info text-info-content border-info shadow-sm hover:bg-info",
+    active: "bg-info/15 text-info border-info/30 hover:bg-info/25",
     focus: "focus-visible:ring-info/40",
   },
   habit_action: {
     base: "bg-accent/10 text-accent border-accent/20 hover:bg-accent/20 hover:border-accent/30",
     active:
-      "bg-accent text-accent-content border-accent shadow-sm hover:bg-accent",
+      "bg-accent/15 text-accent border-accent/30 hover:bg-accent/25",
     focus: "focus-visible:ring-accent/40",
   },
 } as const;
 
 const defaultContentClassName =
-  "prose-base prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1";
+  "prose-sm prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1";
 
 const LazyMarkdownRenderer = lazy(
   () => import("@/components/common/MarkdownRenderer"),

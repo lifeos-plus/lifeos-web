@@ -193,7 +193,7 @@ export default function DateTimeSelector({
                   disabled={disabled}
                   className={`px-2 py-1 text-xs rounded transition-colors ${
                     timePart === time
-                      ? "bg-primary text-primary-content"
+                      ? "bg-primary/15 text-primary"
                       : "bg-base-200 hover:bg-base-300 text-base-content"
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >

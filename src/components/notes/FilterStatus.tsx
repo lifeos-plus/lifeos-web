@@ -33,7 +33,7 @@ export function FilterStatus({
   return (
     <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg flex-1 min-w-0">
-        <span className="text-base text-primary break-words">
+        <span className="text-sm text-primary break-words">
           {t("filterStatus.filtering")}{" "}
           <strong>
             {[

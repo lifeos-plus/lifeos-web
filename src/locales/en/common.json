@@ -613,15 +613,30 @@
     }
   },
   "settings": {
-    "appearance": {
-      "title": "Appearance",
-      "description": "Choose application theme (can follow system).",
-      "theme": {
-        "label": "Select Theme",
-        "placeholder": "Please select a theme...",
-        "description": "Choose application theme. Selecting 'Follow System' will automatically switch between light/dark mode based on system settings."
-      }
+  "appearance": {
+    "title": "Appearance",
+    "description": "Choose application theme and interface font.",
+    "theme": {
+      "label": "Select Theme",
+      "placeholder": "Please select a theme...",
+      "description": "Choose application theme. Selecting 'Follow System' will automatically switch between light/dark mode based on system settings."
     },
+    "font": {
+      "label": "Interface Font",
+      "placeholder": "Please select a font...",
+      "description": "Choose an interface typeface. Options cover generic Latin-first categories as well as named fonts optimized for Simplified Chinese.",
+      "options": {
+        "system": "System Default",
+        "sans": "Sans-Serif",
+        "serif": "Serif",
+        "mono": "Monospace",
+        "yahei": "Microsoft YaHei",
+        "pingfang": "PingFang SC",
+        "noto": "Noto Sans SC",
+        "songti": "Songti (SimSun)"
+      }
+    }
+  },
     "navigation": {
       "title": "Navigation",
       "description": "Customize your navigation bar to create a personal workspace that better fits your flow.",

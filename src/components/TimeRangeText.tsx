@@ -24,7 +24,7 @@ const TimeRangeTextComponent: React.FC<TimeRangeTextProps> = ({
   const endText = end ? formatTime(end, timezone) : placeholder;
   return (
     <div
-      className={["text-base font-mono text-base-content", className || ""]
+      className={["text-sm font-mono text-base-content", className || ""]
         .filter(Boolean)
         .join(" ")}
     >

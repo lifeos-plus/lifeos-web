@@ -44,9 +44,9 @@ function findEnabledIndex(
 }
 
 const sizeClassMap = {
-  xs: "btn-xs text-[0.7rem] sm:text-xs",
-  sm: "btn-sm text-xs sm:text-sm",
-  md: "text-sm sm:text-base",
+  xs: "btn-xs text-xs",
+  sm: "btn-sm text-sm",
+  md: "btn-md text-sm",
 } as const;
 
 export default function SegmentedControl({

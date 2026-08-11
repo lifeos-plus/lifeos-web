@@ -187,7 +187,7 @@ function CalendarPage() {
     <PageLayout>
       <ToolbarContainer className="mb-4" layout="three-column">
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold">
+          <span className="text-sm ">
             {t("modules.calendar.view.label")}
           </span>
           <SegmentedControl
@@ -310,11 +310,11 @@ function CalendarPage() {
         {showTimelogs && selectedAreaId === undefined && (
           <div className="mb-4 p-3  bg-primary/10 border border-primary/20 rounded-md ">
             <div className="flex items-center gap-2 text-primary">
-              <span className="text-base inline-flex items-center gap-1">
+              <span className="text-sm inline-flex items-center gap-1">
                 <Icon name="sparkles" size={16} aria-hidden />
                 {t("modules.calendar.hint.title")}
               </span>
-              <span className="text-base">
+              <span className="text-sm">
                 {t("modules.calendar.hint.actualEnabled")}
               </span>
             </div>

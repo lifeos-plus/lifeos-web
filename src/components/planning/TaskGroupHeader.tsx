@@ -70,7 +70,7 @@ export const TaskGroupHeader: React.FC<TaskGroupHeaderProps> = ({
     >
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-bold text-base-content">{groupLabel}</h3>
+          <h3 className="text-lg  text-base-content">{groupLabel}</h3>
           {planningCycleType !== "day" && periodRangeLabel && (
             <p className="text-sm text-base-content opacity-70">
               {periodRangeLabel}

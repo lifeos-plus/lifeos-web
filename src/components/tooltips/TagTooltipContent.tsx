@@ -16,12 +16,12 @@ const TagTooltipContent: React.FC<TagTooltipContentProps> = ({ tag }) => {
 
   return (
     <div className="space-y-2">
-      <div className="text-base font-semibold text-base-content">
+      <div className="text-sm  text-base-content">
         {t("notes.tooltip.tag.title", { name: tag.name })}
       </div>
       <dl className="space-y-1 text-sm text-base-content/80">
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("notes.tooltip.tag.entityType")}:
           </dt>
           <dd className="text-base-content">
@@ -29,7 +29,7 @@ const TagTooltipContent: React.FC<TagTooltipContentProps> = ({ tag }) => {
           </dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("notes.tooltip.tag.description")}:
           </dt>
           <dd className="text-base-content">
@@ -38,14 +38,14 @@ const TagTooltipContent: React.FC<TagTooltipContentProps> = ({ tag }) => {
         </div>
         {tag.color ? (
           <div className="flex items-start gap-2">
-            <dt className="font-medium text-base-content/70">
+            <dt className=" text-base-content/70">
               {t("notes.tooltip.tag.color")}:
             </dt>
             <dd className="text-base-content">{tag.color}</dd>
           </div>
         ) : null}
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("notes.tooltip.tag.createdAt")}:
           </dt>
           <dd className="text-base-content">
@@ -53,7 +53,7 @@ const TagTooltipContent: React.FC<TagTooltipContentProps> = ({ tag }) => {
           </dd>
         </div>
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("notes.tooltip.tag.updatedAt")}:
           </dt>
           <dd className="text-base-content">

@@ -42,7 +42,7 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
       loading={isLoading || loading}
       disabled={isSaving || disabled}
     >
-      <div className="space-y-4">
+      <div className="space-y-3">
         {config.items.map((itemConfig) => {
           const preferenceKey = `${config.id}.${itemConfig.key}`;
           const preference = preferences[preferenceKey];

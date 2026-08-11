@@ -128,7 +128,7 @@ const Toast: React.FC<{
       <div className="flex items-start space-x-3 p-4">
         <div className="flex-shrink-0">{getIcon()}</div>
         <div className="flex-grow min-w-0">
-          <h4 className="font-medium text-base">{toast.title}</h4>
+          <h4 className=" text-sm">{toast.title}</h4>
           {toast.message && (
             <p className="text-sm opacity-80 mt-1">{toast.message}</p>
           )}

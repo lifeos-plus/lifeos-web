@@ -60,7 +60,7 @@ const ListContainer: React.FC<ListContainerProps> = ({
 
   // 标题尺寸
   const titleSizeClass =
-    size === "sm" ? "text-base" : size === "lg" ? "text-lg" : "text-base";
+    size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-sm";
   const contentClasses = `min-w-0 flex-1 text-sm ${contentClassName || "overflow-auto"}`;
 
   // 获取列对齐样式
@@ -84,10 +84,10 @@ const ListContainer: React.FC<ListContainerProps> = ({
     >
       {/* Header */}
       {!hideHeader && (
-        <div className="px-6 py-4 border-b border-base-300">
+        <div className="px-4 py-3 border-b border-base-300">
           <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2
-              className={`${titleSizeClass} min-w-0 break-words font-medium text-base-content`}
+              className={`${titleSizeClass} min-w-0 break-words  text-base-content`}
             >
               {title}
             </h2>
@@ -102,9 +102,9 @@ const ListContainer: React.FC<ListContainerProps> = ({
 
       {/* Column Headers */}
       {columns && columns.length > 0 && (
-        <div className="px-6 py-3 bg-primary/10 border-b border-primary/20">
+        <div className="px-4 py-3 bg-primary/10 border-b border-primary/20">
           <div
-            className="grid gap-4"
+            className="grid gap-3"
             style={{
               gridTemplateColumns: columns
                 .map((col) => col.width || "1fr")
@@ -114,7 +114,7 @@ const ListContainer: React.FC<ListContainerProps> = ({
             {columns.map((column) => (
               <div
                 key={column.key}
-                className={`text-sm font-medium text-base-content/70 ${getColumnAlignClass(column.align)}`}
+                className={`text-sm  text-base-content/70 ${getColumnAlignClass(column.align)}`}
               >
                 {column.label}
               </div>

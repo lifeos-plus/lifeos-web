@@ -24,8 +24,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   } as const;
 
   const textSizes = {
-    sm: "text-base",
-    md: "text-base",
+    sm: "text-sm",
+    md: "text-sm",
     lg: "text-lg",
   };
 
@@ -35,7 +35,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         <span
           className={`loading loading-spinner text-primary mx-auto mb-2 ${sizeClasses[size]}`}
         ></span>
-        <p className={`text-base text-base-content ${textSizes[size]}`}>
+        <p className={`text-sm text-base-content ${textSizes[size]}`}>
           {displayMessage}
         </p>
       </div>

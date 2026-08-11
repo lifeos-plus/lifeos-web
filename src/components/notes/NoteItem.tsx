@@ -425,13 +425,13 @@ const NoteItem = React.memo<NoteItemProps>(
               <span className="badge badge-info badge-sm">
                 {t("habitActionNotes.typeLabel")}
               </span>
-              <div className="text-base font-semibold text-base-content">
+              <div className="text-base  text-base-content">
                 {habitAction.habit_title?.trim() ||
                   t("habitForm.fields.title")}
               </div>
               <dl className="space-y-1 text-sm">
                 <div className="flex items-start gap-2">
-                  <dt className="font-medium text-base-content/70">
+                  <dt className=" text-base-content/70">
                     {t("common.date")}:
                   </dt>
                   <dd className="text-base-content">
@@ -439,7 +439,7 @@ const NoteItem = React.memo<NoteItemProps>(
                   </dd>
                 </div>
                 <div className="flex items-start gap-2">
-                  <dt className="font-medium text-base-content/70">
+                  <dt className=" text-base-content/70">
                     {t("habits.habit.status")}:
                   </dt>
                   <dd className="text-base-content">{habitAction.status}</dd>
@@ -515,7 +515,7 @@ const NoteItem = React.memo<NoteItemProps>(
           createdAt={note.createdAt.toISOString()}
           actions={actions}
           actionsVisibility="hover"
-          contentClassName="prose-base prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1"
+          contentClassName="prose-sm prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1"
           minCollapsedLines={minCollapsedLines}
         />
         <HoverTooltipOverlay

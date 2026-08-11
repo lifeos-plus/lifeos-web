@@ -455,7 +455,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
               <div className="space-y-3">
                 {/* 愿景标题 + 领域标签 */}
                 <div className="flex items-center space-x-3 min-w-0">
-                  <h2 className="text-xl lg:text-2xl font-semibold whitespace-nowrap flex items-center gap-2">
+                  <h2 className="text-xl  whitespace-nowrap flex items-center gap-2">
                     <Icon
                       name="map"
                       size={20}
@@ -472,7 +472,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
 
                 {/* 愿景描述 */}
                 {vision.description && (
-                  <p className="text-base lg:text-lg text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
+                  <p className="text-base text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
                     {vision.description}
                   </p>
                 )}
@@ -481,7 +481,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
 
             // 构建元数据容器
             const metadataContainer = (
-              <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm lg:text-base text-base-content/70 font-normal text-left w-full">
+              <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm text-base-content/70 font-normal text-left w-full">
                 <div className="flex items-center gap-1 min-w-0">
                   <span className="text-base-content/50 flex-shrink-0">
                     {t("visions.vision.createdAt")}

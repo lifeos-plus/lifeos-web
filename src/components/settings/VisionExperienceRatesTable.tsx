@@ -223,7 +223,7 @@ const VisionExperienceRatesTable = ({
                     className={isChanged ? "bg-base-200/50" : undefined}
                   >
                     <td className="align-middle">
-                      <div className="font-medium text-base-content">
+                      <div className=" text-base-content">
                         {vision.name}
                       </div>
                     </td>

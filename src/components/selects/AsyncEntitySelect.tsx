@@ -375,7 +375,7 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
 
     const containerClassName = [
       "relative",
-      "form-control",
+      "flex flex-col",
       fullWidth ? "w-full" : "",
       className,
     ]
@@ -384,7 +384,6 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
 
     const inputClassName = [
       "input",
-      "input-bordered",
       inputSizeClass,
       fullWidth ? "w-full" : "",
       disabled ? "cursor-not-allowed" : "",
@@ -504,13 +503,13 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
                 "px-3",
                 "py-2",
                 "text-left",
-                "text-base",
+                "text-sm",
                 "transition-colors",
                 "focus:outline-none",
                 option.disabled
                   ? "opacity-50 cursor-not-allowed"
                   : isSelected
-                    ? "bg-primary text-primary-content cursor-pointer"
+                    ? "bg-primary/15 text-primary cursor-pointer"
                     : isActive
                       ? "bg-base-200 cursor-pointer"
                       : "cursor-pointer hover:bg-base-200",
@@ -549,7 +548,7 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
             {hasMoreOptions && (
               <button
                 type="button"
-                className="w-full px-3 py-2 text-center text-base text-primary hover:bg-base-200 disabled:opacity-60"
+                className="w-full px-3 py-2 text-center text-sm text-primary hover:bg-base-200 disabled:opacity-60"
                 disabled={isLoadingMore}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {

@@ -311,8 +311,8 @@ export default function RecurrenceSelector({
 
       {/* Custom Configuration */}
       {showCustom && (
-        <div className="border-t pt-4 space-y-4">
-          <h4 className="text-base font-medium text-base-content/70">
+        <div className="border-t border-base-300 pt-4 space-y-4">
+          <h4 className="text-sm  text-base-content/70">
             自定义重复规则
           </h4>
 

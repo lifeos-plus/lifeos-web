@@ -7,7 +7,9 @@ import ApiErrorToaster from "@/components/ApiErrorToaster";
 import AppShell from "@/layouts/AppShell";
 import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { FontProvider } from "@/contexts/FontProvider";
 import { initTheme } from "@/theme";
+import { initFont } from "@/config/fontCatalog";
 
 // Create a client with optimized settings for smooth page transitions
 const queryClient = new QueryClient({
@@ -41,6 +43,7 @@ const queryClient = new QueryClient({
 
 // Initialize theme as early as possible
 initTheme();
+initFont();
 
 export const Route = createRootRoute({
   context: () => ({
@@ -49,18 +52,20 @@ export const Route = createRootRoute({
   component: () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ModalProvider>
-          <ToastProvider>
-            <ErrorBoundary>
-              <ApiErrorToaster />
-              <AppShell>
-                <PageTransition>
-                  <Outlet />
-                </PageTransition>
-              </AppShell>
-            </ErrorBoundary>
-          </ToastProvider>
-        </ModalProvider>
+        <FontProvider>
+          <ModalProvider>
+            <ToastProvider>
+              <ErrorBoundary>
+                <ApiErrorToaster />
+                <AppShell>
+                  <PageTransition>
+                    <Outlet />
+                  </PageTransition>
+                </AppShell>
+              </ErrorBoundary>
+            </ToastProvider>
+          </ModalProvider>
+        </FontProvider>
       </ThemeProvider>
     </QueryClientProvider>
   ),

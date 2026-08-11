@@ -16,13 +16,13 @@ const PersonTooltipContent: React.FC<PersonTooltipContentProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="text-base font-semibold text-base-content">
+      <div className="text-sm  text-base-content">
         {t("notes.tooltip.person.title", { name: person.display_name })}
       </div>
       <dl className="space-y-1 text-sm text-base-content/80">
         {person.primary_nickname ? (
           <div className="flex items-start gap-2">
-            <dt className="font-medium text-base-content/70">
+            <dt className=" text-base-content/70">
               {t("notes.tooltip.person.nickname")}:
             </dt>
             <dd className="text-base-content">{person.primary_nickname}</dd>
@@ -30,7 +30,7 @@ const PersonTooltipContent: React.FC<PersonTooltipContentProps> = ({
         ) : null}
         {locationTags.length > 0 || person.location ? (
           <div className="flex items-start gap-2">
-            <dt className="font-medium text-base-content/70">
+            <dt className=" text-base-content/70">
               {t("notes.tooltip.person.location")}:
             </dt>
             <dd className="text-base-content">
@@ -49,7 +49,7 @@ const PersonTooltipContent: React.FC<PersonTooltipContentProps> = ({
           </div>
         ) : null}
         <div className="flex items-start gap-2">
-          <dt className="font-medium text-base-content/70">
+          <dt className=" text-base-content/70">
             {t("notes.tooltip.person.tags")}:
           </dt>
           <dd className="text-base-content">

@@ -1,7 +1,160 @@
 /* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: fresh --default, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, valentine, halloween, garden, forest, aqua, lofi, pastel, fantasy, wireframe, luxury, dracula, cmyk, autumn, business, acid, lemonade, night, coffee, winter;
+  logs: false;
+}
+@plugin "daisyui/theme" {
+  name: "fresh";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #f0fdf4;
+  --color-base-200: #dcfce7;
+  --color-base-300: #bbf7d0;
+  --color-base-content: #064e3b;
+  --color-primary: #10b981;
+  --color-primary-content: #ffffff;
+  --color-secondary: #059669;
+  --color-secondary-content: #ffffff;
+  --color-accent: #34d399;
+  --color-accent-content: #064e3b;
+  --color-neutral: #374151;
+  --color-neutral-content: #ffffff;
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #ffffff;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  /* App-level design tokens for the fresh theme only. */
+  --depth: 0;
+  --noise: 0;
+}
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Noto Sans SC", "Source Han Sans SC", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --breakpoint-xs: 475px;
+  --breakpoint-md-lg: 896px;
+}
+
+/* Named z-index utilities previously configured in tailwind.config.js */
+@utility z-base {
+  z-index: 0;
+}
+@utility z-content {
+  z-index: 1;
+}
+@utility z-button {
+  z-index: 10;
+}
+@utility z-input {
+  z-index: 20;
+}
+@utility z-dropdown {
+  z-index: 30;
+}
+@utility z-overlay {
+  z-index: 1000;
+}
+@utility z-modal {
+  z-index: 2000;
+}
+@utility z-modal-overlay {
+  z-index: 1999;
+}
+@utility z-modal-nested {
+  z-index: 2100;
+}
+@utility z-loading-overlay {
+  z-index: 15;
+}
+@utility z-tooltip {
+  z-index: 3000;
+}
+@utility z-popover {
+  z-index: 3100;
+}
+@utility z-notification {
+  z-index: 3200;
+}
+@utility z-toast {
+  z-index: 5000;
+}
+@utility z-fab {
+  z-index: 60;
+}
+@utility z-header {
+  z-index: 40;
+}
+@utility z-sidebar {
+  z-index: 50;
+}
+@utility z-max {
+  z-index: 9999;
+}
+
+/* Typography overrides previously configured in tailwind.config.js */
+.prose {
+  max-width: none;
+  line-height: 1.625;
+  --tw-prose-body: var(--color-base-content);
+  --tw-prose-bold: inherit;
+  --tw-prose-links: var(--color-primary);
+  --tw-prose-code: inherit;
+  --tw-prose-code-bg: color-mix(in oklab, var(--color-base-300) 35%, transparent);
+  --tw-prose-pre: inherit;
+  --tw-prose-pre-bg: color-mix(in oklab, var(--color-base-300) 25%, transparent);
+  --tw-prose-quotes: color-mix(in oklab, var(--color-base-content) 85%, transparent);
+  --tw-prose-quote-borders: color-mix(in oklab, var(--color-base-300) 80%, transparent);
+  --tw-prose-hr: color-mix(in oklab, var(--color-base-300) 60%, transparent);
+}
+
+.prose :where(a) {
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.prose :where(a):hover {
+  text-decoration: underline;
+}
+
+.prose :where(code) {
+  padding: 0.15em 0.35em;
+  border-radius: 0.5rem;
+  font-weight: 400;
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6, th, strong, b) {
+  font-weight: 400;
+}
+
+.prose :where(pre) {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-base-300) 35%, transparent);
+}
+
+.prose :where(ol > li::marker, ul > li::marker) {
+  color: inherit;
+}
+
+.prose :where(table) {
+  width: 100%;
+}
+
+.prose-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.prose-sm :where(code) {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
 
 /* CSS Custom Properties for consistent spacing */
 :root {
@@ -19,22 +172,9 @@
   --tablet-rail-width: 0px;
   --desktop-rail-width: 128px;
 
-  /* Typography tokens */
-  --fs-caption: 0.75rem; /* 12px */
-  --fs-body: 1rem; /* 16px */
-  --fs-subtitle: 1.125rem; /* 18px */
-  --fs-title: 1.25rem; /* 20px */
-  --fs-display: 2rem; /* 32px */
-
   --lh-tight: 1.3;
   --lh-normal: 1.6;
   --lh-loose: 1.75;
-
-  --fw-regular: 400;
-  --fw-medium: 500;
-  --fw-semibold: 600;
-  --fw-bold: 700;
-
 }
 
 /* Removed global @apply of daisyUI component classes (btn/input/select).
@@ -63,10 +203,6 @@
     text-size-adjust: 100%;
   }
 
-  /* Improve touch scrolling */
-  .overflow-y-auto {
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
 /* Markdown renderer list formatting */
@@ -137,8 +273,112 @@ html {
   scroll-behavior: smooth;
 }
 
-* {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+/* App-level control geometry: compact size and small square-ish corners. */
+:root,
+[data-theme] {
+  --radius-field: 0.25rem;
+  --size-field: 0.21875rem;
+  --size-selector: 0.21875rem;
+}
+
+/* App-level button weight: daisyUI defaults .btn to 600, which reads heavy on
+   data-dense UIs (e.g. tag chips). Removed generically, not per component. */
+.btn {
+  font-weight: 400;
+}
+
+/* Softer modal backdrop: daisyUI defaults to 40% black, which reads harsh. */
+.modal.modal-open,
+.modal[open],
+.modal:popover-open,
+.modal:target,
+.modal-toggle:checked + .modal {
+  background-color: oklch(0% 0 0 / 0.25);
+}
+
+/* Compact table cells: daisyUI defaults to 0.75rem/1rem padding, which reads
+   sparse next to the 14px body scale used across data tables. */
+:where(.table) :where(th, td) {
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+}
+
+/* Table headers follow the no-bold rule like every other control. */
+th {
+  font-weight: 400;
+}
+
+:where(.table) :where(thead, tfoot) {
+  font-weight: 400;
+}
+
+/* Form labels render at full content color: daisyUI's .label dims to 60%. */
+:where(.label) {
+  color: inherit;
+}
+
+/* Neutral ghost/outline buttons use the theme neutral, which is nearly
+   invisible on dark themes. They should always use the contrasting base
+   content color instead. */
+.btn-neutral.btn-ghost,
+.btn-neutral.btn-outline {
+  color: var(--color-base-content);
+}
+
+.btn-neutral.btn-outline {
+  border-color: var(--color-base-content);
+}
+
+/* Colored ghost/outline buttons use the raw theme color as text, which is
+   nearly invisible on pale light themes (e.g. pastel/cupcake). Pull the text
+   toward base-content while keeping the hue. */
+.btn-ghost:not(.btn-neutral),
+.btn-outline:not(.btn-neutral) {
+  color: color-mix(
+    in oklab,
+    var(--btn-color, var(--color-base-content)) 70%,
+    var(--color-base-content)
+  );
+}
+
+.btn-outline:not(.btn-neutral) {
+  border-color: color-mix(
+    in oklab,
+    var(--btn-color, var(--color-base-content)) 70%,
+    var(--color-base-content)
+  );
+}
+
+/* Same guarantee for plain colored text (text-primary/success/...): keep the
+   hue, but mix 30% base-content so it stays readable on pale light themes. */
+.text-primary {
+  color: color-mix(in oklab, var(--color-primary) 70%, var(--color-base-content));
+}
+.text-secondary {
+  color: color-mix(in oklab, var(--color-secondary) 70%, var(--color-base-content));
+}
+.text-accent {
+  color: color-mix(in oklab, var(--color-accent) 70%, var(--color-base-content));
+}
+.text-info {
+  color: color-mix(in oklab, var(--color-info) 70%, var(--color-base-content));
+}
+.text-success {
+  color: color-mix(in oklab, var(--color-success) 70%, var(--color-base-content));
+}
+.text-warning {
+  color: color-mix(in oklab, var(--color-warning) 70%, var(--color-base-content));
+}
+.text-error {
+  color: color-mix(in oklab, var(--color-error) 70%, var(--color-base-content));
+}
+
+/* Guarantee a visible button boundary on every theme: daisyUI derives the
+   solid-button border from the background (--depth), so pale buttons on pale
+   themes (e.g. pastel) can blend into the page. A faint content-colored
+   border keeps the shape readable without changing the palette. */
+.btn:not(.btn-ghost):not(.btn-outline):not(.btn-link):not(.btn-soft) {
+  border-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
 }
 
 @layer components {
@@ -165,8 +405,8 @@ html {
     pointer-events: none;
     background: linear-gradient(
       180deg,
-      hsl(var(--b1) / 0) 0%,
-      hsl(var(--b1) / 0.92) 100%
+      color-mix(in oklab, var(--color-base-100) 0%, transparent) 0%,
+      color-mix(in oklab, var(--color-base-100) 92%, transparent) 100%
     );
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
@@ -177,17 +417,12 @@ html {
 @layer base {
   :root {
     /* Keep controls consistent across DaisyUI themes without overriding states. */
-    --rounded-btn: 0.375rem;
     --scrollbar-size: 8px;
     --scrollbar-radius: 999px;
-    --scrollbar-track: hsl(var(--b2));
-    --scrollbar-thumb: hsl(var(--b3));
-    --scrollbar-thumb-hover: hsl(var(--bc) / 0.2);
-    --scrollbar-thumb-active: hsl(var(--bc) / 0.3);
-  }
-
-  [data-theme] {
-    --rounded-btn: 0.375rem;
+    --scrollbar-track: var(--color-base-200);
+    --scrollbar-thumb: var(--color-base-300);
+    --scrollbar-thumb-hover: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    --scrollbar-thumb-active: color-mix(in oklab, var(--color-base-content) 30%, transparent);
   }
 
   /* Firefox */

@@ -157,7 +157,7 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
     const errorMessage = error || visionsError || defaultVisionError;
 
     return (
-      <div className={`form-control ${fullWidth ? "w-full" : ""}`}>
+      <div className={`flex flex-col ${fullWidth ? "w-full" : ""}`}>
         <AsyncEntitySelect
           value={value ?? (allowUndefined ? undefined : "")}
           onChange={handleChange}
@@ -175,7 +175,7 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
         />
         {hasError && (
           <div className="label">
-            <span className="label-text-alt text-xs text-error">
+            <span className="text-xs text-error">
               {errorMessage}
             </span>
           </div>

@@ -47,7 +47,7 @@ export default function PlanningActionPanel({
       className={`mb-4 rounded-lg border p-4 shadow-sm ${styles.panel}`}
     >
       <div className="mb-3 flex items-center justify-between">
-        <h4 className={`text-base font-medium ${styles.title}`}>{title}</h4>
+        <h4 className={`text-sm  ${styles.title}`}>{title}</h4>
         <ActionButton
           label={closeLabel}
           ariaLabel={closeLabel}

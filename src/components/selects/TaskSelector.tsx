@@ -123,7 +123,7 @@ const TaskSelectorOverride: React.FC<TaskSelectorProps> = ({
   const effectivePlaceholder = placeholder ?? t("taskSelector.placeholder");
 
   return (
-    <div className={`relative form-control ${className}`}>
+    <div className={`relative flex flex-col ${className}`}>
       {showLabel && effectiveLabel && (
         <label htmlFor={`${idPrefix}-override`} className="label">
           <span className={SELECT_LABEL_TEXT_CLASS}>{effectiveLabel}</span>
@@ -279,12 +279,11 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
         "px-3",
         "py-2",
         "text-left",
-        "text-base",
+        "text-sm",
         "transition-colors",
         "focus:outline-none",
-        meta?.kind === "special" ? "font-medium" : "",
         isSelected
-          ? "bg-primary text-primary-content"
+          ? "bg-primary/15 text-primary"
           : isActive
             ? "bg-base-200"
             : "hover:bg-base-200",
@@ -316,7 +315,7 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
   const disabledState = disabled || isLoading;
 
   return (
-    <div className={`relative form-control ${className}`}>
+    <div className={`relative flex flex-col ${className}`}>
       {showLabel && effectiveLabel && (
         <label htmlFor={`${idPrefix}-input`} className="label">
           <span className={SELECT_LABEL_TEXT_CLASS}>{effectiveLabel}</span>

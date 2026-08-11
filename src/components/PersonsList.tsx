@@ -26,7 +26,7 @@ const PersonsListComponent: React.FC<PersonsListProps> = ({
   if (list.length === 0) {
     return (
       <span
-        className={["text-base text-base-content/50", className || ""]
+        className={["text-sm text-base-content/50", className || ""]
           .filter(Boolean)
           .join(" ")}
       >

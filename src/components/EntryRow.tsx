@@ -98,7 +98,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
   return (
     <tr className={rowClassName}>
       {isSelectMode && (
-        <td className="px-4 py-3 text-center">
+        <td className="px-3 py-2 text-center">
           {!entry.isPlaceholder ? (
             <Checkbox
               id={`entry-${entry.id}-select`}
@@ -110,18 +110,18 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
               aria-label={t("entryRow.selectRecord", { id: entry.id })}
             />
           ) : (
-            <span className="text-base text-base-content/50">-</span>
+            <span className="text-sm text-base-content/50">-</span>
           )}
         </td>
       )}
 
-      <td className="px-4 py-3 whitespace-nowrap">
-        <div className="text-base font-medium text-base-content">
+      <td className="px-3 py-2 whitespace-nowrap">
+        <div className="text-sm  text-base-content">
           {getDisplayDate()}
         </div>
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-3 py-2 whitespace-nowrap">
         <TimeRangeText
           start={entry.start_time}
           end={entry.end_time}
@@ -129,13 +129,13 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
         />
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
-        <span className="text-base font-mono text-base-content">
+      <td className="px-3 py-2 whitespace-nowrap">
+        <span className="text-sm font-mono text-base-content">
           {formatDurationFromTimes(entry.start_time, entry.end_time)}
         </span>
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-3 py-2 whitespace-nowrap">
         <AreaBadge
           areaId={entry.area_id || undefined}
           areaMap={areaMap}
@@ -143,7 +143,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
       </td>
 
       <td
-        className="px-4 py-3"
+        className="px-3 py-2"
         tabIndex={isPlaceholder ? -1 : 0}
         onMouseEnter={(event) => {
           if (isPlaceholder) {
@@ -182,16 +182,16 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
           onBlurTooltip?.();
         }}
       >
-        <div className="text-base font-medium text-base-content">
+        <div className="text-sm  text-base-content">
           {entry.title}
         </div>
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-3 py-2 whitespace-nowrap">
         {!entry.isPlaceholder && entry.task ? (
-          <div className="text-base">
+          <div className="text-sm">
             <div className="flex items-center">
-              <span className="text-base text-base-content/80">
+              <span className="text-sm text-base-content/80">
                 {entry.task.content.length > 15
                   ? `${entry.task.content.substring(0, 15)}...`
                   : entry.task.content}
@@ -199,19 +199,19 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
             </div>
           </div>
         ) : (
-          <span className="text-base text-base-content/50">-</span>
+          <span className="text-sm text-base-content/50">-</span>
         )}
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
+      <td className="px-3 py-2 whitespace-nowrap">
         {!entry.isPlaceholder ? (
           <PersonsList people={entry.people} />
         ) : (
-          <span className="text-base text-base-content/50">-</span>
+          <span className="text-sm text-base-content/50">-</span>
         )}
       </td>
 
-      <td className="px-4 py-3 whitespace-nowrap text-center">
+      <td className="px-3 py-2 whitespace-nowrap text-center">
         <div className="flex justify-center gap-1" data-tooltip-exempt>
           {entry.isPlaceholder ? (
             <ActionButton

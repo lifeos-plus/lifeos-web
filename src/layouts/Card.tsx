@@ -7,10 +7,10 @@ import Container from "./Container";
 const getCardStyles = (size: string, className: string) => {
   const titleSizeClass =
     {
-      sm: "text-base",
-      md: "text-base",
+      sm: "text-sm",
+      md: "text-sm",
       lg: "text-lg",
-    }[size] || "text-base";
+    }[size] || "text-sm";
 
   const buttonSize = ({
     sm: "sm",
@@ -155,12 +155,12 @@ const Card: React.FC<CardProps> = ({
     >
       {/* Header */}
       {title ? (
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex-1 min-w-0">
             {typeof title === "string" ? (
-              <h3 className={`card-title ${titleSizeClass}`}>{title}</h3>
+              <h3 className={`flex items-center gap-2 ${titleSizeClass}`}>{title}</h3>
             ) : (
-              <div className={`card-title ${titleSizeClass}`}>{title}</div>
+              <div className={`flex items-center gap-2 ${titleSizeClass}`}>{title}</div>
             )}
             {description && <p className="text-sm mt-1">{description}</p>}
           </div>

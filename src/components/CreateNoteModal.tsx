@@ -398,7 +398,7 @@ export default function CreateNoteModal({
 
   const modalHeader = (
     <div className="flex flex-col gap-2">
-      <span className="text-lg font-semibold text-base-content">
+      <span className="text-lg  text-base-content">
         {modalTitle}
       </span>
       {modalDescription ? (
@@ -413,10 +413,10 @@ export default function CreateNoteModal({
             className="mt-0.5 text-info"
           />
           <div className="min-w-0">
-            <div className="font-medium text-info">
+            <div className=" text-info">
               {t("createNoteModal.timelogHeader.label")}
             </div>
-            <div className="text-base-content/90 font-medium">
+            <div className="text-base-content/90 ">
               {timelogPrimaryLabel}
             </div>
             {timelogRangeLabel && timelogPrimaryLabel !== timelogRangeLabel ? (
@@ -436,10 +436,10 @@ export default function CreateNoteModal({
             className="mt-0.5 text-info-content"
           />
           <div className="min-w-0">
-            <div className="font-medium text-info-content">
+            <div className=" text-info-content">
               {t("createNoteModal.habitActionHeader.label")}
             </div>
-            <div className="font-medium text-info-content">
+            <div className=" text-info-content">
               {habitActionPrimaryLabel}
             </div>
           </div>

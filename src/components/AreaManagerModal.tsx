@@ -120,14 +120,14 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
                   className="w-4 h-4 rounded-full"
                   style={{ backgroundColor: area.color }}
                 />
-                <h3 className="font-semibold text-base-content">
+                <h3 className="text-sm text-base-content">
                   {area.name}
                 </h3>
               </div>
               <ActionButtonGroup gap="sm" align="end">
                 <EditButton onClick={() => handleEdit(area)} />
                 <ActionButton
-                  label={area.is_active ? "" : ""}
+                  label=""
                   iconName="eye"
                   color="neutral"
                   size="sm"
@@ -143,13 +143,13 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
             </div>
 
             {area.description && (
-              <p className="text-base text-base-content mb-2">
+              <p className="text-sm text-base-content mb-2">
                 {area.description}
               </p>
             )}
 
             {area.icon && (
-              <div className="text-base text-base-content/60">
+              <div className="text-sm text-base-content/60">
                 {t("areaManager.iconLabel")}{" "}
                 {iconOptions.find((opt) => opt.value === area.icon)
                   ?.label || area.icon}

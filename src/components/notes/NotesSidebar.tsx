@@ -55,7 +55,7 @@ function NotesFilterOption({
       }`}
     >
       <span
-        className={`flex items-center gap-1 text-sm font-medium ${
+        className={`flex items-center gap-1 text-sm  ${
           selected ? "text-primary" : "text-base-content"
         }`}
       >
@@ -145,7 +145,7 @@ export function NotesSidebar({
         isExpanded={expandedSections.persons}
         onToggleExpansion={() => toggleSection("persons")}
         title={
-          <h3 className="text-base font-semibold text-base-content">
+          <h3 className="text-sm  text-base-content">
             {t("notesSidebar.relatedPersons")}
           </h3>
         }
@@ -155,7 +155,7 @@ export function NotesSidebar({
           {(() => {
             if (isLoadingStats) {
               return (
-                <p className="text-base text-base-content">
+                <p className="text-sm text-base-content">
                   {t("common.loading")}
                 </p>
               );
@@ -163,7 +163,7 @@ export function NotesSidebar({
 
             if (uniquePersons.length === 0) {
               return (
-                <p className="text-base text-base-content">
+                <p className="text-sm text-base-content">
                   {t("notesSidebar.noRelatedPersons")}
                 </p>
               );
@@ -207,7 +207,7 @@ export function NotesSidebar({
         isExpanded={expandedSections.tags}
         onToggleExpansion={() => toggleSection("tags")}
         title={
-          <h3 className="text-base font-semibold text-base-content">
+          <h3 className="text-sm  text-base-content">
             {t("target.tag")}
           </h3>
         }
@@ -215,7 +215,7 @@ export function NotesSidebar({
       >
         <div className="px-4 pb-4 max-h-[40vh] overflow-y-auto">
           {isLoadingStats ? (
-            <p className="text-base text-base-content">{t("common.loading")}</p>
+            <p className="text-sm text-base-content">{t("common.loading")}</p>
           ) : (
             <div className="space-y-1">
               {/* Untagged filter option - always shown at the top */}
@@ -229,7 +229,7 @@ export function NotesSidebar({
 
               {/* Regular tags */}
               {availableNoteTags.length === 0 ? (
-                <p className="text-base text-base-content">
+                <p className="text-sm text-base-content">
                   {t("notesSidebar.noTags")}
                 </p>
               ) : (

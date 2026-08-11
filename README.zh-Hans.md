@@ -43,7 +43,7 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 - `openapi.json` 是已提交并固定的传输契约基线。
 - `src/services/api/generated/schema.ts` 由基线生成，请勿手工编辑。
 - `npm run api:check` 会在提交的 `schema.ts` 过期时失败。
-- 固定契约默认版本为 `v1.0.1`；`lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh` 刷新；可用 `LIFEOS_CLI_SCHEMA_VERSION` 指定其他发布标签。
+- 固定契约默认版本为 `v1.0.2`；`lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh` 刷新；可用 `LIFEOS_CLI_SCHEMA_VERSION` 指定其他发布标签。
 
 ## 验证
 

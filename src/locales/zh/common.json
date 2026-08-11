@@ -613,15 +613,30 @@
     }
   },
   "settings": {
-    "appearance": {
-      "title": "外观",
-      "description": "选择应用主题（可跟随系统）。",
-      "theme": {
-        "label": "选择主题",
-        "placeholder": "请选择主题...",
-        "description": "选择应用主题。选择\"跟随系统\"将根据系统设置自动切换浅色/深色模式。"
-      }
+  "appearance": {
+    "title": "外观",
+    "description": "选择应用主题与界面字体。",
+    "theme": {
+      "label": "选择主题",
+      "placeholder": "请选择主题...",
+      "description": "选择应用主题。选择\"跟随系统\"将根据系统设置自动切换浅色/深色模式。"
     },
+    "font": {
+      "label": "界面字体",
+      "placeholder": "请选择字体...",
+      "description": "选择界面字体。选项包含通用字体类别，以及针对简体中文优化的指定字体。",
+      "options": {
+        "system": "系统默认",
+        "sans": "无衬线",
+        "serif": "衬线",
+        "mono": "等宽",
+        "yahei": "微软雅黑",
+        "pingfang": "苹方",
+        "noto": "思源黑体（Noto Sans SC）",
+        "songti": "宋体"
+      }
+    }
+  },
     "navigation": {
       "title": "导航栏",
       "description": "定制你的导航栏，打造一个更符合你心流的个人工作空间。",

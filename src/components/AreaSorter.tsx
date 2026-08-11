@@ -147,25 +147,25 @@ export default function AreaSorter({
                 name: area.name,
                 position: index + 1,
               })}
-              className={`flex min-w-0 items-center gap-2 overflow-hidden rounded border p-2 transition-colors ${
+              className={`flex min-w-0 items-center gap-2 overflow-hidden rounded border border-base-300 p-2 transition-colors ${
                 disabled || loading
                   ? "bg-base-200 cursor-not-allowed opacity-60"
                   : "bg-base-100 transition-all hover:bg-base-300 hover:shadow-md"
               }`}
             >
               {/* Order number */}
-              <div className="w-6 h-6 bg-base-300 rounded-full flex items-center justify-center text-sm font-medium">
+              <div className="w-6 h-6 bg-base-300 rounded-full flex items-center justify-center text-sm ">
                 {index + 1}
               </div>
 
               {/* Area color indicator */}
               <div
-                className="w-4 h-4 rounded-full border"
+                className="w-4 h-4 rounded-full border border-base-300"
                 style={{ backgroundColor: area.color || UNKNOWN_AREA_COLOR }}
               />
 
               {/* Area name */}
-              <div className="min-w-0 flex-1 break-words text-sm font-medium">
+              <div className="min-w-0 flex-1 break-words text-sm ">
                 {area.name}
               </div>
 

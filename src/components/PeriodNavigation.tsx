@@ -448,7 +448,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
         size="sm"
         ariaLabel={`${t("planning.periodNavigation.previous")}${t(`planning.periodNavigation.periodTypes.${periodType}`)}`}
         disabled={disabled}
-        className="font-normal text-sm sm:text-base"
+        className="font-normal text-sm"
       />
 
       {/* 当前周期按钮 + 日期选择器 */}
@@ -467,9 +467,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
                 : t("planning.periodNavigation.goToCurrent")
             }
             disabled={disabled}
-            className={`w-full min-w-0 max-w-full font-normal text-sm sm:text-lg font-medium [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden ${
-              centerButtonWidth !== "auto" ? "" : ""
-            }`}
+            className="w-full min-w-0 max-w-full font-normal text-sm [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden"
           />
         </div>
 
@@ -499,7 +497,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
                 className="absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl border border-base-300 bg-base-100 p-4 shadow-xl z-dropdown"
               >
                 <form className="space-y-3" onSubmit={handleDateFormSubmit}>
-                  <div className="form-control">
+                  <div className="flex flex-col">
                     <label
                       htmlFor={dateInputId}
                       id={labelId}
@@ -563,7 +561,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
         size="sm"
         ariaLabel={`${t("planning.periodNavigation.next")}${t(`planning.periodNavigation.periodTypes.${periodType}`)}`}
         disabled={disabled}
-        className="font-normal text-sm sm:text-base"
+        className="font-normal text-sm"
       />
     </div>
   );

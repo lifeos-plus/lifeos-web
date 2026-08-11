@@ -452,7 +452,7 @@ const TimeLogPage = () => {
             <Container className="mb-4">
               <div className="w-full flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="text-base">
+                  <div className="text-sm">
                     {t("timeLog.pagination.showing", {
                       start:
                         advancedSearch.data.length > 0
@@ -475,14 +475,14 @@ const TimeLogPage = () => {
                     disabled={!advancedSearch.hasPreviousPage}
                   />
                   <div className="flex items-center gap-2">
-                    <span className="text-base">
+                    <span className="text-sm">
                       {t("timeLog.pagination.page", {
                         page: advancedSearch.currentPage,
                         totalPages: advancedSearch.totalPages,
                       })}
                     </span>
                     <div className="flex items-center gap-1">
-                      <span className="text-base">
+                      <span className="text-sm">
                         {t("timeLog.pagination.jumpTo")}
                       </span>
                       <TextInput
@@ -505,7 +505,7 @@ const TimeLogPage = () => {
                         }}
                         className="input-xs w-16 text-center"
                       />
-                      <span className="text-base">
+                      <span className="text-sm">
                         {t("timeLog.pagination.pageSuffix")}
                       </span>
                     </div>
@@ -553,8 +553,8 @@ const TimeLogPage = () => {
               !isTableLoading && (
                 <div className="w-full px-4 py-3 bg-primary/10 border-b border-primary/20">
                   <div className="w-full flex items-center justify-between">
-                    <div className="text-base text-primary">
-                      <span className="font-medium">
+                    <div className="text-sm text-primary">
+                      <span>
                         {t("timeLog.searchResults.title")}
                       </span>
                       {t("timeLog.searchResults.from", {
@@ -597,7 +597,7 @@ const TimeLogPage = () => {
                           task: t("taskSelector.specialOptions.hasTask"),
                         })}`}
                     </div>
-                    <div className="text-base text-primary">
+                    <div className="text-sm text-primary">
                       {t("timeLog.searchResults.foundRecords", {
                         count: advancedSearch.totalCount,
                       })}

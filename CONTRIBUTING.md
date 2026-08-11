@@ -14,8 +14,8 @@ This repository ships the LifeOS Web UI: a Vite/React workspace for browser work
 
 Requirements:
 
-- Node.js 20.19+ or 22.12+
-- npm 10.8.2 (the version declared by the `packageManager` field)
+- Node.js 22.12+ or 24.0+ (LTS)
+- npm 11.17.0 (the version declared by the `packageManager` field)
 
 Install dependencies:
 
@@ -35,13 +35,21 @@ The validation baseline installs the locked npm workspace, rejects high- and cri
 
 Prefer `npm ci` for local validation runs that should not rewrite the lockfile, and use the npm version declared by `package.json` when updating `package-lock.json`.
 
+ESLint must stay at zero warnings. The `lint` script enforces this with `--max-warnings 0`, so both local runs and the `validate.sh` baseline fail on any warning. Warnings that slip through would otherwise appear only as CI annotations (yellow warning markers) in the PR diff, where they are easy to overlook:
+
+```bash
+npm run lint
+```
+
+This catches issues such as missing React hook dependencies (`exhaustive-deps`) in the same change that introduces them.
+
 ### E2E Testing
 
 E2E tests live in `e2e/` and cover the core user loop (create a vision, add a task, record a timelog, inspect insights) plus a navigation smoke test. They run against a real LifeOS Web API (`lifeos-cli web serve`) backed by a throwaway SQLite database in an isolated temporary HOME, so the exercised HTTP transport matches the pinned OpenAPI contract instead of a mock. Your configured database is never touched.
 
 Requirements:
 
-- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==1.0.1"`
+- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==1.0.2"`
 - Playwright Chromium browser: `npx playwright install chromium`
 
 Run the suite on demand:
@@ -62,7 +70,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
   npm run api:refresh
   ```
 
-  The default pinned release is `v1.0.1`. Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
+  The default pinned release is `v1.0.2`. Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
 
 ## Dependency Maintenance

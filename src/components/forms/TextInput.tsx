@@ -19,7 +19,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       lg: "input-lg text-base",
     } as const;
 
-    const baseClasses = `input input-bordered w-full ${sizeClasses[size]}`;
+    const baseClasses = `input w-full ${sizeClasses[size]}`;
     const finalClasses = `${baseClasses} ${className}`.trim();
 
     return <input ref={ref} type={type} className={finalClasses} {...rest} />;

@@ -75,7 +75,7 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
             variant="outline"
             ariaLabel={t("timeLog.toolbar.bulkImport")}
             onClick={() => onQueryModeChange("import")}
-            className="font-normal text-base"
+            className="font-normal text-sm"
           />
         )}
         {isImportMode && (
@@ -86,7 +86,7 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
             variant="outline"
             ariaLabel={t("timeLog.toolbar.returnToSingle")}
             onClick={() => onQueryModeChange("single")}
-            className="font-normal text-base"
+            className="font-normal text-sm"
           />
         )}
       </div>
@@ -124,7 +124,7 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
           onClick={() =>
             onQueryModeChange(queryMode === "advanced" ? "single" : "advanced")
           }
-          className="font-normal text-base"
+          className="font-normal text-sm"
         />
       </div>
     </ToolbarContainer>

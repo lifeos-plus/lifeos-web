@@ -55,7 +55,7 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
                       color="primary"
                       variant={activeGroup === group.id ? "solid" : "ghost"}
                       size="md"
-                      className="w-full justify-start text-left font-medium"
+                      className="w-full justify-start text-left "
                     />
                   ))}
                 </nav>
