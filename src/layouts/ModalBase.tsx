@@ -267,7 +267,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
   if (!isOpen && !isVisible) return null;
 
   const overlayCls =
-    `fixed inset-0 bg-base-content/50 flex items-center justify-center ${
+    `fixed inset-0 bg-base-content/30 flex items-center justify-center ${
       nested ? "z-modal-nested" : "z-modal-overlay"
     } p-1 sm:p-2 md:p-4 transition-opacity duration-200 ${
       isVisible ? "opacity-100" : "opacity-0"
