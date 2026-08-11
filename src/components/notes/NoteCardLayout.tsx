@@ -87,7 +87,7 @@ const associationPalette = {
 } as const;
 
 const defaultContentClassName =
-  "prose-base prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1";
+  "prose-sm prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1";
 
 const LazyMarkdownRenderer = lazy(
   () => import("@/components/common/MarkdownRenderer"),

@@ -515,7 +515,7 @@ const NoteItem = React.memo<NoteItemProps>(
           createdAt={note.createdAt.toISOString()}
           actions={actions}
           actionsVisibility="hover"
-          contentClassName="prose-base prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1"
+          contentClassName="prose-sm prose-p:my-2 prose-p:whitespace-pre-wrap prose-ul:my-2 prose-ol:my-2 prose-li:my-1"
           minCollapsedLines={minCollapsedLines}
         />
         <HoverTooltipOverlay
