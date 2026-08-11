@@ -938,14 +938,12 @@ function InsightsPage() {
                   });
 
                   const baseClasses = [
-                    "btn",
-                    selected ? "btn-primary" : "btn-neutral",
-                    selected ? "" : "btn-ghost",
-                    "btn-xs",
+                    "inline-flex items-center gap-1 rounded border px-2 py-1 text-sm text-base-content transition-colors",
+                    selected
+                      ? "border-base-300 bg-base-200"
+                      : "border-base-300/60 bg-base-100 hover:bg-base-200",
                     "min-w-32 max-w-40 flex-shrink-0",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
+                  ].join(" ");
 
                   return (
                     <button

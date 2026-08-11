@@ -449,7 +449,7 @@ export function HabitActionList({
               return (
                 <div
                   key={index}
-                  className={`p-2 text-center border rounded transition-colors ${
+                  className={`p-2 text-center border border-base-300 rounded transition-colors ${
                     !isCurrentMonth
                       ? "text-base-content/30"
                       : "text-base-content"
@@ -519,7 +519,7 @@ export function HabitActionList({
               return (
                 <div
                   key={formatDateKey(date)}
-                  className={`flex min-w-0 flex-col items-stretch gap-2 rounded-lg border p-3 transition-colors hover:bg-primary/10 focus-within:bg-primary/10 sm:flex-row sm:items-center sm:justify-between ${
+                  className={`flex min-w-0 flex-col items-stretch gap-2 rounded-lg border border-base-300 p-3 transition-colors hover:bg-primary/10 focus-within:bg-primary/10 sm:flex-row sm:items-center sm:justify-between ${
                     isSelectedDate
                       ? "border-primary bg-primary/10 ring-2 ring-primary/20"
                       : isTodayDate

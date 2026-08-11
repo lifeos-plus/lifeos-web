@@ -28,7 +28,7 @@ const TASK_STATUS_CONFIG = {
     iconName: "x-mark" as IconName,
     color: "text-base-content/60",
     bgColor: "bg-base-300/50",
-    hoverColor: "hover:bg-base-400/60",
+    hoverColor: "hover:bg-base-300/60",
   },
   paused: {
     iconName: "pause" as IconName,

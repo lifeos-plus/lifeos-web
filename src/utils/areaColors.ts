@@ -1,18 +1,18 @@
-export const DEFAULT_AREA_COLOR = "#6B7280";
-export const UNKNOWN_AREA_COLOR = "#9CA3AF";
-export const DEFAULT_NEW_AREA_COLOR = "#3B82F6";
+export const DEFAULT_AREA_COLOR = "#70747B";
+export const UNKNOWN_AREA_COLOR = "#A1A4AA";
+export const DEFAULT_NEW_AREA_COLOR = "#6A8DC7";
 
 export const AREA_COLOR_PALETTE = [
   DEFAULT_NEW_AREA_COLOR,
-  "#10B981",
-  "#F59E0B",
-  "#8B5CF6",
-  "#EF4444",
-  "#F97316",
-  "#06B6D4",
-  "#84CC16",
-  "#EC4899",
-  "#6366F1",
+  "#3A8F73",
+  "#BB8F45",
+  "#9A82D0",
+  "#C46F6F",
+  "#C07D4F",
+  "#3A92A1",
+  "#7B9F43",
+  "#C3719A",
+  "#8688CE",
 ] as const;
 
 const parseHexColor = (color: string) => {

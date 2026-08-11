@@ -1,7 +1,7 @@
 /* src/styles/calendar.css - FullCalendar custom styles */
 
 .fc-event-title {
-  font-weight: var(--fw-medium);
+  font-weight: 400;
   font-size: calc(var(--fs-body) - 2px);
   line-height: var(--lh-tight);
   white-space: normal;
@@ -11,7 +11,7 @@
 
 .fc-event-time {
   font-size: var(--fs-caption);
-  font-weight: var(--fw-medium);
+  font-weight: 400;
   opacity: 0.95;
 }
 
@@ -44,7 +44,7 @@
 
 .fc-toolbar-title {
   font-size: var(--fs-title);
-  font-weight: var(--fw-semibold);
+  font-weight: 400;
 }
 
 /* FullCalendar buttons - use daisyUI primary colors for theme compatibility */
@@ -71,7 +71,7 @@
 
 .fc-timegrid-slot-label {
   font-size: var(--fs-caption);
-  font-weight: var(--fw-medium);
+  font-weight: 400;
 }
 
 .fc-event {
@@ -102,7 +102,7 @@
   border: 1px solid var(--color-success);
   color: var(--color-success-content);
   border-style: solid;
-  font-weight: var(--fw-semibold);
+  font-weight: 400;
 }
 
 /* Improve time text contrast on light themes */

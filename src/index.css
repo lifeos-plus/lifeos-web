@@ -182,12 +182,6 @@
   --lh-tight: 1.3;
   --lh-normal: 1.6;
   --lh-loose: 1.75;
-
-  --fw-regular: 400;
-  --fw-medium: 500;
-  --fw-semibold: 600;
-  --fw-bold: 700;
-
 }
 
 /* Removed global @apply of daisyUI component classes (btn/input/select).
@@ -216,10 +210,6 @@
     text-size-adjust: 100%;
   }
 
-  /* Improve touch scrolling */
-  .overflow-y-auto {
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
 /* Markdown renderer list formatting */
@@ -309,10 +299,6 @@ html {
 .modal:target,
 .modal-toggle:checked + .modal {
   background-color: oklch(0% 0 0 / 0.25);
-}
-
-* {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
 @layer components {
