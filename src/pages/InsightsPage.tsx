@@ -132,14 +132,14 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
     <div className="flex items-center gap-3">
       {/* 日期 - 使用常规大小 */}
       <div
-        className="w-32 text-base font-medium text-base-content/80 flex-shrink-0 flex items-center justify-center"
+        className="w-32 text-base  text-base-content/80 flex-shrink-0 flex items-center justify-center"
         title={labelTitle ?? displayLabel}
       >
         {displayLabel}
       </div>
 
       <div
-        className={`w-16 text-sm font-semibold tabular-nums ${coverageColorClass} flex-shrink-0 flex items-center justify-center`}
+        className={`w-16 text-sm  tabular-nums ${coverageColorClass} flex-shrink-0 flex items-center justify-center`}
         title={coverage.label}
       >
         {coverage.label}
@@ -172,7 +172,7 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
               >
                 {showLabel && (
                   <span
-                    className="px-2 py-2 text-sm font-medium drop-shadow-sm truncate max-w-full flex items-center justify-center h-full"
+                    className="px-2 py-2 text-sm  drop-shadow-sm truncate max-w-full flex items-center justify-center h-full"
                     style={{ color: getReadableTextColor(areaColor) }}
                   >
                     <span>
@@ -713,7 +713,7 @@ function InsightsPage() {
         {/* 左列：视图选择器 */}
         <div className="flex flex-col gap-2 w-full lg:w-auto">
           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-            <span className="text-sm sm:text-base font-bold shrink-0">
+            <span className="text-sm sm:text-base  shrink-0">
               {t("insights.viewType.label")}
             </span>
             <SegmentedControl
@@ -736,7 +736,7 @@ function InsightsPage() {
             className={`flex items-center gap-1 sm:gap-2 flex-wrap ${hasGranularityToggle ? "" : "invisible pointer-events-none"}`}
             aria-hidden={!hasGranularityToggle}
           >
-            <span className="text-sm sm:text-base font-bold shrink-0">
+            <span className="text-sm sm:text-base  shrink-0">
               {t("insights.granularity.label")}
             </span>
             <div className="min-h-[2.5rem] md:min-h-[2.75rem]">
@@ -979,7 +979,7 @@ function InsightsPage() {
                               areaIdToColor[idStr] || UNKNOWN_AREA_COLOR,
                           }}
                         />
-                        <span className="font-medium text-base-content truncate">
+                        <span className=" text-base-content truncate">
                           {name}
                         </span>
                         <span className="font-normal text-base-content ml-1 flex-shrink-0">
@@ -1006,7 +1006,7 @@ function InsightsPage() {
                 className="mb-3 text-primary"
                 aria-hidden
               />
-              <h3 className="text-lg font-bold font-medium mb-2 text-base-content">
+              <h3 className="text-lg   mb-2 text-base-content">
                 {t("insights.noStats")}
               </h3>
               <p className="text-base text-base-content/60">
@@ -1061,7 +1061,7 @@ function InsightsPage() {
       >
         {areaTooltip?.payload && (
           <div>
-            <div className="font-semibold mb-2 text-base-content">
+            <div className=" mb-2 text-base-content">
               {areaTooltip.payload.title}
             </div>
             <ul className="space-y-1 text-base-content/80">

@@ -205,7 +205,7 @@ const PersonSelector: React.FC<PersonSelectorProps> = ({
           }`}
         >
           <div className="flex-1 min-w-0">
-            <div className="font-medium truncate">{displayName}</div>
+            <div className=" truncate">{displayName}</div>
             {variant === "detailed" && nickname && nickname !== displayName && (
               <div className="text-sm opacity-80 truncate">{nickname}</div>
             )}

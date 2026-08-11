@@ -235,7 +235,7 @@ export const TaskEditModalView: React.FC<TaskEditModalViewProps> = ({
                 resize="vertical"
                 className="text-sm sm:text-sm"
               />
-              <p className="text-xs sm:text-sm mt-2 text-primary font-medium">
+              <p className="text-xs sm:text-sm mt-2 text-primary ">
                 {t("taskForm.tips.bulkContentHelper")}
               </p>
             </>
@@ -293,7 +293,7 @@ export const TaskEditModalView: React.FC<TaskEditModalViewProps> = ({
 
         <div className="space-y-2 sm:space-y-3 pt-2 sm:pt-3 pb-2 sm:pb-3">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm sm:text-base font-semibold">
+            <h3 className="text-sm sm:text-base ">
               {t("taskForm.planning.title")}
             </h3>
           </div>

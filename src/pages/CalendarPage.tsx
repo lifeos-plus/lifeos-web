@@ -187,7 +187,7 @@ function CalendarPage() {
     <PageLayout>
       <ToolbarContainer className="mb-4" layout="three-column">
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold">
+          <span className="text-base ">
             {t("modules.calendar.view.label")}
           </span>
           <SegmentedControl

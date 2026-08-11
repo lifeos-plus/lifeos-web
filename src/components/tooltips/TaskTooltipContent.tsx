@@ -62,7 +62,7 @@ const TaskTooltipContent: React.FC<TaskTooltipContentProps> = ({
 
   return (
     <div>
-      <div className="font-semibold mb-2 text-base-content">
+      <div className=" mb-2 text-base-content">
         {t("draggableTaskList.tooltip.title", {
           name: task.content ?? noneLabel,
         })}

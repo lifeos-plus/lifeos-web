@@ -374,7 +374,7 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
           <thead className="bg-base-100  border-b border-base-200">
             <tr>
               {isSelectMode && (
-                <th className="px-4 py-3 text-center text-base font-medium text-base-content uppercase tracking-wider w-12">
+                <th className="px-4 py-3 text-center text-base  text-base-content uppercase tracking-wider w-12">
                   <Checkbox
                     id="select-all"
                     name="select-all"
@@ -405,10 +405,10 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
                   />
                 </th>
               )}
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-24">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-24">
                 {t("timeLog.table.date")}
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-32">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-32">
                 <div className="flex items-center gap-2">
                   <ActionButton
                     label={t("timeLog.table.timeRange")}
@@ -426,10 +426,10 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
                   />
                 </div>
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-20">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-20">
                 {t("timeLog.table.duration")}
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-28">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-28">
                 {queryMode === "single" ? (
                   <AreaSelect
                     value={
@@ -449,16 +449,16 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
                   t("target.area")
                 )}
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider">
                 {t("timeLog.table.description")}
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-24">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-24">
                 {t("batchEdit.editType.task")}
               </th>
-              <th className="px-4 py-3 text-left text-base font-medium text-base-content uppercase tracking-wider w-20">
+              <th className="px-4 py-3 text-left text-base  text-base-content uppercase tracking-wider w-20">
                 {t("timeLog.table.relatedPerson")}
               </th>
-              <th className="px-4 py-3 text-center text-base font-medium text-base-content uppercase tracking-wider w-28">
+              <th className="px-4 py-3 text-center text-base  text-base-content uppercase tracking-wider w-28">
                 {t("common.actions")}
               </th>
             </tr>

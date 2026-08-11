@@ -683,7 +683,7 @@ export default function PlannedEventModal({
         {/* 4. 循环设置 */}
         {allowScopedEditing && (
           <div className="bg-base-200 rounded-lg p-3 sm:p-4 space-y-3">
-            <div className="text-sm sm:text-base font-semibold text-base-content">
+            <div className="text-sm sm:text-base  text-base-content">
               {t("eventModal.editScope.title")}
             </div>
             <RadioGroup

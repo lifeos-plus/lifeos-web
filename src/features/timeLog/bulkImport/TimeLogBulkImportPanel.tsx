@@ -602,7 +602,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
       <Container padding="lg" borderVariant="subtle" shadow="md">
         <div className="mb-4">
           <div>
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl ">
               {t("timeLog.bulkImport.modalTitle")}
             </h2>
             <p className="text-sm text-base-content/70">
@@ -614,7 +614,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm  mb-1">
               {t("timeLog.bulkImport.startDateLabel")}
             </label>
             <TextInput
@@ -627,7 +627,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm  mb-1">
               {t("timeLog.bulkImport.firstStartLabel")}
             </label>
             <TextInput
@@ -641,7 +641,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
           </div>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm  mb-1">
             {t("timeLog.bulkImport.inputLabel")}
           </label>
           <TextArea
@@ -681,7 +681,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
       <Container padding="lg" borderVariant="subtle" shadow="md">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-lg ">
               {t("timeLog.bulkImport.previewTitle", {
                 count: rows.length,
               })}
@@ -738,7 +738,7 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
         )}
         {rows.some((row) => row.errors.length > 0) && (
           <div className="mt-6 border-t border-base-300 pt-4">
-            <h4 className="font-semibold text-base">
+            <h4 className=" text-base">
               {t("timeLog.bulkImport.errorListTitle")}
             </h4>
             <ul className="mt-2 space-y-1 text-sm text-error">

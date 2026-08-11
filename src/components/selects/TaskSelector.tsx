@@ -282,7 +282,6 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
         "text-base",
         "transition-colors",
         "focus:outline-none",
-        meta?.kind === "special" ? "font-medium" : "",
         isSelected
           ? "bg-primary text-primary-content"
           : isActive

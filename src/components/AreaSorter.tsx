@@ -154,7 +154,7 @@ export default function AreaSorter({
               }`}
             >
               {/* Order number */}
-              <div className="w-6 h-6 bg-base-300 rounded-full flex items-center justify-center text-sm font-medium">
+              <div className="w-6 h-6 bg-base-300 rounded-full flex items-center justify-center text-sm ">
                 {index + 1}
               </div>
 
@@ -165,7 +165,7 @@ export default function AreaSorter({
               />
 
               {/* Area name */}
-              <div className="min-w-0 flex-1 break-words text-sm font-medium">
+              <div className="min-w-0 flex-1 break-words text-sm ">
                 {area.name}
               </div>
 

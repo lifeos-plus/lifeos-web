@@ -1013,7 +1013,7 @@ function AssetSummaryPanel({
         <span className={financeTextClass.inlineLabel}>
           {t("finance.metrics.totalValue")}
         </span>
-        <span className="font-semibold">
+        <span className="">
           {totalValue === null ? (
             <span className={financeTextClass.placeholder}>-</span>
           ) : (

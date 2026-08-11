@@ -790,7 +790,7 @@ const TagManager: React.FC<TagManagerProps> = ({
               color="primary"
               variant="solid"
               iconName="sparkles"
-              className="px-4 py-2 text-base font-medium shadow-md hover:shadow-lg transition-all duration-200"
+              className="px-4 py-2 text-base  shadow-md hover:shadow-lg transition-all duration-200"
             />
           </div>
         )}
@@ -903,7 +903,7 @@ const TagManager: React.FC<TagManagerProps> = ({
                         id={`tag-category-rename-${option.value}`}
                         value={renameCategoryLabel}
                         onChange={(e) => setRenameCategoryLabel(e.target.value)}
-                        className="bg-transparent border-none outline-none text-sm font-medium min-w-[140px]"
+                        className="bg-transparent border-none outline-none text-sm  min-w-[140px]"
                         autoFocus
                       />
                       <ActionButton
@@ -952,7 +952,7 @@ const TagManager: React.FC<TagManagerProps> = ({
                       type="button"
                       onClick={() => setSelectedCategory(option.value)}
                       aria-pressed={active}
-                      className="inline-flex items-center gap-2 text-sm font-medium"
+                      className="inline-flex items-center gap-2 text-sm "
                     >
                       <span className="truncate max-w-[12rem]">
                         {displayLabel}
@@ -1055,7 +1055,7 @@ const TagManager: React.FC<TagManagerProps> = ({
                       aria-hidden
                     />
                   </div>
-                  <p className="text-base font-medium text-base-content/70 mb-1">
+                  <p className="text-base  text-base-content/70 mb-1">
                     {t("tagManager.noTags")}
                   </p>
                   <p className="text-sm text-base-content/50">
@@ -1093,10 +1093,10 @@ const TagManager: React.FC<TagManagerProps> = ({
             return (
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base font-semibold text-base-content">
+                  <h3 className="text-base  text-base-content">
                     {getCategoryDisplayName(activeCategory, categoryLabelMap)}
                   </h3>
-                  <span className="text-xs font-medium text-base-content/70 bg-base-200 px-2 py-1 rounded-full">
+                  <span className="text-xs  text-base-content/70 bg-base-200 px-2 py-1 rounded-full">
                     {t("tagManager.ui.tagCount", {
                       count: filteredTags.length,
                     })}
@@ -1502,7 +1502,7 @@ const TagGroup: React.FC<TagGroupProps> = ({
               aria-hidden
             />
           </div>
-          <h4 className="text-lg font-medium font-semibold text-base-content">
+          <h4 className="text-lg   text-base-content">
             {group.displayName}
           </h4>
         </div>
@@ -1616,7 +1616,7 @@ const TagItem: React.FC<TagItemProps> = ({
           disabled={false}
           onClick={(e) => e.stopPropagation()}
         />
-        <span className="text-base-content text-sm font-medium select-none">
+        <span className="text-base-content text-sm  select-none">
           {tag.name}
         </span>
         {tag.usageStats && (
@@ -1640,7 +1640,7 @@ const TagItem: React.FC<TagItemProps> = ({
             type="text"
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
-            className="bg-transparent border-none outline-none text-base-content text-sm font-medium min-w-[60px] max-w-[140px] placeholder:text-base-content/50"
+            className="bg-transparent border-none outline-none text-base-content text-sm  min-w-[60px] max-w-[140px] placeholder:text-base-content/50"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSave();
@@ -1688,7 +1688,7 @@ const TagItem: React.FC<TagItemProps> = ({
       <div
         className="inline-flex items-center rounded-lg border border-error/50 bg-error/10 px-2 py-1"
       >
-        <span className="text-error text-sm font-medium">
+        <span className="text-error text-sm ">
           {t("common.deleting")}
         </span>
         <ActionButton
@@ -1720,7 +1720,7 @@ const TagItem: React.FC<TagItemProps> = ({
       className={`group inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-1 transition-colors ${theme.tag}`}
       onClick={onEditStart}
     >
-      <span className="text-base-content text-sm font-medium select-none">
+      <span className="text-base-content text-sm  select-none">
         {tag.name}
       </span>
 

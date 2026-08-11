@@ -182,7 +182,7 @@ const QuickTemplatesManagerModal = ({
                     <span className="w-28 text-sm text-base-content/80 truncate">
                       {areaLabel}
                     </span>
-                    <span className="flex-1 min-w-0 text-sm font-medium text-base-content truncate">
+                    <span className="flex-1 min-w-0 text-sm  text-base-content truncate">
                       {template.title}
                     </span>
                     <span className="w-24 text-xs text-base-content/70 truncate">

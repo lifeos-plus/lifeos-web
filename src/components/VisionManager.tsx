@@ -455,7 +455,7 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
               <div className="space-y-3">
                 {/* 愿景标题 + 领域标签 */}
                 <div className="flex items-center space-x-3 min-w-0">
-                  <h2 className="text-xl lg:text-2xl font-semibold whitespace-nowrap flex items-center gap-2">
+                  <h2 className="text-xl lg:text-2xl  whitespace-nowrap flex items-center gap-2">
                     <Icon
                       name="map"
                       size={20}

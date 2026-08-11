@@ -130,7 +130,7 @@ const PlanningPage: React.FC = () => {
         <>
           <ToolbarContainer className="mb-4" layout="three-column">
             <div className="flex items-center gap-1 sm:gap-2 w-full lg:w-auto">
-              <span className="text-sm sm:text-base font-bold shrink-0">
+              <span className="text-sm sm:text-base  shrink-0">
                 {t("planning.viewType.label")}：
               </span>
               <SegmentedControl

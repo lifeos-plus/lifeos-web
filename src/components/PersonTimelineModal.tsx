@@ -326,7 +326,7 @@ const PersonTimelineModal: React.FC<PersonTimelineModalProps> = ({
                           {isTimelog ? (
                             renderTimelogDetails(activity)
                           ) : (
-                            <h4 className="break-words text-sm font-medium leading-relaxed">
+                            <h4 className="break-words text-sm  leading-relaxed">
                               {activity.title}
                             </h4>
                           )}

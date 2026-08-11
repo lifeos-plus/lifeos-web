@@ -41,7 +41,7 @@ const markdownSanitizeSchema: Schema = {
 };
 
 const BASE_PROSE_CLASSES =
-  "markdown-prose prose max-w-none text-base-content prose-headings:font-semibold prose-headings:text-base-content prose-a:font-medium prose-blockquote:border-base-300/70";
+  "markdown-prose prose max-w-none text-base-content prose-headings:text-base-content prose-blockquote:border-base-300/70";
 
 const MarkdownRenderer = memo(function MarkdownRenderer({
   content,

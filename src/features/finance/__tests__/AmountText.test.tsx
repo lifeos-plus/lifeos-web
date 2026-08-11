@@ -7,7 +7,7 @@ describe("FinanceAmountText", () => {
   it("keeps numeric text visually continuous and trims insignificant zeroes", () => {
     render(<FinanceAmountText amount="123.4500" currencyCode="USD" />);
 
-    expect(screen.getByText("123.45").className).toContain("font-medium");
+    expect(screen.getByText("123.45").className).not.toContain("font-");
     expect(screen.queryByText(".4500")).toBeNull();
     expect(screen.getByText("USD").className).toContain("opacity-65");
     expect(screen.getByText("123.45").parentElement?.className).toContain(
@@ -31,9 +31,9 @@ describe("FinanceAmountListText", () => {
     const usd = screen.getByText("USD");
     const btc = screen.getByText("BTC");
 
-    expect(within(usd.parentElement as HTMLElement).getByText("10").className).toContain(
-      "font-medium",
-    );
+    expect(
+      within(usd.parentElement as HTMLElement).getByText("10").className,
+    ).not.toContain("font-");
     expect(
       within(btc.parentElement as HTMLElement).getByText("-2.5").parentElement?.className,
     ).toContain("text-warning");

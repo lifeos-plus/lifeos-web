@@ -371,7 +371,7 @@ export function HabitActionList({
         {/* Left Side - Monthly Calendar View */}
         <Surface padding="lg" elevation="moderate">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-base-content">
+            <h3 className="text-lg  text-base-content">
               {t("habits.actionList.monthView")}
             </h3>
             <div className="flex gap-2">
@@ -384,7 +384,7 @@ export function HabitActionList({
                 ariaLabel={t("habits.actionList.previousMonth")}
                 iconOnly
               />
-              <span className="px-3 py-2 font-medium">
+              <span className="px-3 py-2 ">
                 {monthLabel}
               </span>
               <ActionButton
@@ -403,7 +403,7 @@ export function HabitActionList({
             {calendarWeekdayLabels.map((day) => (
               <div
                 key={day}
-                className="p-2 text-center font-medium text-base-content/70"
+                className="p-2 text-center  text-base-content/70"
               >
                 {day}
               </div>
@@ -463,7 +463,7 @@ export function HabitActionList({
                   title={`${formatDateKey(day)} - ${cellStatus}`}
                   onClick={() => isClickable && handleDateSelect(day)}
                 >
-                  <div className="text-base font-medium">{day.getDate()}</div>
+                  <div className="text-base ">{day.getDate()}</div>
                   {statusText && (
                     <div className="text-sm mt-1 opacity-80">{statusText}</div>
                   )}
@@ -476,7 +476,7 @@ export function HabitActionList({
         {/* Right Side - 5 Days View */}
         <Surface padding="lg" elevation="moderate">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-base-content">
+            <h3 className="text-lg  text-base-content">
               {t("habits.actionList.fiveDayView")}
             </h3>
             <div className="flex gap-2">
@@ -489,7 +489,7 @@ export function HabitActionList({
                 ariaLabel={t("habits.actionList.previousFiveDays")}
                 iconOnly
               />
-              <span className="px-3 py-2 font-medium">
+              <span className="px-3 py-2 ">
                 {formatDateKey(selectedDate)}
               </span>
               <ActionButton
@@ -532,7 +532,7 @@ export function HabitActionList({
                   <div className="flex min-w-0 flex-1 items-center gap-3">
                     <div className="min-w-0 text-base">
                       {isDailyCadence && (
-                        <span className="font-medium text-base-content">
+                        <span className=" text-base-content">
                           {(() => {
                             const current = startOfLocalDay(date);
                             const start = startOfLocalDay(habitStartDate);
@@ -547,7 +547,7 @@ export function HabitActionList({
                       )}
                       <span
                         className={`break-words text-sm text-base-content/70 ${
-                          isDailyCadence ? "ml-2" : "font-medium"
+                          isDailyCadence ? "ml-2" : ""
                         }`}
                       >
                         {formatPeriodLabel(date)}

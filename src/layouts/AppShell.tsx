@@ -150,7 +150,7 @@ function NavigationRail({ onItemClick }: NavigationRailProps) {
           style={{ height: "100px", minHeight: "100px" }}
         >
           <div className="h-full flex flex-col justify-center">
-            <div className="text-sm font-medium text-base-content/70 text-center py-1">
+            <div className="text-sm  text-base-content/70 text-center py-1">
               Web UI
             </div>
             <div className="text-xs text-base-content/50 text-center">
@@ -205,7 +205,7 @@ function AppBar({ onMenuClick }: AppBarProps) {
             className="xl:hidden min-h-12 min-w-12 md:min-h-10 md:min-w-10"
           />
 
-          <div className="hidden lg:flex items-center gap-2 font-bold truncate">
+          <div className="hidden lg:flex items-center gap-2  truncate">
             <Icon name="map" size={20} className="text-primary" aria-hidden />
             <span className="truncate text-xl">LifeOS</span>
           </div>
@@ -215,7 +215,7 @@ function AppBar({ onMenuClick }: AppBarProps) {
         <div className="flex-1 min-w-0 px-1 xs:px-0 md:px-4 lg:px-6">
           {title && (
             <div className="flex items-center gap-1 xs:gap-2 md:gap-3 lg:gap-4 min-w-0">
-              <div className="truncate text-base-content text-sm xs:text-base md:text-lg lg:text-xl font-semibold flex-shrink min-w-0">
+              <div className="truncate text-base-content text-sm xs:text-base md:text-lg lg:text-xl  flex-shrink min-w-0">
                 {title}
               </div>
               {subtitle && (

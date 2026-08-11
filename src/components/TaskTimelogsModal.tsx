@@ -231,7 +231,7 @@ const TaskTimelogsModal: React.FC<TaskTimelogsModalProps> = ({
                     className="mb-6 opacity-60 text-info"
                     aria-hidden
                   />
-                  <h3 className="text-lg font-semibold text-base-content mb-3">
+                  <h3 className="text-lg  text-base-content mb-3">
                     {t("taskTimelogs.emptyState.title")}
                   </h3>
                   <p className="text-base-content/80 mb-4 leading-relaxed">

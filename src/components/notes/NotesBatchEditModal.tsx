@@ -134,7 +134,7 @@ const NotesBatchEditModal = ({
     <ModalBase isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-base-content">
+          <h2 className="text-lg  text-base-content">
             {t("notes.batchEdit.modalTitle", { count: noteIds.length })}
           </h2>
           <p className="text-base text-base-content/70 mt-1">

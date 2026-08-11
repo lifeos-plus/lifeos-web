@@ -215,7 +215,7 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: item.areaColor }}
             ></div>
-            <span className="text-sm font-medium">{item.areaName}</span>
+            <span className="text-sm ">{item.areaName}</span>
             <span className="text-sm">{formatDuration(item.totalMinutes)}</span>
             <span className="text-sm">({item.percentage.toFixed(1)}%)</span>
           </div>
@@ -226,7 +226,7 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
         {timeAllocation.map((item: AreaTimeData) => (
           <div
             key={item.areaId}
-            className="flex items-center justify-center text-sm text-base-content font-medium"
+            className="flex items-center justify-center text-sm text-base-content "
             style={{
               width: `${item.percentage}%`,
               backgroundColor: item.areaColor,

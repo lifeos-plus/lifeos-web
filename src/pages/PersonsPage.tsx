@@ -201,7 +201,7 @@ const PersonsPage: React.FC = () => {
           setTagFiltersExpanded((isExpanded) => !isExpanded)
         }
         title={
-          <h3 className="text-base font-semibold text-base-content">
+          <h3 className="text-base  text-base-content">
             {t("personManager.tagFiltersTitle")}
           </h3>
         }
@@ -211,7 +211,7 @@ const PersonsPage: React.FC = () => {
         <div className="space-y-3 px-5 pb-5">
           {tagsByCategory.map((group) => (
             <div key={group.category} className="space-y-2">
-              <div className="rounded-sm bg-base-200/60 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-base-content/70">
+              <div className="rounded-sm bg-base-200/60 px-3 py-1.5 text-xs  uppercase tracking-wide text-base-content/70">
                 {group.label}
               </div>
               <div className="flex flex-wrap gap-2 px-3">

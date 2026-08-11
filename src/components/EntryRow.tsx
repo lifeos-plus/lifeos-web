@@ -116,7 +116,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
       )}
 
       <td className="px-4 py-3 whitespace-nowrap">
-        <div className="text-base font-medium text-base-content">
+        <div className="text-base  text-base-content">
           {getDisplayDate()}
         </div>
       </td>
@@ -182,7 +182,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
           onBlurTooltip?.();
         }}
       >
-        <div className="text-base font-medium text-base-content">
+        <div className="text-base  text-base-content">
           {entry.title}
         </div>
       </td>

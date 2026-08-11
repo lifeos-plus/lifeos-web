@@ -476,7 +476,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                 {/* Vision Badge for Planning Page */}
                 {associatedVision && (
                   <span
-                    className="inline-flex max-w-[min(12rem,60vw)] flex-shrink-0 items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-base font-medium text-primary"
+                    className="inline-flex max-w-[min(12rem,60vw)] flex-shrink-0 items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-base  text-primary"
                     title={`${t("draggableTaskList.vision.label")}: ${associatedVision.name}`}
                   >
                     <Icon
@@ -654,10 +654,10 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     {associatedHabits.map((habit) => (
                       <div key={habit.id} className="space-y-2">
                         <div className="flex items-center space-x-2">
-                          <h5 className="text-base font-medium text-primary">
+                          <h5 className="text-base  text-primary">
                             {habit.title}
                           </h5>
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-base font-medium bg-primary/10 text-primary">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-base  bg-primary/10 text-primary">
                             {habit.status}
                           </span>
                         </div>
@@ -968,7 +968,7 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
           className="text-primary mb-2"
           aria-hidden
         />
-        <h3 className="text-lg font-bold font-medium mb-1 text-base-content">
+        <h3 className="text-lg   mb-1 text-base-content">
           {t("draggableTaskList.empty.title")}
         </h3>
         <p className="text-base text-base-content">

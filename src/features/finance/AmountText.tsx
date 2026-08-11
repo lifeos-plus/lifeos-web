@@ -53,7 +53,7 @@ export function FinanceAmountText({
         .filter(Boolean)
         .join(" ")}
     >
-      <span className="font-medium">{text}</span>
+      <span className="">{text}</span>
       {showCurrency && symbol ? <FinanceAssetSymbol symbol={symbol} inheritTone /> : null}
     </span>
   );

@@ -22,7 +22,7 @@ interface ChipProps {
 }
 
 const baseClassName =
-  "inline-flex items-center gap-1 rounded-full border font-medium transition-colors";
+  "inline-flex items-center gap-1 rounded-full border  transition-colors";
 
 const sizeClassMap: Record<ChipSize, string> = {
   sm: "px-2 py-0.5 text-sm rounded-md",

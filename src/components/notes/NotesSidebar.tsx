@@ -55,7 +55,7 @@ function NotesFilterOption({
       }`}
     >
       <span
-        className={`flex items-center gap-1 text-sm font-medium ${
+        className={`flex items-center gap-1 text-sm  ${
           selected ? "text-primary" : "text-base-content"
         }`}
       >
@@ -145,7 +145,7 @@ export function NotesSidebar({
         isExpanded={expandedSections.persons}
         onToggleExpansion={() => toggleSection("persons")}
         title={
-          <h3 className="text-base font-semibold text-base-content">
+          <h3 className="text-base  text-base-content">
             {t("notesSidebar.relatedPersons")}
           </h3>
         }
@@ -207,7 +207,7 @@ export function NotesSidebar({
         isExpanded={expandedSections.tags}
         onToggleExpansion={() => toggleSection("tags")}
         title={
-          <h3 className="text-base font-semibold text-base-content">
+          <h3 className="text-base  text-base-content">
             {t("target.tag")}
           </h3>
         }

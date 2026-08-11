@@ -102,7 +102,7 @@ function HabitItem({
     <div className="space-y-3">
       {/* 习惯标题 + 状态标签 */}
       <div className="flex items-center space-x-3 min-w-0">
-        <h2 className="text-xl lg:text-2xl font-semibold whitespace-nowrap flex items-center gap-2">
+        <h2 className="text-xl lg:text-2xl  whitespace-nowrap flex items-center gap-2">
           <Icon name="repeat" size={20} aria-hidden className="text-primary" />
           {habit.title}
         </h2>
@@ -214,7 +214,7 @@ function HabitItem({
           {effectiveStats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-base-200 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
+                <div className="text-2xl  text-primary">
                   {effectiveStats.total_actions}
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -222,7 +222,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-success">
+                <div className="text-2xl  text-success">
                   {completionRate.toFixed(1)}%
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -230,7 +230,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-info">
+                <div className="text-2xl  text-info">
                   {effectiveStats.current_streak}
                 </div>
                 <div className="text-sm text-base-content/70">
@@ -238,7 +238,7 @@ function HabitItem({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-warning">
+                <div className="text-2xl  text-warning">
                   {effectiveStats.longest_streak}
                 </div>
                 <div className="text-sm text-base-content/70">

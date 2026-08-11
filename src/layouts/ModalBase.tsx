@@ -333,7 +333,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
               <div className="flex-shrink-0 pl-2">
                 <h2
                   id={titleId}
-                  className="text-xl font-semibold text-base-content"
+                  className="text-xl  text-base-content"
                 >
                   {header || title}
                 </h2>

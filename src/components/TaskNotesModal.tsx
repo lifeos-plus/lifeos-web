@@ -280,7 +280,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
               className="mb-6 opacity-60"
               aria-hidden
             />
-            <h3 className="text-lg font-semibold text-base-content mb-3">
+            <h3 className="text-lg  text-base-content mb-3">
               {emptyStateTitle}
             </h3>
             <p className="text-base-content/80 mb-6 leading-relaxed">

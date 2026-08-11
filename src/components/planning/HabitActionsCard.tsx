@@ -133,7 +133,7 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
 
                         <div className="flex-1 min-w-0">
                           <div className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
-                            <h5 className="font-medium text-base-content text-base min-w-0 truncate">
+                            <h5 className=" text-base-content text-base min-w-0 truncate">
                               {action.habit.title}
                             </h5>
                             {action.habit.description && (
