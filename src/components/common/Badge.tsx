@@ -36,7 +36,7 @@ const toneClassMap: Record<BadgeTone, string> = {
 };
 
 const sizeClassMap: Record<BadgeSize, string> = {
-  xs: "badge-xs",
+  xs: "badge-sm",
   sm: "badge-sm",
   md: "",
   lg: "badge-lg",

@@ -120,7 +120,7 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
                   className="w-4 h-4 rounded-full"
                   style={{ backgroundColor: area.color }}
                 />
-                <h3 className=" text-base-content">
+                <h3 className="text-sm text-base-content">
                   {area.name}
                 </h3>
               </div>

@@ -114,7 +114,7 @@
 }
 
 .prose :where(a) {
-  font-weight: 500;
+  font-weight: 400;
   text-decoration: none;
 }
 
@@ -125,7 +125,11 @@
 .prose :where(code) {
   padding: 0.15em 0.35em;
   border-radius: 0.5rem;
-  font-weight: 500;
+  font-weight: 400;
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6, th, strong, b) {
+  font-weight: 400;
 }
 
 .prose :where(pre) {
@@ -149,7 +153,7 @@
 
 .prose-sm :where(code) {
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* CSS Custom Properties for consistent spacing */
@@ -297,6 +301,15 @@ html {
 :where(.table) :where(th, td) {
   padding-block: 0.5rem;
   padding-inline: 0.75rem;
+}
+
+/* Table headers follow the no-bold rule like every other control. */
+th {
+  font-weight: 400;
+}
+
+:where(.table) :where(thead, tfoot) {
+  font-weight: 400;
 }
 
 @layer components {

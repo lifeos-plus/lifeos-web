@@ -1,5 +1,11 @@
 /* src/styles/calendar.css - FullCalendar custom styles */
 
+/* Normalize FullCalendar's internal header weights (no bold anywhere). */
+.fc-scrollgrid,
+.fc-scrollgrid * {
+  font-weight: 400;
+}
+
 .fc-event-title {
   font-weight: 400;
   font-size: 0.875rem;

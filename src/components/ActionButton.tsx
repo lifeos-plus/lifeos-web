@@ -105,7 +105,7 @@ function resolveBtnClasses(color: ActionColor, variant: ActionVariant): string {
 function resolveSizeClasses(size: ActionSize): string {
   switch (size) {
     case "xs":
-      return "btn-xs text-[0.7rem] sm:text-xs";
+      return "btn-xs text-xs";
     case "sm":
       return "btn-sm text-xs sm:text-sm";
     case "md":

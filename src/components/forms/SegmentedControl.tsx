@@ -44,7 +44,7 @@ function findEnabledIndex(
 }
 
 const sizeClassMap = {
-  xs: "btn-xs text-[0.7rem] sm:text-xs",
+  xs: "btn-xs text-xs",
   sm: "btn-sm text-xs sm:text-sm",
   md: "text-sm sm:text-base",
 } as const;
