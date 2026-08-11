@@ -9,26 +9,87 @@
   name: "fresh";
   default: true;
   color-scheme: light;
-  --color-base-100: #f0fdf4;
-  --color-base-200: #dcfce7;
-  --color-base-300: #bbf7d0;
-  --color-base-content: #064e3b;
-  --color-primary: #10b981;
-  --color-primary-content: #ffffff;
-  --color-secondary: #059669;
-  --color-secondary-content: #ffffff;
-  --color-accent: #34d399;
-  --color-accent-content: #064e3b;
-  --color-neutral: #374151;
-  --color-neutral-content: #ffffff;
-  --color-info: #0ea5e9;
-  --color-info-content: #ffffff;
-  --color-success: #10b981;
-  --color-success-content: #ffffff;
-  --color-warning: #f59e0b;
-  --color-warning-content: #ffffff;
-  --color-error: #ef4444;
-  --color-error-content: #ffffff;
+  --color-base-100: oklch(98.5% 0.008 163);
+  --color-base-200: oklch(96% 0.02 163);
+  --color-base-300: oklch(92% 0.035 163);
+  --color-base-content: oklch(35% 0.045 163);
+  --color-primary: oklch(67% 0.1 163);
+  --color-primary-content: oklch(99% 0.005 163);
+  --color-secondary: oklch(62% 0.09 163);
+  --color-secondary-content: oklch(99% 0.005 163);
+  --color-accent: oklch(80% 0.08 163);
+  --color-accent-content: oklch(30% 0.03 163);
+  --color-neutral: oklch(45% 0.02 250);
+  --color-neutral-content: oklch(98% 0.005 250);
+  --color-info: oklch(72% 0.09 240);
+  --color-info-content: oklch(98% 0.005 240);
+  --color-success: oklch(66% 0.09 163);
+  --color-success-content: oklch(99% 0.005 163);
+  --color-warning: oklch(80% 0.09 85);
+  --color-warning-content: oklch(25% 0.02 85);
+  --color-error: oklch(60% 0.12 25);
+  --color-error-content: oklch(99% 0.005 25);
+}
+
+/* Default light/dark fallback themes: reduce accent saturation for a calmer look. */
+@plugin "daisyui/theme" {
+  name: "valentine";
+  --color-primary: oklch(65% 0.133 354.31);
+  --color-primary-content: oklch(100% 0 0);
+  --color-secondary: oklch(62% 0.146 303.9);
+  --color-secondary-content: oklch(97% 0.008 308.3);
+  --color-accent: oklch(82% 0.061 230.32);
+  --color-accent-content: oklch(39% 0.05 240.88);
+  --color-neutral: oklch(40% 0.084 2.43);
+  --color-neutral-content: oklch(89% 0.034 343.23);
+  --color-info: oklch(86% 0.07 207.08);
+  --color-info-content: oklch(44% 0.061 240.79);
+  --color-success: oklch(84% 0.079 164.98);
+  --color-success-content: oklch(43% 0.052 166.91);
+  --color-warning: oklch(75% 0.101 55.93);
+  --color-warning-content: oklch(26% 0.043 36.26);
+  --color-error: oklch(63% 0.13 25.33);
+  --color-error-content: oklch(97% 0.007 17.38);
+}
+
+@plugin "daisyui/theme" {
+  name: "pastel";
+  --color-primary: oklch(90% 0.035 306.7);
+  --color-primary-content: oklch(49% 0.146 301.92);
+  --color-secondary: oklch(89% 0.032 10);
+  --color-secondary-content: oklch(51% 0.122 16.93);
+  --color-accent: oklch(90% 0.051 164.15);
+  --color-accent-content: oklch(50% 0.065 165.61);
+  --color-neutral: oklch(55% 0.025 257.42);
+  --color-neutral-content: oklch(92% 0.007 255.51);
+  --color-info: oklch(86% 0.07 207.08);
+  --color-info-content: oklch(52% 0.058 223.13);
+  --color-success: oklch(87% 0.083 154.45);
+  --color-success-content: oklch(52% 0.085 150.07);
+  --color-warning: oklch(83% 0.07 66.29);
+  --color-warning-content: oklch(55% 0.107 38.4);
+  --color-error: oklch(80% 0.063 19.57);
+  --color-error-content: oklch(50% 0.117 27.52);
+}
+
+@plugin "daisyui/theme" {
+  name: "night";
+  --color-primary: oklch(75.35% 0.076 232.66);
+  --color-primary-content: oklch(15.07% 0.015 232.66);
+  --color-secondary: oklch(68.01% 0.087 276.93);
+  --color-secondary-content: oklch(13.6% 0.017 276.93);
+  --color-accent: oklch(72.36% 0.097 350.05);
+  --color-accent-content: oklch(14.47% 0.019 350.05);
+  --color-neutral: oklch(27.95% 0.02 260.03);
+  --color-neutral-content: oklch(85.59% 0.004 260.03);
+  --color-info: oklch(68.45% 0.081 237.25);
+  --color-info-content: oklch(0% 0 0);
+  --color-success: oklch(78.45% 0.073 181.91);
+  --color-success-content: oklch(15.69% 0.014 181.91);
+  --color-warning: oklch(83.24% 0.076 82.95);
+  --color-warning-content: oklch(16.65% 0.015 82.95);
+  --color-error: oklch(71.78% 0.094 13.12);
+  --color-error-content: oklch(14.36% 0.019 13.12);
 }
 
 @theme {
@@ -301,6 +362,15 @@ strong {
   font-weight: 400;
 }
 
+/* App-wide design tokens: compact control radius and low visual pressure
+   (no depth-based shadows, no noise texture) across every theme. */
+:root,
+[data-theme] {
+  --radius-field: 0.375rem;
+  --depth: 0;
+  --noise: 0;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -345,17 +415,12 @@ html {
 @layer base {
   :root {
     /* Keep controls consistent across DaisyUI themes without overriding states. */
-    --radius-field: 0.375rem;
     --scrollbar-size: 8px;
     --scrollbar-radius: 999px;
     --scrollbar-track: var(--color-base-200);
     --scrollbar-thumb: var(--color-base-300);
     --scrollbar-thumb-hover: color-mix(in oklab, var(--color-base-content) 20%, transparent);
     --scrollbar-thumb-active: color-mix(in oklab, var(--color-base-content) 30%, transparent);
-  }
-
-  [data-theme] {
-    --radius-field: 0.375rem;
   }
 
   /* Firefox */
