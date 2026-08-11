@@ -2,7 +2,7 @@
 
 .fc-event-title {
   font-weight: 400;
-  font-size: calc(var(--fs-body) - 2px);
+  font-size: 0.875rem;
   line-height: var(--lh-tight);
   white-space: normal;
   overflow: visible;
@@ -10,7 +10,7 @@
 }
 
 .fc-event-time {
-  font-size: var(--fs-caption);
+  font-size: 0.75rem;
   font-weight: 400;
   opacity: 0.95;
 }
@@ -43,7 +43,7 @@
 }
 
 .fc-toolbar-title {
-  font-size: var(--fs-title);
+  font-size: 1.25rem;
   font-weight: 400;
 }
 
@@ -70,13 +70,13 @@
 }
 
 .fc-timegrid-slot-label {
-  font-size: var(--fs-caption);
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
 .fc-event {
   border-radius: 4px;
-  font-size: var(--fs-caption);
+  font-size: 0.75rem;
   line-height: var(--lh-tight);
 }
 

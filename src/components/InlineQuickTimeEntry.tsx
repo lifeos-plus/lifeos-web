@@ -747,7 +747,7 @@ export default function InlineQuickTimeEntry({
   return (
     <div className="min-w-0 max-w-full rounded-lg border border-primary/30 bg-base-100 p-4 shadow-sm">
       <div className="mb-3">
-        <h4 className="text-lg  text-base-content flex items-center justify-between">
+        <h4 className="text-base  text-base-content flex items-center justify-between">
           <span className="inline-flex items-center gap-2">
             <Icon name="bolt" size={20} aria-hidden />
             {t("quickTimeEntry.title")}
