@@ -467,9 +467,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
                 : t("planning.periodNavigation.goToCurrent")
             }
             disabled={disabled}
-            className={`w-full min-w-0 max-w-full font-normal text-sm  [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden ${
-              centerButtonWidth !== "auto" ? "" : ""
-            }`}
+            className="w-full min-w-0 max-w-full font-normal text-sm [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden"
           />
         </div>
 

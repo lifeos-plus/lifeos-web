@@ -351,14 +351,26 @@ th {
 
 /* Same guarantee for plain colored text (text-primary/success/...): keep the
    hue, but mix 30% base-content so it stays readable on pale light themes. */
-.text-primary,
-.text-secondary,
-.text-accent,
-.text-info,
-.text-success,
-.text-warning,
+.text-primary {
+  color: color-mix(in oklab, var(--color-primary) 70%, var(--color-base-content));
+}
+.text-secondary {
+  color: color-mix(in oklab, var(--color-secondary) 70%, var(--color-base-content));
+}
+.text-accent {
+  color: color-mix(in oklab, var(--color-accent) 70%, var(--color-base-content));
+}
+.text-info {
+  color: color-mix(in oklab, var(--color-info) 70%, var(--color-base-content));
+}
+.text-success {
+  color: color-mix(in oklab, var(--color-success) 70%, var(--color-base-content));
+}
+.text-warning {
+  color: color-mix(in oklab, var(--color-warning) 70%, var(--color-base-content));
+}
 .text-error {
-  color: color-mix(in oklab, currentColor 70%, var(--color-base-content));
+  color: color-mix(in oklab, var(--color-error) 70%, var(--color-base-content));
 }
 
 /* Guarantee a visible button boundary on every theme: daisyUI derives the

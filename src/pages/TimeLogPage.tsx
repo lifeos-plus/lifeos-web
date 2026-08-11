@@ -554,7 +554,7 @@ const TimeLogPage = () => {
                 <div className="w-full px-4 py-3 bg-primary/10 border-b border-primary/20">
                   <div className="w-full flex items-center justify-between">
                     <div className="text-sm text-primary">
-                      <span className="">
+                      <span>
                         {t("timeLog.searchResults.title")}
                       </span>
                       {t("timeLog.searchResults.from", {

@@ -127,7 +127,7 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
               <ActionButtonGroup gap="sm" align="end">
                 <EditButton onClick={() => handleEdit(area)} />
                 <ActionButton
-                  label={area.is_active ? "" : ""}
+                  label=""
                   iconName="eye"
                   color="neutral"
                   size="sm"

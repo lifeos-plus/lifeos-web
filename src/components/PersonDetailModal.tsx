@@ -256,7 +256,7 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
                 className="flex justify-between items-center p-2 bg-base-200 rounded-md"
               >
                 <div>
-                  <span className="">{anniversary.name}</span>
+                  <span>{anniversary.name}</span>
                   <span className="text-sm ml-2">{anniversary.date}</span>
                 </div>
                 <ActionButton
