@@ -9,6 +9,7 @@ import { getAvailableTimezones } from "@/utils/datetime";
 import { NOTE_COLLAPSE_ALLOWED_LINES } from "@/hooks/notes/useNoteCollapsePreference";
 import VisionExperienceRatesTable from "@/components/settings/VisionExperienceRatesTable";
 import VisionExperienceDefaultPreference from "@/components/settings/VisionExperienceDefaultPreference";
+import { FONT_CATALOG } from "@/config/fontCatalog";
 import { Icon, type IconName } from "@/components/icons";
 import type { UUID } from "@/types/primitive";
 import type { CalendarSystem } from "@/utils/calendar";
@@ -90,6 +91,17 @@ export const useSettingsConfig = (
             { value: "coffee", label: t("theme.coffee") },
             { value: "winter", label: t("theme.winter") },
           ],
+        },
+        {
+          key: "font",
+          type: "select",
+          label: t("settings.appearance.font.label"),
+          description: t("settings.appearance.font.description"),
+          placeholder: t("settings.appearance.font.placeholder"),
+          options: FONT_CATALOG.map((option) => ({
+            value: option.id,
+            label: t(`settings.appearance.font.options.${option.id}`),
+          })),
         },
       ],
     },

@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type { AppTheme } from "@/theme";
+import type { AppFont } from "@/config/fontCatalog";
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
 import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
 import { areasApi } from "@/services/api/areas";
@@ -12,6 +13,7 @@ import { useLanguage, type Language } from "@/hooks/useLanguage";
 import AreaManagerModal from "@/components/AreaManagerModal";
 import { useVisibleModules } from "@/hooks/queries/useVisibleModules";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useFont } from "@/contexts/FontContext";
 import { SettingsLayout } from "@/components/settings";
 import { useSettingsConfig } from "@/config/settingsConfig";
 import { isDateKey } from "@/utils/datetime";
@@ -32,6 +34,7 @@ function SettingsPage() {
 
   // Initialize preference hooks directly
   const themeSettings = useTheme();
+  const fontSettings = useFont();
   const visibleModulesSettings = useVisibleModules();
   const calendarSystemSettings = usePreferenceWithBootstrap<
     "gregorian" | "mayan_13_moon"
@@ -182,6 +185,17 @@ function SettingsPage() {
           await themeSettings.saveValue(value as AppTheme),
         updateValue: (value: unknown) =>
           themeSettings.updateValue(value as AppTheme),
+      },
+      "appearance.font": {
+        value: fontSettings.value,
+        loading: fontSettings.loading,
+        saving: fontSettings.saving,
+        error: fontSettings.error,
+        bootstrapped: fontSettings.bootstrapped,
+        saveValue: async (value: unknown) =>
+          await fontSettings.saveValue(value as AppFont),
+        updateValue: (value: unknown) =>
+          fontSettings.updateValue(value as AppFont),
       },
       "navigation.visibleModules": {
         value: visibleModulesSettings.visibleKeys,
