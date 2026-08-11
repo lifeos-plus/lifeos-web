@@ -15,7 +15,7 @@ This repository ships the LifeOS Web UI: a Vite/React workspace for browser work
 Requirements:
 
 - Node.js 20.19+, 22.12+, or 24.0+ (LTS)
-- npm 10.8.2 (the version declared by the `packageManager` field)
+- npm 11.17.0 (the version declared by the `packageManager` field)
 
 Install dependencies:
 
