@@ -269,10 +269,12 @@ html {
   scroll-behavior: smooth;
 }
 
-/* App-level control radius: small, square-ish corners instead of theme pills. */
+/* App-level control geometry: compact size and small square-ish corners. */
 :root,
 [data-theme] {
   --radius-field: 0.25rem;
+  --size-field: 0.21875rem;
+  --size-selector: 0.21875rem;
 }
 
 /* App-level button weight: daisyUI defaults .btn to 600, which reads heavy on

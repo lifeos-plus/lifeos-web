@@ -84,7 +84,7 @@ const ListContainer: React.FC<ListContainerProps> = ({
     >
       {/* Header */}
       {!hideHeader && (
-        <div className="px-6 py-4 border-b border-base-300">
+        <div className="px-4 py-3 border-b border-base-300">
           <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2
               className={`${titleSizeClass} min-w-0 break-words  text-base-content`}
@@ -102,9 +102,9 @@ const ListContainer: React.FC<ListContainerProps> = ({
 
       {/* Column Headers */}
       {columns && columns.length > 0 && (
-        <div className="px-6 py-3 bg-primary/10 border-b border-primary/20">
+        <div className="px-4 py-3 bg-primary/10 border-b border-primary/20">
           <div
-            className="grid gap-4"
+            className="grid gap-3"
             style={{
               gridTemplateColumns: columns
                 .map((col) => col.width || "1fr")

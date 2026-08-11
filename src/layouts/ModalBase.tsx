@@ -327,7 +327,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
             />
           )}
           {/* Content wrapper: unified paddings and gaps for header/body/footer */}
-          <div className="flex flex-col gap-y-2 sm:gap-y-3 px-3 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5 h-full min-h-0">
+          <div className="flex flex-col gap-y-2 sm:gap-y-3 px-3 py-3 sm:px-4 sm:py-3 md:px-5 md:py-4 h-full min-h-0">
             {/* Header - unified style */}
             {(header || title) && (
               <div className="flex-shrink-0 pl-2">

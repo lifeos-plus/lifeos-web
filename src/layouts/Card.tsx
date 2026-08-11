@@ -155,7 +155,7 @@ const Card: React.FC<CardProps> = ({
     >
       {/* Header */}
       {title ? (
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex-1 min-w-0">
             {typeof title === "string" ? (
               <h3 className={`flex items-center gap-2 ${titleSizeClass}`}>{title}</h3>
