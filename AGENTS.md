@@ -32,13 +32,7 @@ The following rules apply to coding agent collaboration in this repository.
 - Keep `npm run api:check` green: do not hand-edit `openapi.json` or `src/services/api/generated/schema.ts`.
 - When the LifeOS Web API publishes a new `openapi.json` release asset, refresh the pinned contract with `npm run api:refresh` in the same change that consumes it.
 - Keep the English and Chinese translation catalogs in sync (`npm run i18n:check`).
-- Keep ESLint at zero warnings. Warnings do not fail the default `validate.sh` run but are surfaced as CI annotations (yellow warning markers in the PR diff), which is easy to miss. Run locally before pushing:
-
-  ```bash
-  npm run lint -- --max-warnings 0
-  ```
-
-  Treat newly introduced warnings (for example React hooks `exhaustive-deps`) as errors and fix them in the same change.
+- Keep ESLint at zero warnings. The `lint` script enforces this via `--max-warnings 0`, so `npm run lint` fails on any warning (including via the `validate.sh` baseline). Warnings that slip through would otherwise surface only as CI annotations (yellow warning markers in the PR diff). Treat newly introduced warnings (for example React hooks `exhaustive-deps`) as errors and fix them in the same change.
 
 ## 5. Security and Documentation
 

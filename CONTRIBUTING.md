@@ -35,10 +35,10 @@ The validation baseline installs the locked npm workspace, rejects high- and cri
 
 Prefer `npm ci` for local validation runs that should not rewrite the lockfile, and use the npm version declared by `package.json` when updating `package-lock.json`.
 
-ESLint must stay at zero warnings. Warnings do not fail `validate.sh` but appear as CI annotations (yellow warning markers) in the PR diff, where they are easy to overlook. Run the lint with warnings treated as errors before pushing:
+ESLint must stay at zero warnings. The `lint` script enforces this with `--max-warnings 0`, so both local runs and the `validate.sh` baseline fail on any warning. Warnings that slip through would otherwise appear only as CI annotations (yellow warning markers) in the PR diff, where they are easy to overlook:
 
 ```bash
-npm run lint -- --max-warnings 0
+npm run lint
 ```
 
 This catches issues such as missing React hook dependencies (`exhaustive-deps`) in the same change that introduces them.
