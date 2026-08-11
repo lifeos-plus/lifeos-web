@@ -79,6 +79,6 @@
   "overrides": {
     "ajv": "^6.14.0",
     "js-yaml": "4.3.1",
-    "minimatch": "^10.2.2"
+    "minimatch": "^10.2.6"
   }
 }
