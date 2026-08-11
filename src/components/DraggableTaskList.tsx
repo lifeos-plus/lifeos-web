@@ -38,6 +38,7 @@ import PersonsList from "./PersonsList";
 import { tasksApi } from "@/services/api/tasks";
 import EnumSelect from "./selects/EnumSelect";
 import {
+  HABIT_ACTION_STATUS_CONFIG,
   TASK_STATUS_LABELS,
   getTaskStatusStyling,
   PRIORITY,
@@ -654,15 +655,26 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     {associatedHabits.map((habit) => (
                       <div key={habit.id} className="space-y-2">
                         <div className="flex items-center space-x-2">
-                          <h5 className="text-sm  text-primary">
+                          <h5 className="text-base  text-primary">
                             {habit.title}
                           </h5>
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm  bg-primary/10 text-primary">
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-sm ${
+                              HABIT_ACTION_STATUS_CONFIG[
+                                habit.status as keyof typeof HABIT_ACTION_STATUS_CONFIG
+                              ]?.bgColor ?? HABIT_ACTION_STATUS_CONFIG.pending.bgColor
+                            } ${
+                              HABIT_ACTION_STATUS_CONFIG[
+                                habit.status as keyof typeof HABIT_ACTION_STATUS_CONFIG
+                              ]?.colorClass ??
+                              HABIT_ACTION_STATUS_CONFIG.pending.colorClass
+                            }`}
+                          >
                             {habit.status}
                           </span>
                         </div>
                         {habit.description && (
-                          <p className="text-sm text-primary">
+                          <p className="text-base text-primary">
                             {habit.description}
                           </p>
                         )}

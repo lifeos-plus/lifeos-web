@@ -132,7 +132,7 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
     <div className="flex items-center gap-3">
       {/* 日期 - 使用常规大小 */}
       <div
-        className="w-32 text-sm  text-base-content/80 flex-shrink-0 flex items-center justify-center"
+        className="w-32 text-base  text-base-content/80 flex-shrink-0 flex items-center justify-center"
         title={labelTitle ?? displayLabel}
       >
         {displayLabel}

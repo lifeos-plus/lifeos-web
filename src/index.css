@@ -312,6 +312,11 @@ th {
   font-weight: 400;
 }
 
+/* Form labels render at full content color: daisyUI's .label dims to 60%. */
+:where(.label) {
+  color: inherit;
+}
+
 @layer components {
   .drawer-side {
     @apply z-sidebar;
