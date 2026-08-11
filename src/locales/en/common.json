@@ -624,13 +624,12 @@
     "font": {
       "label": "Interface Font",
       "placeholder": "Please select a font...",
-      "description": "Choose the interface font family. Chinese-first options improve Simplified Chinese rendering across systems.",
+      "description": "Choose a generic interface typeface. Each option covers Latin text first and falls back to suitable CJK fonts for Chinese.",
       "options": {
         "system": "System Default",
-        "yahei": "Microsoft YaHei",
-        "pingfang": "PingFang SC",
-        "noto": "Noto Sans SC",
-        "serif": "Serif (Songti)"
+        "sans": "Sans-Serif",
+        "serif": "Serif",
+        "mono": "Monospace"
       }
     }
   },

@@ -624,13 +624,12 @@
     "font": {
       "label": "界面字体",
       "placeholder": "请选择字体...",
-      "description": "选择界面字体族。中文优先选项可改善简体中文在不同系统上的显示效果。",
+      "description": "选择通用的界面字体类别。每个选项先覆盖拉丁文本，再回退到适合中文的 CJK 字体。",
       "options": {
         "system": "系统默认",
-        "yahei": "微软雅黑优先",
-        "pingfang": "苹方优先",
-        "noto": "思源黑体（Noto Sans SC）",
-        "serif": "衬线（宋体）"
+        "sans": "无衬线",
+        "serif": "衬线",
+        "mono": "等宽"
       }
     }
   },

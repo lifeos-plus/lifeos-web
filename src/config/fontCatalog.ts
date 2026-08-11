@@ -2,11 +2,12 @@
  * Interface font options.
  *
  * Fonts are plain CSS font-family stacks (no web-font downloads needed), so
- * the app stays local-first. The Chinese-first stacks give Simplified Chinese
- * glyphs an explicit, comfortable fallback order on Windows / macOS / Linux.
+ * the app stays local-first. Options are generic typefaces (sans / serif /
+ * mono) with a Latin-first stack and a CJK fallback tail, so both English and
+ * Simplified Chinese pick up a comfortable font on Windows / macOS / Linux.
  */
 export interface FontOption {
-  id: "system" | "yahei" | "pingfang" | "noto" | "serif";
+  id: "system" | "sans" | "serif" | "mono";
   stack: string;
 }
 
@@ -17,24 +18,19 @@ export const FONT_CATALOG: FontOption[] = [
       'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   },
   {
-    id: "yahei",
+    id: "sans",
     stack:
-      '"Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "pingfang",
-    stack:
-      '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Noto Sans SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif',
-  },
-  {
-    id: "noto",
-    stack:
-      '"Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif',
+      'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "Noto Sans SC", "Source Han Sans SC", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
   },
   {
     id: "serif",
     stack:
-      '"Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", "宋体", ui-serif, Georgia, serif',
+      'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif, "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", "宋体"',
+  },
+  {
+    id: "mono",
+    stack:
+      'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Noto Sans Mono CJK SC", "Source Han Mono SC", "PingFang SC", "Microsoft YaHei", "微软雅黑"',
   },
 ];
 
