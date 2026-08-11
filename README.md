@@ -25,7 +25,7 @@ Unsupported reference-product modules such as food diary, cloud auth, invitation
 
 ## Requirements
 
-- Node.js 20.19+, 22.12+, or 24.0+ (LTS)
+- Node.js 22.12+ or 24.0+ (LTS)
 - npm 11.17.0 (the version declared by the `packageManager` field)
 
 ## Development
