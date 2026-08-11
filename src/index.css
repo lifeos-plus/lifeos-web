@@ -329,6 +329,38 @@ th {
   border-color: var(--color-base-content);
 }
 
+/* Colored ghost/outline buttons use the raw theme color as text, which is
+   nearly invisible on pale light themes (e.g. pastel/cupcake). Pull the text
+   toward base-content while keeping the hue. */
+.btn-ghost:not(.btn-neutral),
+.btn-outline:not(.btn-neutral) {
+  color: color-mix(
+    in oklab,
+    var(--btn-color, var(--color-base-content)) 70%,
+    var(--color-base-content)
+  );
+}
+
+.btn-outline:not(.btn-neutral) {
+  border-color: color-mix(
+    in oklab,
+    var(--btn-color, var(--color-base-content)) 70%,
+    var(--color-base-content)
+  );
+}
+
+/* Same guarantee for plain colored text (text-primary/success/...): keep the
+   hue, but mix 30% base-content so it stays readable on pale light themes. */
+.text-primary,
+.text-secondary,
+.text-accent,
+.text-info,
+.text-success,
+.text-warning,
+.text-error {
+  color: color-mix(in oklab, currentColor 70%, var(--color-base-content));
+}
+
 /* Guarantee a visible button boundary on every theme: daisyUI derives the
    solid-button border from the background (--depth), so pale buttons on pale
    themes (e.g. pastel) can blend into the page. A faint content-colored
