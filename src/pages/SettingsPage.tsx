@@ -323,6 +323,7 @@ function SettingsPage() {
     }),
     [
       themeSettings,
+      fontSettings,
       visibleModulesSettings,
       calendarSystemSettings,
       calendarFirstDaySettings,
