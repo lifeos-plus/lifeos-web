@@ -317,10 +317,16 @@ th {
   color: inherit;
 }
 
-/* Neutral ghost buttons use the theme neutral, which is nearly invisible on
-   dark themes. Ghost text should always be the contrasting base content. */
-.btn-neutral.btn-ghost {
+/* Neutral ghost/outline buttons use the theme neutral, which is nearly
+   invisible on dark themes. They should always use the contrasting base
+   content color instead. */
+.btn-neutral.btn-ghost,
+.btn-neutral.btn-outline {
   color: var(--color-base-content);
+}
+
+.btn-neutral.btn-outline {
+  border-color: var(--color-base-content);
 }
 
 /* Guarantee a visible button boundary on every theme: daisyUI derives the
@@ -328,7 +334,7 @@ th {
    themes (e.g. pastel) can blend into the page. A faint content-colored
    border keeps the shape readable without changing the palette. */
 .btn:not(.btn-ghost):not(.btn-outline):not(.btn-link):not(.btn-soft) {
-  border-color: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  border-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
 }
 
 @layer components {
