@@ -430,7 +430,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         className="dnd-sortable-item group flex w-full min-w-0 max-w-full items-start"
       >
         {/* Expand/Collapse Button */}
-        <div className="mr-1 mt-2 flex-shrink-0 sm:mr-2 sm:mt-3">
+        <div className="mr-1 mt-1 flex-shrink-0 sm:mr-2 sm:mt-1.5">
           <ExpandButton
             isExpanded={isExpanded}
             onClick={() => hasSubtasks && onToggleExpansion(task.id)}
@@ -455,17 +455,17 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         {/* Task Card */}
         <div className="flex-1 w-full min-w-0 max-w-full overflow-hidden">
           <div
-            className={`w-full min-w-0 max-w-full overflow-hidden rounded-lg p-2 transition-all duration-200 ease-in-out sm:p-3 ${statusStyling.bgColor} ${statusStyling.hoverColor}`}
+            className={`w-full min-w-0 max-w-full overflow-hidden rounded-lg p-1.5 transition-all duration-200 ease-in-out sm:p-2 ${statusStyling.bgColor} ${statusStyling.hoverColor}`}
           >
             <div
               data-testid="draggable-task-layout"
-              className="grid w-full min-w-0 grid-cols-1 items-stretch gap-2 2xl:grid-cols-[minmax(0,1fr)_auto] 2xl:items-center"
+              className="grid w-full min-w-0 grid-cols-1 items-stretch gap-1.5 2xl:grid-cols-[minmax(0,1fr)_auto] 2xl:items-center"
             >
               {/* Draggable Task Info */}
               <div
                 {...attributes}
                 {...listeners}
-                className="flex w-full min-w-0 cursor-move flex-wrap items-start gap-2 overflow-hidden sm:flex-nowrap sm:items-center sm:gap-3"
+                className="flex w-full min-w-0 cursor-move flex-wrap items-start gap-1.5 overflow-hidden sm:flex-nowrap sm:items-center sm:gap-2"
               >
                 <span className="text-base-content text-lg flex-shrink-0">
                   {priorityInfo.iconName ? (
@@ -491,7 +491,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
 
                 <div className="flex min-w-0 max-w-full basis-full flex-col overflow-hidden sm:basis-auto sm:flex-1 sm:flex-row sm:items-center">
                   <h4
-                    className="w-full min-w-0 flex-1 overflow-hidden text-sm font-normal text-base-content"
+                    className="w-full min-w-0 flex-1 overflow-hidden text-sm font-normal leading-tight text-base-content"
                     onMouseEnter={handleTaskMouseEnter}
                     onMouseMove={handleTaskMouseMove}
                     onMouseLeave={handleTaskMouseLeave}
@@ -506,7 +506,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                   </h4>
 
                   {/* Task metadata wraps responsively. */}
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-base-content/50 mt-1 sm:mt-0 sm:ml-3">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-sm text-base-content/50 mt-0.5 sm:mt-0 sm:ml-3">
                     <span
                       className="flex-shrink-0 inline-flex items-center gap-1"
                       title={t("draggableTaskList.meta.totalEffort")}

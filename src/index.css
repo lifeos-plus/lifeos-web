@@ -292,6 +292,13 @@ html {
   background-color: oklch(0% 0 0 / 0.25);
 }
 
+/* Compact table cells: daisyUI defaults to 0.75rem/1rem padding, which reads
+   sparse next to the 14px body scale used across data tables. */
+:where(.table) :where(th, td) {
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+}
+
 @layer components {
   .drawer-side {
     @apply z-sidebar;

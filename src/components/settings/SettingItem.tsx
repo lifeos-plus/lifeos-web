@@ -270,7 +270,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
         !config.hideDescription && (
           <p
             id={`${getControlId()}-description`}
-            className="text-sm text-base-content/70"
+            className="text-xs text-base-content/70"
           >
             {config.description}
           </p>
