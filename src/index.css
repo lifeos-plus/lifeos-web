@@ -280,6 +280,11 @@ body,
   }
 }
 
+/* Keep button labels visually light: daisyUI defaults .btn to font-weight 600. */
+.btn {
+  font-weight: 400;
+}
+
 html {
   scroll-behavior: smooth;
 }
