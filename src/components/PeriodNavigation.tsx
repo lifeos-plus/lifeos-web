@@ -448,7 +448,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
         size="sm"
         ariaLabel={`${t("planning.periodNavigation.previous")}${t(`planning.periodNavigation.periodTypes.${periodType}`)}`}
         disabled={disabled}
-        className="font-normal text-sm sm:text-base"
+        className="font-normal text-sm"
       />
 
       {/* 当前周期按钮 + 日期选择器 */}
@@ -467,7 +467,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
                 : t("planning.periodNavigation.goToCurrent")
             }
             disabled={disabled}
-            className={`w-full min-w-0 max-w-full font-normal text-sm sm:text-lg  [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden ${
+            className={`w-full min-w-0 max-w-full font-normal text-sm  [&_span.truncate]:whitespace-normal [&_span.truncate]:text-ellipsis [&_span.truncate]:overflow-hidden ${
               centerButtonWidth !== "auto" ? "" : ""
             }`}
           />
@@ -563,7 +563,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
         size="sm"
         ariaLabel={`${t("planning.periodNavigation.next")}${t(`planning.periodNavigation.periodTypes.${periodType}`)}`}
         disabled={disabled}
-        className="font-normal text-sm sm:text-base"
+        className="font-normal text-sm"
       />
     </div>
   );

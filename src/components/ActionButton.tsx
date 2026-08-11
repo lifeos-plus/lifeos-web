@@ -107,13 +107,13 @@ function resolveSizeClasses(size: ActionSize): string {
     case "xs":
       return "btn-xs text-xs";
     case "sm":
-      return "btn-sm text-xs sm:text-sm";
+      return "btn-sm text-sm";
     case "md":
-      return "text-sm sm:text-base"; // default size with responsive text
+      return "btn-md text-sm";
     case "lg":
-      return "btn-lg text-sm sm:text-lg";
+      return "btn-lg text-base";
     default:
-      return "text-sm sm:text-base";
+      return "btn-md text-sm";
   }
 }
 

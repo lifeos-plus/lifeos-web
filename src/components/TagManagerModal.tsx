@@ -790,7 +790,7 @@ const TagManager: React.FC<TagManagerProps> = ({
               color="primary"
               variant="solid"
               iconName="sparkles"
-              className="px-4 py-2 text-base  shadow-md hover:shadow-lg transition-all duration-200"
+              className="px-4 py-2 text-sm  shadow-md hover:shadow-lg transition-all duration-200"
             />
           </div>
         )}
