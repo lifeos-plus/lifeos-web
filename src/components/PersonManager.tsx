@@ -392,7 +392,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
           >
             <button
               onClick={() => handleSort("name")}
-              className="text-left text-sm  uppercase tracking-wider flex items-center gap-1"
+              className="text-left text-xs  uppercase tracking-wider flex items-center gap-1"
             >
               <span>{t("personDetail.name")}</span>
               {sortField === "name" && (
@@ -405,7 +405,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
             </button>
             <button
               onClick={() => handleSort("nickname")}
-              className="text-left text-sm  uppercase tracking-wider flex items-center gap-1"
+              className="text-left text-xs  uppercase tracking-wider flex items-center gap-1"
             >
               <span>{t("personDetail.nicknames")}</span>
               {sortField === "nickname" && (
@@ -418,7 +418,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
             </button>
             <button
               onClick={() => handleSort("location")}
-              className="text-left text-sm  uppercase tracking-wider flex items-center gap-1"
+              className="text-left text-xs  uppercase tracking-wider flex items-center gap-1"
             >
               <span>{t("personDetail.location")}</span>
               {sortField === "location" && (
@@ -431,7 +431,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
             </button>
             <button
               onClick={() => handleSort("birth_date")}
-              className="text-left text-sm  uppercase tracking-wider flex items-center gap-1"
+              className="text-left text-xs  uppercase tracking-wider flex items-center gap-1"
             >
               <span>{t("personDetail.birthDate")}</span>
               {sortField === "birth_date" && (
@@ -444,7 +444,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
             </button>
             <button
               onClick={() => handleSort("tags")}
-              className="text-left text-sm  uppercase tracking-wider flex items-center gap-1"
+              className="text-left text-xs  uppercase tracking-wider flex items-center gap-1"
             >
               <span>{t("personDetail.relationshipTags")}</span>
               {sortField === "tags" && (
@@ -475,7 +475,7 @@ const PersonManager: React.FC<PersonManagerProps> = ({
                   onClick={() => handlePersonSelect(person)}
                 >
                   <div className={`px-4 py-3 border-b border-base-300 ${PERSON_ROW_CELL_HOVER_CLASS}`}>
-                    <div className="text-sm  text-base-content">
+                    <div className="text-base  text-base-content">
                       {person.display_name}
                     </div>
                   </div>

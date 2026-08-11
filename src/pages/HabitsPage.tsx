@@ -111,7 +111,7 @@ function HabitItem({
 
       {/* 习惯描述 */}
       {habit.description && (
-        <p className="text-sm lg:text-lg text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
+        <p className="text-base text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
           {habit.description}
         </p>
       )}

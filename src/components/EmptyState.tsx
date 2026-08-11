@@ -27,7 +27,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       <h3 className="text-lg  text-base-content mb-2">
         {title}
       </h3>
-      {description ? <p className="text-sm mb-4">{description}</p> : null}
+      {description ? <p className="text-base mb-4">{description}</p> : null}
       {actionText && onAction && (
         <ActionButton
           label={actionText}

@@ -136,7 +136,7 @@ function NavigationRail({ onItemClick }: NavigationRailProps) {
                     aria-hidden
                   />
                 ) : null}
-                <span className="truncate text-base-content text-sm">
+                <span className="truncate text-base-content text-base">
                   {item.navLabel}
                 </span>
               </Link>
