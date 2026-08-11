@@ -35,6 +35,14 @@ The validation baseline installs the locked npm workspace, rejects high- and cri
 
 Prefer `npm ci` for local validation runs that should not rewrite the lockfile, and use the npm version declared by `package.json` when updating `package-lock.json`.
 
+ESLint must stay at zero warnings. Warnings do not fail `validate.sh` but appear as CI annotations (yellow warning markers) in the PR diff, where they are easy to overlook. Run the lint with warnings treated as errors before pushing:
+
+```bash
+npm run lint -- --max-warnings 0
+```
+
+This catches issues such as missing React hook dependencies (`exhaustive-deps`) in the same change that introduces them.
+
 ### E2E Testing
 
 E2E tests live in `e2e/` and cover the core user loop (create a vision, add a task, record a timelog, inspect insights) plus a navigation smoke test. They run against a real LifeOS Web API (`lifeos-cli web serve`) backed by a throwaway SQLite database in an isolated temporary HOME, so the exercised HTTP transport matches the pinned OpenAPI contract instead of a mock. Your configured database is never touched.
