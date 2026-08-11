@@ -283,7 +283,7 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
         "transition-colors",
         "focus:outline-none",
         isSelected
-          ? "bg-primary text-primary-content"
+          ? "bg-primary/15 text-primary"
           : isActive
             ? "bg-base-200"
             : "hover:bg-base-200",

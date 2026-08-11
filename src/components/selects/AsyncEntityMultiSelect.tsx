@@ -507,7 +507,7 @@ const AsyncEntityMultiSelect = forwardRef<
               option.disabled
                 ? "opacity-50 cursor-not-allowed"
                 : isSelected
-                  ? "bg-primary text-primary-content cursor-pointer"
+                  ? "bg-primary/15 text-primary cursor-pointer"
                   : isActive
                     ? "bg-base-200 cursor-pointer"
                     : "cursor-pointer hover:bg-base-200",

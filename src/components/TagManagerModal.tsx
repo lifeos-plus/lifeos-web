@@ -887,7 +887,7 @@ const TagManager: React.FC<TagManagerProps> = ({
                   "inline-flex items-center gap-1 border rounded-full transition-all duration-200",
                   "px-3 py-2",
                   active
-                    ? "bg-primary text-primary-content border-primary"
+                    ? "bg-primary/15 text-primary border-primary/30"
                     : "bg-base-100 text-base-content/80 border-base-300 hover:border-base-content/30 hover:text-base-content",
                 ].join(" ");
                 const actionsClasses =
@@ -1502,7 +1502,7 @@ const TagGroup: React.FC<TagGroupProps> = ({
               aria-hidden
             />
           </div>
-          <h4 className="text-lg   text-base-content">
+          <h4 className="text-base   text-base-content">
             {group.displayName}
           </h4>
         </div>

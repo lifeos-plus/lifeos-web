@@ -200,7 +200,7 @@ const PersonSelector: React.FC<PersonSelectorProps> = ({
             variant === "compact" ? "py-1.5" : "py-2"
           } text-left text-base transition-colors flex items-center justify-between ${
             isSelected
-              ? "bg-primary text-primary-content"
+              ? "bg-primary/15 text-primary"
               : "hover:bg-base-200 text-base-content"
           }`}
         >
