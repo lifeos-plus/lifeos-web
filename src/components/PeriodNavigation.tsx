@@ -499,7 +499,7 @@ const PeriodNavigation: React.FC<PeriodNavigationProps> = ({
                 className="absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl border border-base-300 bg-base-100 p-4 shadow-xl z-dropdown"
               >
                 <form className="space-y-3" onSubmit={handleDateFormSubmit}>
-                  <div className="form-control">
+                  <div className="flex flex-col">
                     <label
                       htmlFor={dateInputId}
                       id={labelId}

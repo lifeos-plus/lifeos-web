@@ -363,7 +363,7 @@ const AsyncEntityMultiSelect = forwardRef<
 
   const containerClassName = [
     "relative",
-    "form-control",
+    "flex flex-col",
     className,
     multiple ? "" : "w-full",
   ]
@@ -372,7 +372,6 @@ const AsyncEntityMultiSelect = forwardRef<
 
   const inputWrapperClasses = [
     "input",
-    "input-bordered",
     sizeClass,
     "flex",
     showSelectedInline ? "flex-wrap" : "",

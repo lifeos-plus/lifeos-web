@@ -1,7 +1,154 @@
 /* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: fresh --default, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, valentine, halloween, garden, forest, aqua, lofi, pastel, fantasy, wireframe, luxury, dracula, cmyk, autumn, business, acid, lemonade, night, coffee, winter;
+  logs: false;
+}
+@plugin "daisyui/theme" {
+  name: "fresh";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #f0fdf4;
+  --color-base-200: #dcfce7;
+  --color-base-300: #bbf7d0;
+  --color-base-content: #064e3b;
+  --color-primary: #10b981;
+  --color-primary-content: #ffffff;
+  --color-secondary: #059669;
+  --color-secondary-content: #ffffff;
+  --color-accent: #34d399;
+  --color-accent-content: #064e3b;
+  --color-neutral: #374151;
+  --color-neutral-content: #ffffff;
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #ffffff;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+}
+
+@theme {
+  --breakpoint-xs: 475px;
+  --breakpoint-md-lg: 896px;
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+  --text-xs-tight: 0.6875rem;
+  --text-xs-tight--line-height: 1rem;
+}
+
+/* Named z-index utilities previously configured in tailwind.config.js */
+@utility z-base {
+  z-index: 0;
+}
+@utility z-content {
+  z-index: 1;
+}
+@utility z-button {
+  z-index: 10;
+}
+@utility z-input {
+  z-index: 20;
+}
+@utility z-dropdown {
+  z-index: 30;
+}
+@utility z-overlay {
+  z-index: 1000;
+}
+@utility z-modal {
+  z-index: 2000;
+}
+@utility z-modal-overlay {
+  z-index: 1999;
+}
+@utility z-modal-nested {
+  z-index: 2100;
+}
+@utility z-loading-overlay {
+  z-index: 15;
+}
+@utility z-tooltip {
+  z-index: 3000;
+}
+@utility z-popover {
+  z-index: 3100;
+}
+@utility z-notification {
+  z-index: 3200;
+}
+@utility z-toast {
+  z-index: 5000;
+}
+@utility z-fab {
+  z-index: 60;
+}
+@utility z-header {
+  z-index: 40;
+}
+@utility z-sidebar {
+  z-index: 50;
+}
+@utility z-max {
+  z-index: 9999;
+}
+
+/* Typography overrides previously configured in tailwind.config.js */
+.prose {
+  max-width: none;
+  line-height: 1.625;
+  --tw-prose-body: var(--color-base-content);
+  --tw-prose-bold: inherit;
+  --tw-prose-links: var(--color-primary);
+  --tw-prose-code: inherit;
+  --tw-prose-code-bg: color-mix(in oklab, var(--color-base-300) 35%, transparent);
+  --tw-prose-pre: inherit;
+  --tw-prose-pre-bg: color-mix(in oklab, var(--color-base-300) 25%, transparent);
+  --tw-prose-quotes: color-mix(in oklab, var(--color-base-content) 85%, transparent);
+  --tw-prose-quote-borders: color-mix(in oklab, var(--color-base-300) 80%, transparent);
+  --tw-prose-hr: color-mix(in oklab, var(--color-base-300) 60%, transparent);
+}
+
+.prose :where(a) {
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.prose :where(a):hover {
+  text-decoration: underline;
+}
+
+.prose :where(code) {
+  padding: 0.15em 0.35em;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.prose :where(pre) {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-base-300) 35%, transparent);
+}
+
+.prose :where(ol > li::marker, ul > li::marker) {
+  color: inherit;
+}
+
+.prose :where(table) {
+  width: 100%;
+}
+
+.prose-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.prose-sm :where(code) {
+  font-size: 0.875rem;
+}
 
 /* CSS Custom Properties for consistent spacing */
 :root {
@@ -165,8 +312,8 @@ html {
     pointer-events: none;
     background: linear-gradient(
       180deg,
-      hsl(var(--b1) / 0) 0%,
-      hsl(var(--b1) / 0.92) 100%
+      color-mix(in oklab, var(--color-base-100) 0%, transparent) 0%,
+      color-mix(in oklab, var(--color-base-100) 92%, transparent) 100%
     );
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
@@ -177,17 +324,17 @@ html {
 @layer base {
   :root {
     /* Keep controls consistent across DaisyUI themes without overriding states. */
-    --rounded-btn: 0.375rem;
+    --radius-field: 0.375rem;
     --scrollbar-size: 8px;
     --scrollbar-radius: 999px;
-    --scrollbar-track: hsl(var(--b2));
-    --scrollbar-thumb: hsl(var(--b3));
-    --scrollbar-thumb-hover: hsl(var(--bc) / 0.2);
-    --scrollbar-thumb-active: hsl(var(--bc) / 0.3);
+    --scrollbar-track: var(--color-base-200);
+    --scrollbar-thumb: var(--color-base-300);
+    --scrollbar-thumb-hover: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    --scrollbar-thumb-active: color-mix(in oklab, var(--color-base-content) 30%, transparent);
   }
 
   [data-theme] {
-    --rounded-btn: 0.375rem;
+    --radius-field: 0.375rem;
   }
 
   /* Firefox */

@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
 import { configDefaults } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
@@ -78,6 +79,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      tailwindcss(),
       react(),
       TanStackRouterVite({
         routesDirectory: './src/routes',

@@ -375,7 +375,7 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
 
     const containerClassName = [
       "relative",
-      "form-control",
+      "flex flex-col",
       fullWidth ? "w-full" : "",
       className,
     ]
@@ -384,7 +384,6 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
 
     const inputClassName = [
       "input",
-      "input-bordered",
       inputSizeClass,
       fullWidth ? "w-full" : "",
       disabled ? "cursor-not-allowed" : "",

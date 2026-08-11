@@ -308,7 +308,7 @@ export function SnapshotFormPanel({
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         <InlineFinanceField label={t("finance.tree.selectTree")}>
           <select
-            className="select select-bordered select-sm w-full"
+            className="select select-sm w-full"
             value={selectedTreeId ?? tree.id}
             onChange={(event) => {
               if (event.target.value) {
