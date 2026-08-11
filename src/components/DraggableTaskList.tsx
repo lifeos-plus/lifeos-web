@@ -491,7 +491,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
 
                 <div className="flex min-w-0 max-w-full basis-full flex-col overflow-hidden sm:basis-auto sm:flex-1 sm:flex-row sm:items-center">
                   <h4
-                    className="w-full min-w-0 flex-1 overflow-hidden text-base font-medium text-base-content"
+                    className="w-full min-w-0 flex-1 overflow-hidden text-base font-normal text-base-content"
                     onMouseEnter={handleTaskMouseEnter}
                     onMouseMove={handleTaskMouseMove}
                     onMouseLeave={handleTaskMouseLeave}
