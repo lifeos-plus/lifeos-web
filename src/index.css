@@ -114,7 +114,7 @@
 }
 
 .prose :where(a) {
-  font-weight: 500;
+  font-weight: 400;
   text-decoration: none;
 }
 
@@ -125,7 +125,7 @@
 .prose :where(code) {
   padding: 0.15em 0.35em;
   border-radius: 0.5rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .prose :where(pre) {
@@ -149,6 +149,7 @@
 
 .prose-sm :where(code) {
   font-size: 0.875rem;
+  font-weight: 400;
 }
 
 /* CSS Custom Properties for consistent spacing */
@@ -283,6 +284,20 @@ body,
 
 /* Keep button labels visually light: daisyUI defaults .btn to font-weight 600. */
 .btn {
+  font-weight: 400;
+}
+
+/* No bold anywhere in the app: cap the effective font weight at 400.
+   Lighter weights (e.g. font-light for de-emphasized text) are preserved;
+   emphasis is expressed through color, size, and spacing instead. */
+*,
+*::before,
+*::after {
+  font-weight: min(var(--tw-font-weight, 400), 400);
+}
+
+b,
+strong {
   font-weight: 400;
 }
 
