@@ -5,6 +5,7 @@ import {
   invalidateTimelogList,
 } from "@/services/api/cacheInvalidation/timelogs";
 import { timelogsApi } from "@/services/api/timelogs";
+import type { Timelog } from "@/services/api";
 import { processTimeEntries, type ProcessedEntry } from "@/utils/datetime";
 import { logger } from "@/utils/core";
 import { createDateBoundaries, sortTimeEntriesByTime } from "@/utils/datetime";
@@ -100,20 +101,29 @@ export const useTimeLogData = ({
         startOfDay.toISOString(),
         endOfDay.toISOString(),
       );
-      const events = timelogs.items;
-
-      // Sort by start time, then end time for stable ordering
-      sortTimeEntriesByTime(events);
-
-      // Process entries for validation and placeholders
-      let processed = processTimeEntries(events, selectedDate, timezone);
-      // Apply sort order
-      if (sortOrder === "desc") {
-        processed = [...processed].reverse();
-      }
-
-      return processed;
+      return timelogs.items;
     },
+    select: useCallback(
+      (items: Timelog[]) => {
+        // Copy before sorting so the cached raw list is never mutated.
+        const events = [...items];
+
+        // Sort by start time, then end time for stable ordering
+        sortTimeEntriesByTime(events);
+
+        // Process entries for validation and placeholders. Running this in
+        // select (instead of queryFn) keeps the cache in raw Timelog shape, so
+        // optimistic updates from useTimelogMutations are re-processed here.
+        let processed = processTimeEntries(events, selectedDate, timezone);
+        // Apply sort order
+        if (sortOrder === "desc") {
+          processed = [...processed].reverse();
+        }
+
+        return processed;
+      },
+      [selectedDate, sortOrder, timezone],
+    ),
     enabled: ready && queryMode === "single",
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

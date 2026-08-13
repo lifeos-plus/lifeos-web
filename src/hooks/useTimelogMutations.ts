@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { timelogsApi } from "@/services/api/timelogs";
 import {
-  isTimelogsListQuery,
-  type QueryLike,
-} from "@/services/api/queryPredicates";
-import {
+  findCachedTimelog,
   invalidateTimelogLatestEndTime,
   invalidateTimelogLists,
   invalidateTimelogsAdvancedSearch,
+  invalidateTimelogTaskDependencies,
+  mergeTimelogIntoListCaches,
   removeTimelogDetailCache,
+  removeTimelogsFromListCaches,
   setTimelogDetailCache,
 } from "@/services/api/cacheInvalidation/timelogs";
 import { useToast } from "@/contexts/ToastContext";
@@ -22,27 +22,6 @@ import type {
 import type { UUID } from "@/types/primitive";
 import { logger } from "@/utils/core";
 
-const mergeTimelog = <T extends Timelog>(
-  existing: T[] | undefined,
-  next: T,
-): T[] => {
-  const list = Array.isArray(existing) ? existing : [];
-  const filtered = list.filter((timelog) => timelog.id !== next.id);
-  return [next, ...filtered].sort(
-    (a, b) =>
-      new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
-  );
-};
-
-const removeTimelogs = <T extends Timelog>(
-  existing: T[] | undefined,
-  idsToRemove: Set<UUID>,
-): T[] => {
-  const list = Array.isArray(existing) ? existing : [];
-  if (list.length === 0) return list;
-  return list.filter((timelog) => !idsToRemove.has(timelog.id));
-};
-
 /**
  * Hook for managing timelogs mutations (create, update, delete)
  */
@@ -51,34 +30,39 @@ export function useTimelogMutations() {
   const toast = useToast();
   const { t } = useTranslation();
 
-  const scheduleTimelogRefresh = (context: string) => {
-    void Promise.all([
-      invalidateTimelogLists(queryClient),
-      invalidateTimelogLatestEndTime(queryClient),
-      invalidateTimelogsAdvancedSearch(queryClient),
-    ]).catch((error) => {
+  // Refresh after a mutation. Awaiting invalidations means the UI settles only
+  // after the affected queries have refetched; failures are surfaced instead
+  // of being silently swallowed.
+  const refreshTimelogQueries = async (context: string) => {
+    try {
+      await Promise.all([
+        invalidateTimelogLists(queryClient),
+        invalidateTimelogLatestEndTime(queryClient),
+        invalidateTimelogsAdvancedSearch(queryClient),
+      ]);
+    } catch (error) {
       logger.warn(context, error);
-    });
+      toast.showError(
+        t("timeLog.messages.timeLogRefreshFailed"),
+        error instanceof Error ? error.message : undefined,
+      );
+    }
   };
 
   // Create timelog mutation
   const createMutation = useMutation({
     mutationFn: (data: TimelogCreate) => timelogsApi.create(data),
-    onSuccess: (result: TimelogWithEnergyResponse) => {
+    onSuccess: async (result: TimelogWithEnergyResponse) => {
       setTimelogDetailCache(queryClient, result);
-      queryClient.setQueriesData(
-        { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
-        (existing) =>
-          mergeTimelog(existing as Timelog[] | undefined, result),
-      );
+      mergeTimelogIntoListCaches(queryClient, result);
 
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after creating timelog",
-      );
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after creating timelog",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, [result]),
+      ]);
 
-      // Invalidate task-related queries to refresh planning page and vision page
-      // This ensures task effort totals and status updates are reflected immediately
-      // without forcing every task to refetch on the network.
       toast.showSuccess(
         t("timeLog.messages.timeLogCreateSuccess"),
         t("timeLog.messages.timeLogCreateSuccessMessage", {
@@ -98,19 +82,22 @@ export function useTimelogMutations() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: UUID; data: TimelogUpdate }) =>
       timelogsApi.update(id, data),
-    onSuccess: (result: Timelog) => {
+    onSuccess: async (result: Timelog, variables) => {
+      const previous = findCachedTimelog(queryClient, variables.id);
       setTimelogDetailCache(queryClient, result);
-      queryClient.setQueriesData(
-        { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
-        (existing) =>
-          mergeTimelog(existing as Timelog[] | undefined, result),
-      );
+      mergeTimelogIntoListCaches(queryClient, result);
 
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after updating timelog",
-      );
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after updating timelog",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, [
+          previous,
+          { task_id: variables.data.task_id },
+          result,
+        ]),
+      ]);
 
-      // Invalidate task-related queries to refresh planning page and vision page
       toast.showSuccess(
         t("timeLog.messages.timeLogUpdateSuccess"),
         t("timeLog.messages.timeLogUpdateSuccessMessage", {
@@ -129,21 +116,17 @@ export function useTimelogMutations() {
   // Delete single timelog mutation
   const deleteMutation = useMutation({
     mutationFn: (id: UUID) => timelogsApi.delete(id),
-    onSuccess: (_, eventId) => {
+    onSuccess: async (_, eventId) => {
+      const previous = findCachedTimelog(queryClient, eventId);
       removeTimelogDetailCache(queryClient, eventId);
+      removeTimelogsFromListCaches(queryClient, [eventId]);
 
-      queryClient.setQueriesData(
-        { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
-        (existing) =>
-          removeTimelogs(
-            existing as Timelog[] | undefined,
-            new Set<UUID>([eventId]),
-          ),
-      );
-
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after deleting timelog",
-      );
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after deleting timelog",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, [previous]),
+      ]);
 
       // Show success message
       toast.showSuccess(t("timeLog.messages.timeLogDeleteSuccess"));
@@ -159,21 +142,21 @@ export function useTimelogMutations() {
   // Batch delete timelogs mutation
   const batchDeleteMutation = useMutation({
     mutationFn: (eventIds: UUID[]) => timelogsApi.batchDelete(eventIds),
-    onSuccess: (result, eventIds) => {
-      const idsToRemove = new Set<UUID>(eventIds);
-
-      queryClient.setQueriesData(
-        { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
-        (existing) =>
-          removeTimelogs(
-            existing as Timelog[] | undefined,
-            idsToRemove,
-          ),
+    onSuccess: async (result, eventIds) => {
+      const previousEntries = eventIds
+        .map((eventId) => findCachedTimelog(queryClient, eventId))
+        .filter((entry): entry is Timelog => Boolean(entry));
+      eventIds.forEach((eventId) =>
+        removeTimelogDetailCache(queryClient, eventId),
       );
+      removeTimelogsFromListCaches(queryClient, eventIds);
 
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after batch deleting timelogs",
-      );
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after batch deleting timelogs",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, previousEntries),
+      ]);
 
       if (result.failed_ids.length > 0) {
         toast.showError(
@@ -205,10 +188,13 @@ export function useTimelogMutations() {
   const batchCreateMutation = useMutation({
     mutationFn: (timelogs: TimelogCreate[]) =>
       timelogsApi.batchCreate(timelogs),
-    onSuccess: (result) => {
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after batch creating timelogs",
-      );
+    onSuccess: async (result) => {
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after batch creating timelogs",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, result.created_timelogs),
+      ]);
 
       if (result.failed_count > 0) {
         toast.showError(
@@ -258,14 +244,18 @@ export function useTimelogMutations() {
         area_id: UUID | null;
       };
     }) => timelogsApi.batchUpdate(params),
-    onSuccess: (result) => {
-      scheduleTimelogRefresh(
-        "Failed to refresh caches after batch updating timelogs",
-      );
+    onSuccess: async (result, params) => {
+      const affectedEntries = params.timelog_ids
+        .map((timelogId) => findCachedTimelog(queryClient, timelogId))
+        .filter((entry): entry is Timelog => Boolean(entry));
 
-      // Invalidate task-related queries to refresh planning page and vision page
+      await Promise.all([
+        refreshTimelogQueries(
+          "Failed to refresh caches after batch updating timelogs",
+        ),
+        invalidateTimelogTaskDependencies(queryClient, affectedEntries),
+      ]);
 
-      // Force refetch of advanced search queries
       if (result.failed_ids.length > 0) {
         toast.showError(
           t("timeLog.messages.timeLogBatchUpdatePartialFailed"),

@@ -1163,6 +1163,8 @@
       "timeLogDeleteSuccess": "Time log deleted successfully!",
       "timeLogDeleteFailed": "Time log deletion failed",
       "timeLogDeleteFailedMessage": "Please try again later",
+      "timeLogRefreshFailed": "Failed to refresh time log data",
+      "timeLogRefreshFailedMessage": "Please check your connection and try again",
       "timeLogBatchDeletePartialFailed": "Batch deletion partially failed",
       "timeLogBatchDeletePartialFailedMessage": "Successfully deleted {{deletedCount}} records, {{failedCount}} deletions failed: {{errors}}",
       "timeLogBatchDeleteSuccess": "Batch deletion successful!",
