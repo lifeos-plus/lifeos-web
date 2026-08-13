@@ -1163,6 +1163,8 @@
       "timeLogDeleteSuccess": "时间日志删除成功！",
       "timeLogDeleteFailed": "时间日志删除失败",
       "timeLogDeleteFailedMessage": "请稍后重试",
+      "timeLogRefreshFailed": "时间日志数据刷新失败",
+      "timeLogRefreshFailedMessage": "请检查网络后重试",
       "timeLogBatchDeletePartialFailed": "批量删除部分失败",
       "timeLogBatchDeletePartialFailedMessage": "成功删除 {{deletedCount}} 条记录，{{failedCount}} 条删除失败：{{errors}}",
       "timeLogBatchDeleteSuccess": "批量删除成功！",

@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 
 import { useTimeLogData } from "@/features/timeLog/controller/useTimeLogData";
+import { timelogsKeys } from "@/services/api/queryKeys";
 
 const fetchRangeMock = vi.fn();
 const deleteMock = vi.fn();
@@ -246,5 +247,62 @@ describe("useTimeLogData", () => {
     expect(result.current.selectedEntryIds.size).toBe(0);
     expect(result.current.deletingEntryCount).toBe(0);
     expect(result.current.processedEntries).toEqual([]);
+  });
+
+  it("re-processes raw entries when the list cache is updated externally (mutation merge)", async () => {
+    const rawEntry1 = {
+      id: "event-1",
+      start_time: "2025-01-01T02:00:00Z",
+      end_time: "2025-01-01T03:00:00Z",
+    };
+    const rawEntry2 = {
+      id: "event-2",
+      start_time: "2025-01-01T03:00:00Z",
+      end_time: "2025-01-01T04:00:00Z",
+    };
+    fetchRangeMock.mockResolvedValue({
+      items: [rawEntry1],
+      pagination: { page: 1, size: 1, total: 1, pages: 1 },
+      meta: {},
+    });
+    processTimeEntriesMock.mockImplementation((entries: unknown[]) =>
+      (entries as Array<{ id: string }>).map((entry) => ({
+        id: `processed-${entry.id}`,
+        isPlaceholder: false,
+      })),
+    );
+
+    const { result } = setup();
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.processedEntries).toEqual([
+      { id: "processed-event-1", isPlaceholder: false },
+    ]);
+
+    // Simulate the optimistic list merge performed by useTimelogMutations:
+    // the cache holds raw Timelog entries and select must re-process them.
+    act(() => {
+      queryClient.setQueryData(
+        timelogsKeys.list({
+          start: "2025-01-01T00:00:00.000Z",
+          end: "2025-01-01T23:59:59.000Z",
+          sort_order: "asc",
+          timezone: "UTC",
+        }),
+        [rawEntry1, rawEntry2],
+      );
+    });
+
+    await waitFor(() =>
+      expect(result.current.processedEntries).toEqual([
+        { id: "processed-event-1", isPlaceholder: false },
+        { id: "processed-event-2", isPlaceholder: false },
+      ]),
+    );
+    expect(processTimeEntriesMock).toHaveBeenLastCalledWith(
+      [rawEntry1, rawEntry2],
+      expect.any(Date),
+      "UTC",
+    );
   });
 });

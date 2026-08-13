@@ -51,20 +51,29 @@ export function useTimelogMutations() {
   const toast = useToast();
   const { t } = useTranslation();
 
-  const scheduleTimelogRefresh = (context: string) => {
-    void Promise.all([
-      invalidateTimelogLists(queryClient),
-      invalidateTimelogLatestEndTime(queryClient),
-      invalidateTimelogsAdvancedSearch(queryClient),
-    ]).catch((error) => {
+  // Refresh after a mutation. Awaiting invalidations means the UI settles only
+  // after the affected queries have refetched; failures are surfaced instead
+  // of being silently swallowed.
+  const refreshTimelogQueries = async (context: string) => {
+    try {
+      await Promise.all([
+        invalidateTimelogLists(queryClient),
+        invalidateTimelogLatestEndTime(queryClient),
+        invalidateTimelogsAdvancedSearch(queryClient),
+      ]);
+    } catch (error) {
       logger.warn(context, error);
-    });
+      toast.showError(
+        t("timeLog.messages.timeLogRefreshFailed"),
+        error instanceof Error ? error.message : undefined,
+      );
+    }
   };
 
   // Create timelog mutation
   const createMutation = useMutation({
     mutationFn: (data: TimelogCreate) => timelogsApi.create(data),
-    onSuccess: (result: TimelogWithEnergyResponse) => {
+    onSuccess: async (result: TimelogWithEnergyResponse) => {
       setTimelogDetailCache(queryClient, result);
       queryClient.setQueriesData(
         { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
@@ -72,7 +81,7 @@ export function useTimelogMutations() {
           mergeTimelog(existing as Timelog[] | undefined, result),
       );
 
-      scheduleTimelogRefresh(
+      await refreshTimelogQueries(
         "Failed to refresh caches after creating timelog",
       );
 
@@ -98,7 +107,7 @@ export function useTimelogMutations() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: UUID; data: TimelogUpdate }) =>
       timelogsApi.update(id, data),
-    onSuccess: (result: Timelog) => {
+    onSuccess: async (result: Timelog) => {
       setTimelogDetailCache(queryClient, result);
       queryClient.setQueriesData(
         { predicate: (query) => isTimelogsListQuery(query as QueryLike) },
@@ -106,7 +115,7 @@ export function useTimelogMutations() {
           mergeTimelog(existing as Timelog[] | undefined, result),
       );
 
-      scheduleTimelogRefresh(
+      await refreshTimelogQueries(
         "Failed to refresh caches after updating timelog",
       );
 
@@ -129,7 +138,7 @@ export function useTimelogMutations() {
   // Delete single timelog mutation
   const deleteMutation = useMutation({
     mutationFn: (id: UUID) => timelogsApi.delete(id),
-    onSuccess: (_, eventId) => {
+    onSuccess: async (_, eventId) => {
       removeTimelogDetailCache(queryClient, eventId);
 
       queryClient.setQueriesData(
@@ -141,7 +150,7 @@ export function useTimelogMutations() {
           ),
       );
 
-      scheduleTimelogRefresh(
+      await refreshTimelogQueries(
         "Failed to refresh caches after deleting timelog",
       );
 
@@ -159,7 +168,7 @@ export function useTimelogMutations() {
   // Batch delete timelogs mutation
   const batchDeleteMutation = useMutation({
     mutationFn: (eventIds: UUID[]) => timelogsApi.batchDelete(eventIds),
-    onSuccess: (result, eventIds) => {
+    onSuccess: async (result, eventIds) => {
       const idsToRemove = new Set<UUID>(eventIds);
 
       queryClient.setQueriesData(
@@ -171,7 +180,7 @@ export function useTimelogMutations() {
           ),
       );
 
-      scheduleTimelogRefresh(
+      await refreshTimelogQueries(
         "Failed to refresh caches after batch deleting timelogs",
       );
 
@@ -205,8 +214,8 @@ export function useTimelogMutations() {
   const batchCreateMutation = useMutation({
     mutationFn: (timelogs: TimelogCreate[]) =>
       timelogsApi.batchCreate(timelogs),
-    onSuccess: (result) => {
-      scheduleTimelogRefresh(
+    onSuccess: async (result) => {
+      await refreshTimelogQueries(
         "Failed to refresh caches after batch creating timelogs",
       );
 
@@ -258,8 +267,8 @@ export function useTimelogMutations() {
         area_id: UUID | null;
       };
     }) => timelogsApi.batchUpdate(params),
-    onSuccess: (result) => {
-      scheduleTimelogRefresh(
+    onSuccess: async (result) => {
+      await refreshTimelogQueries(
         "Failed to refresh caches after batch updating timelogs",
       );
 
