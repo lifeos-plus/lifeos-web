@@ -66,7 +66,7 @@ The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth fo
 - `src/services/api/generated/schema.ts` is generated from that baseline; do not hand-edit either file.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` was stale.
 
-The pinned contract default is `v1.1.0`. Refresh it after a newer `lifeos-cli` release publishes a new `openapi.json` release asset:
+The pinned contract default is `v1.1.1`. Refresh it after a newer `lifeos-cli` release publishes a new `openapi.json` release asset:
 
 ```bash
 npm run api:refresh

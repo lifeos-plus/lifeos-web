@@ -14297,6 +14297,48 @@
           "timelogs"
         ]
       },
+      "get": {
+        "description": "Return one active timelog by identifier.",
+        "operationId": "get_timelog_api_v1_timelogs__timelog_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "timelog_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Timelog Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelogResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Timelog",
+        "tags": [
+          "timelogs"
+        ]
+      },
       "patch": {
         "description": "Update a timelog.",
         "operationId": "update_timelog_api_v1_timelogs__timelog_id__patch",
