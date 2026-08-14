@@ -1506,7 +1506,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get Timelog
+         * @description Return one active timelog by identifier.
+         */
+        get: operations["get_timelog_api_v1_timelogs__timelog_id__get"];
         put?: never;
         post?: never;
         /**
@@ -7448,6 +7452,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TimelogTemplateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_timelog_api_v1_timelogs__timelog_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                timelog_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimelogResponse"];
                 };
             };
             /** @description Validation Error */

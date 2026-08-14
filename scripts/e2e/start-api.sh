@@ -39,7 +39,7 @@ export HOME="${home_dir}"
 export LIFEOS_DATABASE_URL="${db_url}"
 
 if ! command -v lifeos >/dev/null 2>&1; then
-  echo "[e2e] lifeos CLI not found; install it with: uv tool install \"lifeos-cli[web,postgres]==1.1.0\"" >&2
+  echo "[e2e] lifeos CLI not found; install it with: uv tool install \"lifeos-cli[web,postgres]==1.1.1\"" >&2
   exit 1
 fi
 
