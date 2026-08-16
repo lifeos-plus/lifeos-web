@@ -627,7 +627,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/notes/stats/persons": {
+    "/api/v1/notes/stats/person": {
         parameters: {
             query?: never;
             header?: never;
@@ -638,7 +638,7 @@ export interface paths {
          * Get Note Person Usage Stats
          * @description Return active-note usage counts grouped by associated person.
          */
-        get: operations["get_note_person_usage_stats_api_v1_notes_stats_persons_get"];
+        get: operations["get_note_person_usage_stats_api_v1_notes_stats_person_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -671,7 +671,7 @@ export interface paths {
         patch: operations["update_note_api_v1_notes__note_id__patch"];
         trace?: never;
     };
-    "/api/v1/persons/": {
+    "/api/v1/person/": {
         parameters: {
             query?: never;
             header?: never;
@@ -679,23 +679,23 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Persons
-         * @description List people for frontend person selectors and pages.
+         * List Person
+         * @description List person for frontend person selectors and pages.
          */
-        get: operations["list_persons_api_v1_persons__get"];
+        get: operations["list_person_api_v1_person__get"];
         put?: never;
         /**
          * Create Person
          * @description Create a person.
          */
-        post: operations["create_person_api_v1_persons__post"];
+        post: operations["create_person_api_v1_person__post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/persons/search-by-tag": {
+    "/api/v1/person/search-by-tag": {
         parameters: {
             query?: never;
             header?: never;
@@ -703,10 +703,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Search Persons By Tag
+         * Search Person By Tag
          * @description Return an empty tag-name search result until LifeOS supports tag-name lookup.
          */
-        get: operations["search_persons_by_tag_api_v1_persons_search_by_tag_get"];
+        get: operations["search_person_by_tag_api_v1_person_search_by_tag_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -715,7 +715,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/persons/{person_id}": {
+    "/api/v1/person/{person_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -726,24 +726,24 @@ export interface paths {
          * Get Person
          * @description Load one person.
          */
-        get: operations["get_person_api_v1_persons__person_id__get"];
+        get: operations["get_person_api_v1_person__person_id__get"];
         put?: never;
         post?: never;
         /**
          * Delete Person
          * @description Soft-delete a person.
          */
-        delete: operations["delete_person_api_v1_persons__person_id__delete"];
+        delete: operations["delete_person_api_v1_person__person_id__delete"];
         options?: never;
         head?: never;
         /**
          * Update Person
          * @description Update a person.
          */
-        patch: operations["update_person_api_v1_persons__person_id__patch"];
+        patch: operations["update_person_api_v1_person__person_id__patch"];
         trace?: never;
     };
-    "/api/v1/persons/{person_id}/activities/": {
+    "/api/v1/person/{person_id}/activities/": {
         parameters: {
             query?: never;
             header?: never;
@@ -754,7 +754,7 @@ export interface paths {
          * List Person Activities
          * @description Return person-linked activity timeline data.
          */
-        get: operations["list_person_activities_api_v1_persons__person_id__activities__get"];
+        get: operations["list_person_activities_api_v1_person__person_id__activities__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -763,7 +763,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/persons/{person_id}/anniversaries/": {
+    "/api/v1/person/{person_id}/anniversaries/": {
         parameters: {
             query?: never;
             header?: never;
@@ -774,7 +774,7 @@ export interface paths {
          * List Person Anniversaries
          * @description Return empty anniversaries until LifeOS has an anniversary model.
          */
-        get: operations["list_person_anniversaries_api_v1_persons__person_id__anniversaries__get"];
+        get: operations["list_person_anniversaries_api_v1_person__person_id__anniversaries__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2724,8 +2724,8 @@ export interface components {
         NotePersonStatsResponse: {
             /** Person Stats */
             person_stats: components["schemas"]["NotePersonStat"][];
-            /** Total Persons */
-            total_persons: number;
+            /** Total Person */
+            total_person: number;
         };
         /** NoteResponse */
         NoteResponse: {
@@ -2741,8 +2741,8 @@ export interface components {
             habit_actions: components["schemas"]["HabitActionSummaryResponse"][];
             /** Id */
             id: string;
-            /** People */
-            people: components["schemas"]["PersonSummaryResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonSummaryResponse"][];
             /** Tags */
             tags: components["schemas"]["TagSummaryResponse"][];
             task: components["schemas"]["TaskSummaryResponse"] | null;
@@ -3005,8 +3005,8 @@ export interface components {
             is_recurring: boolean;
             /** Master Event Id */
             master_event_id: string | null;
-            /** People */
-            people: components["schemas"]["PersonNameResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonNameResponse"][];
             /** Priority */
             priority: number;
             recurrence_pattern: components["schemas"]["RecurrencePatternResponse"] | null;
@@ -3393,8 +3393,8 @@ export interface components {
             notes_count?: number | null;
             /** Parent Task Id */
             parent_task_id: string | null;
-            /** People */
-            people?: components["schemas"]["PersonNameResponse"][] | null;
+            /** Person */
+            person?: components["schemas"]["PersonNameResponse"][] | null;
             /** Planning Cycle Days */
             planning_cycle_days: number | null;
             /** Planning Cycle Start Date */
@@ -3459,8 +3459,8 @@ export interface components {
             notes_count?: number | null;
             /** Parent Task Id */
             parent_task_id: string | null;
-            /** People */
-            people?: components["schemas"]["PersonNameResponse"][] | null;
+            /** Person */
+            person?: components["schemas"]["PersonNameResponse"][] | null;
             /** Planning Cycle Days */
             planning_cycle_days: number | null;
             /** Planning Cycle Start Date */
@@ -3556,8 +3556,8 @@ export interface components {
             notes_count?: number | null;
             /** Parent Task Id */
             parent_task_id: string | null;
-            /** People */
-            people?: components["schemas"]["PersonNameResponse"][] | null;
+            /** Person */
+            person?: components["schemas"]["PersonNameResponse"][] | null;
             /** Planning Cycle Days */
             planning_cycle_days: number | null;
             /** Planning Cycle Start Date */
@@ -3610,10 +3610,10 @@ export interface components {
             area_id?: string | null;
         };
         /**
-         * TimelogBatchPeopleUpdate
+         * TimelogBatchPersonUpdate
          * @description Person association update payload for timelog batch edits.
          */
-        TimelogBatchPeopleUpdate: {
+        TimelogBatchPersonUpdate: {
             /**
              * Mode
              * @default replace
@@ -3656,7 +3656,7 @@ export interface components {
          */
         TimelogBatchUpdate: {
             area?: components["schemas"]["TimelogBatchAreaUpdate"] | null;
-            people?: components["schemas"]["TimelogBatchPeopleUpdate"] | null;
+            person?: components["schemas"]["TimelogBatchPersonUpdate"] | null;
             task?: components["schemas"]["TimelogBatchTaskUpdate"] | null;
             /** Timelog Ids */
             timelog_ids: string[];
@@ -3766,8 +3766,8 @@ export interface components {
             location: string | null;
             /** Notes */
             notes: string | null;
-            /** People */
-            people: components["schemas"]["PersonNameResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonNameResponse"][];
             /** Start Time */
             start_time: string;
             /** Tags */
@@ -3862,8 +3862,8 @@ export interface components {
             id: string;
             /** Last Used At */
             last_used_at: string | null;
-            /** People */
-            people: components["schemas"]["PersonSummaryResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonSummaryResponse"][];
             /** Person Ids */
             person_ids: string[];
             /** Position */
@@ -3991,8 +3991,8 @@ export interface components {
             id: string;
             /** Name */
             name: string;
-            /** People */
-            people: components["schemas"]["PersonNameResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonNameResponse"][];
             /** Stage */
             stage: number;
             /** Status */
@@ -4058,8 +4058,8 @@ export interface components {
             id: string;
             /** Name */
             name: string;
-            /** People */
-            people: components["schemas"]["PersonNameResponse"][];
+            /** Person */
+            person: components["schemas"]["PersonNameResponse"][];
             /** Stage */
             stage: number;
             /** Status */
@@ -5582,7 +5582,7 @@ export interface operations {
             };
         };
     };
-    get_note_person_usage_stats_api_v1_notes_stats_persons_get: {
+    get_note_person_usage_stats_api_v1_notes_stats_person_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -5666,7 +5666,7 @@ export interface operations {
             };
         };
     };
-    list_persons_api_v1_persons__get: {
+    list_person_api_v1_person__get: {
         parameters: {
             query?: {
                 page?: number;
@@ -5701,7 +5701,7 @@ export interface operations {
             };
         };
     };
-    create_person_api_v1_persons__post: {
+    create_person_api_v1_person__post: {
         parameters: {
             query?: never;
             header?: never;
@@ -5734,7 +5734,7 @@ export interface operations {
             };
         };
     };
-    search_persons_by_tag_api_v1_persons_search_by_tag_get: {
+    search_person_by_tag_api_v1_person_search_by_tag_get: {
         parameters: {
             query?: {
                 page?: number;
@@ -5766,7 +5766,7 @@ export interface operations {
             };
         };
     };
-    get_person_api_v1_persons__person_id__get: {
+    get_person_api_v1_person__person_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -5797,7 +5797,7 @@ export interface operations {
             };
         };
     };
-    delete_person_api_v1_persons__person_id__delete: {
+    delete_person_api_v1_person__person_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -5826,7 +5826,7 @@ export interface operations {
             };
         };
     };
-    update_person_api_v1_persons__person_id__patch: {
+    update_person_api_v1_person__person_id__patch: {
         parameters: {
             query?: never;
             header?: never;
@@ -5861,7 +5861,7 @@ export interface operations {
             };
         };
     };
-    list_person_activities_api_v1_persons__person_id__activities__get: {
+    list_person_activities_api_v1_person__person_id__activities__get: {
         parameters: {
             query?: {
                 page?: number;
@@ -5897,7 +5897,7 @@ export interface operations {
             };
         };
     };
-    list_person_anniversaries_api_v1_persons__person_id__anniversaries__get: {
+    list_person_anniversaries_api_v1_person__person_id__anniversaries__get: {
         parameters: {
             query?: never;
             header?: never;
