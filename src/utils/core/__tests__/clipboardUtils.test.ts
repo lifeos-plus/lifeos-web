@@ -36,12 +36,12 @@ describe("copyToClipboardWithMessages", () => {
   it("copies through the modern clipboard API", async () => {
     writeTextMock.mockResolvedValue(undefined);
 
-    const result = await copyToClipboardWithMessages("hello", "已复制");
+    const result = await copyToClipboardWithMessages("hello", "Copied");
 
     expect(writeTextMock).toHaveBeenCalledWith("hello");
     expect(result).toEqual({
       success: true,
-      message: "已复制",
+      message: "Copied",
     });
   });
 
@@ -52,12 +52,12 @@ describe("copyToClipboardWithMessages", () => {
     });
     execCommandMock.mockReturnValue(true);
 
-    const result = await copyToClipboardWithMessages("hello", "已复制");
+    const result = await copyToClipboardWithMessages("hello", "Copied");
 
     expect(execCommandMock).toHaveBeenCalledWith("copy");
     expect(result).toEqual({
       success: true,
-      message: "已复制",
+      message: "Copied",
     });
   });
 
@@ -68,7 +68,7 @@ describe("copyToClipboardWithMessages", () => {
     });
     execCommandMock.mockReturnValue(false);
 
-    const result = await copyToClipboardWithMessages("hello", "已复制");
+    const result = await copyToClipboardWithMessages("hello", "Copied");
 
     expect(result).toMatchObject({
       success: true,
@@ -82,13 +82,13 @@ describe("copyToClipboardWithMessages", () => {
 
     const result = await copyToClipboardWithMessages(
       "hello",
-      "已复制",
-      "复制失败",
+      "Copied",
+      "Copy failed",
     );
 
     expect(result).toEqual({
       success: false,
-      message: "复制失败",
+      message: "Copy failed",
     });
     expect(errorSpy).toHaveBeenCalled();
   });
@@ -96,9 +96,9 @@ describe("copyToClipboardWithMessages", () => {
   it("falls back to the default error message when none is provided", async () => {
     writeTextMock.mockRejectedValue(new Error("denied"));
 
-    const result = await copyToClipboardWithMessages("hello", "已复制");
+    const result = await copyToClipboardWithMessages("hello", "Copied");
 
     expect(result.success).toBe(false);
-    expect(result.message).toContain("复制失败");
+    expect(result.message).toContain("Copy failed");
   });
 });

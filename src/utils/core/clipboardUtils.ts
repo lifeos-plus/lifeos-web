@@ -23,7 +23,7 @@ async function copyToClipboard(text: string): Promise<CopyResult> {
       await navigator.clipboard.writeText(text);
       return {
         success: true,
-        message: "已复制到剪贴板",
+        message: "Copied to clipboard",
       };
     }
 
@@ -32,14 +32,14 @@ async function copyToClipboard(text: string): Promise<CopyResult> {
     if (fallbackResult.success) {
       return {
         success: true,
-        message: "已复制到剪贴板",
+        message: "Copied to clipboard",
       };
     }
 
     // All methods failed, return manual copy result
     return {
       success: true,
-      message: "请手动复制内容",
+      message: "Please copy manually",
       requiresManualCopy: true,
       exportText: text,
     };
@@ -47,7 +47,7 @@ async function copyToClipboard(text: string): Promise<CopyResult> {
     console.error("Failed to copy to clipboard:", err);
     return {
       success: false,
-      message: "复制失败，请检查浏览器权限设置",
+      message: "Copy failed, check browser permissions",
     };
   }
 }
