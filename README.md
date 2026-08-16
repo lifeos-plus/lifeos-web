@@ -66,16 +66,13 @@ The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth fo
 - `src/services/api/generated/schema.ts` is generated from that baseline; do not hand-edit either file.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` was stale.
 
-The pinned contract default is `v1.1.1`. Refresh it after a newer `lifeos-cli` release publishes a new `openapi.json` release asset:
+The pinned contract default is defined in `scripts/pinned-cli-version.mjs`. Refresh it after a newer `lifeos-cli` release publishes a new `openapi.json` release asset:
 
 ```bash
 npm run api:refresh
 ```
 
-Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
-
-The `lifeos-cli` version installed by CI and required by the E2E harness is
-derived from the same pin; print it with `node scripts/pinned-cli-version.mjs`.
+Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag. The `lifeos-cli` version installed by CI and required by the E2E harness is derived from the same pin; print it with `node scripts/pinned-cli-version.mjs`.
 
 Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters. Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract.
 

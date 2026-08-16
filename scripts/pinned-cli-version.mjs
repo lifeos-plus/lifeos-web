@@ -17,7 +17,14 @@ export function resolveSchemaVersion() {
 }
 
 export function pinnedCliVersion() {
-  return resolveSchemaVersion().replace(/^v/, "");
+  const version = resolveSchemaVersion().replace(/^v/, "");
+  if (!/^\d+\.\d+\.\d+[0-9A-Za-z.+-]*$/.test(version)) {
+    throw new Error(
+      `Invalid lifeos-cli version derived from the schema pin: "${version}". ` +
+        "Expected a PEP 440 version like 1.1.1.",
+    );
+  }
+  return version;
 }
 
 const isMain =

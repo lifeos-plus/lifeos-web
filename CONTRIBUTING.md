@@ -70,7 +70,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
   npm run api:refresh
   ```
 
-  The default pinned release is defined in `scripts/pinned-cli-version.mjs` (currently `v1.1.1`). Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
+  The default pinned release is defined in `scripts/pinned-cli-version.mjs`. Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
 
 ## Dependency Maintenance
