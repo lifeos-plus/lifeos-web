@@ -293,4 +293,10 @@ describe("MayanCalendarAdapter", () => {
       end: "2025-07-25",
     });
   });
+
+  it("returns the out-of-time day label", () => {
+    const adapter = new MayanCalendarAdapter();
+
+    expect(adapter.getSpecialDayName(new Date("2024-07-26T00:00:00Z"))).toBeTruthy();
+  });
 });
