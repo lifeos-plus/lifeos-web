@@ -84,7 +84,7 @@ For repository changes, run the primary validation entrypoint:
 bash ./scripts/validate.sh
 ```
 
-The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite with enforced coverage thresholds (configured in `vite.config.ts`).
+The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, runs the test suite with enforced coverage floors (configured in `vite.config.ts`), checks that the lines added by the change are at least 70% covered (`scripts/check-diff-coverage.mjs`, override with `DIFF_COVERAGE_THRESHOLD`), and runs the E2E suite.
 
 ## Project Policies
 

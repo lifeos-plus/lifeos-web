@@ -31,7 +31,7 @@ Run the default validation baseline before opening a PR:
 bash ./scripts/validate.sh
 ```
 
-The validation baseline installs the locked npm workspace, rejects high- and critical-severity `npm audit` findings, verifies that the generated OpenAPI types are current (`npm run api:check`), validates the translation catalogs, builds the Vite app, runs ESLint, executes the Vitest suite with coverage (`npm run test:coverage`), and runs the Playwright E2E suite. Global coverage thresholds are configured in `vite.config.ts` and the baseline fails when coverage drops below them; raise the thresholds as coverage improves.
+The validation baseline installs the locked npm workspace, rejects high- and critical-severity `npm audit` findings, verifies that the generated OpenAPI types are current (`npm run api:check`), validates the translation catalogs, builds the Vite app, runs ESLint, executes the Vitest suite with coverage (`npm run test:coverage`), enforces diff coverage on the lines added by the change, and runs the Playwright E2E suite. Global coverage floors are configured in `vite.config.ts`; the diff-coverage gate (`scripts/check-diff-coverage.mjs`, default 70%, override with `DIFF_COVERAGE_THRESHOLD`) fails a PR when its newly added source lines are not covered enough, so untested new code cannot hide behind the aggregate percentage. Raise the global floors as coverage improves.
 
 Prefer `npm ci` for local validation runs that should not rewrite the lockfile, and use the npm version declared by `package.json` when updating `package-lock.json`.
 

@@ -51,7 +51,7 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 bash ./scripts/validate.sh
 ```
 
-验证基线包含测试覆盖率门槛，阈值配置见 `vite.config.ts`；覆盖率低于门槛时验证失败。
+验证基线包含两层覆盖率门槛：全局下限见 `vite.config.ts`；新增代码 diff 覆盖率门禁见 `scripts/check-diff-coverage.mjs`（默认 70%，可用 `DIFF_COVERAGE_THRESHOLD` 覆盖），本次改动新增的行覆盖不足时验证失败。
 
 ## 项目政策
 

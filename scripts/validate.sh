@@ -25,6 +25,9 @@ npm run lint
 echo "[validate] run frontend tests with coverage gate"
 npm run test:coverage
 
+echo "[validate] check diff coverage"
+node scripts/check-diff-coverage.mjs
+
 echo "[validate] ensure Playwright browsers"
 npx playwright install chromium
 
