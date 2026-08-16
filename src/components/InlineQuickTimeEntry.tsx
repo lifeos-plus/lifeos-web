@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type {
   TimelogCreate,
-  TimelogWithEnergyResponse,
+  Timelog,
   TaskWithSubtasks,
   Vision,
   PersonSummary,
@@ -101,7 +101,7 @@ interface InlineQuickTimeEntryProps {
   startTime: string;
   endTime: string;
   onEntryCreated: (
-    result: TimelogWithEnergyResponse,
+    result: Timelog,
     context: { sessionId: string },
   ) => void;
   onError: (error: string) => void;
@@ -195,7 +195,7 @@ export default function InlineQuickTimeEntry({
         // Use extracted helper functions
         autoFillTitle(task);
         autoFillArea(vision);
-        applyTaskPersons(task.people ?? undefined);
+        applyTaskPersons(task.person ?? undefined);
       } catch {
         // ignore autofill errors
       }
@@ -610,8 +610,8 @@ export default function InlineQuickTimeEntry({
       // Use extracted helper functions for auto-fill
       autoFillTitle(task);
       autoFillArea(vision);
-      if (task.people && task.people.length > 0) {
-        applyTaskPersons(task.people);
+      if (task.person && task.person.length > 0) {
+        applyTaskPersons(task.person);
       } else {
         clearAutoPersonsIfAutoApplied();
       }
@@ -740,7 +740,7 @@ export default function InlineQuickTimeEntry({
     const templatePersonIds =
       tpl.person_ids && tpl.person_ids.length > 0
         ? tpl.person_ids
-        : (tpl.people?.map((person) => person.id) ?? []);
+        : (tpl.person?.map((person) => person.id) ?? []);
     handlePersonSelectionChange(templatePersonIds);
   };
 
@@ -808,9 +808,16 @@ export default function InlineQuickTimeEntry({
                         "?")
                       : tpl.area_name || "?";
                     if (tpl.default_duration_minutes) {
-                      return `${tpl.title}（领域: ${areaLabel}，时长: ${tpl.default_duration_minutes} 分钟）`;
+                      return t("quickTimeEntry.templates.templateWithAreaDuration", {
+                        title: tpl.title,
+                        area: areaLabel,
+                        duration: tpl.default_duration_minutes,
+                      });
                     }
-                    return `${tpl.title}（领域: ${areaLabel}）`;
+                    return t("quickTimeEntry.templates.templateWithArea", {
+                      title: tpl.title,
+                      area: areaLabel,
+                    });
                   })()}
                 >
                   {/* area color dot */}

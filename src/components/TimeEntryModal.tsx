@@ -117,7 +117,7 @@ const TimeEntryModal = ({
           notes: entry.notes || "",
           energy_level: entry.energy_level || 3,
           task_id: entry.task?.id ?? entry.task_id ?? null,
-          person_ids: entry.people?.map((person) => person.id) || [],
+          person_ids: entry.person?.map((person) => person.id) || [],
           tracking_method: "manual",
         });
       } else {

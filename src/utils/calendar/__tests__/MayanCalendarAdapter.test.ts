@@ -24,7 +24,7 @@ const createTask = (
   created_at: "2026-07-26T00:00:00Z",
   updated_at: "2026-07-26T00:00:00Z",
   deleted_at: null,
-  people: [],
+  person: [],
   subtasks: [],
   completion_percentage: 0,
   depth: 0,
@@ -292,5 +292,11 @@ describe("MayanCalendarAdapter", () => {
       start: "2018-07-26",
       end: "2025-07-25",
     });
+  });
+
+  it("returns the out-of-time day label", () => {
+    const adapter = new MayanCalendarAdapter();
+
+    expect(adapter.getSpecialDayName(new Date("2024-07-26T00:00:00Z"))).toBeTruthy();
   });
 });

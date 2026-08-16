@@ -167,9 +167,9 @@ const NoteItem = React.memo<NoteItemProps>(
       return `${habitLabel} · ${formatDate(habitAction.action_date, timezone)} (${habitAction.status})`;
     };
 
-    if (note.people && note.people.length > 0) {
+    if (note.person && note.person.length > 0) {
       associations.push(
-        ...note.people.map((p) => {
+        ...note.person.map((p) => {
           const id = `person-${p.id}`;
           const payload: NoteAssociationTooltipPayload = {
             type: "person",

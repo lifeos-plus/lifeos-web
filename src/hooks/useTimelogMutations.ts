@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { timelogsApi } from "@/services/api/timelogs";
+import type { components } from "@/services/api/generated/schema";
 import {
   findCachedTimelog,
   invalidateTimelogLatestEndTime,
@@ -16,7 +17,6 @@ import { useToast } from "@/contexts/ToastContext";
 import type {
   TimelogCreate,
   TimelogUpdate,
-  TimelogWithEnergyResponse,
   Timelog,
 } from "@/services/api/timelogs";
 import type { UUID } from "@/types/primitive";
@@ -52,7 +52,7 @@ export function useTimelogMutations() {
   // Create timelog mutation
   const createMutation = useMutation({
     mutationFn: (data: TimelogCreate) => timelogsApi.create(data),
-    onSuccess: async (result: TimelogWithEnergyResponse) => {
+    onSuccess: async (result: Timelog) => {
       setTimelogDetailCache(queryClient, result);
       mergeTimelogIntoListCaches(queryClient, result);
 
@@ -226,11 +226,8 @@ export function useTimelogMutations() {
   const batchUpdateMutation = useMutation({
     mutationFn: (params: {
       timelog_ids: UUID[];
-      update_type: "people" | "title" | "task" | "area";
-      people?: {
-        mode: "add" | "replace" | "clear";
-        person_ids: UUID[];
-      };
+      update_type: "person" | "title" | "task" | "area";
+      person?: components["schemas"]["TimelogBatchPersonUpdate"];
       title?: {
         mode: "replace" | "find_replace";
         value: string;

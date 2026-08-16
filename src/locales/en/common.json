@@ -154,7 +154,39 @@
     "selectPersonPlaceholder": "Please add a related person..."
   },
   "task": {
-    "selectTaskPlaceholder": "Please select a task..."
+    "selectTaskPlaceholder": "Please select a task...",
+    "confirmDeleteTitle": "Delete task?",
+    "confirmDeleteMessage": "Delete task \"{{content}}\"? This cannot be undone.",
+    "messages": {
+      "deleteSuccess": "Task deleted",
+      "deleteSuccessDetail": "The task has been deleted",
+      "deleteSucceeded": "Task deleted successfully",
+      "deleteFailed": "Delete task failed",
+      "deleteFailedDetail": "There was a problem deleting the task. Please try again later.",
+      "statusUpdateSuccess": "Task status updated",
+      "statusUpdateSuccessDetail": "The task status has been updated",
+      "statusUpdateSucceeded": "Task status updated successfully",
+      "statusUpdateSucceededDetail": "\"{{content}}\" status updated to {{status}}",
+      "statusUpdateFailed": "Update task status failed",
+      "statusUpdateFailedDetail": "There was a problem updating the task status. Please try again later.",
+      "orderUpdateSuccess": "Task order updated",
+      "orderUpdateSuccessDetail": "The task order has been updated",
+      "orderUpdateFailed": "Update task order failed",
+      "orderUpdateFailedDetail": "There was a problem updating the task order. Please try again later.",
+      "createSuccess": "Task created",
+      "createSuccessDetail": "\"{{content}}\" has been created",
+      "createFailed": "Create task failed",
+      "inputHint": "Please check your input and retry.",
+      "updateSuccess": "Task updated",
+      "updateSuccessDetail": "\"{{content}}\" has been updated",
+      "updateFailed": "Update task failed",
+      "sortUpdateSuccess": "Task sort updated",
+      "sortUpdateFailed": "Update task sort failed",
+      "moveSuccess": "Task moved",
+      "moveSuccessDetail": "\"{{content}}\" has been moved",
+      "moveFailed": "Move task failed",
+      "retryLater": "Please try again later."
+    }
   },
   "batchEdit": {
     "title": "Batch Edit",
@@ -609,7 +641,13 @@
       "searchFailed": "Unable to complete advanced search",
       "searchCompletedTitle": "Search completed",
       "searchFoundRecords": "Found {{count}} matching notes",
-      "searchFoundNone": "No matching notes found"
+      "searchFoundNone": "No matching notes found",
+      "createSuccess": "Note created",
+      "createFailed": "Create note failed",
+      "updateSuccess": "Note updated",
+      "updateFailed": "Update note failed",
+      "deleteSuccess": "Note deleted",
+      "deleteFailed": "Delete note failed"
     }
   },
   "settings": {
@@ -690,6 +728,7 @@
       "label": "Select Language",
       "placeholder": "Please select a language...",
       "updated": "Language updated",
+      "system": "Follow system",
       "timezone": {
         "label": "Preferred Timezone",
         "description": "Select the timezone used for statistics and display"
@@ -863,7 +902,13 @@
       "copyFailed": "Copy failed",
       "recomputeSuccess": "Time effort recomputation completed",
       "recomputeFailed": "Time effort recomputation failed",
-      "saveFailed": "Failed to save vision"
+      "saveFailed": "Failed to save vision",
+      "deleteSuccess": "Vision deleted",
+      "deleteSuccessDetail": "\"{{name}}\" has been deleted",
+      "deleteFailed": "Delete failed",
+      "harvestSuccess": "Vision harvested",
+      "harvestSuccessDetail": "\"{{name}}\" has been harvested. Congratulations!",
+      "harvestFailed": "Harvest failed"
     },
     "form": {
       "name": "Vision Name",
@@ -1132,6 +1177,13 @@
       "foundRecords": "Found {{count}} records",
       "noMatchingRecords": "No matching records found",
       "queryFailed": "Query failed",
+      "deleteSuccess": "Timelog deleted",
+      "deleteFailed": "Delete timelog failed",
+      "bulkDeletePartial": "Some timelogs failed to delete",
+      "bulkDeletePartialDetail": "Deleted {{deleted}} records, {{failed}} failed to delete: {{errors}}",
+      "bulkDeleteSuccess": "Batch delete succeeded",
+      "bulkDeleteFailed": "Batch delete timelogs failed",
+      "unrecorded": "Unrecorded",
       "loadingAdvancedQueryFailed": "Failed to load advanced query results",
       "exporting": "Exporting data...",
       "exportCompleted": "Export completed",
@@ -1283,7 +1335,9 @@
     "templates": {
       "manage": "Manage Templates",
       "manageTitle": "Open quick templates manager",
-      "noTemplates": "No templates yet, click 'Manage Templates' on the right to add."
+      "noTemplates": "No templates yet, click 'Manage Templates' on the right to add.",
+      "templateWithAreaDuration": "{{title}} (Area: {{area}}, Duration: {{duration}} min)",
+      "templateWithArea": "{{title}} (Area: {{area}})"
     },
     "activity": {
       "label": "Activity Description *",
@@ -1415,6 +1469,26 @@
   },
   "persons": {
     "addContact": "Add Contact",
+    "anniversaries": {
+      "created": "Anniversary created",
+      "createFailed": "Create anniversary failed",
+      "deleted": "Anniversary deleted",
+      "deleteFailed": "Delete anniversary failed",
+      "updated": "Anniversary updated",
+      "updateFailed": "Update anniversary failed",
+      "cannotCreate": "Unable to create anniversary",
+      "cannotUpdate": "Unable to update anniversary",
+      "cannotDelete": "Unable to delete anniversary",
+      "missingContact": "Missing contact information"
+    },
+    "messages": {
+      "createSuccess": "Contact created",
+      "createFailed": "Create contact failed",
+      "updateSuccess": "Contact updated",
+      "updateFailed": "Update contact failed",
+      "deleteSuccess": "Contact deleted",
+      "deleteFailed": "Delete contact failed"
+    },
     "timeline": {
       "title": "{{name}}'s Activity Timeline",
       "activityCount": "({{count}} activities)",
@@ -1691,7 +1765,7 @@
       "navLabel": "Note",
       "description": "Capture low-friction notes and link them to LifeOS entities."
     },
-    "persons": {
+    "person": {
       "displayName": "People",
       "navLabel": "People",
       "description": "Manage people and their linked LifeOS activity."
@@ -1748,7 +1822,13 @@
     }
   },
   "calendar": {
-    "saveFailed": "Save failed, please try again later"
+    "saveFailed": "Save failed, please try again later",
+    "noTimeDay": "No time day",
+    "mayanMoon": "Moon {{index}}",
+    "mayanWeek": "Week {{index}}",
+    "mayanYear": "Mayan year {{year}}",
+    "mayanDay": "{{month}}/{{day}}",
+    "mayanFullDate": "{{year}}/{{month}}/{{day}}"
   },
   "personDetail": {
     "name": "Name",
@@ -1842,6 +1922,7 @@
     "400": "Bad request",
     "409": "Resource conflict, please check your input",
     "notLoggedIn": "User not logged in, request cancelled",
+    "networkServiceError": "Network or service error",
     "proxyResponseTitle": "Proxy or gateway error",
     "proxyHtmlResponse": "A security proxy or gateway returned an HTML error page. Please try again later or contact an administrator if this keeps happening.",
     "invalidResponseFormat": "The service returned a response format that could not be parsed. Please try again later.",
@@ -2004,6 +2085,73 @@
     "empty": {
       "title": "No Tasks Yet",
       "description": "Start creating your first task"
+    }
+  },
+  "area": {
+    "unknown": "Unknown",
+    "unknownArea": "Unknown area"
+  },
+  "recurrence": {
+    "none": "No repeat",
+    "daily": "Every day",
+    "weekly": "Every week",
+    "monthly": "Every month",
+    "yearly": "Every year",
+    "weekdays": "Every weekday (Mon-Fri)",
+    "custom": "Custom recurrence",
+    "customOption": "Custom...",
+    "customTitle": "Custom recurrence rule",
+    "previewPrefix": "Preview: ",
+    "every": "Every",
+    "everyN": "Every {{count}}",
+    "dailyN": "Every {{count}} days",
+    "weeklyN": "Every {{count}} weeks",
+    "weeklyOn": "Every week on {{weekdays}}",
+    "weeklyNOn": "Every {{count}} weeks on {{weekdays}}",
+    "monthlyN": "Every {{count}} months",
+    "monthlyOnDay": "On day {{day}} of every month",
+    "monthlyNOnDay": "On day {{day}} of every {{count}} months",
+    "monthlyOnOrdinal": "Every month on the {{ordinal}} {{weekday}}",
+    "monthlyNOnOrdinal": "Every {{count}} months on the {{ordinal}} {{weekday}}",
+    "yearlyN": "Every {{count}} years",
+    "intelligentWeekly": "Every {{weekday}}",
+    "intelligentMonthly": "Every month on day {{day}}",
+    "intelligentYearly": "Every year on {{month}} {{day}}",
+    "separator": ", ",
+    "selectWeekdays": "Select weekdays",
+    "repeatMethod": "Repeat method",
+    "byDate": "By date: every month",
+    "byWeekday": "By weekday: every month",
+    "dayUnitLabel": "day",
+    "weekdayShort": {
+      "mo": "Mon",
+      "tu": "Tue",
+      "we": "Wed",
+      "th": "Thu",
+      "fr": "Fri",
+      "sa": "Sat",
+      "su": "Sun"
+    },
+    "monthShort": {
+      "1": "Jan",
+      "2": "Feb",
+      "3": "Mar",
+      "4": "Apr",
+      "5": "May",
+      "6": "Jun",
+      "7": "Jul",
+      "8": "Aug",
+      "9": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    },
+    "occurrence": {
+      "1": "1st",
+      "2": "2nd",
+      "3": "3rd",
+      "4": "4th",
+      "-1": "last"
     }
   }
 }

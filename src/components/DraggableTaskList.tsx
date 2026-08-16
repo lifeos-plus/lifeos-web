@@ -561,9 +561,9 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                 </div>
 
                 {/* Associated Persons */}
-                {task.people && task.people.length > 0 && (
+                {task.person && task.person.length > 0 && (
                   <PersonsList
-                    people={task.people}
+                    people={task.person}
                     inline
                     max={3}
                     className="min-w-0 max-w-full overflow-hidden"

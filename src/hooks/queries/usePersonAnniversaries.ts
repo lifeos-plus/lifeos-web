@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import {
   personsApi,
@@ -30,6 +31,7 @@ export function usePersonAnniversaries(
 ): UsePersonAnniversariesResult {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const enabled = Boolean(personId);
 
@@ -52,7 +54,7 @@ export function usePersonAnniversaries(
     mutationFn: (payload: AnniversaryCreate) =>
       personsApi.createAnniversary(personId as UUID, payload),
     onSuccess: async () => {
-      toast.showSuccess("纪念日已创建");
+      toast.showSuccess(t("persons.anniversaries.created"));
       if (personId) {
         await Promise.all([
           invalidatePersonAnniversaries(queryClient, personId),
@@ -61,7 +63,7 @@ export function usePersonAnniversaries(
       }
     },
     onError: (err: Error) => {
-      toast.showError("纪念日创建失败", err.message);
+      toast.showError(t("persons.anniversaries.createFailed"), err.message);
     },
   });
 
@@ -69,7 +71,7 @@ export function usePersonAnniversaries(
     mutationFn: (anniversaryId: UUID) =>
       personsApi.deleteAnniversary(personId as UUID, anniversaryId),
     onSuccess: async () => {
-      toast.showSuccess("纪念日已删除");
+      toast.showSuccess(t("persons.anniversaries.deleted"));
       if (personId) {
         await Promise.all([
           invalidatePersonAnniversaries(queryClient, personId),
@@ -78,7 +80,7 @@ export function usePersonAnniversaries(
       }
     },
     onError: (err: Error) => {
-      toast.showError("纪念日删除失败", err.message);
+      toast.showError(t("persons.anniversaries.deleteFailed"), err.message);
     },
   });
 
@@ -90,7 +92,7 @@ export function usePersonAnniversaries(
     mutationFn: ({ anniversaryId, payload }) =>
       personsApi.updateAnniversary(personId as UUID, anniversaryId, payload),
     onSuccess: async () => {
-      toast.showSuccess("纪念日已更新");
+      toast.showSuccess(t("persons.anniversaries.updated"));
       if (personId) {
         await Promise.all([
           invalidatePersonAnniversaries(queryClient, personId),
@@ -99,7 +101,7 @@ export function usePersonAnniversaries(
       }
     },
     onError: (err: Error) => {
-      toast.showError("纪念日更新失败", err.message);
+      toast.showError(t("persons.anniversaries.updateFailed"), err.message);
     },
   });
 
@@ -108,21 +110,30 @@ export function usePersonAnniversaries(
     isLoading,
     createAnniversary: (payload) => {
       if (!personId) {
-        toast.showError("无法创建纪念日", "缺少联系人信息");
+        toast.showError(
+          t("persons.anniversaries.cannotCreate"),
+          t("persons.anniversaries.missingContact"),
+        );
         return;
       }
       createMutation.mutate(payload);
     },
     updateAnniversary: (anniversaryId, payload) => {
       if (!personId) {
-        toast.showError("无法更新纪念日", "缺少联系人信息");
+        toast.showError(
+          t("persons.anniversaries.cannotUpdate"),
+          t("persons.anniversaries.missingContact"),
+        );
         return;
       }
       updateMutation.mutate({ anniversaryId, payload });
     },
     deleteAnniversary: (anniversaryId) => {
       if (!personId) {
-        toast.showError("无法删除纪念日", "缺少联系人信息");
+        toast.showError(
+          t("persons.anniversaries.cannotDelete"),
+          t("persons.anniversaries.missingContact"),
+        );
         return;
       }
       deleteMutation.mutate(anniversaryId);

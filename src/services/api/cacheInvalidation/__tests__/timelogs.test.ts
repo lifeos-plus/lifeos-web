@@ -34,7 +34,7 @@ const entry = (overrides: Partial<Timelog> = {}): Timelog =>
     area_id: null,
     task_id: null,
     task: null,
-    people: [],
+    person: [],
     tags: [],
     created_at: "2025-01-01T00:00:00Z",
     updated_at: "2025-01-01T00:00:00Z",

@@ -233,7 +233,7 @@ function NotesPage() {
       id?: UUID;
       content: string;
       createdAt: Date;
-      people?: PersonSummary[];
+      person?: PersonSummary[];
       tags?: Tag[];
       task?: ApiNote["task"];
       timelogs?: ApiNote["timelogs"];
@@ -245,7 +245,22 @@ function NotesPage() {
         content: n.content,
         created_at: n.createdAt.toISOString(),
         updated_at: n.createdAt.toISOString(),
-        people: n.people ?? [],
+        person: (n.person ?? []).map((p) => ({
+          id: p.id,
+          name: p.name ?? null,
+          display_name: p.display_name ?? p.name ?? "",
+          primary_nickname: p.primary_nickname ?? "",
+          tags: (p.tags ?? []).map((tag) => ({
+            id: tag.id,
+            name: tag.name ?? "",
+            category: tag.category ?? "",
+            entity_type: tag.entity_type ?? "",
+            description: tag.description ?? "",
+            color: tag.color ?? null,
+            created_at: tag.created_at ?? "",
+            updated_at: tag.updated_at ?? "",
+          })),
+        })),
         tags: n.tags ?? [],
         task: n.task ?? null,
         tasks: n.task ? [n.task] : [],
@@ -264,7 +279,7 @@ function NotesPage() {
       id?: UUID;
       content: string;
       createdAt: Date;
-      people?: PersonSummary[];
+      person?: PersonSummary[];
       tags?: Tag[];
       task?: ApiNote["task"];
       timelogs?: ApiNote["timelogs"];

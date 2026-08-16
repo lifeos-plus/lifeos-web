@@ -91,13 +91,13 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     if (entityType === "task" && task) {
       return deriveNoteAssociationDefaults({
         task,
-        people: task.people,
+        person: task.person,
       });
     }
     if (entityType === "timelog" && timelog) {
       return deriveNoteAssociationDefaults({
         task: timelog.task,
-        people: timelog.people,
+        person: timelog.person,
       });
     }
     return null;
@@ -295,9 +295,9 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
           {notes.map((note) => {
             const associations: NoteCardAssociation[] = [];
 
-            if (note.people && note.people.length > 0) {
+            if (note.person && note.person.length > 0) {
               associations.push(
-                ...note.people.map((person) => ({
+                ...note.person.map((person) => ({
                   id: `person-${person.id}`,
                   type: "person" as const,
                   label: `@${person.display_name ?? person.name}`,

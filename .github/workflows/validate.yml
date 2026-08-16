@@ -32,6 +32,8 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v9.0.0
+        with:
+          cache-dependency-glob: package-lock.json
 
       - name: Install LifeOS CLI with Web API extras
         run: |

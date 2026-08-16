@@ -305,4 +305,92 @@ describe("useTimeLogData", () => {
       "UTC",
     );
   });
+
+  it("shows an error toast when deleting a single entry fails", async () => {
+    fetchRangeMock.mockResolvedValue({
+      items: [],
+      pagination: { page: 1, size: 0, total: 0, pages: 0 },
+      meta: {},
+    });
+    processTimeEntriesMock.mockReturnValue([]);
+    deleteMock.mockRejectedValue(new Error("delete boom"));
+
+    const { result } = setup();
+
+    await waitFor(() => expect(fetchRangeMock).toHaveBeenCalled());
+
+    act(() => result.current.requestDeleteEntry("event-1"));
+    await act(async () => {
+      await result.current.confirmDeleteEntry().catch(() => undefined);
+    });
+
+    expect(toastMock.showError).toHaveBeenCalledWith(
+      "timeLog.messages.deleteFailed",
+      "delete boom",
+    );
+  });
+
+  it("reports partial batch deletion failures", async () => {
+    fetchRangeMock.mockResolvedValue({
+      items: [],
+      pagination: { page: 1, size: 0, total: 0, pages: 0 },
+      meta: {},
+    });
+    processTimeEntriesMock.mockReturnValue([]);
+    batchDeleteMock.mockResolvedValue({
+      failed_ids: ["event-2"],
+      deleted_count: 1,
+      errors: ["nope"],
+    });
+
+    const { result } = setup();
+
+    await waitFor(() => expect(fetchRangeMock).toHaveBeenCalled());
+
+    act(() => {
+      result.current.selectionHandlers.handleSelectEntry(
+        "event-1" as never,
+        true,
+      );
+    });
+    act(() => result.current.requestBatchDelete());
+    await act(async () => {
+      await result.current.confirmBatchDelete();
+    });
+
+    expect(toastMock.showError).toHaveBeenCalledWith(
+      "timeLog.messages.bulkDeletePartial",
+      "timeLog.messages.bulkDeletePartialDetail",
+    );
+  });
+
+  it("shows an error toast when batch deletion fails entirely", async () => {
+    fetchRangeMock.mockResolvedValue({
+      items: [],
+      pagination: { page: 1, size: 0, total: 0, pages: 0 },
+      meta: {},
+    });
+    processTimeEntriesMock.mockReturnValue([]);
+    batchDeleteMock.mockRejectedValue(new Error("batch boom"));
+
+    const { result } = setup();
+
+    await waitFor(() => expect(fetchRangeMock).toHaveBeenCalled());
+
+    act(() => {
+      result.current.selectionHandlers.handleSelectEntry(
+        "event-1" as never,
+        true,
+      );
+    });
+    act(() => result.current.requestBatchDelete());
+    await act(async () => {
+      await result.current.confirmBatchDelete().catch(() => undefined);
+    });
+
+    expect(toastMock.showError).toHaveBeenCalledWith(
+      "timeLog.messages.bulkDeleteFailed",
+      "batch boom",
+    );
+  });
 });

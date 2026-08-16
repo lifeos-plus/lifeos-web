@@ -53,7 +53,7 @@ const ModalContent: React.FC<ModalContentProps> = ({
   errorDisplayMode = "inline",
   loading = false,
   showLoadingOverlay = false,
-  loadingOverlayText = "加载中...",
+  loadingOverlayText = undefined,
   showLoadingSpinner = false,
   loadingSpinnerSize = "md",
   overflow = "auto",
@@ -104,7 +104,9 @@ const ModalContent: React.FC<ModalContentProps> = ({
         <div className="absolute inset-0 bg-base-100/80 flex items-center justify-center z-loading-overlay rounded-lg">
           <div className="flex flex-col items-center gap-2">
             <span className="loading loading-spinner loading-md text-primary"></span>
-            <p className="text-sm">{loadingOverlayText}</p>
+            <p className="text-sm">
+              {loadingOverlayText ?? t("common.loading")}
+            </p>
           </div>
         </div>
       )}
@@ -211,7 +213,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
   error = null,
   onErrorDismiss,
   showLoadingOverlay = false,
-  loadingOverlayText = "加载中...",
+  loadingOverlayText = undefined,
   errorDisplayMode = "inline",
 
   // 新增加载指示器props
@@ -227,6 +229,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
   const modalId = useId();
   const titleId = useId();
+  const { t } = useTranslation();
   const { register, unregister, isTop } = useModalStack();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -316,7 +319,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
           {/* 内置关闭按钮 - 右上角 */}
           {showCloseButton && (
             <ActionButton
-              label={ariaLabel || "关闭"}
+              label={ariaLabel || t("common.close")}
               iconName="x-mark"
               onClick={onClose}
               disabled={closeDisabled}

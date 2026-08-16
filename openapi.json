@@ -3430,14 +3430,14 @@
             "title": "Person Stats",
             "type": "array"
           },
-          "total_persons": {
-            "title": "Total Persons",
+          "total_person": {
+            "title": "Total Person",
             "type": "integer"
           }
         },
         "required": [
           "person_stats",
-          "total_persons"
+          "total_person"
         ],
         "title": "NotePersonStatsResponse",
         "type": "object"
@@ -3482,11 +3482,11 @@
             "title": "Id",
             "type": "string"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonSummaryResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "tags": {
@@ -3539,7 +3539,7 @@
           "updated_at",
           "deleted_at",
           "tags",
-          "people",
+          "person",
           "tasks",
           "task",
           "visions",
@@ -4453,11 +4453,11 @@
             ],
             "title": "Master Event Id"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonNameResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "priority": {
@@ -4534,7 +4534,7 @@
           "is_instance",
           "master_event_id",
           "instance_id",
-          "people"
+          "person"
         ],
         "title": "PlannedEventResponse",
         "type": "object"
@@ -5872,7 +5872,7 @@
             ],
             "title": "Parent Task Id"
           },
-          "people": {
+          "person": {
             "anyOf": [
               {
                 "items": {
@@ -5884,7 +5884,7 @@
                 "type": "null"
               }
             ],
-            "title": "People"
+            "title": "Person"
           },
           "planning_cycle_days": {
             "anyOf": [
@@ -6121,7 +6121,7 @@
             ],
             "title": "Parent Task Id"
           },
-          "people": {
+          "person": {
             "anyOf": [
               {
                 "items": {
@@ -6133,7 +6133,7 @@
                 "type": "null"
               }
             ],
-            "title": "People"
+            "title": "Person"
           },
           "planning_cycle_days": {
             "anyOf": [
@@ -6536,7 +6536,7 @@
             ],
             "title": "Parent Task Id"
           },
-          "people": {
+          "person": {
             "anyOf": [
               {
                 "items": {
@@ -6548,7 +6548,7 @@
                 "type": "null"
               }
             ],
-            "title": "People"
+            "title": "Person"
           },
           "planning_cycle_days": {
             "anyOf": [
@@ -6777,7 +6777,7 @@
         "title": "TimelogBatchAreaUpdate",
         "type": "object"
       },
-      "TimelogBatchPeopleUpdate": {
+      "TimelogBatchPersonUpdate": {
         "description": "Person association update payload for timelog batch edits.",
         "properties": {
           "mode": {
@@ -6794,7 +6794,7 @@
             "type": "array"
           }
         },
-        "title": "TimelogBatchPeopleUpdate",
+        "title": "TimelogBatchPersonUpdate",
         "type": "object"
       },
       "TimelogBatchTaskUpdate": {
@@ -6864,10 +6864,10 @@
               }
             ]
           },
-          "people": {
+          "person": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/TimelogBatchPeopleUpdate"
+                "$ref": "#/components/schemas/TimelogBatchPersonUpdate"
               },
               {
                 "type": "null"
@@ -7293,11 +7293,11 @@
             ],
             "title": "Notes"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonNameResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "start_time": {
@@ -7362,7 +7362,7 @@
           "linked_notes_count",
           "task",
           "tags",
-          "people"
+          "person"
         ],
         "title": "TimelogResponse",
         "type": "object"
@@ -7608,11 +7608,11 @@
             ],
             "title": "Last Used At"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonSummaryResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "person_ids": {
@@ -7642,7 +7642,7 @@
           "area_name",
           "area_color",
           "person_ids",
-          "people",
+          "person",
           "default_duration_minutes",
           "position",
           "usage_count",
@@ -8098,11 +8098,11 @@
             "title": "Name",
             "type": "string"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonNameResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "stage": {
@@ -8124,7 +8124,7 @@
           "experience_points",
           "experience_rate_per_hour",
           "created_at",
-          "people"
+          "person"
         ],
         "title": "VisionResponse",
         "type": "object"
@@ -8341,11 +8341,11 @@
             "title": "Name",
             "type": "string"
           },
-          "people": {
+          "person": {
             "items": {
               "$ref": "#/components/schemas/PersonNameResponse"
             },
-            "title": "People",
+            "title": "Person",
             "type": "array"
           },
           "stage": {
@@ -8374,7 +8374,7 @@
           "experience_points",
           "experience_rate_per_hour",
           "created_at",
-          "people",
+          "person",
           "tasks"
         ],
         "title": "VisionWithTasksResponse",
@@ -8403,7 +8403,6 @@
   },
   "info": {
     "description": "Local-first Web API for lifeos-cli data.",
-    "x-lifeos-cli-release": "v1.1.1",
     "title": "LifeOS Web UI",
     "version": "0.1.0"
   },
@@ -10877,10 +10876,10 @@
         ]
       }
     },
-    "/api/v1/notes/stats/persons": {
+    "/api/v1/notes/stats/person": {
       "get": {
         "description": "Return active-note usage counts grouped by associated person.",
-        "operationId": "get_note_person_usage_stats_api_v1_notes_stats_persons_get",
+        "operationId": "get_note_person_usage_stats_api_v1_notes_stats_person_get",
         "responses": {
           "200": {
             "content": {
@@ -10988,10 +10987,10 @@
         ]
       }
     },
-    "/api/v1/persons/": {
+    "/api/v1/person/": {
       "get": {
-        "description": "List people for frontend person selectors and pages.",
-        "operationId": "list_persons_api_v1_persons__get",
+        "description": "List person for frontend person selectors and pages.",
+        "operationId": "list_person_api_v1_person__get",
         "parameters": [
           {
             "in": "query",
@@ -11088,14 +11087,14 @@
             "description": "Validation Error"
           }
         },
-        "summary": "List Persons",
+        "summary": "List Person",
         "tags": [
-          "persons"
+          "person"
         ]
       },
       "post": {
         "description": "Create a person.",
-        "operationId": "create_person_api_v1_persons__post",
+        "operationId": "create_person_api_v1_person__post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -11130,14 +11129,14 @@
         },
         "summary": "Create Person",
         "tags": [
-          "persons"
+          "person"
         ]
       }
     },
-    "/api/v1/persons/search-by-tag": {
+    "/api/v1/person/search-by-tag": {
       "get": {
         "description": "Return an empty tag-name search result until LifeOS supports tag-name lookup.",
-        "operationId": "search_persons_by_tag_api_v1_persons_search_by_tag_get",
+        "operationId": "search_person_by_tag_api_v1_person_search_by_tag_get",
         "parameters": [
           {
             "in": "query",
@@ -11185,16 +11184,16 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Search Persons By Tag",
+        "summary": "Search Person By Tag",
         "tags": [
-          "persons"
+          "person"
         ]
       }
     },
-    "/api/v1/persons/{person_id}": {
+    "/api/v1/person/{person_id}": {
       "delete": {
         "description": "Soft-delete a person.",
-        "operationId": "delete_person_api_v1_persons__person_id__delete",
+        "operationId": "delete_person_api_v1_person__person_id__delete",
         "parameters": [
           {
             "in": "path",
@@ -11224,12 +11223,12 @@
         },
         "summary": "Delete Person",
         "tags": [
-          "persons"
+          "person"
         ]
       },
       "get": {
         "description": "Load one person.",
-        "operationId": "get_person_api_v1_persons__person_id__get",
+        "operationId": "get_person_api_v1_person__person_id__get",
         "parameters": [
           {
             "in": "path",
@@ -11266,12 +11265,12 @@
         },
         "summary": "Get Person",
         "tags": [
-          "persons"
+          "person"
         ]
       },
       "patch": {
         "description": "Update a person.",
-        "operationId": "update_person_api_v1_persons__person_id__patch",
+        "operationId": "update_person_api_v1_person__person_id__patch",
         "parameters": [
           {
             "in": "path",
@@ -11318,14 +11317,14 @@
         },
         "summary": "Update Person",
         "tags": [
-          "persons"
+          "person"
         ]
       }
     },
-    "/api/v1/persons/{person_id}/activities/": {
+    "/api/v1/person/{person_id}/activities/": {
       "get": {
         "description": "Return person-linked activity timeline data.",
-        "operationId": "list_person_activities_api_v1_persons__person_id__activities__get",
+        "operationId": "list_person_activities_api_v1_person__person_id__activities__get",
         "parameters": [
           {
             "in": "path",
@@ -11417,14 +11416,14 @@
         },
         "summary": "List Person Activities",
         "tags": [
-          "persons"
+          "person"
         ]
       }
     },
-    "/api/v1/persons/{person_id}/anniversaries/": {
+    "/api/v1/person/{person_id}/anniversaries/": {
       "get": {
         "description": "Return empty anniversaries until LifeOS has an anniversary model.",
-        "operationId": "list_person_anniversaries_api_v1_persons__person_id__anniversaries__get",
+        "operationId": "list_person_anniversaries_api_v1_person__person_id__anniversaries__get",
         "parameters": [
           {
             "in": "path",
@@ -11461,7 +11460,7 @@
         },
         "summary": "List Person Anniversaries",
         "tags": [
-          "persons"
+          "person"
         ]
       }
     },

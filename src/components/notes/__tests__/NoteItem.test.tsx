@@ -9,7 +9,7 @@ const baseNote: Note = {
   id: "note-1" as UUID,
   content: "Completed after lunch",
   createdAt: new Date("2026-07-05T12:00:00.000Z"),
-  people: [],
+  person: [],
   tags: [],
   task: null,
   timelogs: [],

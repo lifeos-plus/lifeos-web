@@ -89,4 +89,44 @@ describe("usePersonAnniversaries", () => {
       { timeout: 2000 },
     );
   });
+
+  it("shows success toasts for delete and update when a person is provided", async () => {
+    const { result } = renderHook(
+      () => usePersonAnniversaries("p1" as unknown as string),
+      {
+        wrapper: wrapperFactory("p1"),
+      },
+    );
+
+    await act(async () => {
+      result.current.deleteAnniversary("a1");
+    });
+    expect(showSuccess).toHaveBeenCalled();
+
+    await act(async () => {
+      result.current.updateAnniversary("a1", {
+        name: "n",
+        date: "2020-01-02",
+      });
+    });
+    expect(showSuccess).toHaveBeenCalled();
+  });
+
+  it("blocks delete and update without a person and shows the missing-contact error", async () => {
+    const { result } = renderHook(() => usePersonAnniversaries(null), {
+      wrapper: wrapperFactory(null),
+    });
+
+    await act(async () => {
+      result.current.deleteAnniversary("a1");
+    });
+    await act(async () => {
+      result.current.updateAnniversary("a1", {
+        name: "n",
+        date: "2020-01-02",
+      });
+    });
+
+    expect(showError).toHaveBeenCalled();
+  });
 });

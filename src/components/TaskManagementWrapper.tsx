@@ -84,7 +84,7 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
     if (!taskManagement.creatingNoteForTask) return null;
     return deriveNoteAssociationDefaults({
       task: taskManagement.creatingNoteForTask,
-      people: taskManagement.creatingNoteForTask.people,
+      person: taskManagement.creatingNoteForTask.person,
     });
   }, [taskManagement.creatingNoteForTask]);
 
@@ -126,9 +126,11 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
       {taskManagement.isDeleteConfirmOpen && taskManagement.deletingTask && (
         <ConfirmDialog
           isOpen={taskManagement.isDeleteConfirmOpen}
-          title="确认删除任务"
-          message={`确定要删除任务 "${taskManagement.deletingTask.content}" 吗？此操作不可撤销。`}
-          confirmText="删除"
+          title={t("task.confirmDeleteTitle")}
+          message={t("task.confirmDeleteMessage", {
+            content: taskManagement.deletingTask.content,
+          })}
+          confirmText={t("common.delete")}
           cancelText={t("common.cancel")}
           onConfirm={taskManagement.actions.confirmDeleteTask}
           onCancel={taskManagement.actions.closeDeleteConfirm}
@@ -169,7 +171,7 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
           }
           preSelectedPersonIds={
             createNoteDefaults?.preSelectedPersonIds ??
-            taskManagement.creatingNoteForTask?.people?.map((p) => p.id)
+            taskManagement.creatingNoteForTask?.person?.map((p) => p.id)
           }
           lockTaskSelection={createNoteDefaults?.lockTaskSelection ?? false}
           lockPersonSelection={createNoteDefaults?.lockPersonSelection ?? false}

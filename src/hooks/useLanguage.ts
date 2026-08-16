@@ -11,7 +11,7 @@ interface LanguageOption {
 }
 
 export function useLanguage() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState<Language>("auto");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export function useLanguage() {
 
   // Language options for UI
   const languageOptions: LanguageOption[] = [
-    { value: "auto", label: "跟随系统" },
+    { value: "auto", label: t("settings.language.system") },
     { value: "zh", label: "中文" },
     { value: "en", label: "English" },
   ];

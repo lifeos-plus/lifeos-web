@@ -155,7 +155,7 @@ export default function CreateNoteModal({
   useEffect(() => {
     if (mode === "edit" && existingNote) {
       setContent(existingNote.content);
-      setSelectedPersonIds(existingNote.people?.map((person) => person.id) || []);
+      setSelectedPersonIds(existingNote.person?.map((person) => person.id) || []);
       setSelectedTagIds(
         uniqueUuidList([
           ...normalizedPreSelectedTagIds,

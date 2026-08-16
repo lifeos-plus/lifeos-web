@@ -2,12 +2,10 @@ import type { UUID } from "@/types/primitive";
 import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
-import type { PersonSummary } from "./types/common";
 
 type PlannedEventTransport = components["schemas"]["PlannedEventResponse"];
-export type PlannedEvent = Omit<PlannedEventTransport, "extra_data" | "people"> & {
+export type PlannedEvent = Omit<PlannedEventTransport, "extra_data"> & {
   extra_data?: Record<string, unknown> | null;
-  people?: PersonSummary[];
 };
 export type PlannedEventListResponse = components["schemas"]["ListResponse_PlannedEventResponse_PlannedEventListMeta_"];
 type PlannedEventCreateTransport = components["schemas"]["PlannedEventCreate"];

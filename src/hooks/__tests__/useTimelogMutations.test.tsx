@@ -85,7 +85,7 @@ describe("useTimelogMutations", () => {
       area_id: "area-1",
       task_id: "task-1",
       task: { id: "task-1", vision_id: "vision-1", content: "task" },
-      people: [{ id: "person-1", name: "person" }],
+      person: [{ id: "person-1", name: "person" }],
     };
     queryClient.setQueryData(listKey, [existing]);
     createMock.mockResolvedValue(created);

@@ -1,40 +1,27 @@
 #!/usr/bin/env node
 /**
- * Resolve the lifeos-cli version that must back the pinned OpenAPI contract.
+ * Resolve the lifeos-cli version that backs the pinned OpenAPI contract.
  *
- * The pinned `openapi.json` is self-describing: `info["x-lifeos-cli-release"]`
- * records the GitHub release tag the document was fetched from. This module is
- * the single reader of that provenance, and CI, the E2E harness, and
- * contributor docs all derive the CLI version from it. No version number is
- * stored in documentation or duplicated in other scripts.
+ * The web repository owns this pin explicitly: bump DEFAULT_SCHEMA_VERSION (or
+ * pass LIFEOS_CLI_SCHEMA_VERSION) when consuming a newer lifeos-cli release.
+ * CI, the E2E harness, and contributor docs all derive the version from this
+ * single constant, so there is exactly one place to update.
  */
 
-import { readFile } from "node:fs/promises";
-import { fileURLToPath, pathToFileURL } from "node:url";
-import path from "node:path";
+import { pathToFileURL } from "node:url";
 
-const RELEASE_PROVENANCE_KEY = "x-lifeos-cli-release";
+export const DEFAULT_SCHEMA_VERSION = "v1.1.2";
 const PEP440_VERSION_PATTERN = /^\d+\.\d+\.\d+[0-9A-Za-z.+-]*$/;
 
-export async function pinnedCliVersion() {
-  const openApiPath = path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "..",
-    "openapi.json",
-  );
-  const document = JSON.parse(await readFile(openApiPath, "utf8"));
-  const releaseTag = document.info?.[RELEASE_PROVENANCE_KEY];
-  if (typeof releaseTag !== "string" || releaseTag === "") {
-    throw new Error(
-      `openapi.json does not record its lifeos-cli release ` +
-        `(missing info.${RELEASE_PROVENANCE_KEY}). Run ` +
-        "`npm run api:refresh` to pin a self-describing contract.",
-    );
-  }
-  const version = releaseTag.replace(/^v/, "");
+export function resolveSchemaVersion() {
+  return process.env.LIFEOS_CLI_SCHEMA_VERSION ?? DEFAULT_SCHEMA_VERSION;
+}
+
+export function pinnedCliVersion() {
+  const version = resolveSchemaVersion().replace(/^v/, "");
   if (!PEP440_VERSION_PATTERN.test(version)) {
     throw new Error(
-      `Invalid lifeos-cli version recorded in openapi.json: "${releaseTag}". ` +
+      `Invalid lifeos-cli version derived from the schema pin: "${version}". ` +
         "Expected a numeric PEP 440 version (major.minor.patch).",
     );
   }
@@ -46,5 +33,5 @@ const isMain =
   pathToFileURL(process.argv[1]).href === import.meta.url;
 
 if (isMain) {
-  console.log(await pinnedCliVersion());
+  console.log(pinnedCliVersion());
 }

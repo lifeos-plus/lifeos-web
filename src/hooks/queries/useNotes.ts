@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   useQuery,
   useMutation,
@@ -27,6 +28,7 @@ export function useNotes(
 ) {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
 
   // 1. 使用 useInfiniteQuery 获取笔记列表 (分页逻辑)
   const {
@@ -72,7 +74,7 @@ export function useNotes(
   const createNoteMutation = useMutation({
     mutationFn: (noteData: NoteCreate) => notesApi.create(noteData),
     onSuccess: async (createdNote) => {
-      toast.showSuccess("笔记创建成功！");
+      toast.showSuccess(t("notes.messages.createSuccess"));
       queryClient.setQueryData(notesKeys.detail(createdNote.id), createdNote);
       await Promise.all([
         invalidateNotesLists(queryClient),
@@ -81,7 +83,7 @@ export function useNotes(
       ]);
     },
     onError: (err: Error) => {
-      toast.showError("笔记创建失败", err.message);
+      toast.showError(t("notes.messages.createFailed"), err.message);
     },
   });
 
@@ -90,7 +92,7 @@ export function useNotes(
     mutationFn: (variables: { noteId: UUID; data: NoteUpdate }) =>
       notesApi.update(variables.noteId, variables.data),
     onSuccess: async (updatedNote) => {
-      toast.showSuccess("笔记更新成功！");
+      toast.showSuccess(t("notes.messages.updateSuccess"));
       queryClient.setQueryData(notesKeys.detail(updatedNote.id), updatedNote);
       await Promise.all([
         invalidateNotesLists(queryClient),
@@ -99,7 +101,7 @@ export function useNotes(
       ]);
     },
     onError: (err: Error) => {
-      toast.showError("笔记更新失败", err.message);
+      toast.showError(t("notes.messages.updateFailed"), err.message);
     },
   });
 
@@ -107,7 +109,7 @@ export function useNotes(
   const deleteNoteMutation = useMutation({
     mutationFn: (noteId: UUID) => notesApi.delete(noteId),
     onSuccess: async (_, noteId) => {
-      toast.showSuccess("笔记删除成功！");
+      toast.showSuccess(t("notes.messages.deleteSuccess"));
       queryClient.removeQueries({
         queryKey: notesKeys.detail(noteId),
         exact: true,
@@ -119,7 +121,7 @@ export function useNotes(
       ]);
     },
     onError: (err: Error) => {
-      toast.showError("笔记删除失败", err.message);
+      toast.showError(t("notes.messages.deleteFailed"), err.message);
     },
   });
 

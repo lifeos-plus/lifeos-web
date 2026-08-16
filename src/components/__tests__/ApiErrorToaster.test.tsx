@@ -14,7 +14,10 @@ describe("ApiErrorToaster", () => {
 
     emitApiError({ message: "Boom" });
 
-    expect(showError).toHaveBeenCalledWith("网络或服务错误", "Boom");
+    expect(showError).toHaveBeenCalledWith(
+      "apiErrors.networkServiceError",
+      "Boom",
+    );
 
     unmount();
     emitApiError({ message: "Ignored" });
@@ -29,8 +32,8 @@ describe("ApiErrorToaster", () => {
       toast: { showError },
     });
 
-    emitApiError({ title: "代理层异常", message: "请稍后重试" });
+    emitApiError({ title: "Proxy error", message: "Please retry" });
 
-    expect(showError).toHaveBeenCalledWith("代理层异常", "请稍后重试");
+    expect(showError).toHaveBeenCalledWith("Proxy error", "Please retry");
   });
 });

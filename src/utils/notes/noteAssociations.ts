@@ -11,7 +11,7 @@ type TaskLike =
 
 interface NoteAssociationSource {
   task?: TaskLike;
-  people?: Array<Pick<PersonSummary, "id">> | null | undefined;
+  person?: Array<Pick<PersonSummary, "id">> | null | undefined;
 }
 
 interface NoteAssociationDefaults {
@@ -36,7 +36,7 @@ export function deriveNoteAssociationDefaults(
 ): NoteAssociationDefaults {
   const task = source.task ?? null;
   const personIds = uniqueIds(
-    (source.people ?? [])
+    (source.person ?? [])
       .map((person) => person?.id)
       .filter((id): id is UUID => typeof id === "string" && id.length > 0),
   );

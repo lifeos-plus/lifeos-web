@@ -21,53 +21,21 @@ interface RecurrenceSelectorProps {
 
 // Predefined recurrence presets
 const RECURRENCE_PRESETS = [
-  { preset: "none", rrule: "", description: "不重复" },
-  { preset: "daily", rrule: "FREQ=DAILY", description: "每天" },
-  { preset: "weekly", rrule: "FREQ=WEEKLY", description: "每周" },
-  { preset: "monthly", rrule: "FREQ=MONTHLY", description: "每月" },
-  { preset: "yearly", rrule: "FREQ=YEARLY", description: "每年" },
-  {
-    preset: "weekdays",
-    rrule: "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
-    description: "每周工作日 (周一至周五)",
-  },
+  { preset: "none", rrule: "" },
+  { preset: "daily", rrule: "FREQ=DAILY" },
+  { preset: "weekly", rrule: "FREQ=WEEKLY" },
+  { preset: "monthly", rrule: "FREQ=MONTHLY" },
+  { preset: "yearly", rrule: "FREQ=YEARLY" },
+  { preset: "weekdays", rrule: "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR" },
 ];
 
-// Weekday mappings
-const WEEKDAYS = [
-  { value: "MO", label: "周一" },
-  { value: "TU", label: "周二" },
-  { value: "WE", label: "周三" },
-  { value: "TH", label: "周四" },
-  { value: "FR", label: "周五" },
-  { value: "SA", label: "周六" },
-  { value: "SU", label: "周日" },
-];
+// Weekday, month, and occurrence value lists; labels come from i18n catalogs.
+const WEEKDAY_VALUES = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
+const MONTH_VALUES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+const OCCURRENCE_VALUES = ["1", "2", "3", "4", "-1"];
 
-// Month mappings for yearly recurrence
-const MONTHS = [
-  { value: "1", label: "1月" },
-  { value: "2", label: "2月" },
-  { value: "3", label: "3月" },
-  { value: "4", label: "4月" },
-  { value: "5", label: "5月" },
-  { value: "6", label: "6月" },
-  { value: "7", label: "7月" },
-  { value: "8", label: "8月" },
-  { value: "9", label: "9月" },
-  { value: "10", label: "10月" },
-  { value: "11", label: "11月" },
-  { value: "12", label: "12月" },
-];
-
-// Occurrence mappings for monthly recurrence
-const OCCURRENCES = [
-  { value: "1", label: "第一个" },
-  { value: "2", label: "第二个" },
-  { value: "3", label: "第三个" },
-  { value: "4", label: "第四个" },
-  { value: "-1", label: "最后一个" },
-];
+// JavaScript Date.getDay() order (Sunday first) mapped to weekdayShort keys.
+const JS_DAY_KEYS = ["su", "mo", "tu", "we", "th", "fr", "sa"];
 
 const BYDAY_PATTERN = /^([+-]?\d+)?(MO|TU|WE|TH|FR|SA|SU)$/;
 
@@ -160,38 +128,28 @@ export default function RecurrenceSelector({
 
   // Generate intelligent default description based on start date
   const getIntelligentDescription = (preset: string): string => {
-    if (!startDate)
-      return (
-        RECURRENCE_PRESETS.find((p) => p.preset === preset)?.description || ""
-      );
-
-    const dayNames = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-    const monthNames = [
-      "1月",
-      "2月",
-      "3月",
-      "4月",
-      "5月",
-      "6月",
-      "7月",
-      "8月",
-      "9月",
-      "10月",
-      "11月",
-      "12月",
-    ];
+    if (!startDate) return t(`recurrence.${preset}`);
 
     switch (preset) {
       case "weekly":
-        return `每周${dayNames[startDate.getDay()]}`;
+        return t("recurrence.intelligentWeekly", {
+          weekday: t(
+            `recurrence.weekdayShort.${JS_DAY_KEYS[startDate.getDay()]}`,
+          ),
+        });
       case "monthly":
-        return `每月${startDate.getDate()}日`;
+        return t("recurrence.intelligentMonthly", {
+          day: startDate.getDate(),
+        });
       case "yearly":
-        return `每年${monthNames[startDate.getMonth()]}${startDate.getDate()}日`;
+        return t("recurrence.intelligentYearly", {
+          month: t(
+            `recurrence.monthShort.${String(startDate.getMonth() + 1)}`,
+          ),
+          day: startDate.getDate(),
+        });
       default:
-        return (
-          RECURRENCE_PRESETS.find((p) => p.preset === preset)?.description || ""
-        );
+        return t(`recurrence.${preset}`);
     }
   };
 
@@ -246,36 +204,63 @@ export default function RecurrenceSelector({
   const generateCustomDescription = (
     config: CustomRecurrenceConfig,
   ): string => {
-    const intervalText = config.interval > 1 ? `每${config.interval}` : "每";
+    const hasInterval = config.interval > 1;
+    const weekdayLabels = (config.weekdays ?? [])
+      .map((wd) => t(`recurrence.weekdayShort.${wd.toLowerCase()}`))
+      .join(t("recurrence.separator"));
 
     switch (config.frequency) {
       case "DAILY":
-        return `${intervalText}天`;
+        return hasInterval
+          ? t("recurrence.dailyN", { count: config.interval })
+          : t("recurrence.daily");
       case "WEEKLY":
         if (config.weekdays && config.weekdays.length > 0) {
-          const weekdayLabels = config.weekdays
-            .map((wd) => WEEKDAYS.find((w) => w.value === wd)?.label)
-            .join("、");
-          return `${intervalText}周的${weekdayLabels}`;
+          return hasInterval
+            ? t("recurrence.weeklyNOn", {
+                count: config.interval,
+                weekdays: weekdayLabels,
+              })
+            : t("recurrence.weeklyOn", { weekdays: weekdayLabels });
         }
-        return `${intervalText}周`;
+        return hasInterval
+          ? t("recurrence.weeklyN", { count: config.interval })
+          : t("recurrence.weekly");
       case "MONTHLY":
         if (config.monthDay) {
-          return `${intervalText}月${config.monthDay}日`;
+          return hasInterval
+            ? t("recurrence.monthlyNOnDay", {
+                count: config.interval,
+                day: config.monthDay,
+              })
+            : t("recurrence.monthlyOnDay", { day: config.monthDay });
         } else if (config.monthWeekday) {
-          const weekdayLabel = WEEKDAYS.find(
-            (w) => w.value === config.monthWeekday!.weekday,
-          )?.label;
-          const occurrenceLabel = OCCURRENCES.find(
-            (o) => o.value === String(config.monthWeekday!.occurrence),
-          )?.label;
-          return `${intervalText}月${occurrenceLabel}${weekdayLabel}`;
+          const weekdayLabel = t(
+            `recurrence.weekdayShort.${config.monthWeekday.weekday.toLowerCase()}`,
+          );
+          const occurrenceLabel = t(
+            `recurrence.occurrence.${String(config.monthWeekday.occurrence)}`,
+          );
+          return hasInterval
+            ? t("recurrence.monthlyNOnOrdinal", {
+                count: config.interval,
+                ordinal: occurrenceLabel,
+                weekday: weekdayLabel,
+              })
+            : t("recurrence.monthlyOnOrdinal", {
+                ordinal: occurrenceLabel,
+                weekday: weekdayLabel,
+              });
         }
-        return `${intervalText}月`;
+        return hasInterval
+          ? t("recurrence.monthlyN", { count: config.interval })
+          : t("recurrence.monthly");
       case "YEARLY":
-        return `${intervalText}年`;
+        return hasInterval
+          ? t("recurrence.yearlyN", { count: config.interval })
+          : t("recurrence.yearly");
       default:
-        return "自定义重复";
+        return t("recurrence.custom");
     }
   };
 
@@ -304,7 +289,7 @@ export default function RecurrenceSelector({
               value: p.preset,
               label: getIntelligentDescription(p.preset),
             })),
-            { value: "custom", label: "自定义..." },
+            { value: "custom", label: t("recurrence.customOption") },
           ]}
         />
       </div>
@@ -313,7 +298,7 @@ export default function RecurrenceSelector({
       {showCustom && (
         <div className="border-t border-base-300 pt-4 space-y-4">
           <h4 className="text-sm  text-base-content/70">
-            自定义重复规则
+            {t("recurrence.customTitle")}
           </h4>
 
           {/* Frequency Selection */}
@@ -329,10 +314,10 @@ export default function RecurrenceSelector({
                   })
                 }
                 options={[
-                  { value: "DAILY", label: "每天" },
-                  { value: "WEEKLY", label: "每周" },
-                  { value: "MONTHLY", label: "每月" },
-                  { value: "YEARLY", label: "每年" },
+                  { value: "DAILY", label: t("recurrence.daily") },
+                  { value: "WEEKLY", label: t("recurrence.weekly") },
+                  { value: "MONTHLY", label: t("recurrence.monthly") },
+                  { value: "YEARLY", label: t("recurrence.yearly") },
                 ]}
               />
             </div>
@@ -365,32 +350,32 @@ export default function RecurrenceSelector({
           {customConfig.frequency === "WEEKLY" && (
             <div>
               <label className={`${FORM_LABEL_CLASS} mb-2`}>
-                选择星期
+                {t("recurrence.selectWeekdays")}
               </label>
               <div className="flex flex-wrap gap-2">
-                {WEEKDAYS.map((weekday) => (
+                {WEEKDAY_VALUES.map((value) => (
                   <Checkbox
-                    key={weekday.value}
-                    id={`weekly-type-${weekday.value}`}
+                    key={value}
+                    id={`weekly-type-${value}`}
                     name="weeklyType"
                     checked={
-                      customConfig.weekdays?.includes(weekday.value) || false
+                      customConfig.weekdays?.includes(value) || false
                     }
                     onCheckedChange={(checked) => {
                       const weekdays = customConfig.weekdays || [];
                       if (checked) {
                         handleCustomConfigChange({
-                          weekdays: [...weekdays, weekday.value],
+                          weekdays: [...weekdays, value],
                         });
                         return;
                       }
 
                       handleCustomConfigChange({
-                        weekdays: weekdays.filter((wd) => wd !== weekday.value),
+                        weekdays: weekdays.filter((wd) => wd !== value),
                       });
                     }}
                     size="sm"
-                    label={weekday.label}
+                    label={t(`recurrence.weekdayShort.${value.toLowerCase()}`)}
                   />
                 ))}
               </div>
@@ -401,7 +386,7 @@ export default function RecurrenceSelector({
           {customConfig.frequency === "MONTHLY" && (
             <div>
               <label className={`${FORM_LABEL_CLASS} mb-2`}>
-                重复方式
+                {t("recurrence.repeatMethod")}
               </label>
               <div className="space-y-2">
                 <label className="flex items-center">
@@ -419,7 +404,7 @@ export default function RecurrenceSelector({
                     }}
                     className="mr-2"
                   />
-                  <span className="text-sm">按日期：每月</span>
+                  <span className="text-sm">{t("recurrence.byDate")}</span>
                   <TextInput
                     id="monthDay"
                     name="monthDay"
@@ -439,7 +424,7 @@ export default function RecurrenceSelector({
                     className="mx-1 w-16"
                     disabled={!customConfig.monthDay}
                   />
-                  <span className="text-sm">日</span>
+                  <span className="text-sm">{t("recurrence.dayUnitLabel")}</span>
                 </label>
 
                 <label className="flex items-center">
@@ -456,7 +441,7 @@ export default function RecurrenceSelector({
                     }}
                     className="mr-2"
                   />
-                  <span className="text-sm">按星期：每月</span>
+                  <span className="text-sm">{t("recurrence.byWeekday")}</span>
                   <div className="mx-1 min-w-[110px]">
                     <EnumSelect
                       id="monthly-occurrence"
@@ -476,9 +461,9 @@ export default function RecurrenceSelector({
                           },
                         })
                       }
-                      options={OCCURRENCES.map((occ) => ({
-                        value: String(occ.value),
-                        label: occ.label,
+                      options={OCCURRENCE_VALUES.map((value) => ({
+                        value,
+                        label: t(`recurrence.occurrence.${value}`),
                       }))}
                     />
                   </div>
@@ -494,9 +479,9 @@ export default function RecurrenceSelector({
                           },
                         })
                       }
-                      options={WEEKDAYS.map((wd) => ({
-                        value: wd.value,
-                        label: wd.label,
+                      options={WEEKDAY_VALUES.map((value) => ({
+                        value,
+                        label: t(`recurrence.weekdayShort.${value.toLowerCase()}`),
                       }))}
                     />
                   </div>
@@ -521,9 +506,9 @@ export default function RecurrenceSelector({
                       typeof v === "number" ? v : parseInt(String(v)) || 1,
                   })
                 }
-                options={MONTHS.map((m) => ({
-                  value: m.value,
-                  label: m.label,
+                options={MONTH_VALUES.map((value) => ({
+                  value,
+                  label: t(`recurrence.monthShort.${value}`),
                 }))}
               />
             </div>
@@ -534,13 +519,15 @@ export default function RecurrenceSelector({
       {/* Preview */}
       {selectedPreset !== "none" && selectedPreset !== "custom" && (
         <div className="text-sm bg-base-200 p-2 rounded">
-          预览：{getIntelligentDescription(selectedPreset)}
+          {t("recurrence.previewPrefix")}
+          {getIntelligentDescription(selectedPreset)}
         </div>
       )}
 
       {showCustom && (
         <div className="text-sm bg-base-200 p-2 rounded">
-          预览：{generateCustomDescription(customConfig)}
+          {t("recurrence.previewPrefix")}
+          {generateCustomDescription(customConfig)}
         </div>
       )}
     </div>

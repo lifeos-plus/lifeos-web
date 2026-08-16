@@ -1,7 +1,6 @@
 import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
-import type { PersonSummary } from "./types/common";
 import type { UUID } from "@/types/primitive";
 import { DataCleaner } from "@/utils/protocol";
 import type { NoteSummary } from "./notes";
@@ -29,12 +28,11 @@ export type TimelogTaskSummary = Omit<
 };
 export type Timelog = Omit<
   TimelogTransport,
-  "deleted_at" | "linked_notes_count" | "people" | "task" | "task_id"
+  "deleted_at" | "linked_notes_count" | "task" | "task_id"
 > &
   TimelogClientFields & {
     deleted_at?: string | null;
     linked_notes_count?: number;
-    people?: PersonSummary[] | null;
     task?: TimelogTaskSummary | null;
     task_id?: UUID | null;
   };
@@ -278,11 +276,8 @@ export const timelogsApi = {
 
   batchUpdate: (params: {
     timelog_ids: UUID[];
-    update_type: "people" | "title" | "task" | "area";
-    people?: {
-      mode: "add" | "replace" | "clear";
-      person_ids: UUID[];
-    };
+    update_type: "person" | "title" | "task" | "area";
+    person?: components["schemas"]["TimelogBatchPersonUpdate"];
     title?: {
       mode: "replace" | "find_replace";
       value: string;

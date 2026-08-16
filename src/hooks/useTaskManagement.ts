@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Task, TaskWithSubtasks, Vision } from "@/services/api";
-import type { TimelogWithEnergyResponse } from "@/services/api/timelogs";
+import type { Timelog } from "@/services/api/timelogs";
 import { tasksApi } from "@/services/api";
 import { useToast } from "@/contexts/ToastContext";
 import type { UUID } from "@/types/primitive";
@@ -128,7 +129,7 @@ interface TaskManagementActions {
   // Timelog creation
   handleOpenCreateTimelogModal: (task: TaskWithSubtasks) => void;
   closeCreateTimelogModal: () => void;
-  handleTimelogCreated: (result: TimelogWithEnergyResponse) => void;
+  handleTimelogCreated: (result: Timelog) => void;
 
   // 任务重排序
   handleTasksReorder: (reorderedTasks: TaskWithSubtasks[]) => Promise<void>;
@@ -153,6 +154,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     onTaskStructureChange,
   } = config;
   const toast = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const triggerAttributesUpdate = useCallback(
@@ -194,7 +196,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
   const deleteTaskMutation = useMutation({
     mutationFn: (taskId: UUID) => tasksApi.delete(taskId),
     onSuccess: async (_, taskId) => {
-      toast.showSuccess("任务删除成功", "任务已成功删除");
+      toast.showSuccess(
+        t("task.messages.deleteSuccess"),
+        t("task.messages.deleteSuccessDetail"),
+      );
       if (onTaskUpdateWithVisionId && visionId) {
         onTaskUpdateWithVisionId(visionId);
       } else {
@@ -207,7 +212,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
       await invalidateTasksByIds(queryClient, [taskId], { skipEvents: true });
     },
     onError: (error: Error) => {
-      toast.showError("删除任务失败", "删除任务时遇到问题，请稍后重试");
+      toast.showError(
+        t("task.messages.deleteFailed"),
+        t("task.messages.deleteFailedDetail"),
+      );
       console.error("Delete task error:", error);
     },
   });
@@ -217,7 +225,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     mutationFn: ({ taskId, status }: { taskId: UUID; status: string }) =>
       tasksApi.updateStatus(taskId, status),
     onSuccess: async (updatedTask: Task) => {
-      toast.showSuccess("任务状态更新成功", "任务状态已成功更新");
+      toast.showSuccess(
+        t("task.messages.statusUpdateSuccess"),
+        t("task.messages.statusUpdateSuccessDetail"),
+      );
       const normalizedTask: TaskUpdateSummary = {
         ...updatedTask,
         parent_task_id: updatedTask.parent_task_id ?? null,
@@ -229,7 +240,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
       });
     },
     onError: (error: Error) => {
-      toast.showError("更新任务状态失败", "更新任务状态时遇到问题，请稍后重试");
+      toast.showError(
+        t("task.messages.statusUpdateFailed"),
+        t("task.messages.statusUpdateFailedDetail"),
+      );
       console.error("Update task status error:", error);
     },
   });
@@ -239,7 +253,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     mutationFn: (taskOrders: Array<{ id: UUID; display_order: number }>) =>
       tasksApi.reorder(taskOrders),
     onSuccess: async (_result, taskOrders) => {
-      toast.showSuccess("任务顺序更新成功", "任务顺序已成功更新");
+      toast.showSuccess(
+        t("task.messages.orderUpdateSuccess"),
+        t("task.messages.orderUpdateSuccessDetail"),
+      );
       if (onTaskUpdateWithVisionId && visionId) {
         onTaskUpdateWithVisionId(visionId);
       } else {
@@ -253,7 +270,10 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
       }
     },
     onError: (error: Error) => {
-      toast.showError("更新任务顺序失败", "更新任务顺序时遇到问题，请稍后重试");
+      toast.showError(
+        t("task.messages.orderUpdateFailed"),
+        t("task.messages.orderUpdateFailedDetail"),
+      );
       console.error("Reorder tasks error:", error);
     },
   });
@@ -572,7 +592,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
   }, []);
 
   const handleTimelogCreated = useCallback(
-    (result: TimelogWithEnergyResponse) => {
+    (result: Timelog) => {
       const taskId =
         result.task?.id ??
         result.task_id ??

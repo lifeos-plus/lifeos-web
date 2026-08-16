@@ -11,7 +11,7 @@ export interface Note {
   id: UUID;
   content: string;
   createdAt: Date;
-  people?: PersonSummary[];
+  person?: PersonSummary[];
   tags?: Tag[];
   task?: TaskSummary | null;
   tasks?: TaskSummary[];
