@@ -74,6 +74,9 @@ npm run api:refresh
 
 Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
 
+The `lifeos-cli` version installed by CI and required by the E2E harness is
+derived from the same pin; print it with `node scripts/pinned-cli-version.mjs`.
+
 Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters. Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract.
 
 ## Validation

@@ -11,7 +11,7 @@ import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const DEFAULT_SCHEMA_VERSION = "v1.1.1";
+import { DEFAULT_SCHEMA_VERSION } from "./pinned-cli-version.mjs";
 
 function schemaReleaseUrl(version) {
   return `https://github.com/lifeos-plus/lifeos-cli/releases/download/${version}/openapi.json`;

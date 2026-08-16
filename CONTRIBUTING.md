@@ -49,7 +49,7 @@ E2E tests live in `e2e/` and cover the core user loop (create a vision, add a ta
 
 Requirements:
 
-- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==1.1.1"`
+- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==$(node scripts/pinned-cli-version.mjs)"` (the pinned version is printed by the same command)
 - Playwright Chromium browser: `npx playwright install chromium`
 
 Run the suite on demand:
@@ -70,7 +70,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
   npm run api:refresh
   ```
 
-  The default pinned release is `v1.1.1`. Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
+  The default pinned release is defined in `scripts/pinned-cli-version.mjs` (currently `v1.1.1`). Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
 
 ## Dependency Maintenance

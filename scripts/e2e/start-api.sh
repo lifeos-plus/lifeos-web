@@ -8,6 +8,8 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${repo_root}"
 
+pinned_cli_version="$(node "${repo_root}/scripts/pinned-cli-version.mjs")"
+
 port="${E2E_API_PORT:-8765}"
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -39,7 +41,14 @@ export HOME="${home_dir}"
 export LIFEOS_DATABASE_URL="${db_url}"
 
 if ! command -v lifeos >/dev/null 2>&1; then
-  echo "[e2e] lifeos CLI not found; install it with: uv tool install \"lifeos-cli[web,postgres]==1.1.1\"" >&2
+  echo "[e2e] lifeos CLI not found; install it with: uv tool install \"lifeos-cli[web,postgres]==${pinned_cli_version}\"" >&2
+  exit 1
+fi
+
+installed_cli_version="$(lifeos --version 2>/dev/null | awk '{print $2}')"
+if [ -n "${installed_cli_version}" ] && [ "${installed_cli_version}" != "${pinned_cli_version}" ]; then
+  echo "[e2e] lifeos CLI ${installed_cli_version} does not match the pinned contract version ${pinned_cli_version}." >&2
+  echo "[e2e] Upgrade it with: uv tool install \"lifeos-cli[web,postgres]==${pinned_cli_version}\"" >&2
   exit 1
 fi
 
