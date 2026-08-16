@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import type { UUID } from "@/types/primitive";
 import { DEFAULT_AREA_COLOR, UNKNOWN_AREA_COLOR } from "@/utils/areaColors";
 
@@ -31,6 +32,7 @@ const AreaBadgeComponent: React.FC<AreaBadgeProps> = ({
   size = "md",
   ariaLabel,
 }) => {
+  const { t } = useTranslation();
   const dotClass =
     size === "lg" ? "w-4 h-4" : size === "sm" ? "w-2 h-2" : "w-3 h-3";
 
@@ -47,7 +49,7 @@ const AreaBadgeComponent: React.FC<AreaBadgeProps> = ({
     name ??
     (typeof areaId === "string"
       ? (areaMap?.get(areaId)?.name ??
-        (isUnknownId ? "未知" : "未知领域"))
+        (isUnknownId ? t("area.unknown") : t("area.unknownArea")))
       : "");
 
   return (

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Card, { type CardAction } from "@/layouts/Card";
 import SettingItem from "./SettingItem";
 import type { SettingGroupConfig } from "./types";
@@ -19,6 +20,7 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
   disabled = false,
   customFooterActions,
 }) => {
+  const { t } = useTranslation();
   // Get preferences for this group
   const groupPreferences = config.items
     .map((item) => {
@@ -37,7 +39,7 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
     <Card
       title={config.title}
       description={config.description}
-      error={hasErrors ? "部分设置保存失败" : undefined}
+      error={hasErrors ? t("settings.saveFailed") : undefined}
       footerActions={footerActions.length > 0 ? footerActions : undefined}
       loading={isLoading || loading}
       disabled={isSaving || disabled}

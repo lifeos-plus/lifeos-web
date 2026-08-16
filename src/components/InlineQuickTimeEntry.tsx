@@ -808,9 +808,16 @@ export default function InlineQuickTimeEntry({
                         "?")
                       : tpl.area_name || "?";
                     if (tpl.default_duration_minutes) {
-                      return `${tpl.title}（领域: ${areaLabel}，时长: ${tpl.default_duration_minutes} 分钟）`;
+                      return t("quickTimeEntry.templates.templateWithAreaDuration", {
+                        title: tpl.title,
+                        area: areaLabel,
+                        duration: tpl.default_duration_minutes,
+                      });
                     }
-                    return `${tpl.title}（领域: ${areaLabel}）`;
+                    return t("quickTimeEntry.templates.templateWithArea", {
+                      title: tpl.title,
+                      area: areaLabel,
+                    });
                   })()}
                 >
                   {/* area color dot */}

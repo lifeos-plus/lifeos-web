@@ -14,6 +14,7 @@ import {
   formatDateKey,
   parseDateKey,
 } from "@/utils/datetime";
+import { t } from "@/i18n";
 
 /**
  * Mayan 13-Moon calendar adapter implementation
@@ -439,7 +440,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   }
 
   getSpecialDayName(_date: Date): string {
-    return "无时间日";
+    return t("calendar.noTimeDay");
   }
 
   buildPlanningGroups(
@@ -510,7 +511,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
 
     const yearGroup: PlanningGroup = {
       id: `mayan-year-${mayanYearStart.getFullYear()}`,
-      label: `${mayanYearStart.getFullYear()}年玛雅年`,
+      label: t("calendar.mayanYear", { year: mayanYearStart.getFullYear() }),
       date: mayanYearStart,
       tasks: tasksInMayanYear,
       children: [],
@@ -532,7 +533,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       );
       yearGroup.children!.push({
         id: `mayan-month-${mayanYearStart.getFullYear()}-${m}`,
-        label: `第${m}月`,
+        label: t("calendar.mayanMoon", { index: m }),
         date: moonStart,
         tasks: tasksInMoon,
         children: [],
@@ -546,7 +547,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     );
     yearGroup.children!.push({
       id: `mayan-day-out-of-time-${mayanYearStart.getFullYear()}`,
-      label: `无时间日`,
+      label: t("calendar.noTimeDay"),
       date: outOfTimeDate,
       tasks: outOfTimeTasks,
       children: [],
@@ -567,7 +568,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       return [
         {
           id: `mayan-month-out-of-time-${info.start.toISOString()}`,
-          label: "无时间日",
+          label: t("calendar.noTimeDay"),
           date: info.start,
           tasks: monthTasks.filter((task) =>
             taskPlanningWindowOverlaps(task, info.start, info.end),
@@ -579,7 +580,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
 
     const monthGroup: PlanningGroup = {
       id: `mayan-month-${info.start.getFullYear()}-${info.moonIndex}`,
-      label: `第${info.moonIndex}月`,
+      label: t("calendar.mayanMoon", { index: info.moonIndex }),
       date: info.start,
       tasks: monthTasks.filter((task) =>
         taskPlanningWindowOverlaps(task, info.start, info.end),
@@ -593,7 +594,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       );
       monthGroup.children!.push({
         id: `mayan-week-${w.start.toISOString()}`,
-        label: `第${w.weekIndexWithinYear}周`,
+        label: t("calendar.mayanWeek", { index: w.weekIndexWithinYear }),
         date: w.start,
         tasks: weekTasksIn,
         children: [],
@@ -615,7 +616,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       return [
         {
           id: `mayan-week-out-of-time-${range.start.toISOString()}`,
-          label: "无时间日",
+          label: t("calendar.noTimeDay"),
           date: range.start,
           tasks: weekTasks.filter((task) =>
             taskPlanningWindowOverlaps(task, range.start, range.end),
@@ -631,7 +632,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
 
     const weekGroup: PlanningGroup = {
       id: `mayan-week-${range.start.toISOString()}`,
-      label: `第${range.weekIndexWithinYear}周`,
+      label: t("calendar.mayanWeek", { index: range.weekIndexWithinYear }),
       date: range.start,
       tasks: weekTasksInWeek,
       children: [],
@@ -651,7 +652,10 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       );
       weekGroup.children!.push({
         id: `mayan-day-${range.start.toISOString()}-${index}`,
-        label: `${dayDate.getMonth() + 1}月${dayDate.getDate()}日`,
+        label: t("calendar.mayanDay", {
+          month: dayDate.getMonth() + 1,
+          day: dayDate.getDate(),
+        }),
         date: dayDate,
         tasks: dayTasksInWeek,
         children: [],
@@ -671,7 +675,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       return [
         {
           id: `mayan-day-out-of-time-${date.toISOString()}`,
-          label: `无时间日`,
+          label: t("calendar.noTimeDay"),
           date: date,
           tasks: dayTasks.filter((task) =>
             taskPlanningWindowOverlaps(task, date, date),
@@ -686,7 +690,11 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     const day = date.getDate();
     const dayGroup: PlanningGroup = {
       id: `day-${year}-${month}-${day}`,
-      label: `${year}年${month + 1}月${day}日`,
+      label: t("calendar.mayanFullDate", {
+        year,
+        month: month + 1,
+        day,
+      }),
       date: date,
       tasks: dayTasks.filter((task) =>
         taskPlanningWindowOverlaps(task, date, date),

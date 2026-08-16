@@ -154,7 +154,39 @@
     "selectPersonPlaceholder": "请添加相关人..."
   },
   "task": {
-    "selectTaskPlaceholder": "请选择任务..."
+    "selectTaskPlaceholder": "请选择任务...",
+    "confirmDeleteTitle": "确认删除任务",
+    "confirmDeleteMessage": "确定要删除任务 \"{{content}}\" 吗？此操作不可撤销。",
+    "messages": {
+      "deleteSuccess": "任务删除成功",
+      "deleteSuccessDetail": "任务已成功删除",
+      "deleteSucceeded": "任务删除成功！",
+      "deleteFailed": "删除任务失败",
+      "deleteFailedDetail": "删除任务时遇到问题，请稍后重试",
+      "statusUpdateSuccess": "任务状态更新成功",
+      "statusUpdateSuccessDetail": "任务状态已成功更新",
+      "statusUpdateSucceeded": "任务状态更新成功！",
+      "statusUpdateSucceededDetail": "\"{{content}}\" 状态已更新为 {{status}}",
+      "statusUpdateFailed": "更新任务状态失败",
+      "statusUpdateFailedDetail": "更新任务状态时遇到问题，请稍后重试",
+      "orderUpdateSuccess": "任务顺序更新成功",
+      "orderUpdateSuccessDetail": "任务顺序已成功更新",
+      "orderUpdateFailed": "更新任务顺序失败",
+      "orderUpdateFailedDetail": "更新任务顺序时遇到问题，请稍后重试",
+      "createSuccess": "任务创建成功！",
+      "createSuccessDetail": "\"{{content}}\" 已成功创建",
+      "createFailed": "任务创建失败",
+      "inputHint": "请检查输入信息后重试",
+      "updateSuccess": "任务更新成功！",
+      "updateSuccessDetail": "\"{{content}}\" 已成功更新",
+      "updateFailed": "任务更新失败",
+      "sortUpdateSuccess": "任务排序更新成功！",
+      "sortUpdateFailed": "任务排序更新失败",
+      "moveSuccess": "任务移动成功！",
+      "moveSuccessDetail": "\"{{content}}\" 已成功移动",
+      "moveFailed": "任务移动失败",
+      "retryLater": "请稍后重试"
+    }
   },
   "batchEdit": {
     "title": "批量编辑",
@@ -609,7 +641,13 @@
       "searchFailed": "无法完成高级搜索",
       "searchCompletedTitle": "搜索完成",
       "searchFoundRecords": "找到 {{count}} 条匹配笔记",
-      "searchFoundNone": "未找到匹配笔记"
+      "searchFoundNone": "未找到匹配笔记",
+      "createSuccess": "笔记创建成功！",
+      "createFailed": "笔记创建失败",
+      "updateSuccess": "笔记更新成功！",
+      "updateFailed": "笔记更新失败",
+      "deleteSuccess": "笔记删除成功！",
+      "deleteFailed": "笔记删除失败"
     }
   },
   "settings": {
@@ -690,6 +728,7 @@
       "label": "选择语言",
       "placeholder": "请选择语言...",
       "updated": "语言已更新",
+      "system": "跟随系统",
       "timezone": {
         "label": "首选时区",
         "description": "选择用于统计和展示的时区"
@@ -863,7 +902,13 @@
       "copyFailed": "复制失败",
       "recomputeSuccess": "时间投入重新计算完成",
       "recomputeFailed": "时间投入重新计算失败",
-      "saveFailed": "保存愿景失败"
+      "saveFailed": "保存愿景失败",
+      "deleteSuccess": "愿景删除成功",
+      "deleteSuccessDetail": "愿景\"{{name}}\"已成功删除",
+      "deleteFailed": "删除失败",
+      "harvestSuccess": "愿景收获成功",
+      "harvestSuccessDetail": "愿景\"{{name}}\"已成功收获，恭喜您！",
+      "harvestFailed": "收获失败"
     },
     "form": {
       "name": "愿景名称",
@@ -1132,6 +1177,13 @@
       "foundRecords": "找到 {{count}} 条记录",
       "noMatchingRecords": "未找到匹配的记录",
       "queryFailed": "查询失败",
+      "deleteSuccess": "时间日志删除成功！",
+      "deleteFailed": "删除时间日志失败",
+      "bulkDeletePartial": "批量删除部分失败",
+      "bulkDeletePartialDetail": "成功删除{{deleted}}条记录，{{failed}}条删除失败：{{errors}}",
+      "bulkDeleteSuccess": "批量删除成功！",
+      "bulkDeleteFailed": "批量删除时间日志失败",
+      "unrecorded": "未记录",
       "loadingAdvancedQueryFailed": "加载高级查询结果失败",
       "exporting": "正在导出数据...",
       "exportCompleted": "导出完成",
@@ -1283,7 +1335,9 @@
     "templates": {
       "manage": "管理常用项",
       "manageTitle": "Open quick templates manager",
-      "noTemplates": "暂无模板，可点击右侧\"管理常用项\"进行添加。"
+      "noTemplates": "暂无模板，可点击右侧\"管理常用项\"进行添加。",
+      "templateWithAreaDuration": "{{title}}（领域: {{area}}，时长: {{duration}} 分钟）",
+      "templateWithArea": "{{title}}（领域: {{area}}）"
     },
     "activity": {
       "label": "行为描述 *",
@@ -1415,6 +1469,26 @@
   },
   "persons": {
     "addContact": "新增联系人",
+    "anniversaries": {
+      "created": "纪念日已创建",
+      "createFailed": "纪念日创建失败",
+      "deleted": "纪念日已删除",
+      "deleteFailed": "纪念日删除失败",
+      "updated": "纪念日已更新",
+      "updateFailed": "纪念日更新失败",
+      "cannotCreate": "无法创建纪念日",
+      "cannotUpdate": "无法更新纪念日",
+      "cannotDelete": "无法删除纪念日",
+      "missingContact": "缺少联系人信息"
+    },
+    "messages": {
+      "createSuccess": "联系人创建成功！",
+      "createFailed": "联系人创建失败",
+      "updateSuccess": "联系人更新成功！",
+      "updateFailed": "联系人更新失败",
+      "deleteSuccess": "联系人删除成功！",
+      "deleteFailed": "联系人删除失败"
+    },
     "timeline": {
       "title": "{{name}} 的活动时间线",
       "activityCount": "（{{count}} 项活动）",
@@ -1748,7 +1822,13 @@
     }
   },
   "calendar": {
-    "saveFailed": "保存失败，请稍后重试"
+    "saveFailed": "保存失败，请稍后重试",
+    "noTimeDay": "无时间日",
+    "mayanMoon": "第{{index}}月",
+    "mayanWeek": "第{{index}}周",
+    "mayanYear": "{{year}}年玛雅年",
+    "mayanDay": "{{month}}月{{day}}日",
+    "mayanFullDate": "{{year}}年{{month}}月{{day}}日"
   },
   "personDetail": {
     "name": "姓名",
@@ -1842,6 +1922,7 @@
     "400": "请求参数错误",
     "409": "资源冲突，请检查输入信息",
     "notLoggedIn": "用户未登录，请求已取消",
+    "networkServiceError": "网络或服务错误",
     "proxyResponseTitle": "代理或网关异常",
     "proxyHtmlResponse": "安全代理或网关返回了 HTML 错误页，请稍后重试；如频繁出现请联系管理员。",
     "invalidResponseFormat": "服务返回了无法识别的响应格式，请稍后重试。",
@@ -2004,6 +2085,73 @@
     "empty": {
       "title": "还没有任务",
       "description": "开始创建您的第一个任务吧"
+    }
+  },
+  "area": {
+    "unknown": "未知",
+    "unknownArea": "未知领域"
+  },
+  "recurrence": {
+    "none": "不重复",
+    "daily": "每天",
+    "weekly": "每周",
+    "monthly": "每月",
+    "yearly": "每年",
+    "weekdays": "每周工作日 (周一至周五)",
+    "custom": "自定义重复",
+    "customOption": "自定义...",
+    "customTitle": "自定义重复规则",
+    "previewPrefix": "预览：",
+    "every": "每",
+    "everyN": "每{{count}}",
+    "dailyN": "每{{count}}天",
+    "weeklyN": "每{{count}}周",
+    "weeklyOn": "每周的{{weekdays}}",
+    "weeklyNOn": "每{{count}}周的{{weekdays}}",
+    "monthlyN": "每{{count}}月",
+    "monthlyOnDay": "每月{{day}}日",
+    "monthlyNOnDay": "每{{count}}月{{day}}日",
+    "monthlyOnOrdinal": "每月{{ordinal}}{{weekday}}",
+    "monthlyNOnOrdinal": "每{{count}}月{{ordinal}}{{weekday}}",
+    "yearlyN": "每{{count}}年",
+    "intelligentWeekly": "每周{{weekday}}",
+    "intelligentMonthly": "每月{{day}}日",
+    "intelligentYearly": "每年{{month}}{{day}}日",
+    "separator": "、",
+    "selectWeekdays": "选择星期",
+    "repeatMethod": "重复方式",
+    "byDate": "按日期：每月",
+    "byWeekday": "按星期：每月",
+    "dayUnitLabel": "日",
+    "weekdayShort": {
+      "mo": "周一",
+      "tu": "周二",
+      "we": "周三",
+      "th": "周四",
+      "fr": "周五",
+      "sa": "周六",
+      "su": "周日"
+    },
+    "monthShort": {
+      "1": "1月",
+      "2": "2月",
+      "3": "3月",
+      "4": "4月",
+      "5": "5月",
+      "6": "6月",
+      "7": "7月",
+      "8": "8月",
+      "9": "9月",
+      "10": "10月",
+      "11": "11月",
+      "12": "12月"
+    },
+    "occurrence": {
+      "1": "第一个",
+      "2": "第二个",
+      "3": "第三个",
+      "4": "第四个",
+      "-1": "最后一个"
     }
   }
 }

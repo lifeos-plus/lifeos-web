@@ -126,9 +126,11 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
       {taskManagement.isDeleteConfirmOpen && taskManagement.deletingTask && (
         <ConfirmDialog
           isOpen={taskManagement.isDeleteConfirmOpen}
-          title="确认删除任务"
-          message={`确定要删除任务 "${taskManagement.deletingTask.content}" 吗？此操作不可撤销。`}
-          confirmText="删除"
+          title={t("task.confirmDeleteTitle")}
+          message={t("task.confirmDeleteMessage", {
+            content: taskManagement.deletingTask.content,
+          })}
+          confirmText={t("common.delete")}
           cancelText={t("common.cancel")}
           onConfirm={taskManagement.actions.confirmDeleteTask}
           onCancel={taskManagement.actions.closeDeleteConfirm}

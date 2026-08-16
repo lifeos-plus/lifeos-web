@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   invalidateTimelogLatestEndTime,
@@ -59,6 +60,7 @@ export const useTimeLogData = ({
 }: UseTimeLogDataProps): UseTimeLogDataReturn => {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
   const { startOfDay, endOfDay } = createDateBoundaries(selectedDate, timezone);
   const singleDayListFilters = {
     start: startOfDay.toISOString(),
@@ -144,13 +146,13 @@ export const useTimeLogData = ({
   const deleteEntryMutation = useMutation({
     mutationFn: (entryId: UUID) => timelogsApi.delete(entryId),
     onSuccess: () => {
-      toast.showSuccess("时间日志删除成功！");
+      toast.showSuccess(t("timeLog.messages.deleteSuccess"));
       invalidateTimelogList(queryClient, singleDayListFilters);
       invalidateTimelogLatestEndTime(queryClient);
     },
     onError: (err: Error) => {
       logger.error("Failed to delete entry:", err);
-      toast.showError("删除时间日志失败", err.message);
+      toast.showError(t("timeLog.messages.deleteFailed"), err.message);
     },
   });
 
@@ -160,11 +162,15 @@ export const useTimeLogData = ({
     onSuccess: (result) => {
       if (result.failed_ids.length > 0) {
         toast.showError(
-          "批量删除部分失败",
-          `成功删除${result.deleted_count}条记录，${result.failed_ids.length}条删除失败：${result.errors.join(", ")}`,
+          t("timeLog.messages.bulkDeletePartial"),
+          t("timeLog.messages.bulkDeletePartialDetail", {
+            deleted: result.deleted_count,
+            failed: result.failed_ids.length,
+            errors: result.errors.join(", "),
+          }),
         );
       } else {
-        toast.showSuccess("批量删除成功！");
+        toast.showSuccess(t("timeLog.messages.bulkDeleteSuccess"));
         // Clear selection after successful deletion
         setSelectedEntryIds(new Set());
         setIsSelectMode(false);
@@ -174,7 +180,7 @@ export const useTimeLogData = ({
     },
     onError: (err: Error) => {
       logger.error("Failed to batch delete entries:", err);
-      toast.showError("批量删除时间日志失败", err.message);
+      toast.showError(t("timeLog.messages.bulkDeleteFailed"), err.message);
     },
   });
 

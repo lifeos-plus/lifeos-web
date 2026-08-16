@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { logger } from "@/utils/core";
 import { visionsApi } from "@/services/api/visions";
@@ -67,6 +68,7 @@ const replaceTaskInHierarchy = (
 export const useVisionManager = (statusFilter: string = "active") => {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
 
   // Confirmation states
   const [deletingVision, setDeletingVision] = useState<Vision | null>(null);
@@ -343,12 +345,14 @@ export const useVisionManager = (statusFilter: string = "active") => {
       ]);
       removeVisionFromExpanded(variables.visionId);
       toast.showSuccess(
-        "愿景删除成功",
-        `愿景"${variables.visionName}"已成功删除`,
+        t("visions.messages.deleteSuccess"),
+        t("visions.messages.deleteSuccessDetail", {
+          name: variables.visionName,
+        }),
       );
     },
     onError: (err: Error) => {
-      handleError(err, "删除失败");
+      handleError(err, t("visions.messages.deleteFailed"));
     },
   });
 
@@ -380,12 +384,14 @@ export const useVisionManager = (statusFilter: string = "active") => {
         invalidateVisionHierarchy(queryClient, variables.visionId),
       ]);
       toast.showSuccess(
-        "愿景收获成功",
-        `愿景"${variables.visionName}"已成功收获，恭喜您！`,
+        t("visions.messages.harvestSuccess"),
+        t("visions.messages.harvestSuccessDetail", {
+          name: variables.visionName,
+        }),
       );
     },
     onError: (err: Error) => {
-      handleError(err, "收获失败");
+      handleError(err, t("visions.messages.harvestFailed"));
     },
   });
 

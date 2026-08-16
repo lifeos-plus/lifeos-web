@@ -10,6 +10,7 @@
 import type { Timelog } from "@/services/api";
 import type { UUID } from "@/types/primitive";
 import { createDateBoundaries, sortTimeEntriesByTime } from "./datetime";
+import { t } from "@/i18n";
 interface TimeValidationResult {
   isValid: boolean;
   hasNegativeDuration: boolean;
@@ -189,7 +190,7 @@ function generatePlaceholderEntries(
       // Only create placeholder if duration > 0
       placeholders.push({
         id: `placeholder_${currentTime.getTime()}_${firstEntryStart.getTime()}`,
-        title: "未记录",
+        title: t("timeLog.messages.unrecorded"),
         start_time: currentTime.toISOString(),
         end_time: firstEntryStart.toISOString(),
         area_id: unknownAreaId,
@@ -222,7 +223,7 @@ function generatePlaceholderEntries(
       // Only create placeholder if duration > 0
       placeholders.push({
         id: `placeholder_${prevEntryEnd.getTime()}_${currentEntryStart.getTime()}`,
-        title: "未记录",
+        title: t("timeLog.messages.unrecorded"),
         start_time: prevEntryEnd.toISOString(),
         end_time: currentEntryStart.toISOString(),
         area_id: unknownAreaId,
@@ -255,7 +256,7 @@ function generatePlaceholderEntries(
       // Only create placeholder if duration > 5 minutes
       placeholders.push({
         id: `placeholder_${currentTime.getTime()}_${dayEnd.getTime()}`,
-        title: "未记录",
+        title: t("timeLog.messages.unrecorded"),
         start_time: currentTime.toISOString(),
         end_time: dayEnd.toISOString(),
         area_id: unknownAreaId,
@@ -274,7 +275,7 @@ function generatePlaceholderEntries(
   if (validEntries.length === 0) {
     placeholders.push({
       id: `placeholder_${dayStart.getTime()}_${dayEnd.getTime()}`,
-      title: "未记录",
+        title: t("timeLog.messages.unrecorded"),
       start_time: dayStart.toISOString(),
       end_time: dayEnd.toISOString(),
       area_id: unknownAreaId,

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { tasksApi, type TaskFieldsMode } from "@/services/api/tasks";
 import { tasksKeys } from "@/services/api/queryKeys";
 import { useToast } from "@/contexts/ToastContext";
@@ -62,6 +63,7 @@ const TASK_FIELD_MODES: TaskFieldsMode[] = ["basic", "full"];
 export function useTasksMutations() {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const invalidateTaskListQueries = (visionId?: UUID | null): Promise<void>[] =>
     TASK_FIELD_MODES.map(
@@ -112,10 +114,16 @@ export function useTasksMutations() {
       await Promise.all(invalidatePromises);
 
       // Show success message
-      toast.showSuccess("任务创建成功！", `"${result.content}" 已成功创建`);
+      toast.showSuccess(
+        t("task.messages.createSuccess"),
+        t("task.messages.createSuccessDetail", { content: result.content }),
+      );
     },
     onError: (error: Error) => {
-      toast.showError("任务创建失败", error.message || "请检查输入信息后重试");
+      toast.showError(
+        t("task.messages.createFailed"),
+        error.message || t("task.messages.inputHint"),
+      );
     },
   });
 
@@ -162,10 +170,16 @@ export function useTasksMutations() {
       await Promise.all(invalidatePromises);
 
       // Show success message
-      toast.showSuccess("任务更新成功！", `"${result.content}" 已成功更新`);
+      toast.showSuccess(
+        t("task.messages.updateSuccess"),
+        t("task.messages.updateSuccessDetail", { content: result.content }),
+      );
     },
     onError: (error: Error) => {
-      toast.showError("任务更新失败", error.message || "请检查输入信息后重试");
+      toast.showError(
+        t("task.messages.updateFailed"),
+        error.message || t("task.messages.inputHint"),
+      );
     },
   });
 
@@ -194,12 +208,18 @@ export function useTasksMutations() {
 
       // Show success message
       toast.showSuccess(
-        "任务状态更新成功！",
-        `"${result.content}" 状态已更新为 ${result.status}`,
+        t("task.messages.statusUpdateSucceeded"),
+        t("task.messages.statusUpdateSucceededDetail", {
+          content: result.content,
+          status: result.status,
+        }),
       );
     },
     onError: (error: Error) => {
-      toast.showError("任务状态更新失败", error.message || "请稍后重试");
+      toast.showError(
+        t("task.messages.statusUpdateFailed"),
+        error.message || t("task.messages.retryLater"),
+      );
     },
   });
 
@@ -245,10 +265,13 @@ export function useTasksMutations() {
       await Promise.all(invalidatePromises);
 
       // Show success message
-      toast.showSuccess("任务删除成功！");
+      toast.showSuccess(t("task.messages.deleteSucceeded"));
     },
     onError: (error: Error) => {
-      toast.showError("任务删除失败", error.message || "请稍后重试");
+      toast.showError(
+        t("task.messages.deleteFailed"),
+        error.message || t("task.messages.retryLater"),
+      );
     },
   });
 
@@ -278,10 +301,13 @@ export function useTasksMutations() {
       }
 
       // Show success message
-      toast.showSuccess("任务排序更新成功！");
+      toast.showSuccess(t("task.messages.sortUpdateSuccess"));
     },
     onError: (error: Error) => {
-      toast.showError("任务排序更新失败", error.message || "请稍后重试");
+      toast.showError(
+        t("task.messages.sortUpdateFailed"),
+        error.message || t("task.messages.retryLater"),
+      );
     },
   });
 
@@ -345,10 +371,16 @@ export function useTasksMutations() {
       await Promise.all(invalidatePromises);
 
       // Show success message
-      toast.showSuccess("任务移动成功！", `"${result.content}" 已成功移动`);
+      toast.showSuccess(
+        t("task.messages.moveSuccess"),
+        t("task.messages.moveSuccessDetail", { content: result.content }),
+      );
     },
     onError: (error: Error) => {
-      toast.showError("任务移动失败", error.message || "请稍后重试");
+      toast.showError(
+        t("task.messages.moveFailed"),
+        error.message || t("task.messages.retryLater"),
+      );
     },
   });
 

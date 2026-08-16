@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   personsApi,
@@ -77,6 +78,7 @@ interface UsePersonActivitiesPageReturn {
 export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { t } = useTranslation();
 
   // Normalize filters to a stable object so queryKey doesn't change on each render
   const keyFilters = {
@@ -113,12 +115,12 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
   const createPersonMutation = useMutation({
     mutationFn: (person: PersonCreate) => personsApi.create(person),
     onSuccess: async (created) => {
-      toast.showSuccess("联系人创建成功！");
+      toast.showSuccess(t("persons.messages.createSuccess"));
       setPersonDetailCache(queryClient, created);
       await invalidatePersonsLists(queryClient);
     },
     onError: (err: Error) => {
-      toast.showError("联系人创建失败", err.message);
+      toast.showError(t("persons.messages.createFailed"), err.message);
     },
   });
 
@@ -127,12 +129,12 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     mutationFn: ({ id, person }: { id: UUID; person: PersonUpdate }) =>
       personsApi.update(id, person),
     onSuccess: async (updated) => {
-      toast.showSuccess("联系人更新成功！");
+      toast.showSuccess(t("persons.messages.updateSuccess"));
       setPersonDetailCache(queryClient, updated);
       await invalidatePersonsLists(queryClient);
     },
     onError: (err: Error) => {
-      toast.showError("联系人更新失败", err.message);
+      toast.showError(t("persons.messages.updateFailed"), err.message);
     },
   });
 
@@ -140,7 +142,7 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
   const deletePersonMutation = useMutation({
     mutationFn: ({ id }: { id: UUID }) => personsApi.delete(id),
     onSuccess: async (_, variables) => {
-      toast.showSuccess("联系人删除成功！");
+      toast.showSuccess(t("persons.messages.deleteSuccess"));
       const targetId = variables.id;
       removePersonDetailCache(queryClient, targetId);
       await Promise.all([
@@ -149,7 +151,7 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
       ]);
     },
     onError: (err: Error) => {
-      toast.showError("联系人删除失败", err.message);
+      toast.showError(t("persons.messages.deleteFailed"), err.message);
     },
   });
 

@@ -1,10 +1,12 @@
 import { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Simple hook for managing modal state (loading and error)
  * This is the minimal implementation for stage 1 of progressive modal state management
  */
 export function useModalState() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,14 +40,15 @@ export function useModalState() {
         const result = await operation();
         return result;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "操作失败";
+        const errorMessage =
+          err instanceof Error ? err.message : t("common.operationFailed");
         setError(errorMessage);
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [],
+    [t],
   );
 
   return {
