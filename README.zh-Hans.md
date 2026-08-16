@@ -43,8 +43,7 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 - `openapi.json` 是已提交并固定的传输契约基线。
 - `src/services/api/generated/schema.ts` 由基线生成，请勿手工编辑。
 - `npm run api:check` 会在提交的 `schema.ts` 过期时失败。
-- `openapi.json` 自带来源信息：`info["x-lifeos-cli-release"]` 记录其来源的 GitHub release tag，`node scripts/pinned-cli-version.mjs` 输出与之匹配的 `lifeos-cli` 版本（CI 与 E2E 均使用该版本）；文档中不保存任何版本号。
-- `lifeos-cli` 发布新 `openapi.json` release 资产后，运行 `npm run api:refresh` 刷新（默认拉取最新发布，可用 `LIFEOS_CLI_SCHEMA_VERSION` 固定到指定发布 tag）。
+- 契约刷新与版本对齐详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 验证
 
