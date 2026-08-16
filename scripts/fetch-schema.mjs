@@ -45,9 +45,12 @@ async function latestReleaseTag() {
 }
 
 function injectReleaseProvenance(raw, tag) {
-  const existingKeyPattern =
-    /^(\s*)"x-lifeos-cli-release": "[^"]*",?$/m;
-  if (existingKeyPattern.test(raw)) {
+  const document = JSON.parse(raw);
+  if (
+    document.info &&
+    typeof document.info[RELEASE_PROVENANCE_KEY] === "string" &&
+    document.info[RELEASE_PROVENANCE_KEY] !== ""
+  ) {
     // The lifeos-cli release already records its provenance; keep it as-is.
     return raw;
   }
@@ -60,7 +63,6 @@ function injectReleaseProvenance(raw, tag) {
     );
   }
   // Fallback: structural rewrite, kept for future info-block changes.
-  const document = JSON.parse(raw);
   document.info = { ...document.info, [RELEASE_PROVENANCE_KEY]: tag };
   return `${JSON.stringify(document, null, 2)}\n`;
 }
