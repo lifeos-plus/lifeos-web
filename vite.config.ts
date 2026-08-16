@@ -155,10 +155,10 @@ export default defineConfig(({ mode }) => {
         thresholds: {
           // Global floors near the current baseline; the diff-coverage gate in
           // scripts/check-diff-coverage.mjs enforces new-code coverage per PR.
-          statements: 39,
-          branches: 35,
+          statements: 40,
+          branches: 36,
           functions: 34,
-          lines: 40,
+          lines: 41,
         },
       },
       exclude: [...configDefaults.exclude, 'e2e/**'],
