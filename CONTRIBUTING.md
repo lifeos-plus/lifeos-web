@@ -70,7 +70,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
   npm run api:refresh
   ```
 
-  The refresh consumes the latest published release by default; set `LIFEOS_CLI_SCHEMA_VERSION` to pin a specific release tag. The committed contract records its provenance in `info["x-lifeos-cli-release"]`, and `node scripts/pinned-cli-version.mjs` prints the matching `lifeos-cli` version used by CI and the E2E harness.
+  The default pinned release is defined in `scripts/pinned-cli-version.mjs`. `npm run api:refresh` fetches that version; set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag. `node scripts/pinned-cli-version.mjs` prints the CLI version used by CI and the E2E harness.
 - `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
 
 ## Dependency Maintenance

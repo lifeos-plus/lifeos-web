@@ -8403,7 +8403,6 @@
   },
   "info": {
     "description": "Local-first Web API for lifeos-cli data.",
-    "x-lifeos-cli-release": "v1.1.1",
     "title": "LifeOS Web UI",
     "version": "0.1.0"
   },
