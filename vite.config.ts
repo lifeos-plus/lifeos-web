@@ -147,7 +147,19 @@ export default defineConfig(({ mode }) => {
         reporter: ['text', 'html', 'lcov'],
         reportsDirectory: './coverage',
         include: ['src/**/*.{ts,tsx}'],
-        exclude: ['src/**/*.d.ts', 'src/**/types.ts'],
+        exclude: [
+          'src/**/*.d.ts',
+          'src/**/types.ts',
+          'src/services/api/generated/**',
+        ],
+        thresholds: {
+          // Global floors near the current baseline; the diff-coverage gate in
+          // scripts/check-diff-coverage.mjs enforces new-code coverage per PR.
+          statements: 39,
+          branches: 35,
+          functions: 34,
+          lines: 40,
+        },
       },
       exclude: [...configDefaults.exclude, 'e2e/**'],
     },
