@@ -9,7 +9,9 @@
  * The downloaded document is made self-describing: `info["x-lifeos-cli-release"]`
  * records the GitHub release tag it came from, so consumers (CI, the E2E
  * harness, contributor docs) derive the matching lifeos-cli version from the
- * committed artifact instead of maintaining a separate constant.
+ * committed artifact instead of maintaining a separate constant. The field is
+ * injected only as a fallback: when the release asset already carries it
+ * (lifeos-cli emits it during export), the asset's own value is trusted.
  */
 
 import { writeFile } from "node:fs/promises";
@@ -46,10 +48,8 @@ function injectReleaseProvenance(raw, tag) {
   const existingKeyPattern =
     /^(\s*)"x-lifeos-cli-release": "[^"]*",?$/m;
   if (existingKeyPattern.test(raw)) {
-    return raw.replace(
-      existingKeyPattern,
-      `$1"x-lifeos-cli-release": "${tag}",`,
-    );
+    // The lifeos-cli release already records its provenance; keep it as-is.
+    return raw;
   }
   const descriptionAnchor =
     '"description": "Local-first Web API for lifeos-cli data.",';
