@@ -52,7 +52,7 @@ export const ENDPOINTS = {
   NOTES: {
     BASE: `${API_V1}/notes/`,
     BY_ID: (id: string) => `${API_V1}/notes/${id}`,
-    STATS_PERSONS: `${API_V1}/notes/stats/persons`,
+    STATS_PERSON: `${API_V1}/notes/stats/person`,
     TAG_BY_ID: (noteId: string, tagId: string) =>
       `${API_V1}/notes/${noteId}/tags/${tagId}`,
     ADVANCED_SEARCH: `${API_V1}/notes/advanced-search`,
@@ -73,15 +73,15 @@ export const ENDPOINTS = {
     TASK_ASSOCIATIONS: `${API_V1}/habits/habit-task-associations/`,
   },
   PERSONS: {
-    BASE: `${API_V1}/persons/`,
-    BY_ID: (id: string) => `${API_V1}/persons/${id}`,
-    ACTIVITIES: (id: string) => `${API_V1}/persons/${id}/activities/`,
-    ANNIVERSARIES: (id: string) => `${API_V1}/persons/${id}/anniversaries/`,
+    BASE: `${API_V1}/person/`,
+    BY_ID: (id: string) => `${API_V1}/person/${id}`,
+    ACTIVITIES: (id: string) => `${API_V1}/person/${id}/activities/`,
+    ANNIVERSARIES: (id: string) => `${API_V1}/person/${id}/anniversaries/`,
     ANNIVERSARY_BY_ID: (personId: string, anniversaryId: string) =>
-      `${API_V1}/persons/${personId}/anniversaries/${anniversaryId}`,
+      `${API_V1}/person/${personId}/anniversaries/${anniversaryId}`,
     TAG_BY_ID: (personId: string, tagId: string) =>
-      `${API_V1}/persons/${personId}/tags/${tagId}`,
-    SEARCH_BY_TAG: `${API_V1}/persons/search-by-tag`,
+      `${API_V1}/person/${personId}/tags/${tagId}`,
+    SEARCH_BY_TAG: `${API_V1}/person/search-by-tag`,
   },
   AREAS: {
     BASE: `${API_V1}/areas/`,

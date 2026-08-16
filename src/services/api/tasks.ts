@@ -2,6 +2,7 @@ import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
 import type { TimelogListResponse, TimelogListTransport } from "./timelogs";
+import type { PersonSummary } from "./types/common";
 import type { UUID } from "@/types/primitive";
 import { MAX_TASKS_PAGE_SIZE } from "@/utils/constants";
 import { formatDateKey } from "@/utils/datetime";
@@ -14,8 +15,10 @@ type TaskOptionalFields =
   | "planning_cycle_days"
   | "planning_cycle_start_date"
   | "planning_cycle_type";
-export type Task = Omit<TaskTransport, TaskOptionalFields> &
-  Partial<Pick<TaskTransport, TaskOptionalFields>>;
+export type Task = Omit<TaskTransport, TaskOptionalFields | "person"> &
+  Partial<Pick<TaskTransport, TaskOptionalFields>> & {
+    people?: PersonSummary[];
+  };
 export type TaskMoveResponse = components["schemas"]["TaskMoveResponse"];
 export type TaskCreate = Omit<TaskCreateTransport, "vision_id"> & {
   person_ids?: UUID[];
@@ -38,6 +41,18 @@ export type TaskListResponse = Omit<TaskListTransport, "items" | "meta"> & {
   items: Task[];
   meta: Partial<TaskListTransport["meta"]>;
 };
+
+const toTask = (task: TaskTransport): Task => ({
+  ...task,
+  people: task.person ?? undefined,
+});
+
+const toTaskWithSubtasks = (task: TaskTreeTransport): TaskWithSubtasks => ({
+  ...toTask(task),
+  subtasks: (task.subtasks ?? []).map(toTaskWithSubtasks),
+  completion_percentage: task.completion_percentage ?? 0,
+  depth: task.depth ?? 0,
+});
 
 const toTaskCreateTransport = ({
   person_ids: _personIds,
@@ -104,7 +119,11 @@ export const tasksApi = {
     if (extra?.query) params.query = extra.query;
     const fields: TaskFieldsMode = extra?.fields ?? "basic";
     params.fields = fields;
-    return http.get<TaskListTransport>(ENDPOINTS.TASKS.BASE, params);
+    const response = await http.get<TaskListTransport>(
+      ENDPOINTS.TASKS.BASE,
+      params,
+    );
+    return { ...response, items: response.items.map(toTask) };
   },
 
   async searchSelectorPage(opts: {
@@ -197,13 +216,17 @@ export const tasksApi = {
   },
 
   async getVisionHierarchy(visionId: UUID): Promise<TaskHierarchy> {
-    return http.get<components["schemas"]["TaskHierarchyResponse"]>(
+    const response = await http.get<components["schemas"]["TaskHierarchyResponse"]>(
       ENDPOINTS.TASKS.BY_VISION_HIERARCHY(visionId),
     );
+    return {
+      ...response,
+      root_tasks: response.root_tasks.map(toTaskWithSubtasks),
+    };
   },
 
   async getById(id: UUID): Promise<Task> {
-    return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id));
+    return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id)).then(toTask);
   },
 
   /**
@@ -211,13 +234,17 @@ export const tasksApi = {
    * 失败时不触发全局错误提示，调用方负责降级处理。
    */
   async getByIdQuiet(id: UUID): Promise<Task> {
-    return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), undefined, {
-      silent: true,
-    });
+    return http
+      .get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), undefined, {
+        silent: true,
+      })
+      .then(toTask);
   },
 
   async getWithSubtasks(id: UUID): Promise<TaskWithSubtasks> {
-    return http.get<TaskTreeTransport>(ENDPOINTS.TASKS.WITH_SUBTASKS(id));
+    return http
+      .get<TaskTreeTransport>(ENDPOINTS.TASKS.WITH_SUBTASKS(id))
+      .then(toTaskWithSubtasks);
   },
 
   async create(task: TaskCreate): Promise<Task> {
@@ -225,10 +252,9 @@ export const tasksApi = {
     if (task.parent_task_id === "") {
       task = { ...task, parent_task_id: null };
     }
-    return http.post<TaskTransport>(
-      ENDPOINTS.TASKS.BASE,
-      toTaskCreateTransport(task),
-    );
+    return http
+      .post<TaskTransport>(ENDPOINTS.TASKS.BASE, toTaskCreateTransport(task))
+      .then(toTask);
   },
 
   async update(id: UUID, task: TaskUpdate): Promise<Task> {
@@ -236,14 +262,15 @@ export const tasksApi = {
     if (task.parent_task_id === "") {
       task = { ...task, parent_task_id: null };
     }
-    return http.patch<TaskTransport>(
-      ENDPOINTS.TASKS.BY_ID(id),
-      toTaskUpdateTransport(task),
-    );
+    return http
+      .patch<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), toTaskUpdateTransport(task))
+      .then(toTask);
   },
 
   async updateStatus(id: UUID, status: string): Promise<Task> {
-    return http.patch<TaskTransport>(ENDPOINTS.TASKS.STATUS(id), { status });
+    return http
+      .patch<TaskTransport>(ENDPOINTS.TASKS.STATUS(id), { status })
+      .then(toTask);
   },
 
   async delete(id: UUID): Promise<void> {

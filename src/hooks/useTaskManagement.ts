@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Task, TaskWithSubtasks, Vision } from "@/services/api";
-import type { TimelogWithEnergyResponse } from "@/services/api/timelogs";
+import type { Timelog } from "@/services/api/timelogs";
 import { tasksApi } from "@/services/api";
 import { useToast } from "@/contexts/ToastContext";
 import type { UUID } from "@/types/primitive";
@@ -129,7 +129,7 @@ interface TaskManagementActions {
   // Timelog creation
   handleOpenCreateTimelogModal: (task: TaskWithSubtasks) => void;
   closeCreateTimelogModal: () => void;
-  handleTimelogCreated: (result: TimelogWithEnergyResponse) => void;
+  handleTimelogCreated: (result: Timelog) => void;
 
   // 任务重排序
   handleTasksReorder: (reorderedTasks: TaskWithSubtasks[]) => Promise<void>;
@@ -592,7 +592,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
   }, []);
 
   const handleTimelogCreated = useCallback(
-    (result: TimelogWithEnergyResponse) => {
+    (result: Timelog) => {
       const taskId =
         result.task?.id ??
         result.task_id ??

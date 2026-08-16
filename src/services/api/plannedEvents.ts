@@ -5,11 +5,14 @@ import type { components } from "./generated/schema";
 import type { PersonSummary } from "./types/common";
 
 type PlannedEventTransport = components["schemas"]["PlannedEventResponse"];
-export type PlannedEvent = Omit<PlannedEventTransport, "extra_data" | "people"> & {
+export type PlannedEvent = Omit<PlannedEventTransport, "extra_data" | "person"> & {
   extra_data?: Record<string, unknown> | null;
   people?: PersonSummary[];
 };
-export type PlannedEventListResponse = components["schemas"]["ListResponse_PlannedEventResponse_PlannedEventListMeta_"];
+type PlannedEventListTransport = components["schemas"]["ListResponse_PlannedEventResponse_PlannedEventListMeta_"];
+export type PlannedEventListResponse = Omit<PlannedEventListTransport, "items"> & {
+  items: PlannedEvent[];
+};
 type PlannedEventCreateTransport = components["schemas"]["PlannedEventCreate"];
 type PlannedEventUpdateTransport = components["schemas"]["PlannedEventUpdate"];
 type PlannedEventClientMetadata = { extra_data?: Record<string, unknown> };
@@ -38,42 +41,70 @@ const toUpdateTransport = ({
   ...payload
 }: PlannedEventUpdate): PlannedEventUpdateTransport => payload;
 
+const toPlannedEvent = (event: PlannedEventTransport): PlannedEvent => ({
+  ...event,
+  people: event.person,
+});
+
+const toPlannedEventList = (
+  response: PlannedEventListTransport,
+): PlannedEventListResponse => ({
+  ...response,
+  items: response.items.map(toPlannedEvent),
+});
+
 export const plannedEventsApi = {
   fetchRange: async (start: string, end: string, status?: string) =>
-    http.get<PlannedEventListResponse>(ENDPOINTS.PLANNED_EVENTS.BASE, {
-      start,
-      end,
-      status,
-      page: 1,
-      size: 500,
-    }),
+    http
+      .get<PlannedEventListTransport>(ENDPOINTS.PLANNED_EVENTS.BASE, {
+        start,
+        end,
+        status,
+        page: 1,
+        size: 500,
+      })
+      .then(toPlannedEventList),
   fetchRaw: async (page = 1, size = 100, status?: string) =>
-    http.get<PlannedEventListResponse>(ENDPOINTS.PLANNED_EVENTS.RAW, {
-      page,
-      size,
-      status,
-    }),
+    http
+      .get<PlannedEventListTransport>(ENDPOINTS.PLANNED_EVENTS.RAW, {
+        page,
+        size,
+        status,
+      })
+      .then(toPlannedEventList),
   fetchByTask: async (taskId: UUID, page = 1, size = 100) =>
-    http.get<PlannedEventListResponse>(
-      ENDPOINTS.PLANNED_EVENTS.BY_TASK(taskId),
-      { page, size },
-    ),
+    http
+      .get<PlannedEventListTransport>(
+        ENDPOINTS.PLANNED_EVENTS.BY_TASK(taskId),
+        { page, size },
+      )
+      .then(toPlannedEventList),
   create: (payload: PlannedEventCreate): Promise<PlannedEvent> =>
-    http.post<PlannedEventTransport>(
-      ENDPOINTS.PLANNED_EVENTS.BASE,
-      toCreateTransport(payload),
-    ),
+    http
+      .post<PlannedEventTransport>(
+        ENDPOINTS.PLANNED_EVENTS.BASE,
+        toCreateTransport(payload),
+      )
+      .then(toPlannedEvent),
   getById: (id: UUID): Promise<PlannedEvent> =>
-    http.get<PlannedEventTransport>(ENDPOINTS.PLANNED_EVENTS.BY_ID(id)),
+    http
+      .get<PlannedEventTransport>(ENDPOINTS.PLANNED_EVENTS.BY_ID(id))
+      .then(toPlannedEvent),
   update: (
     id: UUID,
     payload: PlannedEventUpdate,
     options?: PlannedEventUpdateOptions,
   ): Promise<PlannedEvent> =>
-    http.patch<PlannedEventTransport>(ENDPOINTS.PLANNED_EVENTS.BY_ID(id), toUpdateTransport(payload), {
-      updateType: options?.updateType,
-      instanceStart: options?.instanceStart,
-    }),
+    http
+      .patch<PlannedEventTransport>(
+        ENDPOINTS.PLANNED_EVENTS.BY_ID(id),
+        toUpdateTransport(payload),
+        {
+          updateType: options?.updateType,
+          instanceStart: options?.instanceStart,
+        },
+      )
+      .then(toPlannedEvent),
   delete: (id: UUID, options?: PlannedEventDeleteOptions): Promise<void> =>
     http.delete<void>(ENDPOINTS.PLANNED_EVENTS.BY_ID(id), {
       deleteType: options?.deleteType,

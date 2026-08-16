@@ -1770,6 +1770,11 @@
       "navLabel": "People",
       "description": "Manage people and their linked LifeOS activity."
     },
+    "person": {
+      "displayName": "People",
+      "navLabel": "People",
+      "description": "Manage people and their linked LifeOS activity."
+    },
     "food-diary": {
       "displayName": "Food Diary",
       "navLabel": "Food Diary",

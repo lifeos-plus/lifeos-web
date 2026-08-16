@@ -1770,6 +1770,11 @@
       "navLabel": "关系",
       "description": "有意识地滋养对你重要的人际关系网络。"
     },
+    "person": {
+      "displayName": "关系",
+      "navLabel": "关系",
+      "description": "有意识地滋养对你重要的人际关系网络。"
+    },
     "food-diary": {
       "displayName": "饮食",
       "navLabel": "饮食",

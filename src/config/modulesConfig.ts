@@ -11,7 +11,7 @@ export type ModuleKey =
   | "finance"
   | "planning"
   | "notes"
-  | "persons"
+  | "person"
   | "insights"
   | "focus"
   | "habits"
@@ -95,7 +95,7 @@ export const MODULES: ModuleConfig[] = [
     iconName: "document-text",
   },
   {
-    key: "persons",
+    key: "person",
     path: "/people",
     navColor: "pink",
     showInNav: true,

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type {
   TimelogCreate,
-  TimelogWithEnergyResponse,
+  Timelog,
   TaskWithSubtasks,
   Vision,
   PersonSummary,
@@ -101,7 +101,7 @@ interface InlineQuickTimeEntryProps {
   startTime: string;
   endTime: string;
   onEntryCreated: (
-    result: TimelogWithEnergyResponse,
+    result: Timelog,
     context: { sessionId: string },
   ) => void;
   onError: (error: string) => void;

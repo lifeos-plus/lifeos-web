@@ -22,7 +22,7 @@ export type NoteTimelogSummary = TimelogSummaryTransport & {
 };
 export type NoteHabitActionSummary = components["schemas"]["HabitActionSummaryResponse"];
 export type Note = Pick<NoteTransport, "content" | "created_at" | "id" | "updated_at"> &
-  Partial<Omit<NoteTransport, "content" | "created_at" | "id" | "people" | "tags" | "task" | "tasks" | "timelogs" | "updated_at">> & {
+  Partial<Omit<NoteTransport, "content" | "created_at" | "id" | "person" | "tags" | "task" | "tasks" | "timelogs" | "updated_at">> & {
     people?: PersonSummary[];
     tags?: Tag[];
     task?: TaskSummary | null;
@@ -142,7 +142,7 @@ interface NoteBulkCreateResponsePayload {
 type NoteListTransport = components["schemas"]["ListResponse_NoteResponse_NoteListMeta_"];
 export type NoteListResponse = Omit<NoteListTransport, "items"> & { items: Note[] };
 
-const toNote = (note: NoteTransport): Note => note;
+const toNote = (note: NoteTransport): Note => ({ ...note, people: note.person });
 const toNoteList = (response: NoteListTransport): NoteListResponse => ({
   ...response,
   items: response.items.map(toNote),
@@ -196,7 +196,7 @@ export const notesApi = {
     const [notes, tagUsage, personUsage] = await Promise.all([
       notesApi.fetchPaged({ page: 1, size: 1 }),
       tagsApi.getStatsBatch("note"),
-      http.get<NotePersonStatsResponse>(ENDPOINTS.NOTES.STATS_PERSONS),
+      http.get<NotePersonStatsResponse>(ENDPOINTS.NOTES.STATS_PERSON),
     ]);
     return {
       total_notes: notes.pagination.total,

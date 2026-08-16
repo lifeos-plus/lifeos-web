@@ -14,7 +14,7 @@ describe("notesApi", () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation((input) => {
       const url = String(input);
       if (url.startsWith(localUrl(ENDPOINTS.NOTES.BASE))) {
-        if (url === localUrl(ENDPOINTS.NOTES.STATS_PERSONS)) {
+        if (url === localUrl(ENDPOINTS.NOTES.STATS_PERSON)) {
           return Promise.resolve(
             new Response(
               JSON.stringify({
@@ -26,7 +26,7 @@ describe("notesApi", () => {
                     usage_count: 1,
                   },
                 ],
-                total_persons: 1,
+                total_person: 1,
               }),
               {
                 status: 200,
@@ -93,7 +93,7 @@ describe("notesApi", () => {
     const requestedUrls = fetchMock.mock.calls.map(([url]) => String(url));
     expect(requestedUrls.some((url) => url.startsWith(localUrl(ENDPOINTS.NOTES.BASE)))).toBe(true);
     expect(requestedUrls).toContain(localUrl(ENDPOINTS.STATS.TAGS_USAGE("note")));
-    expect(requestedUrls).toContain(localUrl(ENDPOINTS.NOTES.STATS_PERSONS));
+    expect(requestedUrls).toContain(localUrl(ENDPOINTS.NOTES.STATS_PERSON));
   });
 
   it("queries notes through the habit_action_id filter", async () => {

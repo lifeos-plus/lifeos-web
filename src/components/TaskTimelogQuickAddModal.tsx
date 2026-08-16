@@ -5,7 +5,7 @@ import ModalBase from "@/layouts/ModalBase";
 import InlineQuickTimeEntry from "./InlineQuickTimeEntry";
 import type {
   TaskWithSubtasks,
-  TimelogWithEnergyResponse,
+  Timelog,
 } from "@/services/api";
 import { tasksApi } from "@/services/api/tasks";
 import { tasksKeys } from "@/services/api/queryKeys";
@@ -17,7 +17,7 @@ interface TaskTimelogQuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   task: TaskWithSubtasks | null;
-  onTimelogCreated: (result: TimelogWithEnergyResponse) => void;
+  onTimelogCreated: (result: Timelog) => void;
 }
 
 export default function TaskTimelogQuickAddModal({
