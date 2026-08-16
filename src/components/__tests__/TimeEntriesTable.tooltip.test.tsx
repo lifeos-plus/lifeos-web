@@ -15,7 +15,7 @@ const buildEntry = (overrides: Partial<ProcessedEntry> = {}): ProcessedEntry => 
   tracking_method: "manual",
   created_at: "2026-08-10T02:00:00.000Z",
   updated_at: "2026-08-10T02:00:00.000Z",
-  people: [],
+  person: [],
   tags: [],
   extra_data: null,
   task: {

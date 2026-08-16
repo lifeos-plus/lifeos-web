@@ -77,10 +77,6 @@ export const ENDPOINTS = {
     BY_ID: (id: string) => `${API_V1}/person/${id}`,
     ACTIVITIES: (id: string) => `${API_V1}/person/${id}/activities/`,
     ANNIVERSARIES: (id: string) => `${API_V1}/person/${id}/anniversaries/`,
-    ANNIVERSARY_BY_ID: (personId: string, anniversaryId: string) =>
-      `${API_V1}/person/${personId}/anniversaries/${anniversaryId}`,
-    TAG_BY_ID: (personId: string, tagId: string) =>
-      `${API_V1}/person/${personId}/tags/${tagId}`,
     SEARCH_BY_TAG: `${API_V1}/person/search-by-tag`,
   },
   AREAS: {

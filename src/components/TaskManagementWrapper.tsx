@@ -84,7 +84,7 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
     if (!taskManagement.creatingNoteForTask) return null;
     return deriveNoteAssociationDefaults({
       task: taskManagement.creatingNoteForTask,
-      people: taskManagement.creatingNoteForTask.people,
+      person: taskManagement.creatingNoteForTask.person,
     });
   }, [taskManagement.creatingNoteForTask]);
 
@@ -171,7 +171,7 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
           }
           preSelectedPersonIds={
             createNoteDefaults?.preSelectedPersonIds ??
-            taskManagement.creatingNoteForTask?.people?.map((p) => p.id)
+            taskManagement.creatingNoteForTask?.person?.map((p) => p.id)
           }
           lockTaskSelection={createNoteDefaults?.lockTaskSelection ?? false}
           lockPersonSelection={createNoteDefaults?.lockPersonSelection ?? false}

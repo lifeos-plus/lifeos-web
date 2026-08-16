@@ -43,10 +43,10 @@ describe("plannedEventsApi", () => {
       });
 
     const list = await plannedEventsApi.fetchRange("2026-01-01", "2026-01-02");
-    expect(list.items[0].people).toEqual([{ id: "p1", name: "Alice" }]);
+    expect(list.items[0].person).toEqual([{ id: "p1", name: "Alice" }]);
 
     const detail = await plannedEventsApi.getById("e1");
-    expect(detail.people).toEqual([{ id: "p1", name: "Alice" }]);
+    expect(detail.person).toEqual([{ id: "p1", name: "Alice" }]);
 
     expect(String(fetchMock.mock.calls[0][0])).toContain(
       localUrl(ENDPOINTS.PLANNED_EVENTS.BASE),

@@ -205,7 +205,7 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
 
       <td className="px-3 py-2 whitespace-nowrap">
         {!entry.isPlaceholder ? (
-          <PersonsList people={entry.people} />
+          <PersonsList people={entry.person} />
         ) : (
           <span className="text-sm text-base-content/50">-</span>
         )}

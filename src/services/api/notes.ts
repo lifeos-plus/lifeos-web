@@ -1,7 +1,6 @@
 import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
-import type { PersonSummary } from "./types/common";
 import { tagsApi, type Tag } from "./tags";
 import type { UUID } from "@/types/primitive";
 
@@ -22,8 +21,7 @@ export type NoteTimelogSummary = TimelogSummaryTransport & {
 };
 export type NoteHabitActionSummary = components["schemas"]["HabitActionSummaryResponse"];
 export type Note = Pick<NoteTransport, "content" | "created_at" | "id" | "updated_at"> &
-  Partial<Omit<NoteTransport, "content" | "created_at" | "id" | "person" | "tags" | "task" | "tasks" | "timelogs" | "updated_at">> & {
-    people?: PersonSummary[];
+  Partial<Omit<NoteTransport, "content" | "created_at" | "id" | "tags" | "task" | "tasks" | "timelogs" | "updated_at">> & {
     tags?: Tag[];
     task?: TaskSummary | null;
     tasks?: TaskSummary[];
@@ -142,7 +140,7 @@ interface NoteBulkCreateResponsePayload {
 type NoteListTransport = components["schemas"]["ListResponse_NoteResponse_NoteListMeta_"];
 export type NoteListResponse = Omit<NoteListTransport, "items"> & { items: Note[] };
 
-const toNote = (note: NoteTransport): Note => ({ ...note, people: note.person });
+const toNote = (note: NoteTransport): Note => note;
 const toNoteList = (response: NoteListTransport): NoteListResponse => ({
   ...response,
   items: response.items.map(toNote),

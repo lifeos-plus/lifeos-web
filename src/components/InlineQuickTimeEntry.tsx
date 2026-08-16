@@ -195,7 +195,7 @@ export default function InlineQuickTimeEntry({
         // Use extracted helper functions
         autoFillTitle(task);
         autoFillArea(vision);
-        applyTaskPersons(task.people ?? undefined);
+        applyTaskPersons(task.person ?? undefined);
       } catch {
         // ignore autofill errors
       }
@@ -610,8 +610,8 @@ export default function InlineQuickTimeEntry({
       // Use extracted helper functions for auto-fill
       autoFillTitle(task);
       autoFillArea(vision);
-      if (task.people && task.people.length > 0) {
-        applyTaskPersons(task.people);
+      if (task.person && task.person.length > 0) {
+        applyTaskPersons(task.person);
       } else {
         clearAutoPersonsIfAutoApplied();
       }
@@ -740,7 +740,7 @@ export default function InlineQuickTimeEntry({
     const templatePersonIds =
       tpl.person_ids && tpl.person_ids.length > 0
         ? tpl.person_ids
-        : (tpl.people?.map((person) => person.id) ?? []);
+        : (tpl.person?.map((person) => person.id) ?? []);
     handlePersonSelectionChange(templatePersonIds);
   };
 

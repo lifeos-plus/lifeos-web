@@ -1,7 +1,6 @@
 import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
-import type { PersonSummary } from "./types/common";
 import type { UUID } from "@/types/primitive";
 import { DataCleaner } from "@/utils/protocol";
 import type { NoteSummary } from "./notes";
@@ -29,12 +28,11 @@ export type TimelogTaskSummary = Omit<
 };
 export type Timelog = Omit<
   TimelogTransport,
-  "deleted_at" | "linked_notes_count" | "person" | "task" | "task_id"
+  "deleted_at" | "linked_notes_count" | "task" | "task_id"
 > &
   TimelogClientFields & {
     deleted_at?: string | null;
     linked_notes_count?: number;
-    people?: PersonSummary[] | null;
     task?: TimelogTaskSummary | null;
     task_id?: UUID | null;
   };
@@ -69,11 +67,6 @@ export type LatestTimelogEndTimeResponse = components["schemas"]["LatestTimelogE
 
 const TIMELOG_PAGE_SIZE = 500;
 const MAX_TIMELOG_RANGE_PAGES = 100;
-
-const toTimelog = (entry: TimelogTransport): Timelog => ({
-  ...entry,
-  people: entry.person,
-});
 
 function toTimelogPayload(
   payload: TimelogCreate | TimelogUpdate,
@@ -118,7 +111,7 @@ export const timelogsApi = {
       );
 
       firstResponse ??= response;
-      items.push(...response.items.map(toTimelog));
+      items.push(...response.items);
       totalPages = response.pagination?.pages ?? 0;
       totalCount = response.pagination?.total ?? items.length;
       const backendTruncated = response.meta?.truncated === true;
@@ -162,9 +155,10 @@ export const timelogsApi = {
 
   create: (payload: TimelogCreate) => {
     const cleanedData = DataCleaner.create(toTimelogPayload(payload));
-    return http
-      .post<TimelogTransport>(ENDPOINTS.TIMELOGS.BASE, cleanedData)
-      .then(toTimelog);
+    return http.post<TimelogTransport>(
+      ENDPOINTS.TIMELOGS.BASE,
+      cleanedData,
+    );
   },
 
   batchCreate: (timelogs: TimelogCreate[]) => {
@@ -179,7 +173,7 @@ export const timelogsApi = {
     ).then((createdTimelogs) => ({
       created_count: createdTimelogs.length,
       failed_count: 0,
-      created_timelogs: createdTimelogs.map(toTimelog),
+      created_timelogs: createdTimelogs,
       errors: [],
     }));
   },
@@ -187,17 +181,16 @@ export const timelogsApi = {
   update: (id: UUID, payload: TimelogUpdate) => {
     const cleanedData = DataCleaner.update(toTimelogPayload(payload));
 
-    return http
-      .patch<TimelogTransport>(ENDPOINTS.TIMELOGS.BY_ID(id), cleanedData)
-      .then(toTimelog);
+    return http.patch<TimelogTransport>(
+      ENDPOINTS.TIMELOGS.BY_ID(id),
+      cleanedData,
+    );
   },
 
   quickEnd: (id: UUID) =>
-    http
-      .patch<TimelogTransport>(ENDPOINTS.TIMELOGS.BY_ID(id), {
-        end_time: new Date().toISOString(),
-      })
-      .then(toTimelog),
+    http.patch<TimelogTransport>(ENDPOINTS.TIMELOGS.BY_ID(id), {
+      end_time: new Date().toISOString(),
+    }),
 
   delete: (id: UUID) => http.delete<void>(ENDPOINTS.TIMELOGS.BY_ID(id)),
 
@@ -246,12 +239,10 @@ export const timelogsApi = {
         size: 500,
       },
     );
-    const items = response.items.map(toTimelog);
-    const returnedCount = items.length;
+    const returnedCount = response.items.length;
     const totalCount = response.pagination?.total ?? returnedCount;
     return {
       ...response,
-      items,
       meta: {
         ...response.meta,
         start_date: response.meta?.start_date ?? params.start_date,

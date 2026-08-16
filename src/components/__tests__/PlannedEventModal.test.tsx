@@ -99,12 +99,10 @@ const recurringInstance: PlannedEvent = {
   is_instance: true,
   master_event_id: "event-1",
   instance_id: "instance-1",
-  people: [
+  person: [
     {
       id: "person-1",
-      display_name: "Alice",
-      primary_nickname: "Alice",
-      tags: [],
+      name: "Alice",
     },
   ],
 };

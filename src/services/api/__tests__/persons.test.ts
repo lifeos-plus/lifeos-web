@@ -37,6 +37,24 @@ describe("personsApi", () => {
             }),
           );
         }
+        if (url.startsWith(localUrl(ENDPOINTS.PERSONS.ANNIVERSARIES("p1")))) {
+          return Promise.resolve(
+            json({
+              items: [],
+              pagination: { page: 1, size: 10, total: 0, pages: 0 },
+              meta: { person_id: "p1" },
+            }),
+          );
+        }
+        if (url.startsWith(localUrl(ENDPOINTS.PERSONS.SEARCH_BY_TAG))) {
+          return Promise.resolve(
+            json({
+              items: [person],
+              pagination: { page: 1, size: 10, total: 1, pages: 1 },
+              meta: {},
+            }),
+          );
+        }
         if (url.startsWith(localUrl(ENDPOINTS.PERSONS.BY_ID("p1")))) {
           return Promise.resolve(json(person));
         }
@@ -63,6 +81,10 @@ describe("personsApi", () => {
     await personsApi.delete("p1");
     const activities = await personsApi.getActivities("p1");
     expect(activities.items).toEqual([]);
+    const anniversaries = await personsApi.getAnniversaries("p1");
+    expect(anniversaries.items).toEqual([]);
+    const byTag = await personsApi.searchByTag("work");
+    expect(byTag.items[0].id).toBe("p1");
 
     const calls = fetchMock.mock.calls.map((call) => ({
       url: String(call[0]),
@@ -78,6 +100,16 @@ describe("personsApi", () => {
     expect(
       urls.some((url) =>
         url.startsWith(localUrl(ENDPOINTS.PERSONS.ACTIVITIES("p1"))),
+      ),
+    ).toBe(true);
+    expect(
+      urls.some((url) =>
+        url.startsWith(localUrl(ENDPOINTS.PERSONS.ANNIVERSARIES("p1"))),
+      ),
+    ).toBe(true);
+    expect(
+      urls.some((url) =>
+        url.startsWith(localUrl(ENDPOINTS.PERSONS.SEARCH_BY_TAG)),
       ),
     ).toBe(true);
     expect(calls.map((c) => c.method)).toContain("POST");

@@ -18,7 +18,6 @@ import {
   parseBulkTimelogInput,
   BULK_IMPORT_MAX_ENTRIES,
   BULK_IMPORT_MAX_DAYS,
-  type BulkImportRow,
   type BulkImportMessage,
   type BulkImportRowErrorCode,
   type BulkImportWarningCode,
@@ -30,12 +29,16 @@ import {
   resolveBulkImportDefaultStart,
   toDateInputValue,
 } from "./bulkImportDefaults";
+import {
+  buildDraftTimelog,
+  buildProcessedEntry,
+  type EditableRow,
+} from "./draftBuilders";
 import type { ProcessedEntry } from "@/utils/datetime";
 import type { UUID } from "@/types/primitive";
 import { UNKNOWN_AREA_COLOR } from "@/utils/areaColors";
 import type { TaskWithSubtasks } from "@/services/api";
 import type {
-  Timelog,
   TimelogCreate,
   TimelogTaskSummary,
 } from "@/services/api/timelogs";
@@ -52,10 +55,6 @@ interface TimeLogBulkImportPanelProps {
   preloadedTasks: TaskWithSubtasks[];
   onCancel: () => void;
   onImported: () => void;
-}
-
-interface EditableRow extends BulkImportRow {
-  isManualEdit?: boolean;
 }
 
 const MIN_TEXTAREA_HEIGHT = 200;
@@ -111,63 +110,6 @@ const convertToUtcIso = (
   );
 };
 
-const buildProcessedEntry = (
-  row: EditableRow,
-  timezone: string,
-  taskLookup: Map<UUID, TimelogTaskSummary>,
-  personLookup: Map<UUID, PersonSummary>,
-): ProcessedEntry => {
-  const startIso = convertToUtcIso(row.date, row.startTime, timezone);
-  const endIso = convertToUtcIso(row.endDate, row.endTime, timezone);
-  const people = row.personIds.map((id) => {
-    const uuid = id as UUID;
-    return (
-      personLookup.get(uuid) || {
-        id: uuid,
-        display_name: uuid,
-        primary_nickname: "",
-        name: "",
-        tags: [],
-      }
-    );
-  });
-  const task =
-    row.taskId && taskLookup.get(row.taskId as UUID)
-      ? taskLookup.get(row.taskId as UUID)!
-      : row.taskId
-        ? {
-            id: row.taskId as UUID,
-            content: row.taskId,
-            vision_id: null,
-            vision_summary: null,
-          }
-        : null;
-  return {
-    id: row.id as UUID,
-    title: row.description,
-    start_time: startIso,
-    end_time: endIso,
-    area_id: (row.areaId as UUID) ?? null,
-    tracking_method: "manual",
-    location: null,
-    energy_level: row.energyLevel ?? null,
-    notes: row.notes || null,
-    tags: [],
-    extra_data: { sourceLine: row.sourceLineNumber },
-    created_at: startIso,
-    updated_at: endIso,
-    people,
-    task,
-    linked_notes: [],
-    validationResult: {
-      isValid: row.errors.length === 0,
-      hasNegativeDuration: false,
-      hasOverlaps: false,
-      overlappingEntries: [],
-    },
-  } as ProcessedEntry;
-};
-
 const computeDayOffset = (baseDate: string, target: string): number | null => {
   if (!DATE_REGEX.test(baseDate) || !DATE_REGEX.test(target)) return null;
   const base = parseDateOnlyToLocalDate(baseDate);
@@ -217,59 +159,6 @@ const validateRowFields = (
   }
 
   return errors;
-};
-
-const buildDraftTimelog = (
-  row: EditableRow,
-  timezone: string,
-  taskLookup: Map<UUID, TimelogTaskSummary>,
-  personLookup: Map<UUID, PersonSummary>,
-): Timelog => {
-  const startIso = convertToUtcIso(row.date, row.startTime, timezone);
-  const endIso = convertToUtcIso(row.endDate, row.endTime, timezone);
-  const nowIso = new Date().toISOString();
-  const people = row.personIds.map((id) => {
-    const uuid = id as UUID;
-    return (
-      personLookup.get(uuid) || {
-        id: uuid,
-        display_name: uuid,
-        primary_nickname: "",
-        name: "",
-        tags: [],
-      }
-    );
-  });
-  const task =
-    row.taskId && taskLookup.get(row.taskId as UUID)
-      ? taskLookup.get(row.taskId as UUID)!
-      : row.taskId
-        ? {
-            id: row.taskId as UUID,
-            content: row.taskId,
-            vision_id: null,
-            vision_summary: null,
-          }
-        : null;
-  return {
-    id: row.id as UUID,
-    title: row.description,
-    start_time: startIso,
-    end_time: endIso,
-    area_id: (row.areaId as UUID) ?? null,
-    area_summary: null,
-    tracking_method: "manual",
-    location: null,
-    energy_level: row.energyLevel ?? null,
-    notes: row.notes || null,
-    tags: [],
-    extra_data: { sourceLine: row.sourceLineNumber },
-    created_at: nowIso,
-    updated_at: nowIso,
-    people,
-    task,
-    linked_notes: [],
-  };
 };
 
 const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({

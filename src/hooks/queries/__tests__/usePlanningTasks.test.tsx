@@ -39,7 +39,7 @@ describe("usePlanningTasks", () => {
     created_at: overrides.created_at ?? "2025-01-01T00:00:00Z",
     updated_at: overrides.updated_at ?? "2025-01-01T00:00:00Z",
     deleted_at: overrides.deleted_at ?? null,
-    people: overrides.people ?? [],
+    person: overrides.person ?? [],
   });
 
   let queryClient: QueryClient;
