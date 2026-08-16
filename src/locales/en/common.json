@@ -1765,11 +1765,6 @@
       "navLabel": "Note",
       "description": "Capture low-friction notes and link them to LifeOS entities."
     },
-    "persons": {
-      "displayName": "People",
-      "navLabel": "People",
-      "description": "Manage people and their linked LifeOS activity."
-    },
     "person": {
       "displayName": "People",
       "navLabel": "People",
