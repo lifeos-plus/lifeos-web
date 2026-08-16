@@ -148,6 +148,13 @@ export default defineConfig(({ mode }) => {
         reportsDirectory: './coverage',
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/**/*.d.ts', 'src/**/types.ts'],
+        thresholds: {
+          // Baseline floors with a small buffer; raise these as coverage grows.
+          statements: 35,
+          branches: 30,
+          functions: 30,
+          lines: 36,
+        },
       },
       exclude: [...configDefaults.exclude, 'e2e/**'],
     },

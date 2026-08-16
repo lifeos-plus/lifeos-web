@@ -22,8 +22,8 @@ npm run build
 echo "[validate] lint frontend"
 npm run lint
 
-echo "[validate] run frontend tests"
-npm test
+echo "[validate] run frontend tests with coverage gate"
+npm run test:coverage
 
 echo "[validate] ensure Playwright browsers"
 npx playwright install chromium

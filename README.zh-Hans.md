@@ -51,6 +51,8 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 bash ./scripts/validate.sh
 ```
 
+验证基线包含测试覆盖率门槛，阈值配置见 `vite.config.ts`；覆盖率低于门槛时验证失败。
+
 ## 项目政策
 
 - 贡献流程：[CONTRIBUTING.md](CONTRIBUTING.md)
