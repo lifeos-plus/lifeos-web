@@ -45,7 +45,6 @@ interface TaskGroupCardProps {
   carryForwardableTasks: TaskWithSubtasks[];
   handlers: PlanningTaskGroupHandlers;
   onTaskUpdate?: () => void;
-  onTaskStatusUpdate?: (taskId: UUID, newStatus: string) => Promise<void>;
   getExpandedTasks: (groupId: string) => Set<UUID>;
   toggleTaskExpansion: (groupId: string, taskId: string) => void;
   planningTaskFilterStatus: readonly string[];
@@ -82,7 +81,6 @@ export const TaskGroupCard: React.FC<TaskGroupCardProps> = ({
   carryForwardableTasks,
   handlers,
   onTaskUpdate,
-  onTaskStatusUpdate,
   getExpandedTasks,
   toggleTaskExpansion,
   planningTaskFilterStatus,
@@ -161,7 +159,6 @@ export const TaskGroupCard: React.FC<TaskGroupCardProps> = ({
         visionFilter={visionFilter}
         selectedVisionFilterName={selectedVisionFilterName}
         onTaskUpdate={onTaskUpdate}
-        onTaskStatusUpdate={onTaskStatusUpdate}
         getExpandedTasks={getExpandedTasks}
         toggleTaskExpansion={toggleTaskExpansion}
       />

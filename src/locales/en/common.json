@@ -156,11 +156,11 @@
   "taskManagement": {
     "statusCascade": {
       "title": "Unfinished subtasks remain",
-      "message": "Before marking this task done, also complete the following {{count}} subtasks? Cancelled or paused subtasks stay unchanged.",
+      "message": "This task still has {{count}} unfinished subtasks. Mark them done as well? Cancelled or paused subtasks stay unchanged.",
       "more": "and {{count}} more subtasks",
-      "confirm": "Complete subtasks too",
+      "confirm": "Complete these subtasks too",
       "cancel": "Cancel change",
-      "blockedError": "This task still has unfinished direct subtasks. Complete, cancel, or pause all direct subtasks before marking it as done."
+      "blockedError": "This task still has unfinished direct subtasks. Complete, cancel, or pause them all before marking it done."
     }
   },
   "task": {

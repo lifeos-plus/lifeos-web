@@ -20,7 +20,6 @@ interface TaskListSectionProps {
   visionFilter: string;
   selectedVisionFilterName: string;
   onTaskUpdate?: () => void;
-  onTaskStatusUpdate?: (taskId: UUID, newStatus: string) => Promise<void>;
   getExpandedTasks: (groupId: string) => Set<UUID>;
   toggleTaskExpansion: (groupId: string, taskId: string) => void;
 }
@@ -35,7 +34,6 @@ export const TaskListSection: React.FC<TaskListSectionProps> = ({
   visionFilter,
   selectedVisionFilterName,
   onTaskUpdate,
-  onTaskStatusUpdate,
   getExpandedTasks,
   toggleTaskExpansion,
 }) => {
@@ -97,18 +95,12 @@ export const TaskListSection: React.FC<TaskListSectionProps> = ({
         allTasks={filteredTasks}
       >
         {(taskManagement) => {
-          const optimizedStatusUpdate = onTaskStatusUpdate
-            ? async (task: TaskWithSubtasks, newStatus: string) => {
-                await onTaskStatusUpdate(task.id, newStatus);
-              }
-            : taskManagement.actions.handleStatusUpdate;
-
           return (
             <DraggableTaskList
               tasks={sortedTasks}
               onEditTask={taskManagement.actions.handleEditTask}
               onDeleteTask={taskManagement.actions.handleDeleteTask}
-              onStatusUpdate={optimizedStatusUpdate}
+              onStatusUpdate={taskManagement.actions.handleStatusUpdate}
               onAddSubtask={taskManagement.actions.handleAddSubtask}
               onViewTimeRecords={taskManagement.actions.handleViewTimeRecords}
               onCreateNote={taskManagement.actions.handleOpenCreateNoteModal}

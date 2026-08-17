@@ -5,7 +5,6 @@ import type {
   PlanningGroup,
   PlanningViewType,
 } from "@/utils/calendar";
-import type { UUID } from "@/types/primitive";
 import { usePlanningTaskGroup } from "@/hooks/planning/usePlanningTaskGroup";
 import { TaskGroupCard } from "./planning/TaskGroupCard";
 import type { TaskTooltipLookupEntry } from "./tooltips/tooltipData";
@@ -15,7 +14,6 @@ interface PlanningTaskListProps {
   visions: Vision[];
   taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
   onTaskUpdate?: () => void;
-  onTaskStatusUpdate?: (taskId: UUID, newStatus: string) => Promise<void>;
   planningCycleType?: PlanningViewType;
   calendarAdapter?: CalendarAdapter;
 }
@@ -89,7 +87,6 @@ const PlanningTaskList: React.FC<PlanningTaskListProps> = (props) => {
       carryForwardableTasks={carryForwardableTasks}
       handlers={handlers}
       onTaskUpdate={props.onTaskUpdate}
-      onTaskStatusUpdate={props.onTaskStatusUpdate}
       getExpandedTasks={getExpandedTasks}
       toggleTaskExpansion={toggleTaskExpansion}
       planningTaskFilterStatus={planningTaskFilterStatus}
