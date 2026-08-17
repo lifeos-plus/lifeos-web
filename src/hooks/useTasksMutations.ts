@@ -57,8 +57,15 @@ const collectPlanningSnapshots = (
 
 const TASK_FIELD_MODES: TaskFieldsMode[] = ["basic", "full"];
 
+/** Task fields editable through this hook. Status changes go through useTaskManagement. */
+type TaskUpdateWithoutStatus = Omit<TaskUpdate, "status">;
+
 /**
- * Hook for managing tasks mutations (create, update, delete, reorder, move)
+ * Hook for managing tasks mutations (create, update, delete, reorder, move).
+ *
+ * Task status updates are intentionally NOT part of this hook: they are
+ * centralized in `useTaskManagement`, which owns the cascade confirmation
+ * flow (`apply_to_subtasks`) and the localized blocked-error handling.
  */
 export function useTasksMutations() {
   const queryClient = useQueryClient();
@@ -131,7 +138,7 @@ export function useTasksMutations() {
   const updateMutation = useMutation<
     Task,
     Error,
-    { id: UUID; data: TaskUpdate },
+    { id: UUID; data: TaskUpdateWithoutStatus },
     { previousTask: Task | null }
   >({
     mutationFn: ({ id, data }) => tasksApi.update(id, data),
@@ -179,46 +186,6 @@ export function useTasksMutations() {
       toast.showError(
         t("task.messages.updateFailed"),
         error.message || t("task.messages.inputHint"),
-      );
-    },
-  });
-
-  // Update task status mutation
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: UUID; status: string }) =>
-      tasksApi.updateStatus(id, status),
-    onSuccess: async (result: Task) => {
-      updateTaskCaches(queryClient, result);
-
-      // 精确缓存失效策略：只失效相关的查询
-      const invalidatePromises = [
-        // 失效vision hierarchy
-        invalidateVisionsHierarchy(queryClient, result.vision_id),
-      ];
-
-      // 只在有vision_id时才失效相关的任务查询
-      if (result.vision_id) {
-        invalidatePromises.push(...invalidateTaskListQueries(result.vision_id));
-      } else {
-        // 如果是无vision的任务，失效全量任务查询
-        invalidatePromises.push(...invalidateTaskListQueries(undefined));
-      }
-
-      await Promise.all(invalidatePromises);
-
-      // Show success message
-      toast.showSuccess(
-        t("task.messages.statusUpdateSucceeded"),
-        t("task.messages.statusUpdateSucceededDetail", {
-          content: result.content,
-          status: result.status,
-        }),
-      );
-    },
-    onError: (error: Error) => {
-      toast.showError(
-        t("task.messages.statusUpdateFailed"),
-        error.message || t("task.messages.retryLater"),
       );
     },
   });
@@ -388,7 +355,6 @@ export function useTasksMutations() {
     // Individual mutations
     createTask: createMutation,
     updateTask: updateMutation,
-    updateTaskStatus: updateStatusMutation,
     deleteTask: deleteMutation,
     reorderTasks: reorderMutation,
     moveTask: moveMutation,
@@ -396,7 +362,6 @@ export function useTasksMutations() {
     // Convenience methods for async operations
     createTaskAsync: createMutation.mutateAsync,
     updateTaskAsync: updateMutation.mutateAsync,
-    updateTaskStatusAsync: updateStatusMutation.mutateAsync,
     deleteTaskAsync: deleteMutation.mutateAsync,
     reorderTasksAsync: reorderMutation.mutateAsync,
     moveTaskAsync: moveMutation.mutateAsync,

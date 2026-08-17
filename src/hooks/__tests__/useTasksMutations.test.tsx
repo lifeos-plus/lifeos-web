@@ -8,7 +8,6 @@ import { ToastContext } from "@/contexts/ToastContext";
 
 const createMock = vi.fn();
 const updateMock = vi.fn();
-const updateStatusMock = vi.fn();
 const deleteMock = vi.fn();
 const reorderMock = vi.fn();
 const moveMock = vi.fn();
@@ -17,7 +16,6 @@ vi.mock("@/services/api/tasks", () => ({
   tasksApi: {
     create: (...args: unknown[]) => createMock(...args),
     update: (...args: unknown[]) => updateMock(...args),
-    updateStatus: (...args: unknown[]) => updateStatusMock(...args),
     delete: (...args: unknown[]) => deleteMock(...args),
     reorder: (...args: unknown[]) => reorderMock(...args),
     move: (...args: unknown[]) => moveMock(...args),
@@ -55,7 +53,6 @@ describe("useTasksMutations", () => {
   beforeEach(() => {
     createMock.mockReset().mockResolvedValue(task);
     updateMock.mockReset().mockResolvedValue(task);
-    updateStatusMock.mockReset().mockResolvedValue({ ...task, status: "done" });
     deleteMock.mockReset().mockResolvedValue(undefined);
     reorderMock.mockReset().mockResolvedValue({});
     moveMock.mockReset().mockResolvedValue(task);
@@ -80,14 +77,6 @@ describe("useTasksMutations", () => {
     expect(toastMock.showSuccess).toHaveBeenCalledWith(
       "task.messages.updateSuccess",
       "task.messages.updateSuccessDetail",
-    );
-
-    await act(async () => {
-      await result.current.updateTaskStatusAsync({ id: "t1", status: "done" });
-    });
-    expect(toastMock.showSuccess).toHaveBeenCalledWith(
-      "task.messages.statusUpdateSucceeded",
-      "task.messages.statusUpdateSucceededDetail",
     );
 
     await act(async () => {
@@ -116,7 +105,6 @@ describe("useTasksMutations", () => {
   it("surfaces mutation failures through the error toast", async () => {
     createMock.mockRejectedValue("boom");
     updateMock.mockRejectedValue("boom");
-    updateStatusMock.mockRejectedValue("boom");
     deleteMock.mockRejectedValue("boom");
     reorderMock.mockRejectedValue("boom");
     moveMock.mockRejectedValue("boom");
@@ -126,7 +114,6 @@ describe("useTasksMutations", () => {
     for (const run of [
       () => result.current.createTaskAsync({ content: "Task A", vision_id: null }),
       () => result.current.updateTaskAsync({ id: "t1", data: { content: "Task A" } }),
-      () => result.current.updateTaskStatusAsync({ id: "t1", status: "done" }),
       () => result.current.deleteTaskAsync({ id: "t1" }),
       () => result.current.reorderTasksAsync([{ id: "t1", display_order: 1 }]),
       () => result.current.moveTaskAsync({ id: "t1" }),
@@ -143,10 +130,6 @@ describe("useTasksMutations", () => {
     expect(toastMock.showError).toHaveBeenCalledWith(
       "task.messages.updateFailed",
       "task.messages.inputHint",
-    );
-    expect(toastMock.showError).toHaveBeenCalledWith(
-      "task.messages.statusUpdateFailed",
-      "task.messages.retryLater",
     );
     expect(toastMock.showError).toHaveBeenCalledWith(
       "task.messages.deleteFailed",
