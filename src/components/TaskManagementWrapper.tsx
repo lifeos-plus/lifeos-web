@@ -137,6 +137,33 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
         />
       )}
 
+      {/* 状态级联确认对话框 */}
+      {taskManagement.statusCascade && (() => {
+        const affected = taskManagement.statusCascade.affectedSubtasks;
+        const shown = affected.slice(0, 8);
+        const hiddenCount = affected.length - shown.length;
+        const lines = [
+          t("taskManagement.statusCascade.message", { count: affected.length }),
+          ...shown.map((subtask) => `• ${subtask.content}`),
+        ];
+        if (hiddenCount > 0) {
+          lines.push(
+            t("taskManagement.statusCascade.more", { count: hiddenCount }),
+          );
+        }
+        return (
+          <ConfirmDialog
+            isOpen
+            title={t("taskManagement.statusCascade.title")}
+            message={lines.join("\n")}
+            confirmText={t("taskManagement.statusCascade.confirm")}
+            cancelText={t("taskManagement.statusCascade.cancel")}
+            onConfirm={taskManagement.actions.confirmStatusCascade}
+            onCancel={taskManagement.actions.closeStatusCascade}
+          />
+        );
+      })()}
+
       {/* 时间记录查看模态框 */}
       {taskManagement.isTimeRecordsModalOpen &&
         taskManagement.viewingTimeRecords && (

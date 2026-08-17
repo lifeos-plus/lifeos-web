@@ -10,12 +10,14 @@ import type { TaskWithSubtasks } from "@/services/api";
 const deleteMock = vi.fn();
 const updateStatusMock = vi.fn();
 const reorderMock = vi.fn();
+const getWithSubtasksMock = vi.fn();
 
 vi.mock("@/services/api/tasks", () => ({
   tasksApi: {
     delete: (...args: unknown[]) => deleteMock(...args),
     updateStatus: (...args: unknown[]) => updateStatusMock(...args),
     reorder: (...args: unknown[]) => reorderMock(...args),
+    getWithSubtasks: (...args: unknown[]) => getWithSubtasksMock(...args),
   },
 }));
 
@@ -51,11 +53,28 @@ const task = {
   parent_task_id: null,
 } as unknown as TaskWithSubtasks;
 
+const parentWithOpenSubtask = {
+  id: "parent-1",
+  content: "Parent",
+  status: "todo",
+  parent_task_id: null,
+  subtasks: [
+    {
+      id: "child-1",
+      content: "Child",
+      status: "in_progress",
+      parent_task_id: "parent-1",
+      subtasks: [],
+    },
+  ],
+} as unknown as TaskWithSubtasks;
+
 describe("useTaskManagement", () => {
   beforeEach(() => {
     deleteMock.mockReset().mockResolvedValue(undefined);
     updateStatusMock.mockReset().mockResolvedValue({ ...task, status: "done" });
     reorderMock.mockReset().mockResolvedValue({});
+    getWithSubtasksMock.mockReset().mockResolvedValue(parentWithOpenSubtask);
     toastMock.showSuccess.mockClear();
     toastMock.showError.mockClear();
   });
@@ -128,5 +147,49 @@ describe("useTaskManagement", () => {
       "task.messages.orderUpdateFailed",
       "task.messages.orderUpdateFailedDetail",
     );
+  });
+
+  it("asks for confirmation before completing a parent with open subtasks", async () => {
+    const { result } = renderHook(() => useTaskManagement(), { wrapper });
+
+    await act(async () => {
+      await result.current.actions.handleStatusUpdate(
+        parentWithOpenSubtask,
+        "done",
+      );
+    });
+
+    expect(updateStatusMock).not.toHaveBeenCalled();
+    expect(result.current.state.statusCascade?.affectedSubtasks).toHaveLength(1);
+
+    act(() => {
+      result.current.actions.confirmStatusCascade();
+    });
+    await act(async () => {});
+
+    expect(updateStatusMock).toHaveBeenCalledWith(
+      "parent-1",
+      "done",
+      { applyToSubtasks: true },
+    );
+    expect(result.current.state.statusCascade).toBeNull();
+  });
+
+  it("cancelling the cascade leaves the status unchanged", async () => {
+    const { result } = renderHook(() => useTaskManagement(), { wrapper });
+
+    await act(async () => {
+      await result.current.actions.handleStatusUpdate(
+        parentWithOpenSubtask,
+        "done",
+      );
+    });
+
+    act(() => {
+      result.current.actions.closeStatusCascade();
+    });
+
+    expect(updateStatusMock).not.toHaveBeenCalled();
+    expect(result.current.state.statusCascade).toBeNull();
   });
 });

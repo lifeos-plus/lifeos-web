@@ -13,6 +13,11 @@ import {
 } from "@/utils/query";
 import { tasksKeys } from "@/services/api/queryKeys";
 import { createModalSessionId } from "@/utils/session";
+import {
+  collectOpenSubtasks,
+  hasBlockingDirectSubtasks,
+  isParentCompletionBlockedError,
+} from "@/utils/taskStatus";
 
 type TaskUpdateSummary = {
   id: UUID;
@@ -91,6 +96,13 @@ interface TaskManagementState {
   // 创建子任务相关状态
   creatingSubtask: boolean;
   parentTaskId: UUID | null;
+
+  // 状态级联确认相关状态
+  statusCascade: {
+    task: TaskWithSubtasks;
+    newStatus: string;
+    affectedSubtasks: TaskWithSubtasks[];
+  } | null;
 }
 
 interface TaskManagementActions {
@@ -109,6 +121,8 @@ interface TaskManagementActions {
     task: TaskWithSubtasks,
     newStatus: string,
   ) => Promise<void>;
+  closeStatusCascade: () => void;
+  confirmStatusCascade: () => void;
 
   // 添加子任务
   handleAddSubtask: (parentId?: UUID | null) => void;
@@ -222,8 +236,15 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
 
   // 任务状态更新 mutation
   const updateTaskStatusMutation = useMutation({
-    mutationFn: ({ taskId, status }: { taskId: UUID; status: string }) =>
-      tasksApi.updateStatus(taskId, status),
+    mutationFn: ({
+      taskId,
+      status,
+      applyToSubtasks,
+    }: {
+      taskId: UUID;
+      status: string;
+      applyToSubtasks?: boolean;
+    }) => tasksApi.updateStatus(taskId, status, { applyToSubtasks }),
     onSuccess: async (updatedTask: Task) => {
       toast.showSuccess(
         t("task.messages.statusUpdateSuccess"),
@@ -242,7 +263,9 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     onError: (error: Error) => {
       toast.showError(
         t("task.messages.statusUpdateFailed"),
-        t("task.messages.statusUpdateFailedDetail"),
+        isParentCompletionBlockedError(error)
+          ? t("taskManagement.statusCascade.blockedError")
+          : t("task.messages.statusUpdateFailedDetail"),
       );
       console.error("Update task status error:", error);
     },
@@ -295,6 +318,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     isCreateTimelogModalOpen: false,
     creatingSubtask: false,
     parentTaskId: null,
+    statusCascade: null,
   });
 
   // 任务编辑处理
@@ -428,9 +452,9 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 状态更新处理
-  const handleStatusUpdate = useCallback(
-    async (task: TaskWithSubtasks, newStatus: string) => {
+  // 应用状态更新（保留滚动位置和焦点）
+  const applyStatusUpdate = useCallback(
+    (taskId: UUID, status: string, applyToSubtasks: boolean) => {
       // 保存当前滚动位置和焦点
       const activeElement = document.activeElement as HTMLElement | null;
       const activeElementRole = activeElement?.getAttribute("role");
@@ -445,7 +469,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
       };
 
       updateTaskStatusMutation.mutate(
-        { taskId: task.id, status: newStatus },
+        { taskId, status, applyToSubtasks },
         {
           onSuccess: () => {
             // 恢复滚动位置和焦点
@@ -461,6 +485,53 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     },
     [updateTaskStatusMutation],
   );
+
+  // 状态更新处理：done 且存在未闭合直接子任务时先做二次确认
+  const handleStatusUpdate = useCallback(
+    async (task: TaskWithSubtasks, newStatus: string) => {
+      if (
+        newStatus === "done" &&
+        task.status !== "done" &&
+        hasBlockingDirectSubtasks(task)
+      ) {
+        let fullTask = task;
+        try {
+          fullTask = await tasksApi.getWithSubtasks(task.id);
+        } catch (error) {
+          // 规划页可能只加载了部分子任务；拉取失败时回退到本地树，
+          // 后端校验仍然是最终防线。
+          console.warn("Failed to load full task subtree for status cascade:", error);
+        }
+        const affectedSubtasks = collectOpenSubtasks(fullTask);
+        if (affectedSubtasks.length > 0) {
+          setState((prev) => ({
+            ...prev,
+            statusCascade: {
+              task: fullTask,
+              newStatus,
+              affectedSubtasks,
+            },
+          }));
+          return;
+        }
+      }
+      applyStatusUpdate(task.id, newStatus, false);
+    },
+    [applyStatusUpdate],
+  );
+
+  // 关闭状态级联确认对话框
+  const closeStatusCascade = useCallback(() => {
+    setState((prev) => ({ ...prev, statusCascade: null }));
+  }, []);
+
+  // 确认级联：把父任务状态应用到未闭合子任务
+  const confirmStatusCascade = useCallback(() => {
+    const pending = state.statusCascade;
+    if (!pending) return;
+    setState((prev) => ({ ...prev, statusCascade: null }));
+    applyStatusUpdate(pending.task.id, pending.newStatus, true);
+  }, [state.statusCascade, applyStatusUpdate]);
 
   // 添加子任务处理
   const handleAddSubtask = useCallback(
@@ -655,6 +726,8 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     confirmDeleteTask,
     closeDeleteConfirm,
     handleStatusUpdate,
+    closeStatusCascade,
+    confirmStatusCascade,
     handleAddSubtask,
     handleViewTimeRecords,
     closeTimeRecordsModal,
@@ -688,6 +761,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     isCreateTimelogModalOpen: state.isCreateTimelogModalOpen,
     creatingSubtask: state.creatingSubtask,
     parentTaskId: state.parentTaskId,
+    statusCascade: state.statusCascade,
   };
 };
 

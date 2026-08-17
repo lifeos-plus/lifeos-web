@@ -3496,6 +3496,11 @@ export interface components {
          * @description Payload for updating just a task status.
          */
         TaskStatusUpdate: {
+            /**
+             * Apply To Subtasks
+             * @default false
+             */
+            apply_to_subtasks?: boolean;
             /** Status */
             status: string;
         };

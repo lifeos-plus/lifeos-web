@@ -33,6 +33,23 @@ describe("tasksApi.updateStatus", () => {
     expect(init.method).toBe("PATCH");
     expect(init.body).toBe(JSON.stringify({ status: "done" }));
   });
+
+  it("includes apply_to_subtasks when cascade is requested", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ id: "task-1", status: "done" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    await tasksApi.updateStatus("task-1", "done", { applyToSubtasks: true });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(init.method).toBe("PATCH");
+    expect(init.body).toBe(
+      JSON.stringify({ status: "done", apply_to_subtasks: true }),
+    );
+  });
 });
 
 describe("tasksApi.getTimelogs", () => {

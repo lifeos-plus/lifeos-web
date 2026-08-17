@@ -153,6 +153,16 @@
   "person": {
     "selectPersonPlaceholder": "请添加相关人..."
   },
+  "taskManagement": {
+    "statusCascade": {
+      "title": "仍有未完成的子任务",
+      "message": "标记为已完成前，是否同时完成以下 {{count}} 个子任务？已取消或已暂停的子任务保持不变。",
+      "more": "以及其他 {{count}} 个子任务",
+      "confirm": "同时完成子任务",
+      "cancel": "取消更改",
+      "blockedError": "该任务还有未完成的直接子任务，请先完成、取消或暂停所有直接子任务后再标记为已完成。"
+    }
+  },
   "task": {
     "selectTaskPlaceholder": "请选择任务...",
     "confirmDeleteTitle": "确认删除任务",

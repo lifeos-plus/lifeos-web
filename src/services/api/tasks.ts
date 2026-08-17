@@ -242,8 +242,15 @@ export const tasksApi = {
     );
   },
 
-  async updateStatus(id: UUID, status: string): Promise<Task> {
-    return http.patch<TaskTransport>(ENDPOINTS.TASKS.STATUS(id), { status });
+  async updateStatus(
+    id: UUID,
+    status: string,
+    options?: { applyToSubtasks?: boolean },
+  ): Promise<Task> {
+    return http.patch<TaskTransport>(ENDPOINTS.TASKS.STATUS(id), {
+      status,
+      ...(options?.applyToSubtasks ? { apply_to_subtasks: true } : {}),
+    });
   },
 
   async delete(id: UUID): Promise<void> {

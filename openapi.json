@@ -6276,6 +6276,11 @@
       "TaskStatusUpdate": {
         "description": "Payload for updating just a task status.",
         "properties": {
+          "apply_to_subtasks": {
+            "default": false,
+            "title": "Apply To Subtasks",
+            "type": "boolean"
+          },
           "status": {
             "title": "Status",
             "type": "string"

@@ -75,7 +75,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           </div>
         </div>
         <div className="flex-grow min-w-0">
-          <p className="text-sm leading-relaxed text-base-content/80">
+          <p className="text-sm leading-relaxed whitespace-pre-line text-base-content/80">
             {message}
           </p>
         </div>
