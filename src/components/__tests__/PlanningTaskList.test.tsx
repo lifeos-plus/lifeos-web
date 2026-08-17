@@ -67,7 +67,6 @@ describe("PlanningTaskList", () => {
         group={group}
         visions={visions}
         onTaskUpdate={vi.fn()}
-        onTaskStatusUpdate={vi.fn()}
         planningCycleType="week"
       />,
     );
