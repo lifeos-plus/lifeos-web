@@ -153,6 +153,16 @@
   "person": {
     "selectPersonPlaceholder": "Please add a related person..."
   },
+  "taskManagement": {
+    "statusCascade": {
+      "title": "Unfinished subtasks remain",
+      "message": "Before marking this task done, also complete the following {{count}} subtasks? Cancelled or paused subtasks stay unchanged.",
+      "more": "and {{count}} more subtasks",
+      "confirm": "Complete subtasks too",
+      "cancel": "Cancel change",
+      "blockedError": "This task still has unfinished direct subtasks. Complete, cancel, or pause all direct subtasks before marking it as done."
+    }
+  },
   "task": {
     "selectTaskPlaceholder": "Please select a task...",
     "confirmDeleteTitle": "Delete task?",
