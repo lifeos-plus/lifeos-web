@@ -25,6 +25,7 @@ import {
 import { Icon } from "@/components/icons";
 import { useVisions } from "@/hooks/queries/useVisions";
 import { useAllTasks } from "@/hooks/queries/useTasks";
+import { useAreas } from "@/hooks/queries/useAreas";
 import "@/styles/calendar.css";
 import Container from "@/layouts/Container";
 import type { UUID } from "@/types/primitive";
@@ -85,6 +86,7 @@ function CalendarPage() {
     excludeStatus: ["done", "cancelled"],
     enabled: stableVisions.length > 0,
   });
+  const { areaMap } = useAreas();
 
   const allowedVisionIds = useMemo<Set<UUID> | null>(() => {
     if (!stableVisions || stableVisions.length === 0) {
@@ -160,6 +162,7 @@ function CalendarPage() {
     showPlannedEvents,
     showTimelogs,
     selectedAreaId,
+    areaMap,
     taskIndicatorLabel: t("modules.calendar.taskIndicator"),
     preloadedTasks: stableAllFlatTasks,
     visions: stableVisions,
@@ -344,6 +347,12 @@ function CalendarPage() {
           datesSet={handleDatesSet}
           select={handleDateSelect}
           eventClick={handlePlannedEventClick}
+          eventDidMount={(info) => {
+            const areaColor = info.event.extendedProps?.areaColor;
+            if (typeof areaColor === "string" && areaColor) {
+              info.el.style.setProperty("--event-area-color", areaColor);
+            }
+          }}
           locale="zh-cn"
           buttonText={{
             today: t("modules.calendar.fc.today"),
