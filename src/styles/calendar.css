@@ -116,7 +116,8 @@
   opacity: 1;
 }
 
-/* Force no transparency on events for better readability */
+/* Keep the whole event element opaque; transparency is applied only to the
+   background fill via the area-tinted rules below. */
 .fc-event,
 .fc-timegrid-event,
 .fc-event-main {
@@ -129,8 +130,26 @@
   color: inherit;
 }
 
-/* Theme-specific contrast tuning */
-/* Solid colors work across themes; no separate alpha overrides needed */
+/* Area-tinted events - translucent area color background so text stays readable.
+   `--event-area-color` is set per event via eventDidMount in CalendarPage. */
+.fc-event.area-tinted {
+  background-color: color-mix(in srgb, var(--event-area-color) 20%, transparent);
+  border-color: color-mix(in srgb, var(--event-area-color) 55%, transparent);
+}
+
+/* Theme-specific text contrast for translucent fills */
+[data-theme="light"] .fc-event.area-tinted {
+  color: #1f2937;
+}
+
+[data-theme="dark"] .fc-event.area-tinted {
+  color: #f3f4f6;
+}
+
+/* Task-linked area events keep the outline accent in the area color */
+.fc-event.area-tinted.task-linked {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--event-area-color) 30%, transparent);
+}
 
 /* Smooth scrolling for better UX */
 .fc-scroller {

@@ -82,6 +82,10 @@ vi.mock("@/hooks/queries/useVisions", () => ({
   useVisions: () => ({ visions: [] }),
 }));
 
+vi.mock("@/hooks/queries/useAreas", () => ({
+  useAreas: () => ({ areas: [], areaMap: new Map() }),
+}));
+
 vi.mock("@/hooks/queries/useTasks", () => ({
   useAllTasks: () => ({ data: [] }),
 }));
