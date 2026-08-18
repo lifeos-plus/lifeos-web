@@ -80,6 +80,10 @@ bash ./scripts/validate.sh
 
 The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite.
 
+## Releases
+
+`lifeos-web` ships versioned releases as `vX.Y.Z` tags and GitHub Releases. Each release records the pinned `lifeos-cli` contract version it was built against. See [CONTRIBUTING.md](CONTRIBUTING.md) for the release process.
+
 ## Project Policies
 
 - Contribution workflow: [CONTRIBUTING.md](CONTRIBUTING.md)

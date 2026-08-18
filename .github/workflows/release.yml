@@ -1,0 +1,74 @@
+name: Release Web
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to release (vX.Y.Z). Leave empty to use the version from package.json."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Web Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Refuse non-main runs
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Releases must run from the main branch"
+          exit 1
+
+      - name: Resolve release tag
+        id: version
+        run: |
+          app_version="$(node -p "require('./package.json').version")"
+          tag="v${app_version}"
+          if [ -n "${{ github.event.inputs.version }}" ] && [ "${{ github.event.inputs.version }}" != "${tag}" ]; then
+            echo "::error::Requested version ${{ github.event.inputs.version }} does not match package.json version ${tag}"
+            exit 1
+          fi
+          if git rev-parse "${tag}" >/dev/null 2>&1; then
+            echo "::error::Tag ${tag} already exists; bump package.json first"
+            exit 1
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${app_version}" >> "$GITHUB_OUTPUT"
+
+      - name: Run validation baseline
+        run: bash ./scripts/validate.sh
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.version.outputs.tag }}"
+          cli_version="$(node scripts/pinned-cli-version.mjs)"
+          printf '%s\n' \
+            "lifeos-web v${{ steps.version.outputs.version }}" \
+            "" \
+            "Pinned LifeOS Web API contract: \`lifeos-cli v${cli_version}\`" \
+            "" \
+            "Changes since the previous release (auto-generated from merged pull requests):" \
+            > /tmp/lifeos-web-release-notes.md
+          gh tag create "${tag}" -m "lifeos-web v${{ steps.version.outputs.version }}"
+          git push origin "${tag}"
+          gh release create "${tag}" \
+            --title "lifeos-web v${{ steps.version.outputs.version }}" \
+            --notes-file /tmp/lifeos-web-release-notes.md \
+            --generate-notes

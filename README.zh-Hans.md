@@ -51,6 +51,10 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 bash ./scripts/validate.sh
 ```
 
+## 发布
+
+`lifeos-web` 以 `vX.Y.Z` tag 与 GitHub Release 发布版本，每个版本会记录构建时所固定的 `lifeos-cli` 契约版本。发布流程详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 ## 项目政策
 
 - 贡献流程：[CONTRIBUTING.md](CONTRIBUTING.md)

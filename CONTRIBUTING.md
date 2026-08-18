@@ -97,6 +97,15 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 - Link relevant issues in the PR description using `Closes #xx` or `Related #xx`.
 - Use the `gh` CLI for all issue and PR operations.
 
+## Release Process
+
+`lifeos-web` is versioned independently of `lifeos-cli`:
+
+- The app version lives in `package.json` (`version`) and is the single source of truth for release tags (`vX.Y.Z`, semver).
+- Every release records the pinned LifeOS Web API contract version it was built against (`lifeos-cli vX.Y.Z` from `scripts/pinned-cli-version.mjs`).
+- To release: merge the version bump and intended changes to `main`, then run the manual `Release Web` workflow (`.github/workflows/release.yml`). The workflow validates the baseline, refuses to run off `main`, creates the `vX.Y.Z` tag, and publishes a GitHub Release with auto-generated notes.
+- `lifeos-web` is never published to npm: `package.json` stays `"private": true`.
+
 ## Documentation
 
 - Keep `README.md` as the canonical English entry document.
