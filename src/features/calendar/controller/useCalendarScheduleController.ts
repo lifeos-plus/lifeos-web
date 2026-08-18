@@ -20,6 +20,10 @@ import type {
   Vision,
 } from "@/services/api";
 import type { UUID } from "@/types/primitive";
+import {
+  DEFAULT_AREA_COLOR,
+  UNKNOWN_AREA_COLOR,
+} from "@/utils/areaColors";
 
 interface SelectedDateInfo {
   start: Date;
@@ -33,6 +37,7 @@ interface UseCalendarScheduleControllerParams {
   showPlannedEvents: boolean;
   showTimelogs: boolean;
   selectedAreaId: UUID | null | undefined;
+  areaMap: Map<UUID, { name: string; color: string }>;
   taskIndicatorLabel: string;
   preloadedTasks: ApiTask[];
   visions: Vision[];
@@ -74,6 +79,7 @@ export function useCalendarScheduleController({
   showPlannedEvents,
   showTimelogs,
   selectedAreaId,
+  areaMap,
   taskIndicatorLabel,
   preloadedTasks,
   visions,
@@ -137,6 +143,10 @@ export function useCalendarScheduleController({
       showPlannedEvents ? planned : []
     ).map((plannedEvent, index) => {
       const hasTask = plannedEvent.task_id != null;
+      const areaId = plannedEvent.area_id ?? null;
+      const areaColor = areaId
+        ? (areaMap.get(areaId)?.color ?? DEFAULT_AREA_COLOR)
+        : null;
       return {
         id: plannedEvent.is_instance
           ? `planned-${plannedEvent.master_event_id || plannedEvent.id}-instance-${plannedEvent.start_time}-${index}`
@@ -148,11 +158,13 @@ export function useCalendarScheduleController({
         end: plannedEvent.end_time || undefined,
         allDay: plannedEvent.is_all_day,
         classNames: hasTask
-          ? ["planned-event", "task-linked"]
-          : ["planned-event"],
+          ? ["planned-event", "task-linked", ...(areaColor ? ["area-tinted"] : [])]
+          : ["planned-event", ...(areaColor ? ["area-tinted"] : [])],
         extendedProps: {
           entryType: "planned",
           originalPlannedEvent: plannedEvent,
+          areaId,
+          areaColor,
           priority: plannedEvent.priority,
           isRecurring: plannedEvent.is_recurring,
           tags: plannedEvent.tags,
@@ -164,27 +176,40 @@ export function useCalendarScheduleController({
 
     const timelogInputs: FullCalendarScheduleInput[] = (
       showTimelogs ? timelogs : []
-    ).map((timelog, index) => ({
-      id: `timelog-${timelog.id}-${timelog.start_time}-${index}`,
-      title: timelog.title,
-      start: timelog.start_time,
-      end: timelog.end_time || undefined,
-      allDay: false,
-      classNames: ["timelog-event"],
-      extendedProps: {
-        entryType: "timelog",
-        originalTimelog: timelog,
-        location: timelog.location,
-        trackingMethod: timelog.tracking_method,
-        energyLevel: timelog.energy_level,
-        notes: timelog.notes,
-        tags: timelog.tags,
-        areaId: timelog.area_id,
-      },
-    }));
+    ).map((timelog, index) => {
+      const areaId = timelog.area_id ?? null;
+      const areaColor = areaId
+        ? (timelog.area_summary?.color ??
+          areaMap.get(areaId)?.color ??
+          UNKNOWN_AREA_COLOR)
+        : null;
+      return {
+        id: `timelog-${timelog.id}-${timelog.start_time}-${index}`,
+        title: timelog.title,
+        start: timelog.start_time,
+        end: timelog.end_time || undefined,
+        allDay: false,
+        classNames: [
+          "timelog-event",
+          ...(areaColor ? ["area-tinted"] : []),
+        ],
+        extendedProps: {
+          entryType: "timelog",
+          originalTimelog: timelog,
+          areaId,
+          areaColor,
+          location: timelog.location,
+          trackingMethod: timelog.tracking_method,
+          energyLevel: timelog.energy_level,
+          notes: timelog.notes,
+          tags: timelog.tags,
+        },
+      };
+    });
 
     return [...plannedEventInputs, ...timelogInputs];
   }, [
+    areaMap,
     planned,
     showTimelogs,
     showPlannedEvents,
