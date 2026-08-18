@@ -1,0 +1,107 @@
+name: Release Web
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing v* tag to publish or repair"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-web-${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create Web Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Resolve and verify release tag
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+        run: |
+          tag="${RELEASE_TAG}"
+          if ! printf '%s' "${tag}" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Release tag must match vX.Y.Z, got ${tag}"
+            exit 1
+          fi
+          app_version="$(node -p "require('./package.json').version")"
+          if [ "${tag}" != "v${app_version}" ]; then
+            echo "::error::Tag ${tag} does not match package.json version v${app_version}"
+            exit 1
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${app_version}" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure release target is reachable from main
+        run: |
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" "origin/main"
+          echo "Release target ${GITHUB_SHA} is reachable from main"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v9.0.0
+        with:
+          cache-dependency-glob: package-lock.json
+
+      - name: Install LifeOS CLI with Web API extras
+        run: |
+          CLI_VERSION="$(node scripts/pinned-cli-version.mjs)"
+          echo "Pinned lifeos-cli version: ${CLI_VERSION}"
+          uv tool install "lifeos-cli[web,postgres]==${CLI_VERSION}"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run validation baseline
+        run: bash ./scripts/validate.sh
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          cli_version="$(node scripts/pinned-cli-version.mjs)"
+          printf '%s\n' \
+            "lifeos-web ${RELEASE_TAG}" \
+            "" \
+            "Pinned LifeOS Web API contract: \`lifeos-cli v${cli_version}\`" \
+            "" \
+            "Changes since the previous release (auto-generated from merged pull requests):" \
+            > /tmp/lifeos-web-release-notes.md
+          if gh release view "${RELEASE_TAG}" --json url >/dev/null 2>&1; then
+            echo "Release ${RELEASE_TAG} already exists; skipping creation."
+          else
+            gh release create "${RELEASE_TAG}" \
+              --verify-tag \
+              --title "lifeos-web ${RELEASE_TAG}" \
+              --notes-file /tmp/lifeos-web-release-notes.md \
+              --generate-notes
+          fi
