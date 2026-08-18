@@ -1,15 +1,22 @@
 name: Release Web
 
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version tag to release (vX.Y.Z). Leave empty to use the version from package.json."
-        required: false
+      release_tag:
+        description: "Existing v* tag to publish or repair"
+        required: true
         type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-web-${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -20,6 +27,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -28,47 +36,52 @@ jobs:
           cache: "npm"
           cache-dependency-path: package-lock.json
 
-      - name: Refuse non-main runs
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo "::error::Releases must run from the main branch"
-          exit 1
-
-      - name: Resolve release tag
+      - name: Resolve and verify release tag
         id: version
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
         run: |
-          app_version="$(node -p "require('./package.json').version")"
-          tag="v${app_version}"
-          if [ -n "${{ github.event.inputs.version }}" ] && [ "${{ github.event.inputs.version }}" != "${tag}" ]; then
-            echo "::error::Requested version ${{ github.event.inputs.version }} does not match package.json version ${tag}"
+          tag="${RELEASE_TAG}"
+          if ! printf '%s' "${tag}" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Release tag must match vX.Y.Z, got ${tag}"
             exit 1
           fi
-          if git rev-parse "${tag}" >/dev/null 2>&1; then
-            echo "::error::Tag ${tag} already exists; bump package.json first"
+          app_version="$(node -p "require('./package.json').version")"
+          if [ "${tag}" != "v${app_version}" ]; then
+            echo "::error::Tag ${tag} does not match package.json version v${app_version}"
             exit 1
           fi
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "version=${app_version}" >> "$GITHUB_OUTPUT"
 
+      - name: Ensure release target is reachable from main
+        run: |
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" "origin/main"
+          echo "Release target ${GITHUB_SHA} is reachable from main"
+
       - name: Run validation baseline
         run: bash ./scripts/validate.sh
 
-      - name: Create tag and GitHub Release
+      - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
         run: |
-          tag="${{ steps.version.outputs.tag }}"
           cli_version="$(node scripts/pinned-cli-version.mjs)"
           printf '%s\n' \
-            "lifeos-web v${{ steps.version.outputs.version }}" \
+            "lifeos-web ${RELEASE_TAG}" \
             "" \
             "Pinned LifeOS Web API contract: \`lifeos-cli v${cli_version}\`" \
             "" \
             "Changes since the previous release (auto-generated from merged pull requests):" \
             > /tmp/lifeos-web-release-notes.md
-          gh tag create "${tag}" -m "lifeos-web v${{ steps.version.outputs.version }}"
-          git push origin "${tag}"
-          gh release create "${tag}" \
-            --title "lifeos-web v${{ steps.version.outputs.version }}" \
-            --notes-file /tmp/lifeos-web-release-notes.md \
-            --generate-notes
+          if gh release view "${RELEASE_TAG}" --json url >/dev/null 2>&1; then
+            echo "Release ${RELEASE_TAG} already exists; skipping creation."
+          else
+            gh release create "${RELEASE_TAG}" \
+              --verify-tag \
+              --title "lifeos-web ${RELEASE_TAG}" \
+              --notes-file /tmp/lifeos-web-release-notes.md \
+              --generate-notes
+          fi

@@ -103,7 +103,15 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 
 - The app version lives in `package.json` (`version`) and is the single source of truth for release tags (`vX.Y.Z`, semver).
 - Every release records the pinned LifeOS Web API contract version it was built against (`lifeos-cli vX.Y.Z` from `scripts/pinned-cli-version.mjs`).
-- To release: merge the version bump and intended changes to `main`, then run the manual `Release Web` workflow (`.github/workflows/release.yml`). The workflow validates the baseline, refuses to run off `main`, creates the `vX.Y.Z` tag, and publishes a GitHub Release with auto-generated notes.
+- To release:
+  1. Merge the version bump and intended changes to `main`.
+  2. Tag the `main` tip with the version and push the tag:
+     ```bash
+     git tag -a v1.0.0 -m "lifeos-web v1.0.0"
+     git push origin v1.0.0
+     ```
+  3. The `Release Web` workflow (`.github/workflows/release.yml`) validates the baseline, verifies the tag matches `package.json` and is reachable from `main`, and publishes a GitHub Release with auto-generated notes.
+- The same workflow can be re-run manually from the Actions tab (with an existing `v*` tag) to repair a missing or broken release.
 - `lifeos-web` is never published to npm: `package.json` stays `"private": true`.
 
 ## Documentation

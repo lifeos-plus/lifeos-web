@@ -53,7 +53,7 @@ bash ./scripts/validate.sh
 
 ## 发布
 
-`lifeos-web` 以 `vX.Y.Z` tag 与 GitHub Release 发布版本，每个版本会记录构建时所固定的 `lifeos-cli` 契约版本。发布流程详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+`lifeos-web` 以 `vX.Y.Z` tag 与 GitHub Release 发布版本，每个版本会记录构建时所固定的 `lifeos-cli` 契约版本。发布方式：将版本号变更合并到 `main` 后，为最新提交打 tag 并推送（`git tag -a v1.0.0 && git push origin v1.0.0`），`Release Web` 工作流会自动完成校验并发布 GitHub Release。详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 项目政策
 

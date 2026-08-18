@@ -82,7 +82,7 @@ The baseline installs locked dependencies, rejects high- and critical-severity `
 
 ## Releases
 
-`lifeos-web` ships versioned releases as `vX.Y.Z` tags and GitHub Releases. Each release records the pinned `lifeos-cli` contract version it was built against. See [CONTRIBUTING.md](CONTRIBUTING.md) for the release process.
+`lifeos-web` ships versioned releases as `vX.Y.Z` tags and GitHub Releases. Each release records the pinned `lifeos-cli` contract version it was built against. To release, merge the version bump to `main`, tag the tip (`git tag -a v1.0.0 && git push origin v1.0.0`), and the `Release Web` workflow publishes the GitHub Release. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Project Policies
 
