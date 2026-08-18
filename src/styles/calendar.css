@@ -60,6 +60,13 @@
   color: var(--color-primary-content) !important;
 }
 
+/* Theme-aware grid lines: FullCalendar defaults to #ddd, which is harsh on
+   dark themes. Derive the line color from base-content so it follows the
+   active daisyUI theme (soft gray on light, subtle gray on dark). */
+.fc {
+  --fc-border-color: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+}
+
 .fc-button:hover {
   background-color: color-mix(in oklab, var(--color-primary) 80%, transparent) !important;
   border-color: color-mix(in oklab, var(--color-primary) 80%, transparent) !important;
@@ -133,17 +140,15 @@
 /* Area-tinted events - translucent area color background so text stays readable.
    `--event-area-color` is set per event via eventDidMount in CalendarPage. */
 .fc-event.area-tinted {
-  background-color: color-mix(in srgb, var(--event-area-color) 20%, transparent);
+  background-color: color-mix(in srgb, var(--event-area-color) 24%, transparent);
   border-color: color-mix(in srgb, var(--event-area-color) 55%, transparent);
 }
 
-/* Theme-specific text contrast for translucent fills */
-[data-theme="light"] .fc-event.area-tinted {
-  color: #1f2937;
-}
-
-[data-theme="dark"] .fc-event.area-tinted {
-  color: #f3f4f6;
+/* Theme-safe text for translucent fills: use the theme's base-content color
+   (guaranteed contrast on the base surface) instead of primary/success
+   content colors, which vary unpredictably across daisyUI themes. */
+.fc-event.area-tinted {
+  color: var(--color-base-content);
 }
 
 /* Task-linked area events keep the outline accent in the area color */
