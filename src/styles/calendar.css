@@ -27,6 +27,13 @@
   border-radius: 4px;
 }
 
+/* Events render as flat color blocks only: suppress all event borders
+   (including FullCalendar's default 1px solid). The view already has plenty
+   of grid lines, so events should not add more. */
+.fc .fc-event {
+  border: 0;
+}
+
 .fc-timegrid-event {
   min-height: 28px;
 }
@@ -60,6 +67,13 @@
   color: var(--color-primary-content) !important;
 }
 
+/* Theme-aware grid lines: FullCalendar defaults to #ddd, which is harsh on
+   dark themes. Derive the line color from base-content so it follows the
+   active daisyUI theme (soft gray on light, subtle gray on dark). */
+.fc {
+  --fc-border-color: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+}
+
 .fc-button:hover {
   background-color: color-mix(in oklab, var(--color-primary) 80%, transparent) !important;
   border-color: color-mix(in oklab, var(--color-primary) 80%, transparent) !important;
@@ -89,25 +103,19 @@
 /* Planned events - use primary color palette for theme compatibility */
 .planned-event-custom {
   background-color: var(--color-primary);
-  border: 1px solid var(--color-primary);
   color: var(--color-primary-content);
-  border-style: dashed;
 }
 
 /* Planned events with task linked - slightly more prominent */
 .planned-event-custom.task-linked {
   background-color: var(--color-primary);
-  border-color: var(--color-primary);
   color: var(--color-primary-content);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary) 25%, transparent);
 }
 
 /* Actual events - use success color palette for theme compatibility */
 .timelog-event-custom {
   background-color: var(--color-success);
-  border: 1px solid var(--color-success);
   color: var(--color-success-content);
-  border-style: solid;
   font-weight: 400;
 }
 
@@ -116,7 +124,8 @@
   opacity: 1;
 }
 
-/* Force no transparency on events for better readability */
+/* Keep the whole event element opaque; transparency is applied only to the
+   background fill via the area-tinted rules below. */
 .fc-event,
 .fc-timegrid-event,
 .fc-event-main {
@@ -129,8 +138,15 @@
   color: inherit;
 }
 
-/* Theme-specific contrast tuning */
-/* Solid colors work across themes; no separate alpha overrides needed */
+/* Area-tinted events - translucent area color background so text stays readable.
+   `--event-area-color` is set per event via eventDidMount in CalendarPage.
+   Text uses the theme's base-content color (guaranteed contrast on the base
+   surface) instead of primary/success content colors, which vary
+   unpredictably across daisyUI themes. */
+.fc-event.area-tinted {
+  background-color: color-mix(in srgb, var(--event-area-color) 24%, transparent);
+  color: var(--color-base-content);
+}
 
 /* Smooth scrolling for better UX */
 .fc-scroller {

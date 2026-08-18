@@ -1,3 +1,5 @@
+import type { UUID } from "@/types/primitive";
+
 export const DEFAULT_AREA_COLOR = "#70747B";
 export const UNKNOWN_AREA_COLOR = "#A1A4AA";
 export const DEFAULT_NEW_AREA_COLOR = "#6A8DC7";
@@ -38,4 +40,21 @@ export const getReadableTextColor = (backgroundColor: string): string => {
   const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 
   return luminance > 0.179 ? "#111827" : "#FFFFFF";
+};
+
+/**
+ * Resolve the display color for a schedule event based on its area.
+ * - No area id -> null (the event keeps its default solid styling).
+ * - Unknown sentinel "-1" -> UNKNOWN_AREA_COLOR, matching AreaBadge.
+ * - Otherwise prefer the API-provided area summary color, then the local
+ *   area map, then DEFAULT_AREA_COLOR as a stable fallback.
+ */
+export const resolveEventAreaColor = (
+  areaId: string | null | undefined,
+  areaMap: Map<UUID, { name: string; color: string }>,
+  areaSummaryColor?: string | null,
+): string | null => {
+  if (!areaId) return null;
+  if (areaId === "-1") return UNKNOWN_AREA_COLOR;
+  return areaSummaryColor ?? areaMap.get(areaId)?.color ?? DEFAULT_AREA_COLOR;
 };
