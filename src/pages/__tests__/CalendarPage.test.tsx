@@ -10,6 +10,7 @@ setupTranslationMock();
 const calendarMetrics = vi.hoisted(() => ({
   datesSetCalls: 0,
   renders: 0,
+  eventAreaVar: null as string | null,
 }));
 
 const calendarAdapter = vi.hoisted(() => ({
@@ -26,13 +27,22 @@ vi.mock("@fullcalendar/react", async () => {
       {
         datesSet,
         visibleRange,
+        eventDidMount,
       }: {
         datesSet: (info: { start: Date; end: Date; startStr: string }) => void;
         visibleRange: (date: Date) => { start: string; end: string };
+        eventDidMount?: (info: {
+          event: { extendedProps?: Record<string, unknown> };
+          el: {
+            style: { setProperty: (name: string, value: string) => void };
+          };
+        }) => void;
       },
       ref,
     ) => {
       calendarMetrics.renders += 1;
+      const eventDidMountRef = React.useRef(eventDidMount);
+      eventDidMountRef.current = eventDidMount;
       React.useImperativeHandle(ref, () => ({
         getApi: () => ({
           view: { title: "2026年8月5日", type: "timeGridDay" },
@@ -44,6 +54,18 @@ vi.mock("@fullcalendar/react", async () => {
           start: new Date("2026-08-05T00:00:00.000Z"),
           end: new Date("2026-08-06T00:00:00.000Z"),
           startStr: "2026-08-05T00:00:00Z",
+        });
+        eventDidMountRef.current?.({
+          event: { extendedProps: { areaColor: "#ABCDEF" } },
+          el: {
+            style: {
+              setProperty: (name: string, value: string) => {
+                if (name === "--event-area-color") {
+                  calendarMetrics.eventAreaVar = value;
+                }
+              },
+            },
+          },
         });
       }, [datesSet, visibleRange]);
       return <div data-testid="full-calendar" />;
@@ -130,10 +152,19 @@ describe("CalendarPage", () => {
   it("does not retrigger FullCalendar date profiles after datesSet state sync", async () => {
     calendarMetrics.datesSetCalls = 0;
     calendarMetrics.renders = 0;
+    calendarMetrics.eventAreaVar = null;
 
     render(<CalendarPage />);
 
     await waitFor(() => expect(calendarMetrics.renders).toBeGreaterThan(1));
     expect(calendarMetrics.datesSetCalls).toBe(1);
+  });
+
+  it("sets the area color CSS variable when events mount", async () => {
+    calendarMetrics.eventAreaVar = null;
+
+    render(<CalendarPage />);
+
+    await waitFor(() => expect(calendarMetrics.eventAreaVar).toBe("#ABCDEF"));
   });
 });

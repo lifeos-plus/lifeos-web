@@ -21,8 +21,7 @@ import type {
 } from "@/services/api";
 import type { UUID } from "@/types/primitive";
 import {
-  DEFAULT_AREA_COLOR,
-  UNKNOWN_AREA_COLOR,
+  resolveEventAreaColor,
 } from "@/utils/areaColors";
 
 interface SelectedDateInfo {
@@ -144,9 +143,14 @@ export function useCalendarScheduleController({
     ).map((plannedEvent, index) => {
       const hasTask = plannedEvent.task_id != null;
       const areaId = plannedEvent.area_id ?? null;
-      const areaColor = areaId
-        ? (areaMap.get(areaId)?.color ?? DEFAULT_AREA_COLOR)
-        : null;
+      const areaColor = resolveEventAreaColor(areaId, areaMap);
+      const classNames = ["planned-event"];
+      if (hasTask) {
+        classNames.push("task-linked");
+      }
+      if (areaColor) {
+        classNames.push("area-tinted");
+      }
       return {
         id: plannedEvent.is_instance
           ? `planned-${plannedEvent.master_event_id || plannedEvent.id}-instance-${plannedEvent.start_time}-${index}`
@@ -157,9 +161,7 @@ export function useCalendarScheduleController({
         start: plannedEvent.start_time,
         end: plannedEvent.end_time || undefined,
         allDay: plannedEvent.is_all_day,
-        classNames: hasTask
-          ? ["planned-event", "task-linked", ...(areaColor ? ["area-tinted"] : [])]
-          : ["planned-event", ...(areaColor ? ["area-tinted"] : [])],
+        classNames,
         extendedProps: {
           entryType: "planned",
           originalPlannedEvent: plannedEvent,
@@ -178,21 +180,22 @@ export function useCalendarScheduleController({
       showTimelogs ? timelogs : []
     ).map((timelog, index) => {
       const areaId = timelog.area_id ?? null;
-      const areaColor = areaId
-        ? (timelog.area_summary?.color ??
-          areaMap.get(areaId)?.color ??
-          UNKNOWN_AREA_COLOR)
-        : null;
+      const areaColor = resolveEventAreaColor(
+        areaId,
+        areaMap,
+        timelog.area_summary?.color,
+      );
+      const classNames = ["timelog-event"];
+      if (areaColor) {
+        classNames.push("area-tinted");
+      }
       return {
         id: `timelog-${timelog.id}-${timelog.start_time}-${index}`,
         title: timelog.title,
         start: timelog.start_time,
         end: timelog.end_time || undefined,
         allDay: false,
-        classNames: [
-          "timelog-event",
-          ...(areaColor ? ["area-tinted"] : []),
-        ],
+        classNames,
         extendedProps: {
           entryType: "timelog",
           originalTimelog: timelog,

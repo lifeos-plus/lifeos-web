@@ -139,15 +139,12 @@
 }
 
 /* Area-tinted events - translucent area color background so text stays readable.
-   `--event-area-color` is set per event via eventDidMount in CalendarPage. */
+   `--event-area-color` is set per event via eventDidMount in CalendarPage.
+   Text uses the theme's base-content color (guaranteed contrast on the base
+   surface) instead of primary/success content colors, which vary
+   unpredictably across daisyUI themes. */
 .fc-event.area-tinted {
   background-color: color-mix(in srgb, var(--event-area-color) 24%, transparent);
-}
-
-/* Theme-safe text for translucent fills: use the theme's base-content color
-   (guaranteed contrast on the base surface) instead of primary/success
-   content colors, which vary unpredictably across daisyUI themes. */
-.fc-event.area-tinted {
   color: var(--color-base-content);
 }
 
