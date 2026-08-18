@@ -89,7 +89,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 
 ## Git and PR Workflow
 
-- Branch from the latest `main`.
+- Align local `main` with `origin/main` (`git fetch` + `git merge --ff-only`), then create a new worktree from `main`.
 - Use `git fetch` and `git merge --ff-only` to sync from `main`.
 - Do not push directly to protected branches.
 - Create or link a tracking issue for substantive development work.
