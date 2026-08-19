@@ -17,7 +17,6 @@ test("navigation exposes the LifeOS modules and routes to the timelog page", asy
     "Planning",
     "Timelog",
     "Finance",
-    "Health",
     "Stats",
     "Schedule",
     "Note",

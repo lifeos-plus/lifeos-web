@@ -8,10 +8,20 @@ test.beforeEach(async ({ page }) => {
 
 test("health page creates a menstrual day and switches tabs", async ({
   page,
+  request,
 }) => {
+  const probe = await request.get("/api/v1/menstrual-days/");
+  test.skip(
+    probe.status() === 404,
+    "health endpoints are not available in the pinned lifeos-cli backend",
+  );
+
   await page.goto("/health");
   await expect(page).toHaveTitle(/Health/);
 
+  await expect(
+    page.getByRole("link", { name: "Health", exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Add day" })).toBeVisible();
   await page.getByRole("button", { name: "Add day" }).first().click();
   await page.getByRole("checkbox", { name: "In period" }).check();
