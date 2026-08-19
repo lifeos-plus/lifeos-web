@@ -15,6 +15,7 @@ Default navigation keeps LifeOS-backed surfaces visible:
 - Planning
 - Timelog
 - Finance
+- Health
 - Insights / Stats
 - Schedule / Calendar
 - Notes

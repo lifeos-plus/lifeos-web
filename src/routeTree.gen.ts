@@ -21,6 +21,7 @@ import { Route as AuthenticatedPersonsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPeopleRouteImport } from './routes/_authenticated/people'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
+import { Route as AuthenticatedHealthRouteImport } from './routes/_authenticated/health'
 import { Route as AuthenticatedHabitsRouteImport } from './routes/_authenticated/habits'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedConfigRouteImport } from './routes/_authenticated/config'
@@ -85,6 +86,11 @@ const AuthenticatedInsightsRoute = AuthenticatedInsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedHealthRoute = AuthenticatedHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedHabitsRoute = AuthenticatedHabitsRouteImport.update({
   id: '/habits',
   path: '/habits',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/config': typeof AuthenticatedConfigRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/habits': typeof AuthenticatedHabitsRoute
+  '/health': typeof AuthenticatedHealthRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/people': typeof AuthenticatedPeopleRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/config': typeof AuthenticatedConfigRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/habits': typeof AuthenticatedHabitsRoute
+  '/health': typeof AuthenticatedHealthRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/people': typeof AuthenticatedPeopleRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/_authenticated/config': typeof AuthenticatedConfigRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
   '/_authenticated/habits': typeof AuthenticatedHabitsRoute
+  '/_authenticated/health': typeof AuthenticatedHealthRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/people': typeof AuthenticatedPeopleRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/config'
     | '/finance'
     | '/habits'
+    | '/health'
     | '/insights'
     | '/notes'
     | '/people'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/config'
     | '/finance'
     | '/habits'
+    | '/health'
     | '/insights'
     | '/notes'
     | '/people'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/_authenticated/config'
     | '/_authenticated/finance'
     | '/_authenticated/habits'
+    | '/_authenticated/health'
     | '/_authenticated/insights'
     | '/_authenticated/notes'
     | '/_authenticated/people'
@@ -305,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInsightsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/health': {
+      id: '/_authenticated/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof AuthenticatedHealthRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/habits': {
       id: '/_authenticated/habits'
       path: '/habits'
@@ -341,6 +360,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedConfigRoute: typeof AuthenticatedConfigRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
   AuthenticatedHabitsRoute: typeof AuthenticatedHabitsRoute
+  AuthenticatedHealthRoute: typeof AuthenticatedHealthRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPeopleRoute: typeof AuthenticatedPeopleRoute
@@ -358,6 +378,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedConfigRoute: AuthenticatedConfigRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
   AuthenticatedHabitsRoute: AuthenticatedHabitsRoute,
+  AuthenticatedHealthRoute: AuthenticatedHealthRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPeopleRoute: AuthenticatedPeopleRoute,

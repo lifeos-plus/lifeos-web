@@ -383,6 +383,472 @@
         "title": "AreaUpdate",
         "type": "object"
       },
+      "BodyMeasurementCreate": {
+        "description": "Payload for creating a body weight/composition measurement.",
+        "properties": {
+          "body_fat_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Fat Percentage"
+          },
+          "body_water_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Water Kg"
+          },
+          "bone_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bone Mass Kg"
+          },
+          "fat_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fat Mass Kg"
+          },
+          "measured_at": {
+            "format": "date-time",
+            "title": "Measured At",
+            "type": "string"
+          },
+          "muscle_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Mass Kg"
+          },
+          "muscle_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Percentage"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protein_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protein Kg"
+          },
+          "skeletal_muscle_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skeletal Muscle Kg"
+          },
+          "unit": {
+            "default": "kg",
+            "title": "Unit",
+            "type": "string"
+          },
+          "visceral_fat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visceral Fat"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "measured_at",
+          "weight"
+        ],
+        "title": "BodyMeasurementCreate",
+        "type": "object"
+      },
+      "BodyMeasurementResponse": {
+        "additionalProperties": false,
+        "description": "One body weight/composition measurement.",
+        "properties": {
+          "bmi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bmi"
+          },
+          "body_fat_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Fat Percentage"
+          },
+          "body_water_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Water Kg"
+          },
+          "bone_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bone Mass Kg"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "display_unit": {
+            "title": "Display Unit",
+            "type": "string"
+          },
+          "fat_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fat Mass Kg"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "measured_at": {
+            "title": "Measured At",
+            "type": "string"
+          },
+          "muscle_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Mass Kg"
+          },
+          "muscle_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Percentage"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protein_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protein Kg"
+          },
+          "skeletal_muscle_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skeletal Muscle Kg"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visceral_fat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visceral Fat"
+          },
+          "weight_kg": {
+            "title": "Weight Kg",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "measured_at",
+          "weight_kg",
+          "display_unit",
+          "bmi",
+          "body_fat_percentage",
+          "visceral_fat",
+          "fat_mass_kg",
+          "muscle_percentage",
+          "muscle_mass_kg",
+          "body_water_kg",
+          "protein_kg",
+          "bone_mass_kg",
+          "skeletal_muscle_kg",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BodyMeasurementResponse",
+        "type": "object"
+      },
+      "BodyMeasurementUpdate": {
+        "description": "Payload for updating a body weight/composition measurement.",
+        "properties": {
+          "body_fat_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Fat Percentage"
+          },
+          "body_water_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Water Kg"
+          },
+          "bone_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bone Mass Kg"
+          },
+          "clear_fields": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clear Fields"
+          },
+          "fat_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fat Mass Kg"
+          },
+          "measured_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured At"
+          },
+          "muscle_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Mass Kg"
+          },
+          "muscle_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Muscle Percentage"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protein_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protein Kg"
+          },
+          "skeletal_muscle_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skeletal Muscle Kg"
+          },
+          "unit": {
+            "default": "kg",
+            "title": "Unit",
+            "type": "string"
+          },
+          "visceral_fat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visceral Fat"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "title": "BodyMeasurementUpdate",
+        "type": "object"
+      },
       "DailyAreaMeta": {
         "additionalProperties": false,
         "properties": {
@@ -2713,6 +3179,30 @@
         "title": "ListResponse[AreaResponse, AreaListMeta]",
         "type": "object"
       },
+      "ListResponse_BodyMeasurementResponse_EmptyMeta_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BodyMeasurementResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/EmptyMeta"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "items",
+          "pagination",
+          "meta"
+        ],
+        "title": "ListResponse[BodyMeasurementResponse, EmptyMeta]",
+        "type": "object"
+      },
       "ListResponse_DailyAreaResponse_DailyAreaMeta_": {
         "properties": {
           "items": {
@@ -3001,6 +3491,54 @@
         "title": "ListResponse[HabitResponse, HabitListMeta]",
         "type": "object"
       },
+      "ListResponse_MenstrualDayResponse_EmptyMeta_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MenstrualDayResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/EmptyMeta"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "items",
+          "pagination",
+          "meta"
+        ],
+        "title": "ListResponse[MenstrualDayResponse, EmptyMeta]",
+        "type": "object"
+      },
+      "ListResponse_MenstrualFactorResponse_EmptyMeta_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MenstrualFactorResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/EmptyMeta"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "items",
+          "pagination",
+          "meta"
+        ],
+        "title": "ListResponse[MenstrualFactorResponse, EmptyMeta]",
+        "type": "object"
+      },
       "ListResponse_NoteResponse_NoteListMeta_": {
         "properties": {
           "items": {
@@ -3095,6 +3633,54 @@
           "meta"
         ],
         "title": "ListResponse[PlannedEventResponse, PlannedEventListMeta]",
+        "type": "object"
+      },
+      "ListResponse_SleepDailySummaryResponse_EmptyMeta_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SleepDailySummaryResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/EmptyMeta"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "items",
+          "pagination",
+          "meta"
+        ],
+        "title": "ListResponse[SleepDailySummaryResponse, EmptyMeta]",
+        "type": "object"
+      },
+      "ListResponse_SleepSegmentResponse_EmptyMeta_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SleepSegmentResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/EmptyMeta"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "items",
+          "pagination",
+          "meta"
+        ],
+        "title": "ListResponse[SleepSegmentResponse, EmptyMeta]",
         "type": "object"
       },
       "ListResponse_TaskResponse_TaskListMeta_": {
@@ -3222,6 +3808,387 @@
           "meta"
         ],
         "title": "ListResponse[VisionResponse, VisionListMeta]",
+        "type": "object"
+      },
+      "MenstrualDayCreate": {
+        "description": "Payload for creating a daily menstrual cycle record.",
+        "properties": {
+          "factor_names": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factor Names"
+          },
+          "flow_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flow Amount"
+          },
+          "in_period": {
+            "default": false,
+            "title": "In Period",
+            "type": "boolean"
+          },
+          "log_date": {
+            "format": "date",
+            "title": "Log Date",
+            "type": "string"
+          },
+          "mood_changes": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mood Changes"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protection_used": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protection Used"
+          },
+          "spotting": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spotting"
+          },
+          "symptoms": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptoms"
+          }
+        },
+        "required": [
+          "log_date"
+        ],
+        "title": "MenstrualDayCreate",
+        "type": "object"
+      },
+      "MenstrualDayResponse": {
+        "additionalProperties": false,
+        "description": "One daily menstrual cycle record.",
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/MenstrualFactorResponse"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "flow_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flow Amount"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "in_period": {
+            "title": "In Period",
+            "type": "boolean"
+          },
+          "log_date": {
+            "title": "Log Date",
+            "type": "string"
+          },
+          "mood_changes": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mood Changes"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protection_used": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protection Used"
+          },
+          "spotting": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spotting"
+          },
+          "symptoms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Symptoms",
+            "type": "array"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "log_date",
+          "in_period",
+          "flow_amount",
+          "symptoms",
+          "factors",
+          "mood_changes",
+          "protection_used",
+          "spotting",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MenstrualDayResponse",
+        "type": "object"
+      },
+      "MenstrualDayUpdate": {
+        "description": "Payload for updating a daily menstrual cycle record.",
+        "properties": {
+          "clear_factors": {
+            "default": false,
+            "title": "Clear Factors",
+            "type": "boolean"
+          },
+          "clear_flow": {
+            "default": false,
+            "title": "Clear Flow",
+            "type": "boolean"
+          },
+          "clear_notes": {
+            "default": false,
+            "title": "Clear Notes",
+            "type": "boolean"
+          },
+          "clear_symptoms": {
+            "default": false,
+            "title": "Clear Symptoms",
+            "type": "boolean"
+          },
+          "factor_names": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factor Names"
+          },
+          "flow_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flow Amount"
+          },
+          "in_period": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Period"
+          },
+          "log_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Log Date"
+          },
+          "mood_changes": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mood Changes"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "protection_used": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protection Used"
+          },
+          "spotting": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spotting"
+          },
+          "symptoms": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptoms"
+          }
+        },
+        "title": "MenstrualDayUpdate",
+        "type": "object"
+      },
+      "MenstrualFactorCreate": {
+        "description": "Payload for creating a custom menstrual factor.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "MenstrualFactorCreate",
+        "type": "object"
+      },
+      "MenstrualFactorResponse": {
+        "additionalProperties": false,
+        "description": "One custom menstrual factor.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "MenstrualFactorResponse",
         "type": "object"
       },
       "NoteCreate": {
@@ -4915,6 +5882,152 @@
           "until"
         ],
         "title": "RecurrencePatternResponse",
+        "type": "object"
+      },
+      "SleepDailySummaryResponse": {
+        "additionalProperties": false,
+        "description": "One computed daily sleep summary.",
+        "properties": {
+          "first_start_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Start At"
+          },
+          "last_end_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last End At"
+          },
+          "segment_count": {
+            "title": "Segment Count",
+            "type": "integer"
+          },
+          "sleep_date": {
+            "title": "Sleep Date",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sleep_date",
+          "total_minutes",
+          "segment_count",
+          "first_start_at",
+          "last_end_at"
+        ],
+        "title": "SleepDailySummaryResponse",
+        "type": "object"
+      },
+      "SleepSegmentCreate": {
+        "description": "Payload for creating a sleep segment.",
+        "properties": {
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_at",
+          "end_at"
+        ],
+        "title": "SleepSegmentCreate",
+        "type": "object"
+      },
+      "SleepSegmentResponse": {
+        "additionalProperties": false,
+        "description": "One sleep segment.",
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_minutes": {
+            "title": "Duration Minutes",
+            "type": "integer"
+          },
+          "end_at": {
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sleep_date": {
+            "title": "Sleep Date",
+            "type": "string"
+          },
+          "start_at": {
+            "title": "Start At",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sleep_date",
+          "start_at",
+          "end_at",
+          "duration_minutes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SleepSegmentResponse",
+        "type": "object"
+      },
+      "SleepSegmentUpdate": {
+        "description": "Payload for updating a sleep segment.",
+        "properties": {
+          "end_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End At"
+          },
+          "start_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start At"
+          }
+        },
+        "title": "SleepSegmentUpdate",
         "type": "object"
       },
       "TagBulkCategoryUpdate": {
@@ -8772,6 +9885,268 @@
         ]
       }
     },
+    "/api/v1/body-measurements/": {
+      "get": {
+        "description": "List body measurements for the local Web UI.",
+        "operationId": "list_body_measurements_api_v1_body_measurements__get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse_BodyMeasurementResponse_EmptyMeta_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Body Measurements",
+        "tags": [
+          "body-measurements"
+        ]
+      },
+      "post": {
+        "description": "Create one body measurement record.",
+        "operationId": "create_body_measurement_api_v1_body_measurements__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyMeasurementCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyMeasurementResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Body Measurement",
+        "tags": [
+          "body-measurements"
+        ]
+      }
+    },
+    "/api/v1/body-measurements/{measurement_id}": {
+      "delete": {
+        "description": "Soft-delete one body measurement.",
+        "operationId": "delete_body_measurement_api_v1_body_measurements__measurement_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "measurement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Measurement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Body Measurement",
+        "tags": [
+          "body-measurements"
+        ]
+      },
+      "get": {
+        "description": "Return one active body measurement.",
+        "operationId": "get_body_measurement_api_v1_body_measurements__measurement_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "measurement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Measurement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyMeasurementResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Body Measurement",
+        "tags": [
+          "body-measurements"
+        ]
+      },
+      "patch": {
+        "description": "Update one body measurement record.",
+        "operationId": "update_body_measurement_api_v1_body_measurements__measurement_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "measurement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Measurement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyMeasurementUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyMeasurementResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Body Measurement",
+        "tags": [
+          "body-measurements"
+        ]
+      }
+    },
     "/api/v1/finance/assets": {
       "get": {
         "description": "List finance assets.",
@@ -10683,6 +12058,402 @@
         ]
       }
     },
+    "/api/v1/menstrual-days/": {
+      "get": {
+        "description": "List menstrual day records for the local Web UI.",
+        "operationId": "list_menstrual_days_api_v1_menstrual_days__get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse_MenstrualDayResponse_EmptyMeta_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Menstrual Days",
+        "tags": [
+          "menstrual-days"
+        ]
+      },
+      "post": {
+        "description": "Create one daily menstrual cycle record.",
+        "operationId": "create_menstrual_day_api_v1_menstrual_days__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenstrualDayCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenstrualDayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Menstrual Day",
+        "tags": [
+          "menstrual-days"
+        ]
+      }
+    },
+    "/api/v1/menstrual-days/{day_id}": {
+      "delete": {
+        "description": "Soft-delete one menstrual day record.",
+        "operationId": "delete_menstrual_day_api_v1_menstrual_days__day_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "day_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Day Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Menstrual Day",
+        "tags": [
+          "menstrual-days"
+        ]
+      },
+      "get": {
+        "description": "Return one active menstrual day record.",
+        "operationId": "get_menstrual_day_api_v1_menstrual_days__day_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "day_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Day Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenstrualDayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Menstrual Day",
+        "tags": [
+          "menstrual-days"
+        ]
+      },
+      "patch": {
+        "description": "Update one daily menstrual cycle record.",
+        "operationId": "update_menstrual_day_api_v1_menstrual_days__day_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "day_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Day Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenstrualDayUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenstrualDayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Menstrual Day",
+        "tags": [
+          "menstrual-days"
+        ]
+      }
+    },
+    "/api/v1/menstrual-factors/": {
+      "get": {
+        "description": "List custom menstrual factors.",
+        "operationId": "list_menstrual_factors_api_v1_menstrual_factors__get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse_MenstrualFactorResponse_EmptyMeta_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Menstrual Factors",
+        "tags": [
+          "menstrual-factors"
+        ]
+      },
+      "post": {
+        "description": "Create one custom menstrual factor.",
+        "operationId": "create_menstrual_factor_api_v1_menstrual_factors__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenstrualFactorCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenstrualFactorResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Menstrual Factor",
+        "tags": [
+          "menstrual-factors"
+        ]
+      }
+    },
+    "/api/v1/menstrual-factors/{factor_id}": {
+      "delete": {
+        "description": "Soft-delete one custom menstrual factor.",
+        "operationId": "delete_menstrual_factor_api_v1_menstrual_factors__factor_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "factor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Factor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Menstrual Factor",
+        "tags": [
+          "menstrual-factors"
+        ]
+      }
+    },
     "/api/v1/notes/": {
       "get": {
         "description": "List notes for the local Web UI.",
@@ -12044,6 +13815,353 @@
         "summary": "Set Preference",
         "tags": [
           "preferences"
+        ]
+      }
+    },
+    "/api/v1/sleep-segments/": {
+      "get": {
+        "description": "List sleep segments for the local Web UI.",
+        "operationId": "list_sleep_segments_api_v1_sleep_segments__get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Size",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sleep_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sleep Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse_SleepSegmentResponse_EmptyMeta_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Sleep Segments",
+        "tags": [
+          "sleep-segments"
+        ]
+      },
+      "post": {
+        "description": "Create one sleep segment.",
+        "operationId": "create_sleep_segment_api_v1_sleep_segments__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SleepSegmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SleepSegmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Sleep Segment",
+        "tags": [
+          "sleep-segments"
+        ]
+      }
+    },
+    "/api/v1/sleep-segments/summary": {
+      "get": {
+        "description": "Return computed daily sleep summaries for an optional date range.",
+        "operationId": "list_sleep_summaries_api_v1_sleep_segments_summary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse_SleepDailySummaryResponse_EmptyMeta_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Sleep Summaries",
+        "tags": [
+          "sleep-segments"
+        ]
+      }
+    },
+    "/api/v1/sleep-segments/{segment_id}": {
+      "delete": {
+        "description": "Soft-delete one sleep segment.",
+        "operationId": "delete_sleep_segment_api_v1_sleep_segments__segment_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "segment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Segment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Sleep Segment",
+        "tags": [
+          "sleep-segments"
+        ]
+      },
+      "get": {
+        "description": "Return one active sleep segment.",
+        "operationId": "get_sleep_segment_api_v1_sleep_segments__segment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "segment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Segment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SleepSegmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Sleep Segment",
+        "tags": [
+          "sleep-segments"
+        ]
+      },
+      "patch": {
+        "description": "Update one sleep segment.",
+        "operationId": "update_sleep_segment_api_v1_sleep_segments__segment_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "segment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Segment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SleepSegmentUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SleepSegmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Sleep Segment",
+        "tags": [
+          "sleep-segments"
         ]
       }
     },

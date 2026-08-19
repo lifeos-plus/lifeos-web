@@ -661,30 +661,30 @@
     }
   },
   "settings": {
-  "appearance": {
-    "title": "Appearance",
-    "description": "Choose application theme and interface font.",
-    "theme": {
-      "label": "Select Theme",
-      "placeholder": "Please select a theme...",
-      "description": "Choose application theme. Selecting 'Follow System' will automatically switch between light/dark mode based on system settings."
-    },
-    "font": {
-      "label": "Interface Font",
-      "placeholder": "Please select a font...",
-      "description": "Choose an interface typeface. Options cover generic Latin-first categories as well as named fonts optimized for Simplified Chinese.",
-      "options": {
-        "system": "System Default",
-        "sans": "Sans-Serif",
-        "serif": "Serif",
-        "mono": "Monospace",
-        "yahei": "Microsoft YaHei",
-        "pingfang": "PingFang SC",
-        "noto": "Noto Sans SC",
-        "songti": "Songti (SimSun)"
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose application theme and interface font.",
+      "theme": {
+        "label": "Select Theme",
+        "placeholder": "Please select a theme...",
+        "description": "Choose application theme. Selecting 'Follow System' will automatically switch between light/dark mode based on system settings."
+      },
+      "font": {
+        "label": "Interface Font",
+        "placeholder": "Please select a font...",
+        "description": "Choose an interface typeface. Options cover generic Latin-first categories as well as named fonts optimized for Simplified Chinese.",
+        "options": {
+          "system": "System Default",
+          "sans": "Sans-Serif",
+          "serif": "Serif",
+          "mono": "Monospace",
+          "yahei": "Microsoft YaHei",
+          "pingfang": "PingFang SC",
+          "noto": "Noto Sans SC",
+          "songti": "Songti (SimSun)"
+        }
       }
-    }
-  },
+    },
     "navigation": {
       "title": "Navigation",
       "description": "Customize your navigation bar to create a personal workspace that better fits your flow.",
@@ -1789,6 +1789,11 @@
       "displayName": "Config",
       "navLabel": "Config",
       "description": "Manage LifeOS Web UI preferences and local settings."
+    },
+    "health": {
+      "displayName": "Health",
+      "navLabel": "Health",
+      "description": "Track menstrual cycle, body composition, and sleep."
     }
   },
   "areaManager": {
@@ -2162,6 +2167,116 @@
       "3": "3rd",
       "4": "4th",
       "-1": "last"
+    }
+  },
+  "health": {
+    "title": "Health",
+    "subtitle": "Track menstrual cycle, body composition, and sleep.",
+    "tabs": {
+      "menstrual": "Menstrual",
+      "body": "Body",
+      "sleep": "Sleep"
+    },
+    "common": {
+      "notRecorded": "Not recorded",
+      "yes": "Yes",
+      "no": "No",
+      "used": "Used",
+      "unused": "Unused",
+      "notes": "Notes"
+    },
+    "menstrual": {
+      "addDay": "Add day",
+      "manageFactors": "Manage factors",
+      "empty": "No menstrual day records yet. Add your first day to start tracking.",
+      "inPeriod": "In period",
+      "notInPeriod": "Not in period",
+      "symptomsLabel": "Symptoms",
+      "factorsLabel": "Factors",
+      "moodChanges": "Mood changes",
+      "protectionUsed": "Protection",
+      "spotting": "Spotting",
+      "createTitle": "Add menstrual day",
+      "editTitle": "Edit menstrual day",
+      "date": "Date",
+      "flowAmount": "Flow amount",
+      "symptoms": "Symptoms",
+      "customSymptom": "Custom symptom",
+      "customSymptomPlaceholder": "Add a custom symptom…",
+      "addSymptom": "Add",
+      "factorName": "Factor name",
+      "factorNamePlaceholder": "e.g. travel, stress, supplements",
+      "addFactor": "Add factor",
+      "factorsEmpty": "No custom factors yet.",
+      "deleteTitle": "Delete menstrual day",
+      "deleteMessage": "Delete the record for {{date}}?",
+      "deleteConfirm": "Delete",
+      "messages": {
+        "created": "Menstrual day created",
+        "updated": "Menstrual day updated",
+        "deleted": "Menstrual day deleted",
+        "factorCreated": "Factor created"
+      },
+      "flow": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "symptom": {
+        "hot_flash": "Hot flash",
+        "headache": "Headache",
+        "bladder_incontinence": "Bladder incontinence",
+        "constipation": "Constipation"
+      }
+    },
+    "body": {
+      "addMeasurement": "Add measurement",
+      "empty": "No body measurements yet. Add your first measurement to start tracking.",
+      "measuredAt": "Measured at",
+      "weight": "Weight",
+      "unit": "Unit",
+      "bodyFat": "Body fat %",
+      "visceralFat": "Visceral fat",
+      "fatMass": "Fat mass (kg)",
+      "musclePercentage": "Muscle %",
+      "muscleMass": "Muscle mass (kg)",
+      "bodyWater": "Body water (kg)",
+      "protein": "Protein (kg)",
+      "boneMass": "Bone mass (kg)",
+      "skeletalMuscle": "Skeletal muscle (kg)",
+      "createTitle": "Add body measurement",
+      "editTitle": "Edit body measurement",
+      "deleteTitle": "Delete body measurement",
+      "deleteMessage": "Delete the measurement from {{measuredAt}}?",
+      "deleteConfirm": "Delete",
+      "messages": {
+        "created": "Body measurement created",
+        "updated": "Body measurement updated",
+        "deleted": "Body measurement deleted"
+      }
+    },
+    "sleep": {
+      "addSegment": "Add sleep",
+      "empty": "No sleep segments for this day.",
+      "noSummary": "No sleep summary for this day.",
+      "date": "Date",
+      "previousDay": "Previous day",
+      "nextDay": "Next day",
+      "totalDuration": "Total duration",
+      "durationValue": "{{hours}}h {{minutes}}m",
+      "segmentCount": "Segments",
+      "firstStart": "First start",
+      "lastEnd": "Last end",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "createTitle": "Add sleep segment",
+      "deleteTitle": "Delete sleep segment",
+      "deleteMessage": "Delete this sleep segment?",
+      "deleteConfirm": "Delete",
+      "messages": {
+        "created": "Sleep segment created",
+        "deleted": "Sleep segment deleted"
+      }
     }
   }
 }

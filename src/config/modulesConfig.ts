@@ -9,6 +9,7 @@ export type ModuleKey =
   | "calendar"
   | "timelog"
   | "finance"
+  | "health"
   | "planning"
   | "notes"
   | "person"
@@ -72,6 +73,13 @@ export const MODULES: ModuleConfig[] = [
     navColor: "green",
     showInNav: true,
     iconName: "banknotes",
+  },
+  {
+    key: "health",
+    path: "/health",
+    navColor: "pink",
+    showInNav: true,
+    iconName: "bolt",
   },
   {
     key: "insights",

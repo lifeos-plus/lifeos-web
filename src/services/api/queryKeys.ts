@@ -130,6 +130,29 @@ export const financeKeys = {
     [...financeKeys.all, "rate-snapshot", id ?? ""] as const,
 };
 
+// Health
+export const healthKeys = {
+  all: ["health"] as const,
+  menstrualDays: () => [...healthKeys.all, "menstrual-days"] as const,
+  menstrualDayLists: () => [...healthKeys.menstrualDays(), "list"] as const,
+  menstrualDayList: (filters?: { start_date?: string; end_date?: string }) =>
+    [...healthKeys.menstrualDayLists(), filters ?? {}] as const,
+  menstrualDay: (id: UUID) => [...healthKeys.menstrualDays(), id] as const,
+  menstrualFactors: () => [...healthKeys.all, "menstrual-factors"] as const,
+  bodyMeasurements: () => [...healthKeys.all, "body-measurements"] as const,
+  bodyMeasurementLists: () => [...healthKeys.bodyMeasurements(), "list"] as const,
+  bodyMeasurementList: (filters?: { start_date?: string; end_date?: string }) =>
+    [...healthKeys.bodyMeasurementLists(), filters ?? {}] as const,
+  bodyMeasurement: (id: UUID) => [...healthKeys.bodyMeasurements(), id] as const,
+  sleepSegments: () => [...healthKeys.all, "sleep-segments"] as const,
+  sleepSegmentLists: () => [...healthKeys.sleepSegments(), "list"] as const,
+  sleepSegmentList: (filters?: { sleep_date?: string; start_date?: string; end_date?: string }) =>
+    [...healthKeys.sleepSegmentLists(), filters ?? {}] as const,
+  sleepSegment: (id: UUID) => [...healthKeys.sleepSegments(), id] as const,
+  sleepSummary: (filters: { start_date?: string; end_date?: string }) =>
+    [...healthKeys.all, "sleep-summary", filters] as const,
+};
+
 // Tags
 export const tagsKeys = {
   all: ["tags"] as const,
