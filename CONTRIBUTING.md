@@ -75,6 +75,7 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 
   Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag without editing the pin. `node scripts/pinned-cli-version.mjs` prints the CLI version used by CI and the E2E harness.
 - `npm run api:check` regenerates the contract from the fetched document and fails when the committed `schema.ts` is stale. CI fetches the pinned document before checking.
+- Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract. Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters.
 
 ## Dependency Maintenance
 
