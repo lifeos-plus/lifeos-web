@@ -13,6 +13,9 @@ npm audit --audit-level=high
 echo "[validate] verify generated API types"
 npm run api:check
 
+echo "[validate] verify OpenAPI contract drift (semantic, not text)"
+node scripts/check-openapi-contract.mjs
+
 echo "[validate] validate translation catalogs"
 npm run i18n:check
 
