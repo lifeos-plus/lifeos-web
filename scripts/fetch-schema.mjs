@@ -5,8 +5,10 @@
  * The lifeos-cli publish workflow attaches `openapi.json` to every v* GitHub
  * Release. This script downloads the asset for the version pinned in
  * `scripts/pinned-cli-version.mjs` (override with LIFEOS_CLI_SCHEMA_VERSION)
- * and writes it verbatim; `npm run api:generate` then regenerates the
- * TypeScript contract from the committed document.
+ * and writes it locally. The document is gitignored: it is a generated
+ * artifact whose version-controlled authority is the pin itself. `npm run
+ * api:generate` regenerates the TypeScript contract from the fetched
+ * document; `npm run api:check` verifies the committed schema.ts is fresh.
  */
 
 import { writeFile } from "node:fs/promises";

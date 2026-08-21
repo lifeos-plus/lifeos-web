@@ -6,7 +6,7 @@
 
 ## 当前范围
 
-默认导航覆盖 LifeOS 已实现的面：愿景、习惯、规划、时间记录、财务、统计、 日程/日历、笔记、人员与设置。
+默认导航覆盖 LifeOS 已实现的面：愿景、习惯、规划、时间记录、财务、健康、统计、 日程/日历、笔记、人员与设置。
 
 ## 本地开发
 
@@ -37,13 +37,6 @@ npm run build
 ```bash
 lifeos web serve --static-dir <path-to>/lifeos-web/dist
 ```
-
-## API 类型与契约固定
-
-- `openapi.json` 是已提交并固定的传输契约基线。
-- `src/services/api/generated/schema.ts` 由基线生成，请勿手工编辑。
-- `npm run api:check` 会在提交的 `schema.ts` 过期时失败。
-- 契约刷新与版本对齐详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 验证
 

@@ -7,6 +7,9 @@ cd "${repo_root}"
 echo "[validate] install locked dependencies"
 npm ci
 
+echo "[validate] fetch pinned OpenAPI contract"
+npm run api:fetch
+
 echo "[validate] audit high-severity vulnerabilities"
 npm audit --audit-level=high
 

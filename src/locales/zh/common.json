@@ -661,30 +661,30 @@
     }
   },
   "settings": {
-  "appearance": {
-    "title": "外观",
-    "description": "选择应用主题与界面字体。",
-    "theme": {
-      "label": "选择主题",
-      "placeholder": "请选择主题...",
-      "description": "选择应用主题。选择\"跟随系统\"将根据系统设置自动切换浅色/深色模式。"
-    },
-    "font": {
-      "label": "界面字体",
-      "placeholder": "请选择字体...",
-      "description": "选择界面字体。选项包含通用字体类别，以及针对简体中文优化的指定字体。",
-      "options": {
-        "system": "系统默认",
-        "sans": "无衬线",
-        "serif": "衬线",
-        "mono": "等宽",
-        "yahei": "微软雅黑",
-        "pingfang": "苹方",
-        "noto": "思源黑体（Noto Sans SC）",
-        "songti": "宋体"
+    "appearance": {
+      "title": "外观",
+      "description": "选择应用主题与界面字体。",
+      "theme": {
+        "label": "选择主题",
+        "placeholder": "请选择主题...",
+        "description": "选择应用主题。选择\"跟随系统\"将根据系统设置自动切换浅色/深色模式。"
+      },
+      "font": {
+        "label": "界面字体",
+        "placeholder": "请选择字体...",
+        "description": "选择界面字体。选项包含通用字体类别，以及针对简体中文优化的指定字体。",
+        "options": {
+          "system": "系统默认",
+          "sans": "无衬线",
+          "serif": "衬线",
+          "mono": "等宽",
+          "yahei": "微软雅黑",
+          "pingfang": "苹方",
+          "noto": "思源黑体（Noto Sans SC）",
+          "songti": "宋体"
+        }
       }
-    }
-  },
+    },
     "navigation": {
       "title": "导航栏",
       "description": "定制你的导航栏，打造一个更符合你心流的个人工作空间。",
@@ -785,6 +785,23 @@
       "minCollapsedLines": {
         "label": "折叠时保留的行数",
         "description": "选择折叠状态下仍然可见的笔记行数。"
+      }
+    },
+    "health": {
+      "title": "健康",
+      "description": "配置健康记录的存储与展示方式。",
+      "weightUnit": {
+        "label": "体重展示单位",
+        "description": "健康工作区中展示体重时使用的单位。",
+        "options": {
+          "jin": "斤"
+        }
+      },
+      "bodyHeight": {
+        "label": "身高",
+        "description": "用于计算 BMI 的身高（厘米）。留空则不显示 BMI。",
+        "placeholder": "例如 170",
+        "clear": "清除身高"
       }
     },
     "autoSaveHint": "修改后将自动保存",
@@ -1789,6 +1806,11 @@
       "displayName": "设置",
       "navLabel": "设置",
       "description": "管理您的个人偏好和系统设置。"
+    },
+    "health": {
+      "displayName": "健康",
+      "navLabel": "健康",
+      "description": "记录生理周期、体重体脂与睡眠。"
     }
   },
   "areaManager": {
@@ -2162,6 +2184,118 @@
       "3": "第三个",
       "4": "第四个",
       "-1": "最后一个"
+    }
+  },
+  "health": {
+    "title": "健康",
+    "subtitle": "记录生理周期、身体成分与睡眠。",
+    "tabs": {
+      "menstrual": "生理周期",
+      "body": "体重体脂",
+      "sleep": "睡眠"
+    },
+    "common": {
+      "notRecorded": "未记录",
+      "yes": "是",
+      "no": "否",
+      "used": "使用",
+      "unused": "未使用",
+      "notes": "备注"
+    },
+    "menstrual": {
+      "addDay": "添加记录",
+      "manageFactors": "管理因素",
+      "empty": "暂无生理周期记录，添加第一条记录开始追踪。",
+      "inPeriod": "经期",
+      "notInPeriod": "非经期",
+      "symptomsLabel": "症状",
+      "factorsLabel": "因素",
+      "moodChanges": "情绪变化",
+      "protectionUsed": "保护措施",
+      "spotting": "点滴出血",
+      "createTitle": "添加生理周期记录",
+      "editTitle": "编辑生理周期记录",
+      "date": "日期",
+      "flowAmount": "月经量",
+      "symptoms": "症状",
+      "customSymptom": "自定义症状",
+      "customSymptomPlaceholder": "添加自定义症状…",
+      "addSymptom": "添加",
+      "factorName": "因素名称",
+      "factorNamePlaceholder": "例如：旅行、压力、补充剂",
+      "addFactor": "添加因素",
+      "factorsEmpty": "暂无自定义因素。",
+      "deleteTitle": "删除生理周期记录",
+      "deleteMessage": "删除 {{date}} 的记录？",
+      "deleteConfirm": "删除",
+      "messages": {
+        "created": "已创建生理周期记录",
+        "updated": "已更新生理周期记录",
+        "deleted": "已删除生理周期记录",
+        "factorCreated": "已创建因素"
+      },
+      "flow": {
+        "low": "少",
+        "medium": "中",
+        "high": "多"
+      },
+      "symptom": {
+        "hot_flash": "潮热",
+        "headache": "头痛",
+        "bladder_incontinence": "膀胱失禁",
+        "constipation": "便秘"
+      }
+    },
+    "body": {
+      "addMeasurement": "添加测量",
+      "empty": "暂无体重测量，添加第一条测量开始追踪。",
+      "measuredAt": "测量时间",
+      "weight": "体重",
+      "unit": "单位",
+      "bodyFat": "体脂率 %",
+      "visceralFat": "内脏脂肪",
+      "fatMass": "脂肪量 (kg)",
+      "musclePercentage": "肌肉率 %",
+      "muscleMass": "肌肉量 (kg)",
+      "bodyWater": "体水分 (kg)",
+      "protein": "蛋白量 (kg)",
+      "boneMass": "骨量 (kg)",
+      "skeletalMuscle": "骨骼肌 (kg)",
+      "createTitle": "添加体重测量",
+      "editTitle": "编辑体重测量",
+      "deleteTitle": "删除体重测量",
+      "deleteMessage": "删除 {{measuredAt}} 的测量？",
+      "deleteConfirm": "删除",
+      "messages": {
+        "created": "已创建体重测量",
+        "updated": "已更新体重测量",
+        "deleted": "已删除体重测量"
+      }
+    },
+    "sleep": {
+      "addSegment": "添加睡眠",
+      "empty": "当日暂无睡眠分段。",
+      "noSummary": "当日暂无睡眠汇总。",
+      "date": "日期",
+      "previousDay": "前一天",
+      "nextDay": "后一天",
+      "totalDuration": "总时长",
+      "durationValue": "{{hours}} 小时 {{minutes}} 分",
+      "segmentCount": "分段数",
+      "firstStart": "最早开始",
+      "lastEnd": "最晚结束",
+      "startTime": "开始时间",
+      "endTime": "结束时间",
+      "createTitle": "添加睡眠分段",
+      "editTitle": "编辑睡眠分段",
+      "deleteTitle": "删除睡眠分段",
+      "deleteMessage": "删除这段睡眠？",
+      "deleteConfirm": "删除",
+      "messages": {
+        "created": "已创建睡眠分段",
+        "updated": "已更新睡眠分段",
+        "deleted": "已删除睡眠分段"
+      }
     }
   }
 }

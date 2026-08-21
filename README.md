@@ -15,6 +15,7 @@ Default navigation keeps LifeOS-backed surfaces visible:
 - Planning
 - Timelog
 - Finance
+- Health
 - Insights / Stats
 - Schedule / Calendar
 - Notes
@@ -57,18 +58,6 @@ The built `dist/` directory can be served by the LifeOS Web API process:
 ```bash
 lifeos web serve --static-dir <path-to>/lifeos-web/dist
 ```
-
-## Generated API Types
-
-The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth for transport request and response types in `src/services/api/`.
-
-- `openapi.json` is the committed, pinned baseline of the transport contract.
-- `src/services/api/generated/schema.ts` is generated from that baseline; do not hand-edit either file.
-- `npm run api:check` regenerates the contract and fails when the committed `schema.ts` was stale.
-
-Contract refresh and version alignment are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters. Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract.
 
 ## Validation
 

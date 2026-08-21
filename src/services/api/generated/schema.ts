@@ -107,6 +107,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/body-measurements/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Body Measurements
+         * @description List body measurements for the local Web UI.
+         */
+        get: operations["list_body_measurements_api_v1_body_measurements__get"];
+        put?: never;
+        /**
+         * Create Body Measurement
+         * @description Create one body measurement record.
+         */
+        post: operations["create_body_measurement_api_v1_body_measurements__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/body-measurements/{measurement_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Body Measurement
+         * @description Return one active body measurement.
+         */
+        get: operations["get_body_measurement_api_v1_body_measurements__measurement_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Body Measurement
+         * @description Soft-delete one body measurement.
+         */
+        delete: operations["delete_body_measurement_api_v1_body_measurements__measurement_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Body Measurement
+         * @description Update one body measurement record.
+         */
+        patch: operations["update_body_measurement_api_v1_body_measurements__measurement_id__patch"];
+        trace?: never;
+    };
     "/api/v1/finance/assets": {
         parameters: {
             query?: never;
@@ -603,6 +655,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/menstrual-days/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Menstrual Days
+         * @description List menstrual day records for the local Web UI.
+         */
+        get: operations["list_menstrual_days_api_v1_menstrual_days__get"];
+        put?: never;
+        /**
+         * Create Menstrual Day
+         * @description Create one daily menstrual cycle record.
+         */
+        post: operations["create_menstrual_day_api_v1_menstrual_days__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/menstrual-days/{day_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Menstrual Day
+         * @description Return one active menstrual day record.
+         */
+        get: operations["get_menstrual_day_api_v1_menstrual_days__day_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Menstrual Day
+         * @description Soft-delete one menstrual day record.
+         */
+        delete: operations["delete_menstrual_day_api_v1_menstrual_days__day_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Menstrual Day
+         * @description Update one daily menstrual cycle record.
+         */
+        patch: operations["update_menstrual_day_api_v1_menstrual_days__day_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/menstrual-factors/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Menstrual Factors
+         * @description List custom menstrual factors.
+         */
+        get: operations["list_menstrual_factors_api_v1_menstrual_factors__get"];
+        put?: never;
+        /**
+         * Create Menstrual Factor
+         * @description Create one custom menstrual factor.
+         */
+        post: operations["create_menstrual_factor_api_v1_menstrual_factors__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/menstrual-factors/{factor_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Menstrual Factor
+         * @description Soft-delete one custom menstrual factor.
+         */
+        delete: operations["delete_menstrual_factor_api_v1_menstrual_factors__factor_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notes/": {
         parameters: {
             query?: never;
@@ -897,6 +1045,78 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sleep-segments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sleep Segments
+         * @description List sleep segments for the local Web UI.
+         */
+        get: operations["list_sleep_segments_api_v1_sleep_segments__get"];
+        put?: never;
+        /**
+         * Create Sleep Segment
+         * @description Create one sleep segment.
+         */
+        post: operations["create_sleep_segment_api_v1_sleep_segments__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sleep-segments/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sleep Summaries
+         * @description Return computed daily sleep summaries for an optional date range.
+         */
+        get: operations["list_sleep_summaries_api_v1_sleep_segments_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sleep-segments/{segment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Sleep Segment
+         * @description Return one active sleep segment.
+         */
+        get: operations["get_sleep_segment_api_v1_sleep_segments__segment_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Sleep Segment
+         * @description Soft-delete one sleep segment.
+         */
+        delete: operations["delete_sleep_segment_api_v1_sleep_segments__segment_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Sleep Segment
+         * @description Update one sleep segment.
+         */
+        patch: operations["update_sleep_segment_api_v1_sleep_segments__segment_id__patch"];
         trace?: never;
     };
     "/api/v1/stats/aggregated-areas": {
@@ -1850,6 +2070,121 @@ export interface components {
             /** Name */
             name?: string | null;
         };
+        /**
+         * BodyMeasurementCreate
+         * @description Payload for creating a body weight/composition measurement.
+         */
+        BodyMeasurementCreate: {
+            /** Body Fat Percentage */
+            body_fat_percentage?: number | null;
+            /** Body Water Kg */
+            body_water_kg?: number | null;
+            /** Bone Mass Kg */
+            bone_mass_kg?: number | null;
+            /** Fat Mass Kg */
+            fat_mass_kg?: number | null;
+            /**
+             * Measured At
+             * Format: date-time
+             */
+            measured_at: string;
+            /** Muscle Mass Kg */
+            muscle_mass_kg?: number | null;
+            /** Muscle Percentage */
+            muscle_percentage?: number | null;
+            /** Notes */
+            notes?: string | null;
+            /** Protein Kg */
+            protein_kg?: number | null;
+            /** Skeletal Muscle Kg */
+            skeletal_muscle_kg?: number | null;
+            /**
+             * Unit
+             * @default kg
+             */
+            unit?: string;
+            /** Visceral Fat */
+            visceral_fat?: number | null;
+            /** Weight */
+            weight: number;
+        };
+        /**
+         * BodyMeasurementResponse
+         * @description One body weight/composition measurement.
+         */
+        BodyMeasurementResponse: {
+            /** Bmi */
+            bmi: number | null;
+            /** Body Fat Percentage */
+            body_fat_percentage: number | null;
+            /** Body Water Kg */
+            body_water_kg: number | null;
+            /** Bone Mass Kg */
+            bone_mass_kg: number | null;
+            /** Created At */
+            created_at: string;
+            /** Display Unit */
+            display_unit: string;
+            /** Fat Mass Kg */
+            fat_mass_kg: number | null;
+            /** Id */
+            id: string;
+            /** Measured At */
+            measured_at: string;
+            /** Muscle Mass Kg */
+            muscle_mass_kg: number | null;
+            /** Muscle Percentage */
+            muscle_percentage: number | null;
+            /** Notes */
+            notes: string | null;
+            /** Protein Kg */
+            protein_kg: number | null;
+            /** Skeletal Muscle Kg */
+            skeletal_muscle_kg: number | null;
+            /** Updated At */
+            updated_at: string;
+            /** Visceral Fat */
+            visceral_fat: number | null;
+            /** Weight Kg */
+            weight_kg: number;
+        };
+        /**
+         * BodyMeasurementUpdate
+         * @description Payload for updating a body weight/composition measurement.
+         */
+        BodyMeasurementUpdate: {
+            /** Body Fat Percentage */
+            body_fat_percentage?: number | null;
+            /** Body Water Kg */
+            body_water_kg?: number | null;
+            /** Bone Mass Kg */
+            bone_mass_kg?: number | null;
+            /** Clear Fields */
+            clear_fields?: string[] | null;
+            /** Fat Mass Kg */
+            fat_mass_kg?: number | null;
+            /** Measured At */
+            measured_at?: string | null;
+            /** Muscle Mass Kg */
+            muscle_mass_kg?: number | null;
+            /** Muscle Percentage */
+            muscle_percentage?: number | null;
+            /** Notes */
+            notes?: string | null;
+            /** Protein Kg */
+            protein_kg?: number | null;
+            /** Skeletal Muscle Kg */
+            skeletal_muscle_kg?: number | null;
+            /**
+             * Unit
+             * @default kg
+             */
+            unit?: string;
+            /** Visceral Fat */
+            visceral_fat?: number | null;
+            /** Weight */
+            weight?: number | null;
+        };
         /** DailyAreaMeta */
         DailyAreaMeta: {
             /** Area Ids */
@@ -2529,6 +2864,13 @@ export interface components {
             meta: components["schemas"]["AreaListMeta"];
             pagination: components["schemas"]["Pagination"];
         };
+        /** ListResponse[BodyMeasurementResponse, EmptyMeta] */
+        ListResponse_BodyMeasurementResponse_EmptyMeta_: {
+            /** Items */
+            items: components["schemas"]["BodyMeasurementResponse"][];
+            meta: components["schemas"]["EmptyMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
         /** ListResponse[DailyAreaResponse, DailyAreaMeta] */
         ListResponse_DailyAreaResponse_DailyAreaMeta_: {
             /** Items */
@@ -2613,6 +2955,20 @@ export interface components {
             meta: components["schemas"]["HabitListMeta"];
             pagination: components["schemas"]["Pagination"];
         };
+        /** ListResponse[MenstrualDayResponse, EmptyMeta] */
+        ListResponse_MenstrualDayResponse_EmptyMeta_: {
+            /** Items */
+            items: components["schemas"]["MenstrualDayResponse"][];
+            meta: components["schemas"]["EmptyMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
+        /** ListResponse[MenstrualFactorResponse, EmptyMeta] */
+        ListResponse_MenstrualFactorResponse_EmptyMeta_: {
+            /** Items */
+            items: components["schemas"]["MenstrualFactorResponse"][];
+            meta: components["schemas"]["EmptyMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
         /** ListResponse[NoteResponse, NoteListMeta] */
         ListResponse_NoteResponse_NoteListMeta_: {
             /** Items */
@@ -2639,6 +2995,20 @@ export interface components {
             /** Items */
             items: components["schemas"]["PlannedEventResponse"][];
             meta: components["schemas"]["PlannedEventListMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
+        /** ListResponse[SleepDailySummaryResponse, EmptyMeta] */
+        ListResponse_SleepDailySummaryResponse_EmptyMeta_: {
+            /** Items */
+            items: components["schemas"]["SleepDailySummaryResponse"][];
+            meta: components["schemas"]["EmptyMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
+        /** ListResponse[SleepSegmentResponse, EmptyMeta] */
+        ListResponse_SleepSegmentResponse_EmptyMeta_: {
+            /** Items */
+            items: components["schemas"]["SleepSegmentResponse"][];
+            meta: components["schemas"]["EmptyMeta"];
             pagination: components["schemas"]["Pagination"];
         };
         /** ListResponse[TaskResponse, TaskListMeta] */
@@ -2675,6 +3045,128 @@ export interface components {
             items: components["schemas"]["VisionResponse"][];
             meta: components["schemas"]["VisionListMeta"];
             pagination: components["schemas"]["Pagination"];
+        };
+        /**
+         * MenstrualDayCreate
+         * @description Payload for creating a daily menstrual cycle record.
+         */
+        MenstrualDayCreate: {
+            /** Factor Names */
+            factor_names?: string[] | null;
+            /** Flow Amount */
+            flow_amount?: string | null;
+            /**
+             * In Period
+             * @default false
+             */
+            in_period?: boolean;
+            /**
+             * Log Date
+             * Format: date
+             */
+            log_date: string;
+            /** Mood Changes */
+            mood_changes?: boolean | null;
+            /** Notes */
+            notes?: string | null;
+            /** Protection Used */
+            protection_used?: boolean | null;
+            /** Spotting */
+            spotting?: boolean | null;
+            /** Symptoms */
+            symptoms?: string[] | null;
+        };
+        /**
+         * MenstrualDayResponse
+         * @description One daily menstrual cycle record.
+         */
+        MenstrualDayResponse: {
+            /** Created At */
+            created_at: string;
+            /** Factors */
+            factors: components["schemas"]["MenstrualFactorResponse"][];
+            /** Flow Amount */
+            flow_amount: string | null;
+            /** Id */
+            id: string;
+            /** In Period */
+            in_period: boolean;
+            /** Log Date */
+            log_date: string;
+            /** Mood Changes */
+            mood_changes: boolean | null;
+            /** Notes */
+            notes: string | null;
+            /** Protection Used */
+            protection_used: boolean | null;
+            /** Spotting */
+            spotting: boolean | null;
+            /** Symptoms */
+            symptoms: string[];
+            /** Updated At */
+            updated_at: string;
+        };
+        /**
+         * MenstrualDayUpdate
+         * @description Payload for updating a daily menstrual cycle record.
+         */
+        MenstrualDayUpdate: {
+            /**
+             * Clear Factors
+             * @default false
+             */
+            clear_factors?: boolean;
+            /**
+             * Clear Flow
+             * @default false
+             */
+            clear_flow?: boolean;
+            /**
+             * Clear Notes
+             * @default false
+             */
+            clear_notes?: boolean;
+            /**
+             * Clear Symptoms
+             * @default false
+             */
+            clear_symptoms?: boolean;
+            /** Factor Names */
+            factor_names?: string[] | null;
+            /** Flow Amount */
+            flow_amount?: string | null;
+            /** In Period */
+            in_period?: boolean | null;
+            /** Log Date */
+            log_date?: string | null;
+            /** Mood Changes */
+            mood_changes?: boolean | null;
+            /** Notes */
+            notes?: string | null;
+            /** Protection Used */
+            protection_used?: boolean | null;
+            /** Spotting */
+            spotting?: boolean | null;
+            /** Symptoms */
+            symptoms?: string[] | null;
+        };
+        /**
+         * MenstrualFactorCreate
+         * @description Payload for creating a custom menstrual factor.
+         */
+        MenstrualFactorCreate: {
+            /** Name */
+            name: string;
+        };
+        /**
+         * MenstrualFactorResponse
+         * @description One custom menstrual factor.
+         */
+        MenstrualFactorResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
         };
         /**
          * NoteCreate
@@ -3107,6 +3599,68 @@ export interface components {
             interval: number | null;
             /** Until */
             until: string | null;
+        };
+        /**
+         * SleepDailySummaryResponse
+         * @description One computed daily sleep summary.
+         */
+        SleepDailySummaryResponse: {
+            /** First Start At */
+            first_start_at: string | null;
+            /** Last End At */
+            last_end_at: string | null;
+            /** Segment Count */
+            segment_count: number;
+            /** Sleep Date */
+            sleep_date: string;
+            /** Total Minutes */
+            total_minutes: number;
+        };
+        /**
+         * SleepSegmentCreate
+         * @description Payload for creating a sleep segment.
+         */
+        SleepSegmentCreate: {
+            /**
+             * End At
+             * Format: date-time
+             */
+            end_at: string;
+            /**
+             * Start At
+             * Format: date-time
+             */
+            start_at: string;
+        };
+        /**
+         * SleepSegmentResponse
+         * @description One sleep segment.
+         */
+        SleepSegmentResponse: {
+            /** Created At */
+            created_at: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** End At */
+            end_at: string;
+            /** Id */
+            id: string;
+            /** Sleep Date */
+            sleep_date: string;
+            /** Start At */
+            start_at: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /**
+         * SleepSegmentUpdate
+         * @description Payload for updating a sleep segment.
+         */
+        SleepSegmentUpdate: {
+            /** End At */
+            end_at?: string | null;
+            /** Start At */
+            start_at?: string | null;
         };
         /**
          * TagBulkCategoryUpdate
@@ -4349,6 +4903,168 @@ export interface operations {
             };
         };
     };
+    list_body_measurements_api_v1_body_measurements__get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_BodyMeasurementResponse_EmptyMeta_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_body_measurement_api_v1_body_measurements__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BodyMeasurementCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BodyMeasurementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_body_measurement_api_v1_body_measurements__measurement_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                measurement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BodyMeasurementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_body_measurement_api_v1_body_measurements__measurement_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                measurement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_body_measurement_api_v1_body_measurements__measurement_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                measurement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BodyMeasurementUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BodyMeasurementResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_assets_api_v1_finance_assets_get: {
         parameters: {
             query?: {
@@ -5516,6 +6232,262 @@ export interface operations {
             };
         };
     };
+    list_menstrual_days_api_v1_menstrual_days__get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_MenstrualDayResponse_EmptyMeta_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_menstrual_day_api_v1_menstrual_days__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenstrualDayCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenstrualDayResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_menstrual_day_api_v1_menstrual_days__day_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                day_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenstrualDayResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_menstrual_day_api_v1_menstrual_days__day_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                day_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_menstrual_day_api_v1_menstrual_days__day_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                day_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenstrualDayUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenstrualDayResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_menstrual_factors_api_v1_menstrual_factors__get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_MenstrualFactorResponse_EmptyMeta_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_menstrual_factor_api_v1_menstrual_factors__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MenstrualFactorCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MenstrualFactorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_menstrual_factor_api_v1_menstrual_factors__factor_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                factor_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_notes_api_v1_notes__get: {
         parameters: {
             query?: {
@@ -6222,6 +7194,201 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PreferenceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sleep_segments_api_v1_sleep_segments__get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+                sleep_date?: string | null;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_SleepSegmentResponse_EmptyMeta_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_sleep_segment_api_v1_sleep_segments__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SleepSegmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SleepSegmentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sleep_summaries_api_v1_sleep_segments_summary_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_SleepDailySummaryResponse_EmptyMeta_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_sleep_segment_api_v1_sleep_segments__segment_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                segment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SleepSegmentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_sleep_segment_api_v1_sleep_segments__segment_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                segment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_sleep_segment_api_v1_sleep_segments__segment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                segment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SleepSegmentUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SleepSegmentResponse"];
                 };
             };
             /** @description Validation Error */

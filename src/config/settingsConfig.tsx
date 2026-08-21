@@ -9,6 +9,7 @@ import { getAvailableTimezones } from "@/utils/datetime";
 import { NOTE_COLLAPSE_ALLOWED_LINES } from "@/hooks/notes/useNoteCollapsePreference";
 import VisionExperienceRatesTable from "@/components/settings/VisionExperienceRatesTable";
 import VisionExperienceDefaultPreference from "@/components/settings/VisionExperienceDefaultPreference";
+import HealthHeightPreference from "@/components/settings/HealthHeightPreference";
 import { FONT_CATALOG } from "@/config/fontCatalog";
 import { Icon, type IconName } from "@/components/icons";
 import type { UUID } from "@/types/primitive";
@@ -31,6 +32,8 @@ const LanguageIcon = createIcon("language");
 const NotesIcon = createIcon("document-text");
 
 const VisionIcon = createIcon("eye");
+
+const HealthIcon = createIcon("bolt");
 
 interface SettingsConfigContext {
   calendarSystem?: CalendarSystem;
@@ -169,6 +172,32 @@ export const useSettingsConfig = (
                 ],
               },
             ]),
+      ],
+    },
+    {
+      id: "health",
+      title: t("settings.health.title"),
+      description: t("settings.health.description"),
+      icon: <HealthIcon />,
+      items: [
+        {
+          key: "weightUnit",
+          type: "select",
+          label: t("settings.health.weightUnit.label"),
+          description: t("settings.health.weightUnit.description"),
+          options: [
+            { value: "kg", label: "kg" },
+            { value: "jin", label: t("settings.health.weightUnit.options.jin") },
+            { value: "lb", label: "lb" },
+          ],
+        },
+        {
+          key: "bodyHeightCm",
+          type: "custom",
+          label: t("settings.health.bodyHeight.label"),
+          description: t("settings.health.bodyHeight.description"),
+          render: (props) => <HealthHeightPreference {...props} />,
+        },
       ],
     },
     {

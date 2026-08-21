@@ -109,6 +109,17 @@ export const ENDPOINTS = {
       `${API_V1}/finance/trees/${treeId}/snapshots`,
     SNAPSHOT_BY_ID: (id: string) => `${API_V1}/finance/snapshots/${id}`,
   },
+  HEALTH: {
+    MENSTRUAL_DAYS: `${API_V1}/menstrual-days/`,
+    MENSTRUAL_DAY_BY_ID: (id: string) => `${API_V1}/menstrual-days/${id}`,
+    MENSTRUAL_FACTORS: `${API_V1}/menstrual-factors/`,
+    MENSTRUAL_FACTOR_BY_ID: (id: string) => `${API_V1}/menstrual-factors/${id}`,
+    BODY_MEASUREMENTS: `${API_V1}/body-measurements/`,
+    BODY_MEASUREMENT_BY_ID: (id: string) => `${API_V1}/body-measurements/${id}`,
+    SLEEP_SEGMENTS: `${API_V1}/sleep-segments/`,
+    SLEEP_SEGMENT_BY_ID: (id: string) => `${API_V1}/sleep-segments/${id}`,
+    SLEEP_SUMMARY: `${API_V1}/sleep-segments/summary`,
+  },
   STATS: {
     DAILY_AREAS: `${API_V1}/stats/daily-areas`,
     DAY_BREAKDOWN: `${API_V1}/stats/day-breakdown`,
