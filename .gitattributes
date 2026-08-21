@@ -1,3 +1,2 @@
 # Generated artifacts: exclude from line-diff review; validate semantically instead.
-openapi.json linguist-generated
 src/services/api/generated/schema.ts linguist-generated

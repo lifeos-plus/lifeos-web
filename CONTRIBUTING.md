@@ -62,16 +62,19 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 
 ## API Contract Policy
 
-- `openapi.json` is the committed, pinned baseline of the LifeOS Web API transport contract.
-- `src/services/api/generated/schema.ts` is generated from that baseline. Do not hand-edit either file.
-- `lifeos-cli` publishes `openapi.json` as a GitHub Release asset. Refresh the pinned contract after a release:
+- `scripts/pinned-cli-version.mjs` is the version-controlled contract authority: it pins the `lifeos-cli` release that defines the Web API transport contract.
+- `openapi.json` is a generated, gitignored artifact — the document published by the pinned release, downloaded verbatim by `npm run api:fetch` (part of `api:refresh`). It is not committed; there is exactly one source of truth (the release asset) and no copy that can drift.
+- `src/services/api/generated/schema.ts` is generated from that document and committed for developer tooling. Do not hand-edit it.
+- `lifeos-cli` publishes `openapi.json` as a GitHub Release asset. Consume a new release in the same change:
 
   ```bash
+  # 1) bump scripts/pinned-cli-version.mjs to the new release tag
+  # 2) refresh the local document and regenerate the TypeScript contract
   npm run api:refresh
   ```
 
-  The default pinned release is defined in `scripts/pinned-cli-version.mjs`. `npm run api:refresh` fetches that version; set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag. `node scripts/pinned-cli-version.mjs` prints the CLI version used by CI and the E2E harness.
-- `npm run api:check` regenerates the contract and fails when the committed `schema.ts` is stale.
+  Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag without editing the pin. `node scripts/pinned-cli-version.mjs` prints the CLI version used by CI and the E2E harness.
+- `npm run api:check` regenerates the contract from the fetched document and fails when the committed `schema.ts` is stale. CI fetches the pinned document before checking.
 
 ## Dependency Maintenance
 

@@ -40,9 +40,10 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 
 ## API 类型与契约固定
 
-- `openapi.json` 是已提交并固定的传输契约基线。
-- `src/services/api/generated/schema.ts` 由基线生成，请勿手工编辑。
-- `npm run api:check` 会在提交的 `schema.ts` 过期时失败。
+- `scripts/pinned-cli-version.mjs` 固定定义契约的 `lifeos-cli` 发布版本，是版本受控的契约权威。
+- `openapi.json` 是生成产物且不入库（gitignored）：由 `npm run api:fetch` 从固定版本的 release asset 逐字节拉取，只有一个事实来源，不存在可漂移的副本。
+- `src/services/api/generated/schema.ts` 由该文档生成并入库供开发工具使用，请勿手工编辑。
+- `npm run api:check` 会基于拉取的文档重新生成，并在提交的 `schema.ts` 过期时失败。
 - 契约刷新与版本对齐详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 验证

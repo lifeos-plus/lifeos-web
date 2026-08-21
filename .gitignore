@@ -34,3 +34,6 @@ coverage/
 playwright-report/
 test-results/
 blob-report/
+
+# Generated from the pinned lifeos-cli release (see scripts/pinned-cli-version.mjs)
+openapi.json

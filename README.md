@@ -63,9 +63,10 @@ lifeos web serve --static-dir <path-to>/lifeos-web/dist
 
 The FastAPI OpenAPI document published by `lifeos-cli` is the source of truth for transport request and response types in `src/services/api/`.
 
-- `openapi.json` is the committed, pinned baseline of the transport contract.
-- `src/services/api/generated/schema.ts` is generated from that baseline; do not hand-edit either file.
-- `npm run api:check` regenerates the contract and fails when the committed `schema.ts` was stale.
+- `scripts/pinned-cli-version.mjs` pins the `lifeos-cli` release that defines the contract; the pin is the version-controlled authority.
+- `openapi.json` is a generated, gitignored artifact, fetched verbatim from the pinned release asset by `npm run api:fetch` — it is not committed, so there is no copy that can drift.
+- `src/services/api/generated/schema.ts` is generated from that document and committed; do not hand-edit it.
+- `npm run api:check` regenerates the contract from the fetched document and fails when the committed `schema.ts` was stale.
 
 Contract refresh and version alignment are documented in [CONTRIBUTING.md](CONTRIBUTING.md).
 

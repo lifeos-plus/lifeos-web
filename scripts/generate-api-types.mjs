@@ -5,7 +5,16 @@ import ts from "typescript";
 
 const inputPath = new URL("../openapi.json", import.meta.url);
 const outputPath = new URL("../src/services/api/generated/schema.ts", import.meta.url);
-const document = JSON.parse(await readFile(inputPath, "utf8"));
+let document;
+try {
+  document = JSON.parse(await readFile(inputPath, "utf8"));
+} catch (error) {
+  console.error(
+    "openapi.json is missing or unreadable. It is a generated, gitignored " +
+      "artifact; fetch the pinned release document first with `npm run api:refresh`.",
+  );
+  process.exit(1);
+}
 
 const ast = await openapiTS(document, {
   defaultNonNullable: false,
