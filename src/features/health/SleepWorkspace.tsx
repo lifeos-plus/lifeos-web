@@ -23,6 +23,7 @@ import {
   formatDateTime,
   getTodayDateString,
   localDateTimeLocalToUtcIso,
+  utcToLocalDateTimeLocal,
 } from "@/utils/datetime";
 
 import { totalMinutesToHoursMinutes } from "./utils";
@@ -40,6 +41,7 @@ export function SleepWorkspace() {
   const { timezone } = useSystemTimezone();
   const [selectedDate, setSelectedDate] = useState(() => getTodayDateString());
   const [formOpen, setFormOpen] = useState(false);
+  const [editingSegment, setEditingSegment] = useState<SleepSegment | null>(null);
   const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
   const [pendingDelete, setPendingDelete] = useState<SleepSegment | null>(null);
@@ -73,7 +75,10 @@ export function SleepWorkspace() {
   const { hours, minutes } = totalMinutesToHoursMinutes(summary?.total_minutes ?? 0);
 
   const invalidateSleep = async () => {
-    await queryClient.invalidateQueries({ queryKey: healthKeys.all });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: healthKeys.sleepSegments() }),
+      queryClient.invalidateQueries({ queryKey: [...healthKeys.all, "sleep-summary"] }),
+    ]);
   };
 
   const createMutation = useMutation({
@@ -81,6 +86,27 @@ export function SleepWorkspace() {
     onSuccess: async () => {
       toast.showSuccess(t("health.sleep.messages.created"));
       setFormOpen(false);
+      setStartAt("");
+      setEndAt("");
+      await invalidateSleep();
+    },
+    onError: (error) => {
+      toast.showError(t("common.error"), error instanceof Error ? error.message : String(error));
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({
+      segmentId,
+      payload,
+    }: {
+      segmentId: UUID;
+      payload: SleepSegmentCreate;
+    }) => healthApi.updateSleepSegment(segmentId, payload),
+    onSuccess: async () => {
+      toast.showSuccess(t("health.sleep.messages.updated"));
+      setFormOpen(false);
+      setEditingSegment(null);
       setStartAt("");
       setEndAt("");
       await invalidateSleep();
@@ -102,12 +128,31 @@ export function SleepWorkspace() {
     },
   });
 
+  const openCreate = () => {
+    setEditingSegment(null);
+    setStartAt("");
+    setEndAt("");
+    setFormOpen(true);
+  };
+
+  const openEdit = (segment: SleepSegment) => {
+    setEditingSegment(segment);
+    setStartAt(utcToLocalDateTimeLocal(segment.start_at, timezone));
+    setEndAt(utcToLocalDateTimeLocal(segment.end_at, timezone));
+    setFormOpen(true);
+  };
+
   const submitForm = () => {
     if (!startAt || !endAt) return;
-    createMutation.mutate({
+    const times = {
       start_at: localDateTimeLocalToUtcIso(startAt, timezone),
       end_at: localDateTimeLocalToUtcIso(endAt, timezone),
-    });
+    };
+    if (editingSegment) {
+      updateMutation.mutate({ segmentId: editingSegment.id, payload: times });
+      return;
+    }
+    createMutation.mutate(times);
   };
 
   if (summaryQuery.isLoading || segmentsQuery.isLoading) {
@@ -151,7 +196,7 @@ export function SleepWorkspace() {
           />
           <CreateNewButton
             label={t("health.sleep.addSegment")}
-            onClick={() => setFormOpen(true)}
+            onClick={openCreate}
             size="sm"
             color="primary"
             variant="solid"
@@ -217,17 +262,29 @@ export function SleepWorkspace() {
                       })}
                     </p>
                   </div>
-                  <ActionButton
-                    label=""
-                    ariaLabel={t("common.delete")}
-                    iconName="trash"
-                    iconOnly
-                    shape="square"
-                    size="xs"
-                    variant="ghost"
-                    color="error"
-                    onClick={() => setPendingDelete(segment)}
-                  />
+                  <div className="flex shrink-0 gap-1">
+                    <ActionButton
+                      label=""
+                      ariaLabel={t("common.edit")}
+                      iconName="edit"
+                      iconOnly
+                      shape="square"
+                      size="xs"
+                      variant="ghost"
+                      onClick={() => openEdit(segment)}
+                    />
+                    <ActionButton
+                      label=""
+                      ariaLabel={t("common.delete")}
+                      iconName="trash"
+                      iconOnly
+                      shape="square"
+                      size="xs"
+                      variant="ghost"
+                      color="error"
+                      onClick={() => setPendingDelete(segment)}
+                    />
+                  </div>
                 </li>
               );
             })}
@@ -238,7 +295,11 @@ export function SleepWorkspace() {
       <ModalBase
         isOpen={formOpen}
         onClose={() => setFormOpen(false)}
-        title={t("health.sleep.createTitle")}
+        title={
+          editingSegment
+            ? t("health.sleep.editTitle")
+            : t("health.sleep.createTitle")
+        }
         size="md"
         bodyOverflow="auto"
       >
@@ -265,19 +326,26 @@ export function SleepWorkspace() {
               label={t("common.cancel")}
               variant="ghost"
               onClick={() => setFormOpen(false)}
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || updateMutation.isPending}
             />
             <ActionButton
               type="submit"
               label={
-                createMutation.isPending
+                createMutation.isPending || updateMutation.isPending
                   ? t("common.saving")
-                  : t("health.sleep.addSegment")
+                  : editingSegment
+                    ? t("common.save")
+                    : t("health.sleep.addSegment")
               }
               color="primary"
               variant="solid"
               iconName="check"
-              disabled={!startAt || !endAt || createMutation.isPending}
+              disabled={
+                !startAt ||
+                !endAt ||
+                createMutation.isPending ||
+                updateMutation.isPending
+              }
               onClick={submitForm}
             />
           </div>

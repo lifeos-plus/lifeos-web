@@ -84,4 +84,29 @@ describe("useSettingsConfig", () => {
       }),
     );
   });
+
+  it("exposes a health group with weight unit and body height preferences", () => {
+    const { result } = renderHook(() => useSettingsConfig());
+
+    const healthGroup = result.current.find((group) => group.id === "health");
+
+    expect(healthGroup).toBeDefined();
+    expect(healthGroup?.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "weightUnit",
+          type: "select",
+          options: expect.arrayContaining([
+            expect.objectContaining({ value: "kg" }),
+            expect.objectContaining({ value: "jin" }),
+            expect.objectContaining({ value: "lb" }),
+          ]),
+        }),
+        expect.objectContaining({
+          key: "bodyHeightCm",
+          type: "custom",
+        }),
+      ]),
+    );
+  });
 });

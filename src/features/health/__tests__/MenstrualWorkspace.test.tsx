@@ -100,6 +100,35 @@ describe("MenstrualWorkspace", () => {
     ).toBeInTheDocument();
   });
 
+  it("translates known symptom codes and passes custom symptoms through raw", async () => {
+    setupTranslationMock({
+      translator: (key: string) =>
+        key === "health.menstrual.symptomsLabel"
+          ? "Symptoms"
+          : key === "health.menstrual.symptom.headache"
+            ? "Headache"
+            : key,
+    });
+    const customDay: MenstrualDay = {
+      ...sourceDay,
+      symptoms: ["headache", "cramps"],
+    };
+    healthApiMocks.listMenstrualDays.mockResolvedValue(
+      dayListResponse([customDay]),
+    );
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ModalProvider>{children}</ModalProvider>
+    );
+    renderWithProviders(<MenstrualWorkspace />, { wrapper });
+
+    expect(
+      await screen.findByText(/Symptoms: Headache, cramps/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Symptoms: headache, cramps/),
+    ).not.toBeInTheDocument();
+  });
+
   it("creates a menstrual day from the form", async () => {
     const user = userEvent.setup();
     const wrapper = ({ children }: { children: React.ReactNode }) => (

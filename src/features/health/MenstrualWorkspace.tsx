@@ -23,6 +23,7 @@ import type { UUID } from "@/types/primitive";
 import { formatDate } from "@/utils/datetime";
 
 import {
+  displaySymptom,
   MENSTRUAL_FLOW_OPTIONS,
   MENSTRUAL_SYMPTOM_OPTIONS,
 } from "./utils";
@@ -323,7 +324,10 @@ export function MenstrualWorkspace() {
                   <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm opacity-70">
                     {day.symptoms.length > 0 ? (
                       <span>
-                        {t("health.menstrual.symptomsLabel")}: {day.symptoms.join(", ")}
+                        {t("health.menstrual.symptomsLabel")}:{" "}
+                        {day.symptoms
+                          .map((symptom) => displaySymptom(symptom, (key) => t(key)))
+                          .join(", ")}
                       </span>
                     ) : null}
                     {day.mood_changes !== null ? (

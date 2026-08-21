@@ -92,6 +92,23 @@ function SettingsPage() {
   const languageSettings = useLanguage();
   const timezoneSettings = useSystemTimezone();
   const noteCollapseSettings = useNoteCollapsePreference();
+  const healthWeightUnitSettings = usePreferenceWithBootstrap<string>({
+    key: "health.weight_unit",
+    defaultValue: "kg",
+    module: "health",
+    validator: (value) => value === "kg" || value === "jin" || value === "lb",
+  });
+  const healthBodyHeightSettings = usePreferenceWithBootstrap<number | null>({
+    key: "health.body_height_cm",
+    defaultValue: null,
+    module: "health",
+    validator: (value) =>
+      value === null ||
+      (typeof value === "number" &&
+        Number.isFinite(value) &&
+        value >= 50 &&
+        value <= 300),
+  });
   const {
     visions,
     loading: visionsLoading,
@@ -320,6 +337,24 @@ function SettingsPage() {
         updateValue: (value: unknown) =>
           timezoneSettings.updateValue(value as string),
       },
+      "health.weightUnit": {
+        ...healthWeightUnitSettings,
+        saveValue: async (value: unknown) =>
+          await healthWeightUnitSettings.saveValue(value as string),
+        updateValue: (value: unknown) =>
+          healthWeightUnitSettings.updateValue(value as string),
+      },
+      "health.bodyHeightCm": {
+        ...healthBodyHeightSettings,
+        saveValue: async (value: unknown) =>
+          await healthBodyHeightSettings.saveValue(
+            typeof value === "number" ? value : null,
+          ),
+        updateValue: (value: unknown) =>
+          healthBodyHeightSettings.updateValue(
+            typeof value === "number" ? value : null,
+          ),
+      },
     }),
     [
       themeSettings,
@@ -334,6 +369,8 @@ function SettingsPage() {
       defaultInboxVisionSettings,
       languageSettings,
       timezoneSettings,
+      healthWeightUnitSettings,
+      healthBodyHeightSettings,
       visionExperienceTableValue,
       visionsLoading,
       visionRatesSaving,

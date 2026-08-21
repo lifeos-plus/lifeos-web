@@ -79,6 +79,7 @@ describe("SleepWorkspace", () => {
       segmentListResponse([segment]),
     );
     healthApiMocks.createSleepSegment.mockResolvedValue(segment);
+    healthApiMocks.updateSleepSegment.mockResolvedValue(segment);
     healthApiMocks.deleteSleepSegment.mockResolvedValue(undefined);
   });
 
@@ -118,6 +119,41 @@ describe("SleepWorkspace", () => {
 
     await waitFor(() => {
       expect(healthApiMocks.createSleepSegment).toHaveBeenCalled();
+    });
+  });
+
+  it("edits a sleep segment from the form", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<SleepWorkspace />, { wrapper });
+
+    await screen.findByText("2");
+    await user.click(
+      screen.getByRole("button", { name: "common.edit" }),
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(
+      within(dialog).getByText("health.sleep.editTitle"),
+    ).toBeInTheDocument();
+
+    const startInput = within(dialog).getByLabelText(/health\.sleep\.startTime/);
+    const endInput = within(dialog).getByLabelText(/health\.sleep\.endTime/);
+    await user.clear(startInput);
+    await user.type(startInput, "2026-08-19T23:00");
+    await user.clear(endInput);
+    await user.type(endInput, "2026-08-20T07:00");
+    await user.click(
+      within(dialog).getByRole("button", { name: "common.save" }),
+    );
+
+    await waitFor(() => {
+      expect(healthApiMocks.updateSleepSegment).toHaveBeenCalledWith(
+        "segment-1",
+        expect.objectContaining({
+          start_at: expect.any(String),
+          end_at: expect.any(String),
+        }),
+      );
     });
   });
 

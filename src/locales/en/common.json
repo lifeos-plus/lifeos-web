@@ -787,6 +787,23 @@
         "description": "Select how many lines remain visible when a note card is collapsed."
       }
     },
+    "health": {
+      "title": "Health",
+      "description": "Configure how health records are stored and displayed.",
+      "weightUnit": {
+        "label": "Weight display unit",
+        "description": "Unit used when showing body weight in the health workspace.",
+        "options": {
+          "jin": "斤 (jin)"
+        }
+      },
+      "bodyHeight": {
+        "label": "Body height",
+        "description": "Height in centimeters used to derive BMI. Leave empty to hide BMI.",
+        "placeholder": "e.g. 170",
+        "clear": "Clear height"
+      }
+    },
     "autoSaveHint": "Changes are saved automatically.",
     "areaSorter": {
       "loading": "Loading areas...",
@@ -2270,11 +2287,13 @@
       "startTime": "Start time",
       "endTime": "End time",
       "createTitle": "Add sleep segment",
+      "editTitle": "Edit sleep segment",
       "deleteTitle": "Delete sleep segment",
       "deleteMessage": "Delete this sleep segment?",
       "deleteConfirm": "Delete",
       "messages": {
         "created": "Sleep segment created",
+        "updated": "Sleep segment updated",
         "deleted": "Sleep segment deleted"
       }
     }

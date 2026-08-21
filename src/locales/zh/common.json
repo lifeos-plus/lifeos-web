@@ -787,6 +787,23 @@
         "description": "选择折叠状态下仍然可见的笔记行数。"
       }
     },
+    "health": {
+      "title": "健康",
+      "description": "配置健康记录的存储与展示方式。",
+      "weightUnit": {
+        "label": "体重展示单位",
+        "description": "健康工作区中展示体重时使用的单位。",
+        "options": {
+          "jin": "斤"
+        }
+      },
+      "bodyHeight": {
+        "label": "身高",
+        "description": "用于计算 BMI 的身高（厘米）。留空则不显示 BMI。",
+        "placeholder": "例如 170",
+        "clear": "清除身高"
+      }
+    },
     "autoSaveHint": "修改后将自动保存",
     "areaSorter": {
       "loading": "加载领域中...",
@@ -2270,11 +2287,13 @@
       "startTime": "开始时间",
       "endTime": "结束时间",
       "createTitle": "添加睡眠分段",
+      "editTitle": "编辑睡眠分段",
       "deleteTitle": "删除睡眠分段",
       "deleteMessage": "删除这段睡眠？",
       "deleteConfirm": "删除",
       "messages": {
         "created": "已创建睡眠分段",
+        "updated": "已更新睡眠分段",
         "deleted": "已删除睡眠分段"
       }
     }
