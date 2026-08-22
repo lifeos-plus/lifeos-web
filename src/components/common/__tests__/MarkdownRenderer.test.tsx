@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import MarkdownRenderer from "@/components/common/MarkdownRenderer";
+import MarkdownRenderer, {
+  SafeAnchor,
+} from "@/components/common/MarkdownRenderer";
 
 describe("MarkdownRenderer", () => {
   it("renders basic markdown content", () => {
@@ -30,5 +32,29 @@ describe("MarkdownRenderer", () => {
     expect(
       screen.getByText((text) => text.startsWith("Click")),
     ).toBeInTheDocument();
+  });
+
+  it("forces rel=noopener noreferrer on target=_blank links", () => {
+    render(
+      <SafeAnchor href="https://example.com" target="_blank">
+        external
+      </SafeAnchor>,
+    );
+
+    const link = screen.getByRole("link", { name: "external" });
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("keeps explicit rel on same-tab links", () => {
+    render(
+      <SafeAnchor href="https://example.com" rel="nofollow">
+        same-tab
+      </SafeAnchor>,
+    );
+
+    const link = screen.getByRole("link", { name: "same-tab" });
+    expect(link).not.toHaveAttribute("target");
+    expect(link).toHaveAttribute("rel", "nofollow");
   });
 });
