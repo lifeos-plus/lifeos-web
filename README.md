@@ -4,7 +4,7 @@
 
 `lifeos-web` is the first-party React Web UI for LifeOS. It is a Vite/React workspace for browser workflows over the LifeOS Web API provided by [`lifeos-cli`](https://github.com/lifeos-plus/lifeos-cli).
 
-The frontend is intentionally local-first: it talks to the same configured database as the terminal-native CLI through the LifeOS Web API and the generated OpenAPI transport contract. The Web API implementation stays in `lifeos-cli`; this repository ships only the browser UI and its build, validation, and dependency tooling.
+The frontend is intentionally local-first: it talks to the same configured database as the terminal-native CLI through the LifeOS Web API and the generated OpenAPI transport contract. The Web API implementation stays in `lifeos-cli`; this repository ships only the browser UI and its build, validation, and dependency tooling. The OpenAPI contract is pinned to a specific `lifeos-cli` release and verified against a committed SHA-256 digest (`scripts/pinned-schema.sha256`) whenever the document is fetched; see [CONTRIBUTING.md](CONTRIBUTING.md) for the refresh flow.
 
 ## Current Scope
 
@@ -45,6 +45,8 @@ npm run dev
 ```
 
 Vite proxies `/api` to `http://127.0.0.1:8765`.
+
+The dev server listens on loopback only by default. Set `VITE_DEV_HOST=0.0.0.0` only when remote debugging is required, because the dev proxy reaches the unauthenticated local Web API.
 
 ## Build
 

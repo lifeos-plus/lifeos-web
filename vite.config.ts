@@ -76,6 +76,15 @@ function contentSecurityPolicyPlugin(cspContent: string): PluginOption {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const cspContent = createCspContent(mode, env)
+  const devHostRaw = (env.VITE_DEV_HOST ?? '').trim()
+  const devHost = devHostRaw.toLowerCase()
+  const resolvedDevHost = devHost === 'true' ? true : devHost || false
+  const loopbackDevHosts = new Set(['127.0.0.1', 'localhost', '::1'])
+  if (devHost && !loopbackDevHosts.has(devHost)) {
+    console.warn(
+      `[lifeos-web] VITE_DEV_HOST=${env.VITE_DEV_HOST} exposes the Vite dev server and its /api proxy beyond loopback; prefer 127.0.0.1 unless remote debugging is required.`,
+    )
+  }
 
   return {
     plugins: [
@@ -91,7 +100,7 @@ export default defineConfig(({ mode }) => {
     ],
     base: '/',
     server: {
-      host: true,
+      host: resolvedDevHost,
       proxy: {
         '/api': {
           target: process.env.E2E_API_PROXY_TARGET || 'http://127.0.0.1:8765',
