@@ -46,6 +46,8 @@ npm run dev
 
 Vite proxies `/api` to `http://127.0.0.1:8765`.
 
+The dev server listens on loopback only by default. Set `VITE_DEV_HOST=0.0.0.0` only when remote debugging is required, because the dev proxy reaches the unauthenticated local Web API.
+
 ## Build
 
 ```bash

@@ -25,6 +25,8 @@ npm run dev
 
 Vite 将 `/api` 代理到 `http://127.0.0.1:8765`。
 
+开发服务器默认只监听 loopback；仅当需要远程调试时才设置 `VITE_DEV_HOST=0.0.0.0`，因为 dev 代理会访问无认证的本地 Web API。
+
 ## 构建
 
 ```bash

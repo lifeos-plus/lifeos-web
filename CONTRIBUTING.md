@@ -60,6 +60,8 @@ npm run test:e2e
 
 Playwright starts both servers automatically: a temporary LifeOS Web API (`scripts/e2e/start-api.sh`, default port 8765) and the Vite dev server (default port 5173, API proxied to the temporary server). Override ports with `E2E_API_PORT` and `E2E_WEB_PORT`. CI installs browsers with OS dependencies and caches them; runs use 2 workers, 2 retries, and keep a trace on first retry plus an HTML report on failure (`playwright-report/`).
 
+The Vite dev server listens on loopback only by default. For remote debugging, start it explicitly with `VITE_DEV_HOST=0.0.0.0 npm run dev`; remember that the `/api` proxy reaches the unauthenticated local Web API.
+
 ## API Contract Policy
 
 - `scripts/pinned-cli-version.mjs` is the version-controlled contract authority: it pins the `lifeos-cli` release that defines the Web API transport contract.
