@@ -88,20 +88,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
         run: |
-          cli_version="$(node scripts/pinned-cli-version.mjs)"
-          printf '%s\n' \
-            "lifeos-web ${RELEASE_TAG}" \
-            "" \
-            "Pinned LifeOS Web API contract: \`lifeos-cli v${cli_version}\`" \
-            "" \
-            "Changes since the previous release (auto-generated from merged pull requests):" \
-            > /tmp/lifeos-web-release-notes.md
           if gh release view "${RELEASE_TAG}" --json url >/dev/null 2>&1; then
             echo "Release ${RELEASE_TAG} already exists; skipping creation."
           else
-            gh release create "${RELEASE_TAG}" \
-              --verify-tag \
-              --title "lifeos-web ${RELEASE_TAG}" \
-              --notes-file /tmp/lifeos-web-release-notes.md \
-              --generate-notes
+            gh release create "${RELEASE_TAG}" --verify-tag --generate-notes
           fi
