@@ -8,7 +8,7 @@ This repository ships the LifeOS Web UI: a Vite/React workspace, the npm lockfil
 
 - npm dependency lockfile, audit, and dependency-review flows
 - Content-Security-Policy configuration in `vite.config.ts`
-- the pinned OpenAPI contract consumed from `lifeos-cli` releases
+- the pinned OpenAPI contract consumed from `lifeos-cli` releases, verified against the committed SHA-256 pin in `scripts/pinned-schema.sha256`
 - `.env.example` and repository examples that must not expose secrets
 
 ## Reporting a Vulnerability
