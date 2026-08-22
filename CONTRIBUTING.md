@@ -64,12 +64,15 @@ Playwright starts both servers automatically: a temporary LifeOS Web API (`scrip
 
 - `scripts/pinned-cli-version.mjs` is the version-controlled contract authority: it pins the `lifeos-cli` release that defines the Web API transport contract.
 - `openapi.json` is a generated, gitignored artifact — the document published by the pinned release, downloaded verbatim by `npm run api:fetch` (part of `api:refresh`). It is not committed; there is exactly one source of truth (the release asset) and no copy that can drift.
+- `scripts/pinned-schema.sha256` pins the SHA-256 digest of the OpenAPI asset per release tag. `npm run api:fetch` verifies the downloaded document against this pin and fails on mismatch, so a tampered or corrupted release asset cannot silently shape the generated contract.
 - `src/services/api/generated/schema.ts` is generated from that document and committed for developer tooling. Do not hand-edit it.
 - `lifeos-cli` publishes `openapi.json` as a GitHub Release asset. Consume a new release in the same change:
 
   ```bash
   # 1) bump scripts/pinned-cli-version.mjs to the new release tag
-  # 2) refresh the local document and regenerate the TypeScript contract
+  # 2) add the release asset digest to scripts/pinned-schema.sha256
+  #    (run `npm run api:fetch` once with the new pin to derive it)
+  # 3) refresh the local document and regenerate the TypeScript contract
   npm run api:refresh
   ```
 
