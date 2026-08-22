@@ -11,12 +11,14 @@
  * document; `npm run api:check` verifies the committed schema.ts is fresh.
  */
 
-import { writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 import { resolveSchemaVersion } from "./pinned-cli-version.mjs";
 
+const PIN_FILE = new URL("./pinned-schema.sha256", import.meta.url);
 const outputPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
@@ -44,5 +46,40 @@ if (!response.ok) {
   process.exit(1);
 }
 
-await writeFile(outputPath, await response.text());
+const schemaText = await response.text();
+const digest = createHash("sha256").update(schemaText, "utf8").digest("hex");
+let pinnedDigest = null;
+try {
+  const pinText = await readFile(PIN_FILE, "utf8");
+  for (const line of pinText.split("\n")) {
+    const fields = line.trim().split(/\s+/);
+    if (fields.length >= 2 && fields[1] === schemaVersion) {
+      pinnedDigest = fields[0];
+    }
+  }
+} catch {
+  // A missing pin file is handled below as an integrity failure.
+}
+
+if (pinnedDigest === null) {
+  console.error(
+    `No integrity pin found for ${schemaVersion}. Add its SHA-256 to ` +
+      `${fileURLToPath(PIN_FILE)} before refreshing the schema.`,
+  );
+  console.error(
+    "Add one line in the form '<sha256>  <version>', for example from " +
+      "`sha256sum` on the downloaded asset.",
+  );
+  process.exit(1);
+}
+if (digest !== pinnedDigest) {
+  console.error(
+    `Schema integrity check failed for ${schemaVersion}: ` +
+      `expected ${pinnedDigest}, got ${digest}.`,
+  );
+  process.exit(1);
+}
+
+await writeFile(outputPath, schemaText);
 console.log(`Fetched LifeOS Web API schema (${schemaVersion}) -> openapi.json`);
+console.log(`Schema integrity verified: sha256 ${digest}`);

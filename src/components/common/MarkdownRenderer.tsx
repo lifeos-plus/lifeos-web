@@ -10,6 +10,28 @@ interface MarkdownRendererProps {
   isStreaming?: boolean;
 }
 
+interface SafeAnchorProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  node?: unknown;
+}
+
+/** Render one markdown link with a safe `rel` for target="_blank". */
+export const SafeAnchor = ({
+  node: _node,
+  target,
+  rel,
+  children,
+  ...props
+}: SafeAnchorProps) => (
+  <a
+    {...props}
+    target={target}
+    rel={target === "_blank" ? "noopener noreferrer" : rel}
+  >
+    {children}
+  </a>
+);
+
 type PropertyDefinition =
   | string
   | [string, ...Array<string | number | boolean | RegExp | null | undefined>];
@@ -66,6 +88,7 @@ const MarkdownRenderer = memo(function MarkdownRenderer({
         key={key}
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[[rehypeSanitize, markdownSanitizeSchema]]}
+        components={{ a: SafeAnchor }}
       >
         {sanitizedContent}
       </ReactMarkdown>
