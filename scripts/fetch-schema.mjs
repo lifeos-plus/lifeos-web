@@ -66,6 +66,10 @@ if (pinnedDigest === null) {
     `No integrity pin found for ${schemaVersion}. Add its SHA-256 to ` +
       `${fileURLToPath(PIN_FILE)} before refreshing the schema.`,
   );
+  console.error(
+    "Add one line in the form '<sha256>  <version>', for example from " +
+      "`sha256sum` on the downloaded asset.",
+  );
   process.exit(1);
 }
 if (digest !== pinnedDigest) {
