@@ -818,58 +818,6 @@
       "moveUp": "Move {{name}} up",
       "moveDown": "Move {{name}} down"
     },
-    "llm": {
-      "title": "AI Access",
-      "description": "Manage encrypted BYOT (Bring Your Own Token) credentials for LiteLLM.",
-      "credentials": {
-        "label": "Bring Your Own Token",
-        "description": "Tokens are encrypted and only the last four characters are shown after saving.",
-        "empty": "No custom tokens yet. Add your first token below.",
-        "defaultBadge": "Default",
-        "tokenPreview": "Ends with {{last4}}",
-        "updatedAt": "Updated {{value}}",
-        "addNew": "Add New Token",
-        "saveButton": "Save Token"
-      },
-      "providers": {
-        "openai": "OpenAI",
-        "azure-openai": "Azure OpenAI",
-        "custom": "Custom Provider"
-      },
-      "actions": {
-        "makeDefault": "Make Default",
-        "testConnection": "Test Connection"
-      },
-      "form": {
-        "provider": "Provider",
-        "displayName": "Display name",
-        "displayNamePlaceholder": "e.g., Product team budget",
-        "apiKey": "API key",
-        "apiBase": "API base URL",
-        "modelOverride": "Preferred model (optional)",
-        "makeDefault": "Set as default when saving"
-      },
-      "errors": {
-        "missingKey": "Please enter an API key.",
-        "genericError": "Failed to load LLM credentials."
-      },
-      "confirmDelete": "Delete token \"{{name}}\"?",
-      "toasts": {
-        "saveSuccess": "Token saved.",
-        "updateSuccess": "Token updated.",
-        "defaultSuccess": "Default token updated.",
-        "deleteSuccess": "Token deleted.",
-        "testSuccess": "Connection successful.",
-        "testFail": "Connection failed."
-      }
-    },
-    "accountSecurity": {
-      "title": "Account Security",
-      "description": "Manage password and other sensitive security settings.",
-      "changePasswordLabel": "Update Password",
-      "changePasswordHint": "After changing the password you will be signed out and must log in again.",
-      "changePasswordDescription": "Update your password to keep your account secure."
-    },
     "saveSuccess": "All settings saved successfully",
     "partialSuccess": "Saved {{successful}} settings, {{failed}} failed",
     "saveFailed": "Settings save failed",

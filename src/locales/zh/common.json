@@ -818,58 +818,6 @@
       "moveUp": "将 {{name}} 上移",
       "moveDown": "将 {{name}} 下移"
     },
-    "llm": {
-      "title": "AI 接入",
-      "description": "管理自带 LLM API Token，全部加密保存，仅显示尾号。",
-      "credentials": {
-        "label": "自带 Token",
-        "description": "Token 经过加密存储，保存后仅显示最后四位。",
-        "empty": "尚未配置 Token，可在下方添加。",
-        "defaultBadge": "默认",
-        "tokenPreview": "尾号 {{last4}}",
-        "updatedAt": "更新时间 {{value}}",
-        "addNew": "添加 Token",
-        "saveButton": "保存 Token"
-      },
-      "providers": {
-        "openai": "OpenAI",
-        "azure-openai": "Azure OpenAI",
-        "custom": "自定义"
-      },
-      "actions": {
-        "makeDefault": "设为默认",
-        "testConnection": "检测可用性"
-      },
-      "form": {
-        "provider": "服务商",
-        "displayName": "显示名称",
-        "displayNamePlaceholder": "例如：团队额度",
-        "apiKey": "API Token",
-        "apiBase": "API Base URL",
-        "modelOverride": "偏好模型（可选）",
-        "makeDefault": "保存后设为默认"
-      },
-      "errors": {
-        "missingKey": "请填写 API Token。",
-        "genericError": "加载 Token 失败。"
-      },
-      "confirmDelete": "确定删除 Token「{{name}}」吗？",
-      "toasts": {
-        "saveSuccess": "Token 保存成功。",
-        "updateSuccess": "Token 更新成功。",
-        "defaultSuccess": "默认 Token 已更新。",
-        "deleteSuccess": "Token 已删除。",
-        "testSuccess": "连接成功。",
-        "testFail": "连接失败。"
-      }
-    },
-    "accountSecurity": {
-      "title": "账号安全",
-      "description": "管理密码及其他敏感安全设置。",
-      "changePasswordLabel": "更新密码",
-      "changePasswordHint": "修改密码后系统会自动登出，需要重新登录。",
-      "changePasswordDescription": "更新密码以保护账号安全。"
-    },
     "saveSuccess": "所有设置已保存",
     "partialSuccess": "已保存 {{successful}} 项设置，{{failed}} 项失败",
     "saveFailed": "设置保存失败",
