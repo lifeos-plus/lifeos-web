@@ -1919,7 +1919,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health": {
+    "/healthy": {
         parameters: {
             query?: never;
             header?: never;
@@ -1930,7 +1930,7 @@ export interface paths {
          * Health
          * @description Return a lightweight service health response.
          */
-        get: operations["health_health_get"];
+        get: operations["health_healthy_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9085,7 +9085,7 @@ export interface operations {
             };
         };
     };
-    health_health_get: {
+    health_healthy_get: {
         parameters: {
             query?: never;
             header?: never;
