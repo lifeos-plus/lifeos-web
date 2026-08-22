@@ -76,7 +76,9 @@ function contentSecurityPolicyPlugin(cspContent: string): PluginOption {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const cspContent = createCspContent(mode, env)
-  const devHost = (env.VITE_DEV_HOST ?? '').trim().toLowerCase()
+  const devHostRaw = (env.VITE_DEV_HOST ?? '').trim()
+  const devHost = devHostRaw.toLowerCase()
+  const resolvedDevHost = devHost === 'true' ? true : devHost || false
   const loopbackDevHosts = new Set(['127.0.0.1', 'localhost', '::1'])
   if (devHost && !loopbackDevHosts.has(devHost)) {
     console.warn(
@@ -98,7 +100,7 @@ export default defineConfig(({ mode }) => {
     ],
     base: '/',
     server: {
-      host: devHost || false,
+      host: resolvedDevHost,
       proxy: {
         '/api': {
           target: process.env.E2E_API_PROXY_TARGET || 'http://127.0.0.1:8765',
