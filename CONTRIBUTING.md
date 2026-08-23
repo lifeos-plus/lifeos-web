@@ -79,7 +79,6 @@ The Vite dev server listens on loopback only by default. For remote debugging, s
   ```
 
   Set `LIFEOS_CLI_SCHEMA_VERSION` to consume a different release tag without editing the pin. `node scripts/pinned-cli-version.mjs` prints the CLI version used by CI and the E2E harness.
-- To develop against an unreleased lifeos-cli branch, export that checkout's `openapi.json` (`uv run --extra web python scripts/export_web_openapi.py --output <path>` in the lifeos-cli repo) and set `LIFEOS_CLI_SCHEMA_PATH` to the exported file. This dev-only override bypasses the release download and digest check; do not commit the resulting `schema.ts`, and CI keeps validating against the pinned release.
 - `npm run api:check` regenerates the contract from the fetched document and fails when the committed `schema.ts` is stale. CI fetches the pinned document before checking.
 - Types passed to and returned from the HTTP boundary must come from the generated OpenAPI contract. Frontend-only query filters, form drafts, cache projections, and aggregate view models may be derived with `Pick`, `Omit`, intersections, or explicit adapters.
 

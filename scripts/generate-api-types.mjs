@@ -7,15 +7,11 @@ const inputPath = new URL("../openapi.json", import.meta.url);
 const outputPath = new URL("../src/services/api/generated/schema.ts", import.meta.url);
 let document;
 try {
-  const overridePath = process.env.LIFEOS_CLI_SCHEMA_PATH;
-  document = JSON.parse(
-    overridePath ? await readFile(overridePath, "utf8") : await readFile(inputPath, "utf8"),
-  );
+  document = JSON.parse(await readFile(inputPath, "utf8"));
 } catch (error) {
   console.error(
-    "No readable OpenAPI document. Either fetch the pinned release document " +
-      "with `npm run api:refresh`, or set LIFEOS_CLI_SCHEMA_PATH to a locally " +
-      "exported openapi.json for pre-release development.",
+    "openapi.json is missing or unreadable. It is a generated, gitignored " +
+      "artifact; fetch the pinned release document first with `npm run api:refresh`.",
   );
   process.exit(1);
 }
