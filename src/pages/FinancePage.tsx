@@ -53,8 +53,8 @@ import {
   type FinanceNodeFormState,
   type FinanceTab,
   type FinanceToolbarTab,
+  type FinanceFormMode,
   type PresetConfig,
-  type SnapshotFormMode,
   type TreeNodeWithChildren,
 } from "@/features/finance/utils";
 import {
@@ -176,7 +176,7 @@ function FinancePresetWorkspace({ preset }: { preset: PresetConfig }) {
   const activeTimezone = useSystemTimezone().timezone;
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<UUID | null>(null);
   const [snapshotFormVisible, setSnapshotFormVisible] = useState(false);
-  const [snapshotFormMode, setSnapshotFormMode] = useState<SnapshotFormMode>("create");
+  const [snapshotFormMode, setSnapshotFormMode] = useState<FinanceFormMode>("create");
   const [selectedTreeId, setSelectedTreeId] = useState<UUID | null>(null);
   const [pendingDeleteSnapshot, setPendingDeleteSnapshot] = useState<FinanceSnapshot | null>(null);
   const [deletedSnapshotIds, setDeletedSnapshotIds] = useState<Set<UUID>>(() => new Set());
@@ -1037,7 +1037,7 @@ function SnapshotModule({
   snapshotDetail: FinanceSnapshot | null;
   snapshotDetailLoading: boolean;
   snapshotFormVisible: boolean;
-  snapshotFormMode: SnapshotFormMode;
+  snapshotFormMode: FinanceFormMode;
   snapshotSubmitting: boolean;
   snapshotUpdating: boolean;
   snapshotDeleting: boolean;

@@ -6,9 +6,22 @@ import type {
 import type { UUID } from "@/types/primitive";
 
 /**
+ * Client-side finance tree duplication.
+ *
+ * The Web UI consumes the pinned lifeos-cli OpenAPI contract, which does not
+ * yet expose the atomic `POST /finance/trees/{tree_id}/copy` endpoint, so the
+ * tree is duplicated here by creating the tree and replaying its nodes.
+ * Once a lifeos-cli release ships that endpoint and the web pin is bumped,
+ * replace this module (including the name resolution) with a single call to
+ * the server endpoint and delete it.
+ */
+
+/**
  * Suffix appended to the source tree name when no explicit copy name is
- * given. Kept in English to match the CLI-side naming convention so both
- * surfaces produce the same tree names.
+ * given. Mirrors the canonical naming rule owned by the lifeos-cli finance
+ * service (`FINANCE_TREE_COPY_NAME_SUFFIX` in
+ * `src/lifeos_cli/db/services/finance.py`) so both surfaces produce the same
+ * tree names; keep both aligned.
  */
 export const COPY_NAME_SUFFIX = " Copy";
 
