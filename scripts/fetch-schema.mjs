@@ -9,6 +9,13 @@
  * artifact whose version-controlled authority is the pin itself. `npm run
  * api:generate` regenerates the TypeScript contract from the fetched
  * document; `npm run api:check` verifies the committed schema.ts is fresh.
+ *
+ * Pre-release development against an unreleased lifeos-cli branch can point
+ * LIFEOS_CLI_SCHEMA_PATH at a locally exported openapi.json (for example from
+ * `uv run --extra web python scripts/export_web_openapi.py` in a lifeos-cli
+ * checkout). This bypasses the release download and digest check; never
+ * commit the schema.ts derived from an override (CI still validates against
+ * the pinned release).
  */
 
 import { createHash } from "node:crypto";
@@ -24,6 +31,20 @@ const outputPath = path.resolve(
   "..",
   "openapi.json",
 );
+
+const schemaOverridePath = process.env.LIFEOS_CLI_SCHEMA_PATH;
+if (schemaOverridePath) {
+  const overrideText = await readFile(schemaOverridePath, "utf8");
+  await writeFile(outputPath, overrideText);
+  console.log(
+    `[schema] Using local OpenAPI override (${schemaOverridePath}) -> openapi.json`,
+  );
+  console.log(
+    "[schema] Override mode: do not commit schema.ts derived from this document; " +
+      "CI still validates against the pinned release.",
+  );
+  process.exit(0);
+}
 
 function schemaReleaseUrl(version) {
   return `https://github.com/lifeos-plus/lifeos-cli/releases/download/${version}/openapi.json`;
