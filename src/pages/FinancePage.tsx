@@ -69,6 +69,7 @@ import {
 import { FinanceAssetSymbol } from "@/features/finance/AmountText";
 import { financeTextClass } from "@/features/finance/styles";
 import { useFinanceAssetSource } from "@/features/finance/useFinanceAssetSource";
+import { duplicateTree } from "@/features/finance/treeCopy";
 
 const PRESETS: PresetConfig[] = [
   {
@@ -501,7 +502,7 @@ function FinancePresetWorkspace({ preset }: { preset: PresetConfig }) {
   );
 }
 
-function FinanceTreesWorkspace() {
+export function FinanceTreesWorkspace() {
   const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -636,6 +637,23 @@ function FinanceTreesWorkspace() {
       });
       setSelectedTreeId(context?.previousSelectedTreeId ?? null);
       await queryClient.invalidateQueries({ queryKey: financeKeys.trees() });
+      toast.showError(t("common.error"), error instanceof Error ? error.message : String(error));
+    },
+  });
+
+  const copyTreeMutation = useMutation({
+    mutationFn: (source: FinanceTree) =>
+      duplicateTree(
+        financeApi,
+        source,
+        trees.map((item) => item.name),
+      ),
+    onSuccess: async (copiedTree) => {
+      toast.showSuccess(t("finance.messages.treeCopied"));
+      setSelectedTreeId(copiedTree.id);
+      await invalidateTreeLists(copiedTree);
+    },
+    onError: (error) => {
       toast.showError(t("common.error"), error instanceof Error ? error.message : String(error));
     },
   });
@@ -802,13 +820,15 @@ function FinanceTreesWorkspace() {
               rightSlot={
                 <SnapshotActionButtons
                   editLabel={t("common.edit")}
+                  copyLabel={t("common.copy")}
                   deleteLabel={t("common.delete")}
-                  disabled={deleteTreeMutation.isPending}
+                  disabled={deleteTreeMutation.isPending || copyTreeMutation.isPending}
                   deleteDisabled={deleteTreeMutation.isPending}
                   onEdit={() => {
                     setTreeFormMode("edit");
                     setTreeFormVisible(true);
                   }}
+                  onCopy={() => copyTreeMutation.mutate(tree)}
                   onDelete={() => setPendingDeleteTree(tree)}
                 />
               }
