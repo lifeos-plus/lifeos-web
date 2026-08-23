@@ -10,6 +10,10 @@ import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { FontProvider } from "@/contexts/FontProvider";
 import { initTheme } from "@/theme";
 import { initFont } from "@/config/fontCatalog";
+import {
+  retryDelayForRequest,
+  shouldRetryRequest,
+} from "@/utils/query";
 
 // Create a client with optimized settings for smooth page transitions
 const queryClient = new QueryClient({
@@ -19,19 +23,8 @@ const queryClient = new QueryClient({
       gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
       refetchOnWindowFocus: false, // Disable to prevent unnecessary refetches during navigation
       refetchOnReconnect: true, // Keep refetch on reconnect for data freshness
-      retry: (failureCount, error) => {
-        // Don't retry on 4xx errors
-        if (
-          error instanceof Error &&
-          "status" in error &&
-          typeof error.status === "number"
-        ) {
-          if (error.status >= 400 && error.status < 500) {
-            return false;
-          }
-        }
-        return failureCount < 3;
-      },
+      retry: shouldRetryRequest,
+      retryDelay: retryDelayForRequest,
       // Use placeholder data to prevent loading states during navigation
       placeholderData: (previousData: unknown) => previousData,
     },

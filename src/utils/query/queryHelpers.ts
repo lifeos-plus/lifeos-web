@@ -3,6 +3,7 @@ import { tasksKeys } from "@/services/api/queryKeys";
 import type { Task } from "@/services/api/tasks";
 import type { UUID } from "@/types/primitive";
 import {
+  isPlanningTaskListQuery,
   isTasksListQuery,
   isTasksSelectorSourceQuery,
   type QueryLike as QueryPredicateLike,
@@ -445,6 +446,8 @@ export const invalidateTasksByIds = async (
         predicate: (query) =>
           (isTasksListQuery(query as QueryLike) ||
             isTasksSelectorSourceQuery(query as QueryLike)) &&
+          // planning 列表数据由 updateTaskCaches 就地更新，重拉只会放大请求量
+          !isPlanningTaskListQuery(query as QueryLike) &&
           uniqueTaskIds.some((taskId) =>
             queryContainsTask(query as QueryLike, taskId),
           ),

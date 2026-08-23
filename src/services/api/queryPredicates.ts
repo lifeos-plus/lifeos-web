@@ -67,6 +67,28 @@ export const isTasksListQuery = (query: QueryLike): boolean => {
   );
 };
 
+/**
+ * Planning-view task lists (keyed by planning_cycle_type/start_date).
+ *
+ * These queries are patched in place by `updateTaskCaches` after mutations,
+ * so invalidating them would only trigger a full re-fetch and another parent
+ * tooltip batch for every single edit. Structure-level changes still refresh
+ * planning snapshots through the dedicated planning invalidation path.
+ */
+export const isPlanningTaskListQuery = (query: QueryLike): boolean => {
+  if (!Array.isArray(query.queryKey) || query.queryKey.length < 3) {
+    return false;
+  }
+  if (!isTasksListQuery(query)) return false;
+  const filters = query.queryKey[2];
+  return (
+    filters !== null &&
+    typeof filters === "object" &&
+    !Array.isArray(filters) &&
+    "planning_cycle_type" in filters
+  );
+};
+
 export const isTasksSelectorSourceQuery = (query: QueryLike): boolean => {
   if (!Array.isArray(query.queryKey)) return false;
   return (

@@ -5,6 +5,7 @@ import { type PropsWithChildren } from "react";
 
 import { usePlanningTasks } from "@/hooks/queries/usePlanningTasks";
 import type { Task } from "@/services/api/tasks";
+import { logger } from "@/utils/core";
 
 const tasksGetAllMock = vi.fn();
 
@@ -147,7 +148,7 @@ describe("usePlanningTasks", () => {
     });
   });
 
-  it("fetches cross-cycle parents for tooltip lookup without changing the displayed tree", async () => {
+  it("batch-fetches cross-cycle parents for tooltip lookup without changing the displayed tree", async () => {
     const child = createTask({
       id: "task-child",
       parent_task_id: "task-week-parent",
@@ -164,12 +165,12 @@ describe("usePlanningTasks", () => {
       pagination: { page: 1, size: 100, total: 1, pages: 1 },
       meta: {},
     });
-    const getByIdMock = vi
+    const getByIdsMock = vi
       .spyOn(
         await import("@/services/api/tasks").then((m) => m.tasksApi),
-        "getByIdQuiet",
+        "getByIdsQuiet",
       )
-      .mockResolvedValue(parent);
+      .mockResolvedValue([parent]);
 
     const { result } = renderHook(
       () => usePlanningTasks("day", new Date("2025-01-01T00:00:00Z")),
@@ -187,8 +188,46 @@ describe("usePlanningTasks", () => {
     expect(result.current.taskLookup.get("task-week-parent")?.content).toBe(
       "Weekly parent",
     );
-    expect(getByIdMock).toHaveBeenCalledWith("task-week-parent");
+    expect(getByIdsMock).toHaveBeenCalledWith(["task-week-parent"]);
 
-    getByIdMock.mockRestore();
+    getByIdsMock.mockRestore();
+  });
+
+  it("degrades gracefully when the batch parent lookup fails", async () => {
+    const child = createTask({
+      id: "task-child",
+      parent_task_id: "task-week-parent",
+      planning_cycle_type: "day",
+    });
+
+    tasksGetAllMock.mockResolvedValue({
+      items: [child],
+      pagination: { page: 1, size: 100, total: 1, pages: 1 },
+      meta: {},
+    });
+    const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
+    const getByIdsMock = vi
+      .spyOn(
+        await import("@/services/api/tasks").then((m) => m.tasksApi),
+        "getByIdsQuiet",
+      )
+      .mockRejectedValue(new Error("Too Many Requests"));
+
+    const { result } = renderHook(
+      () => usePlanningTasks("day", new Date("2025-01-01T00:00:00Z")),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.tasks.length).toBeGreaterThan(0));
+
+    expect(result.current.taskLookup.has("task-week-parent")).toBe(false);
+    expect(getByIdsMock).toHaveBeenCalledWith(["task-week-parent"]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Failed to load 1 parent tasks for tooltip"),
+      expect.any(Error),
+    );
+
+    getByIdsMock.mockRestore();
+    warnSpy.mockRestore();
   });
 });

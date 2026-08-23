@@ -5,12 +5,19 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 export class ApiError extends Error {
   status: number;
   title?: string;
+  /** Seconds the server asked us to wait before retrying (429 only). */
+  retryAfter?: number;
 
-  constructor(message: string, status: number, options?: { title?: string }) {
+  constructor(
+    message: string,
+    status: number,
+    options?: { title?: string; retryAfter?: number },
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.title = options?.title;
+    this.retryAfter = options?.retryAfter;
   }
 }
 
@@ -52,7 +59,15 @@ async function parseError(response: Response): Promise<ApiError> {
   } catch {
     // Keep HTTP status text when the body is not JSON.
   }
-  return new ApiError(message, response.status);
+  const retryAfterHeader = response.headers.get("Retry-After");
+  const retryAfterSeconds = retryAfterHeader
+    ? Number.parseInt(retryAfterHeader, 10)
+    : Number.NaN;
+  const retryAfter =
+    retryAfterHeader != null && Number.isFinite(retryAfterSeconds)
+      ? retryAfterSeconds
+      : undefined;
+  return new ApiError(message, response.status, { retryAfter });
 }
 
 async function request<T>(

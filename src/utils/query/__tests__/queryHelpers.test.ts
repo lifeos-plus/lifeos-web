@@ -5,6 +5,7 @@ import type { Task } from "@/services/api/tasks";
 import type { UUID } from "@/types/primitive";
 import { normalizeTaskSelectorSourceFilters } from "@/services/api/taskFilters";
 import {
+  invalidateTasksByIds,
   removeTaskFromSelectorSourceCache,
   updateTaskCaches,
   updateTaskRelationshipCounts,
@@ -136,5 +137,40 @@ describe("queryHelpers selector source cache syncing", () => {
 
     expect(updatedTask?.notes_count).toBe(3);
     expect(updatedTask?.note_count).toBe(3);
+  });
+
+  it("invalidates vision task lists but not planning lists after an attribute update", async () => {
+    const task = createTask({
+      id: "task-planning-edit" as UUID,
+      vision_id: "vision-edit" as UUID,
+    });
+    const planningKey = tasksKeys.list({
+      planning_cycle_type: "year",
+      planning_cycle_start_date: "2026-07-26",
+      fields: "full",
+      size: 100,
+    });
+    const visionListKey = tasksKeys.list({
+      vision_id: "vision-edit" as UUID,
+      fields: "full",
+    });
+
+    queryClient.setQueryData(planningKey, {
+      tasks: [task],
+      taskLookup: new Map([[String(task.id), task]]),
+    });
+    queryClient.setQueryData(visionListKey, [task]);
+
+    await invalidateTasksByIds(queryClient, [task.id]);
+
+    const planningQuery = queryClient
+      .getQueryCache()
+      .find({ queryKey: planningKey });
+    const visionQuery = queryClient
+      .getQueryCache()
+      .find({ queryKey: visionListKey });
+
+    expect(planningQuery?.state.isInvalidated).toBe(false);
+    expect(visionQuery?.state.isInvalidated).toBe(true);
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { usePageHeader } from "@/contexts/PageHeaderContext";
 import PageLayout from "@/layouts/PageLayout";
@@ -51,8 +51,13 @@ const PlanningPage: React.FC = () => {
     enabled: !calendarLoading,
   });
 
+  const prefetchOtherViewsOnce = useRef(false);
+
   useEffect(() => {
-    if (calendarLoading) return;
+    // 首次就绪时预热其他视图类型一次，保证切换视图类型有即时缓存；
+    // 之后只在相邻周期上预热，避免每次变化都触发 4 个周期的请求风暴。
+    if (calendarLoading || prefetchOtherViewsOnce.current) return;
+    prefetchOtherViewsOnce.current = true;
     const others: PlanningViewType[] = [
       "7years",
       "year",
@@ -65,6 +70,17 @@ const PlanningPage: React.FC = () => {
       const dateForPrefetch = parseDateKey(range.start);
       void prefetch(vt, dateForPrefetch);
     });
+  }, [calendarLoading, calendarAdapter, viewType, selectedDate, prefetch]);
+
+  useEffect(() => {
+    if (calendarLoading) return;
+    const previousDate = calendarAdapter.getPreviousPeriod(
+      selectedDate,
+      viewType,
+    );
+    const nextDate = calendarAdapter.getNextPeriod(selectedDate, viewType);
+    void prefetch(viewType, previousDate);
+    void prefetch(viewType, nextDate);
   }, [viewType, selectedDate, prefetch, calendarAdapter, calendarLoading]);
 
   useEffect(() => {
