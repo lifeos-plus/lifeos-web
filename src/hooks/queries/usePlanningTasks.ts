@@ -9,57 +9,18 @@ import {
 import { tasksKeys } from "@/services/api/queryKeys";
 import type { UUID } from "@/types/primitive";
 import {
-  toTooltipLookupEntry,
-  type TaskTooltipLookupEntry,
-} from "@/components/tooltips/tooltipData";
+  buildTaskHierarchy,
+  buildTaskLookup,
+} from "@/utils/query";
 import { logger } from "@/utils/core";
 
 type PlanningCycleType = "7years" | "year" | "month" | "week" | "day";
 
-/** tips 只消费父任务名称等少量字段，补拉数量做上限保护。 */
-const MAX_PARENT_LOOKUP_FETCHES = 30;
-
-function buildTaskHierarchy(flatTasks: Task[]): TaskWithSubtasks[] {
-  const taskMap = new Map<UUID, TaskWithSubtasks>();
-  const rootTasks: TaskWithSubtasks[] = [];
-
-  flatTasks.forEach((task) => {
-    taskMap.set(task.id, {
-      ...task,
-      subtasks: [],
-      completion_percentage: 0,
-      depth: 0,
-    } as TaskWithSubtasks);
-  });
-
-  flatTasks.forEach((task) => {
-    const node = taskMap.get(task.id)!;
-    if (task.parent_task_id) {
-      const parent = taskMap.get(task.parent_task_id);
-      if (parent) {
-        parent.subtasks.push(node);
-        node.depth = parent.depth + 1;
-      } else {
-        rootTasks.push(node);
-      }
-    } else {
-      rootTasks.push(node);
-    }
-  });
-
-  return rootTasks;
-}
-
-function buildTaskLookup(
-  flatTasks: Task[],
-  extraParents: Task[],
-): Map<string, TaskTooltipLookupEntry> {
-  const lookup = new Map<string, TaskTooltipLookupEntry>();
-  [...flatTasks, ...extraParents].forEach((task) => {
-    lookup.set(String(task.id), toTooltipLookupEntry(task));
-  });
-  return lookup;
-}
+/**
+ * tips 只消费父任务名称等少量字段，补拉数量做上限保护。
+ * 批量接口一次请求即可拉回全部父任务（上限与后端 id_in 契约一致）。
+ */
+const MAX_PARENT_LOOKUP_FETCHES = 100;
 
 /**
  * 拉取规划视图任务，并轻量补拉不在结果集中的直接父任务。
@@ -100,20 +61,16 @@ async function fetchPlanningTaskSet(
 
   const extraParents: Task[] = [];
   if (missingParentIds.length > 0) {
-    const results = await Promise.allSettled(
-      // 后台补拉：失败不触发全局错误提示，tips 降级显示无父任务
-      missingParentIds.map((parentId) => tasksApi.getByIdQuiet(parentId)),
-    );
-    results.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        extraParents.push(result.value);
-      } else {
-        logger.warn(
-          `Failed to load parent task ${missingParentIds[index]} for tooltip:`,
-          result.reason,
-        );
-      }
-    });
+    try {
+      // 后台批量补拉：失败不触发全局错误提示，tips 降级显示无父任务
+      const parents = await tasksApi.getByIdsQuiet(missingParentIds);
+      extraParents.push(...parents);
+    } catch (error) {
+      logger.warn(
+        `Failed to load ${missingParentIds.length} parent tasks for tooltip:`,
+        error,
+      );
+    }
   }
 
   return {

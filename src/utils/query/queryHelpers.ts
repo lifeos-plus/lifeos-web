@@ -3,6 +3,7 @@ import { tasksKeys } from "@/services/api/queryKeys";
 import type { Task } from "@/services/api/tasks";
 import type { UUID } from "@/types/primitive";
 import {
+  isPlanningTaskListQuery,
   isTasksListQuery,
   isTasksSelectorSourceQuery,
   type QueryLike as QueryPredicateLike,
@@ -11,6 +12,10 @@ import {
   taskMatchesSelectorSourceFilters,
   type TaskSelectorSourceFiltersNormalized,
 } from "@/services/api/taskFilters";
+import {
+  updatePlanningQueryData,
+  type PlanningQueryData,
+} from "@/utils/query";
 
 type QueryLike = QueryPredicateLike & {
   state: {
@@ -85,6 +90,20 @@ const deepUpsertTaskInValue = (
       return { result: working as Task, changed: true };
     }
     return { result: value, changed: false };
+  }
+
+  if (value instanceof Map) {
+    const taskKey = String(task.id);
+    if (!value.has(taskKey)) {
+      return { result: value, changed: false };
+    }
+    const { result, changed } = deepUpsertTaskInValue(value.get(taskKey), task);
+    if (!changed) {
+      return { result: value, changed: false };
+    }
+    const nextMap = new Map(value);
+    nextMap.set(taskKey, result);
+    return { result: nextMap, changed: true };
   }
 
   if (isPlainObject(value)) {
@@ -178,6 +197,24 @@ const patchTaskRelationshipCountsInValue = (
       return { result: nextArray, changed: true };
     }
     return { result: value, changed: false };
+  }
+
+  if (value instanceof Map) {
+    const taskKey = String(taskId);
+    if (!value.has(taskKey)) {
+      return { result: value, changed: false };
+    }
+    const { result, changed } = patchTaskRelationshipCountsInValue(
+      value.get(taskKey),
+      taskId,
+      patch,
+    );
+    if (!changed) {
+      return { result: value, changed: false };
+    }
+    const nextMap = new Map(value);
+    nextMap.set(taskKey, result);
+    return { result: nextMap, changed: true };
   }
 
   if (isTaskLike(value)) {
@@ -278,6 +315,12 @@ const dataContainsTask = (value: unknown, taskId: UUID): boolean => {
 
   if (Array.isArray(value)) {
     return value.some((item) => dataContainsTask(item, taskId));
+  }
+
+  if (value instanceof Map) {
+    return Array.from(value.values()).some((child) =>
+      dataContainsTask(child, taskId),
+    );
   }
 
   if (isTaskLike(value)) {
@@ -445,6 +488,8 @@ export const invalidateTasksByIds = async (
         predicate: (query) =>
           (isTasksListQuery(query as QueryLike) ||
             isTasksSelectorSourceQuery(query as QueryLike)) &&
+          // planning 列表数据由 updateTaskCaches 就地更新，重拉只会放大请求量
+          !isPlanningTaskListQuery(query as QueryLike) &&
           uniqueTaskIds.some((taskId) =>
             queryContainsTask(query as QueryLike, taskId),
           ),
@@ -469,6 +514,20 @@ export const updateTaskCaches = (
 
   queries.forEach((query) => {
     const queryKey = query.queryKey as readonly unknown[];
+    if (isPlanningTaskListQuery(query as QueryLike)) {
+      // planning 缓存是「树 + tooltip 查找表」：字段、父子嵌套、查找表条目
+      // 都需要重建，简单深合并无法保持结构正确。
+      queryClient.setQueryData(queryKey, (existing: unknown) => {
+        if (existing === null || typeof existing !== "object") {
+          return existing;
+        }
+        return (
+          updatePlanningQueryData(existing as PlanningQueryData, task) ??
+          existing
+        );
+      });
+      return;
+    }
     queryClient.setQueryData(queryKey, (existing: unknown) =>
       upsertTaskInUnknownData(existing, task),
     );

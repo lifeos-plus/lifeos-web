@@ -5,6 +5,7 @@ import type { Task } from "@/services/api/tasks";
 import type { UUID } from "@/types/primitive";
 import { normalizeTaskSelectorSourceFilters } from "@/services/api/taskFilters";
 import {
+  invalidateTasksByIds,
   removeTaskFromSelectorSourceCache,
   updateTaskCaches,
   updateTaskRelationshipCounts,
@@ -136,5 +137,137 @@ describe("queryHelpers selector source cache syncing", () => {
 
     expect(updatedTask?.notes_count).toBe(3);
     expect(updatedTask?.note_count).toBe(3);
+  });
+
+  it("invalidates vision task lists but not planning lists after an attribute update", async () => {
+    const task = createTask({
+      id: "task-planning-edit" as UUID,
+      vision_id: "vision-edit" as UUID,
+    });
+    const planningKey = tasksKeys.list({
+      planning_cycle_type: "year",
+      planning_cycle_start_date: "2026-07-26",
+      fields: "full",
+      size: 100,
+    });
+    const visionListKey = tasksKeys.list({
+      vision_id: "vision-edit" as UUID,
+      fields: "full",
+    });
+
+    queryClient.setQueryData(planningKey, {
+      tasks: [task],
+      taskLookup: new Map([[String(task.id), task]]),
+    });
+    queryClient.setQueryData(visionListKey, [task]);
+
+    await invalidateTasksByIds(queryClient, [task.id]);
+
+    const planningQuery = queryClient
+      .getQueryCache()
+      .find({ queryKey: planningKey });
+    const visionQuery = queryClient
+      .getQueryCache()
+      .find({ queryKey: visionListKey });
+
+    expect(planningQuery?.state.isInvalidated).toBe(false);
+    expect(visionQuery?.state.isInvalidated).toBe(true);
+  });
+
+  it("keeps planning taskLookup and task tree entries fresh after cache patching", () => {
+    const parent = createTask({
+      id: "task-parent-lookup" as UUID,
+      content: "Old parent",
+    });
+    const child = createTask({
+      id: "task-child-lookup" as UUID,
+      parent_task_id: "task-parent-lookup" as UUID,
+      content: "Old child",
+    });
+    const planningKey = tasksKeys.list({
+      planning_cycle_type: "year",
+      planning_cycle_start_date: "2026-07-26",
+      fields: "full",
+      size: 100,
+    });
+
+    // Mirror the planning query data shape produced by usePlanningTasks:
+    // a built task tree plus a lookup map that may include cross-cycle parents.
+    const taskLookup = new Map([
+      ["task-parent-lookup", createTask({ id: "task-parent-lookup" as UUID, content: "Old parent" })],
+    ]);
+    queryClient.setQueryData(planningKey, {
+      tasks: [
+        {
+          ...child,
+          subtasks: [],
+          completion_percentage: 0,
+          depth: 0,
+        },
+      ],
+      taskLookup,
+    });
+
+    updateTaskCaches(queryClient, {
+      ...parent,
+      content: "Renamed parent",
+    });
+
+    const planningData = queryClient.getQueryData<{
+      tasks: Array<Task & { subtasks?: Task[] }>;
+      taskLookup: Map<string, { content?: string | null }>;
+    }>(planningKey);
+
+    expect(planningData?.taskLookup.get("task-parent-lookup")?.content).toBe(
+      "Renamed parent",
+    );
+  });
+
+  it("rebuilds planning task tree nesting when parent_task_id changes", () => {
+    const parentA = createTask({ id: "task-tree-a" as UUID });
+    const parentB = createTask({ id: "task-tree-b" as UUID });
+    const child = createTask({
+      id: "task-tree-child" as UUID,
+      parent_task_id: "task-tree-a" as UUID,
+    });
+    const planningKey = tasksKeys.list({
+      planning_cycle_type: "year",
+      planning_cycle_start_date: "2026-07-26",
+      fields: "full",
+      size: 100,
+    });
+    const toNode = (task: Task) => ({
+      ...task,
+      subtasks: [],
+      completion_percentage: 0,
+      depth: 0,
+    });
+
+    queryClient.setQueryData(planningKey, {
+      tasks: [
+        { ...toNode(parentA), subtasks: [toNode(child)] },
+        toNode(parentB),
+      ],
+      taskLookup: new Map(),
+    });
+    queryClient.setQueryData(tasksKeys.detail(child.id), child);
+
+    updateTaskCaches(queryClient, {
+      ...child,
+      parent_task_id: "task-tree-b" as UUID,
+    });
+
+    const planningData = queryClient.getQueryData<{
+      tasks: Array<Task & { subtasks?: Array<Task & { id: string }> }>;
+    }>(planningKey);
+    const treeA = planningData?.tasks.find((task) => task.id === "task-tree-a");
+    const treeB = planningData?.tasks.find((task) => task.id === "task-tree-b");
+
+    expect(treeA?.subtasks?.map((subtask) => subtask.id)).not.toContain(
+      "task-tree-child",
+    );
+    expect(treeB?.subtasks?.map((subtask) => subtask.id)).toContain(
+      "task-tree-child",
+    );
   });
 });
