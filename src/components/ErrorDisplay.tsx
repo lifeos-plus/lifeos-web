@@ -7,9 +7,6 @@ interface ErrorDisplayProps {
   action?: React.ReactNode;
 }
 
-/**
- * ErrorDisplay - Reusable component for displaying error messages
- */
 const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   error,
   className = "",

@@ -3,35 +3,17 @@ import React from "react";
 interface ContainerProps {
   children: React.ReactNode;
   className?: string;
-  /** Content overflow behavior. */
   overflow?: "hidden" | "auto" | "visible" | "scroll";
-  /** Maximum height constraint. */
   maxHeight?: "none" | "full" | "screen" | "fit";
-  /** Container padding. */
   padding?: "none" | "sm" | "md" | "lg" | "responsive";
-  /** Whether to apply the minimum-width constraint. */
   minWidth?: boolean;
-  /** Whether to apply the maximum-width constraint. */
   maxWidth?: boolean;
-  /** Flex sizing behavior. */
   flex?: "1" | "none" | "auto" | "initial";
-  /** Minimum height constraint. */
   minHeight?: "0" | "auto" | "full" | "screen" | "fit";
-  /** Border style. */
   borderVariant?: "subtle" | "none";
-  /** Shadow strength. */
   shadow?: "none" | "sm" | "md" | "lg";
 }
 
-/**
- * Enhanced Container - unified border, shadow and radius with flexible configuration.
- *
- * Features:
- * - Flexible overflow handling
- * - Responsive padding options
- * - Configurable height constraints
- * - Better mobile support
- */
 function Container({
   children,
   className = "",

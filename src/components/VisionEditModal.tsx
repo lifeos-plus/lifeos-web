@@ -21,12 +21,6 @@ interface VisionEditModalProps {
   onRequestDelete?: (vision: Vision) => void;
 }
 
-/**
- * VisionEditModal - Modal for creating and editing visions
- *
- * This modal provides a clean interface for vision management,
- * replacing the inline form approach with a modal dialog.
- */
 const VisionEditModal: React.FC<VisionEditModalProps> = ({
   isOpen,
   onClose,
@@ -59,11 +53,9 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
     if (!loading) onClose();
   };
 
-  // Initialize form data when modal opens or vision changes
   useEffect(() => {
     if (isOpen) {
       if (vision) {
-        // Edit mode - populate form with existing data
         setFormData({
           name: vision.name,
           description: vision.description || "",
@@ -74,7 +66,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
         });
         setPersonSelectionTouched(false);
       } else {
-        // Create mode - reset form
         setFormData({
           name: "",
           description: "",
@@ -94,7 +85,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
     }
   }, [isOpen, vision, setError]);
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -119,7 +109,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
         let updatedVision: Vision | undefined;
 
         if (vision) {
-          // Update existing vision
           const updateData: VisionUpdate = {
             name: formData.name.trim(),
             description: formData.description?.trim() || undefined,
@@ -142,7 +131,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
             `${t("tagManager.entityTypes.vision")}"${formData.name.trim()}"${t("visions.messages.visionUpdated")}`,
           );
         } else {
-          // Create new vision
           const createData: VisionCreate = {
             name: formData.name.trim(),
             description: formData.description?.trim() || undefined,
@@ -185,8 +173,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
       );
     }
   };
-
-  // Removed dirty-state tracking for confirm dialog
 
   return (
     <ModalBase
@@ -246,7 +232,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
           />
         </FormField>
 
-        {/* Vision Description - Always full width */}
         <FormField
           label={t("visions.form.description")}
           htmlFor={visionDescriptionId}
@@ -300,9 +285,7 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
           />
         </FormField>
 
-        {/* Responsive Grid Layout for Area and Status */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          {/* Area (optional) */}
           <div className="w-full">
             <AreaSelect
               value={formData.area_id ?? undefined}
@@ -320,7 +303,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
             />
           </div>
 
-          {/* Status Selection */}
           <div className="w-full">
             <EnumSelect
               id="vision-status"
@@ -350,7 +332,6 @@ const VisionEditModal: React.FC<VisionEditModalProps> = ({
           </div>
         </div>
 
-        {/* Person Selector - Always full width */}
         <div className="w-full">
           <PersonSelector
             selectedPersonIds={formData.person_ids || []}

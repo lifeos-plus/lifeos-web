@@ -3,12 +3,6 @@ import { usePersistentState } from "@/hooks/usePersistentState";
 import type { UUID } from "@/types/primitive";
 import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 
-/**
- * Persistent UI state for Timelog page
- * - sortOrder: "asc" | "desc"
- * - selectedAreaId: UUID | "" | "__none__" | null
- * - scrollPosition: number
- */
 export function useTimeLogUIState() {
   // Sort order (default asc), persist until storage is cleared
   const { state: sortOrder, setState: setSortOrder } = usePersistentState<
@@ -19,7 +13,6 @@ export function useTimeLogUIState() {
     expireInHours: 0,
   });
 
-  // Area filter (default all), expire in 48h
   const { state: selectedAreaId, setState: setSelectedAreaId } =
     usePersistentState<UUID | "" | null | typeof SelectorSpecialValue.None>({
       key: "tt_selected_area_id",
@@ -27,7 +20,6 @@ export function useTimeLogUIState() {
       expireInHours: 48,
     });
 
-  // Scroll position (default 0), expire in 24h
   const { state: scrollPosition, setState: setScrollPosition } =
     usePersistentState<number>({
       key: "tt_scroll_position",
@@ -55,17 +47,14 @@ export function useTimeLogUIState() {
   );
 
   return {
-    // state
     sortOrder,
     selectedAreaId,
     scrollPosition,
 
-    // setters
     setSortOrder,
     setSelectedAreaId,
     setScrollPosition,
 
-    // helpers
     saveScrollPosition,
     restoreScrollPosition,
     clearScrollPosition,

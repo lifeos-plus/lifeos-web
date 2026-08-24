@@ -19,10 +19,6 @@ interface CalendarAdapterState {
   loading: boolean;
 }
 
-/**
- * Hook to get calendar adapter based on user preferences
- * Provides a unified interface for calendar operations regardless of the underlying calendar system
- */
 export function useCalendarAdapter(): CalendarAdapterState {
   const calendarSystemPreference = usePreferenceWithBootstrap<CalendarSystem>({
     key: "calendar.system",
@@ -75,16 +71,9 @@ export function useCalendarAdapter(): CalendarAdapterState {
   };
 }
 
-/**
- * Hook for planning cycle operations
- * Provides convenient methods for setting up planning cycles
- */
 export function usePlanningCycle() {
   const { adapter, calendarSystem } = useCalendarAdapter();
 
-  /**
-   * Get default planning cycle settings for a given cycle type
-   */
   const getDefaultCycleSettings = (
     cycleType: ExtendedPlanningViewType,
     baseDate: Date = new Date(),
@@ -99,11 +88,7 @@ export function usePlanningCycle() {
     };
   };
 
-  /**
-   * Get quick set options for common planning cycles
-   */
   const getQuickSetOptions = (baseDate: Date = new Date()) => {
-    // Calculate tomorrow's date
     const tomorrow = new Date(baseDate);
     tomorrow.setDate(tomorrow.getDate() + 1);
 

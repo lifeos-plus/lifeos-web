@@ -55,7 +55,6 @@ import {
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { Icon } from "./icons";
 
-// Types
 interface DraggableTaskListProps {
   tasks: TaskWithSubtasks[];
   onEditTask: (task: TaskWithSubtasks) => void;
@@ -70,7 +69,6 @@ interface DraggableTaskListProps {
   onToggleExpansion?: (taskId: UUID) => void;
   onTasksReorder?: (reorderedTasks: TaskWithSubtasks[]) => void | Promise<void>;
   habitTaskAssociations?: Record<UUID, Habit[]>;
-  // Vision information for planning page
   visions?: Vision[];
   showVisionInfo?: boolean;
   /**
@@ -78,7 +76,6 @@ interface DraggableTaskListProps {
    * 用于 tips 解析父任务名称等字段。
    */
   taskLookup?: ReadonlyMap<string, TaskTooltipLookupEntry> | null;
-  // Context for different pages
   isPlanningPage?: boolean;
 }
 
@@ -97,11 +94,9 @@ interface SortableTaskItemProps {
   onCreateTimeRecord: (task: TaskWithSubtasks) => void;
   onToggleExpansion: (taskId: UUID) => void;
   habitTaskAssociations?: Record<UUID, Habit[]>;
-  // Vision information for planning page
   visions?: Vision[];
   showVisionInfo?: boolean;
   tooltipLookups?: TooltipLookups;
-  // Context for different pages
   isPlanningPage?: boolean;
 }
 
@@ -132,7 +127,6 @@ const readTaskRelationshipCount = (
   return count;
 };
 
-// Task hierarchy utilities
 class TaskHierarchyManager {
   private taskMap = new Map<UUID, TaskDragInfo>();
   private rootTasks: TaskWithSubtasks[] = [];
@@ -164,10 +158,8 @@ class TaskHierarchyManager {
     if (!info) return [];
 
     if (info.parentId === null) {
-      // Root level - return root tasks
       return this.rootTasks;
     } else {
-      // Find parent and return its subtasks
       const parentInfo = this.taskMap.get(info.parentId);
       return parentInfo?.task.subtasks || [];
     }
@@ -179,7 +171,6 @@ class TaskHierarchyManager {
     parentId: UUID | null,
   ): TaskWithSubtasks[] {
     if (parentId === null) {
-      // Root level reordering
       return reorderedSiblings;
     }
 
@@ -210,7 +201,6 @@ class TaskHierarchyManager {
   }
 }
 
-// Task Item Component
 const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   task,
   depth,
@@ -247,17 +237,14 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  // Get associated habit for this task
   const associatedHabits = habitTaskAssociations?.[task.id] ?? [];
   const hasAssociatedHabits = associatedHabits.length > 0;
 
-  // Get associated vision for this task (for planning page)
   const associatedVision =
     showVisionInfo && visions
       ? visions.find((vision) => vision.id === task.vision_id)
       : null;
 
-  // Get task status styling configuration (currently not used for visual styling)
   const statusStyling = getTaskStatusStyling(task.status);
   const priorityIndex = Number.isFinite(task.priority)
     ? Math.max(0, Math.min(PRIORITY.length - 1, Number(task.priority ?? 0)))
@@ -430,7 +417,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         }}
         className="dnd-sortable-item group flex w-full min-w-0 max-w-full items-start"
       >
-        {/* Expand/Collapse Button */}
         <div className="mr-1 mt-1 flex-shrink-0 sm:mr-2 sm:mt-1.5">
           <ExpandButton
             isExpanded={isExpanded}
@@ -453,7 +439,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
           />
         </div>
 
-        {/* Task Card */}
         <div className="flex-1 w-full min-w-0 max-w-full overflow-hidden">
           <div
             className={`w-full min-w-0 max-w-full overflow-hidden rounded-lg p-1.5 transition-all duration-200 ease-in-out sm:p-2 ${statusStyling.bgColor} ${statusStyling.hoverColor}`}
@@ -462,7 +447,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
               data-testid="draggable-task-layout"
               className="grid w-full min-w-0 grid-cols-1 items-stretch gap-1.5 2xl:grid-cols-[minmax(0,1fr)_auto] 2xl:items-center"
             >
-              {/* Draggable Task Info */}
               <div
                 {...attributes}
                 {...listeners}
@@ -474,7 +458,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                   ) : null}
                 </span>
 
-                {/* Vision Badge for Planning Page */}
                 {associatedVision && (
                   <span
                     className="inline-flex max-w-[min(12rem,60vw)] flex-shrink-0 items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-sm  text-primary"
@@ -506,7 +489,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     </span>
                   </h4>
 
-                  {/* Task metadata wraps responsively. */}
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-sm text-base-content/50 mt-0.5 sm:mt-0 sm:ml-3">
                     <span
                       className="flex-shrink-0 inline-flex items-center gap-1"
@@ -548,7 +530,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                             return `${t("draggableTaskList.planningCycle.from", { date: startDate })} 1${cycleTypeText}${t("draggableTaskList.planningCycle.within")}`;
                           }
 
-                          // Fallback if no start date
                           const cycleTypeText =
                             cycleTypeMap[task.planning_cycle_type] ||
                             task.planning_cycle_type;
@@ -556,11 +537,9 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                         })()}
                       </span>
                     )}
-                    {/* Area badge if task inherits vision area (optional) */}
                   </div>
                 </div>
 
-                {/* Associated Persons */}
                 {task.person && task.person.length > 0 && (
                   <PersonsList
                     people={task.person}
@@ -620,7 +599,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     color="primary"
                     onClick={() => onCreateTimeRecord(task)}
                   />
-                  {/* View time records button - only show in vision page */}
                   <ActionButton
                     label=""
                     iconName="timer"
@@ -628,7 +606,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                     className={timeLogButtonClass}
                     onClick={() => onViewTimeRecords(task)}
                   />
-                  {/* Delete button - only show in vision page */}
                   {!isPlanningPage && (
                     <DeleteButton
                       onClick={() => onDeleteTask(task)}
@@ -639,7 +616,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
               </div>
             </div>
 
-            {/* Habit Information - Show when task has associated habit */}
             {hasAssociatedHabits && (
               <div className="mt-3 p-3 bg-base-100/50 rounded-r-lg">
                 <div className="flex items-start space-x-2">
@@ -717,7 +693,6 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   );
 };
 
-// Main Component
 const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
   tasks,
   onEditTask,
@@ -738,7 +713,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
   isPlanningPage,
 }) => {
   const { t } = useTranslation();
-  // State management
   const [internalExpandedTasks, setInternalExpandedTasks] = useState<Set<UUID>>(
     new Set(),
   );
@@ -754,13 +728,11 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     [visions, tasks, taskLookup],
   );
 
-  // Memoized hierarchy manager
   const hierarchyManager = useMemo(
     () => new TaskHierarchyManager(tasks),
     [tasks],
   );
 
-  // Sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -768,7 +740,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     }),
   );
 
-  // Expansion state management
   const setExpandedTasks = useCallback(
     (taskId: UUID) => {
       if (externalOnToggleExpansion) {
@@ -788,7 +759,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     [externalOnToggleExpansion],
   );
 
-  // Same level reordering
   const handleSameLevelReorder = useCallback(
     async (activeInfo: TaskDragInfo, overInfo: TaskDragInfo) => {
       const siblings = hierarchyManager.getSiblings(activeInfo.task.id);
@@ -822,11 +792,9 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     [hierarchyManager, onTasksReorder, tasks],
   );
 
-  // Cross-level movement
   const handleCrossLevelMove = useCallback(
     async (activeInfo: TaskDragInfo, overInfo: TaskDragInfo) => {
       try {
-        // Move the active task to become a child of the over task
         // The API expects: move(taskId, oldParentTaskId, newParentTaskId, newVisionId, newDisplayOrder)
         await tasksApi.move(
           activeInfo.task.id, // taskId
@@ -836,11 +804,9 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
           0, // newDisplayOrder - add at the beginning
         );
 
-        // Notify parent component to reload tasks
         if (onTasksReorder) {
           // For cross-level moves, we need to reload the entire task tree
           // since the structure has changed significantly
-          // Send a special signal to indicate cross-level move
           await onTasksReorder([]); // Empty array signals cross-level move
         }
       } catch (error) {
@@ -854,7 +820,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     [onTasksReorder],
   );
 
-  // Drag end handler
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
       const { active, over } = event;
@@ -866,28 +831,22 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
 
       if (!activeInfo || !overInfo) return;
 
-      // Same level operations - need to distinguish between reordering and making child
       if (activeInfo.parentId === overInfo.parentId) {
         if (activeInfo.task.id !== overInfo.task.id) {
-          // Check if target has subtasks and is expanded
           const targetTask = overInfo.task;
           const isTargetExpanded = expandedTasks.has(targetTask.id);
           const hasSubtasks =
             targetTask.subtasks && targetTask.subtasks.length > 0;
 
           if (hasSubtasks && isTargetExpanded) {
-            // Target has subtasks and is expanded - make it a child
             await handleCrossLevelMove(activeInfo, overInfo);
           } else {
-            // Target has no subtasks or is not expanded - do reordering
             await handleSameLevelReorder(activeInfo, overInfo);
           }
         } else {
-          // Dragging onto itself - ignore
           return;
         }
       } else {
-        // Cross-level movement
         await handleCrossLevelMove(activeInfo, overInfo);
       }
     },
@@ -899,7 +858,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     ],
   );
 
-  // Render task node recursively
   const renderTaskNode = useCallback(
     (
       task: TaskWithSubtasks,
@@ -931,7 +889,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
             isPlanningPage={isPlanningPage}
           />
 
-          {/* Subtasks */}
           {hasSubtasks && isExpanded && (
             <div className="mt-1 relative">
               <SortableContext
@@ -970,7 +927,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     ],
   );
 
-  // Empty state
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 text-base-content/70">
@@ -990,7 +946,6 @@ const DraggableTaskList: React.FC<DraggableTaskListProps> = ({
     );
   }
 
-  // Main render
   return (
     <DndContext
       sensors={sensors}

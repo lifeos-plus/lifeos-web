@@ -83,7 +83,6 @@ export function useTasksMutations() {
         }) as Promise<void>,
     );
 
-  // Create task mutation
   const createMutation = useMutation({
     mutationFn: (data: TaskCreate) => tasksApi.create(data),
     onSuccess: async (result: Task) => {
@@ -97,7 +96,6 @@ export function useTasksMutations() {
       // 精确缓存失效策略：延迟失效hierarchy，给乐观更新时间生效
       const invalidatePromises: Promise<void>[] = [];
 
-      // 延迟200ms后失效hierarchy，确保乐观更新先显示
       setTimeout(() => {
         if (result.vision_id) {
           invalidateVisionsHierarchy(queryClient, result.vision_id);
@@ -120,7 +118,6 @@ export function useTasksMutations() {
 
       await Promise.all(invalidatePromises);
 
-      // Show success message
       toast.showSuccess(
         t("task.messages.createSuccess"),
         t("task.messages.createSuccessDetail", { content: result.content }),
@@ -134,7 +131,6 @@ export function useTasksMutations() {
     },
   });
 
-  // Update task mutation
   const updateMutation = useMutation<
     Task,
     Error,
@@ -152,7 +148,6 @@ export function useTasksMutations() {
 
       // 精确缓存失效策略：只失效相关的查询
       const invalidatePromises: Promise<void>[] = [
-        // 失效vision hierarchy
         invalidateVisionsHierarchy(queryClient, result.vision_id),
       ];
 
@@ -176,7 +171,6 @@ export function useTasksMutations() {
 
       await Promise.all(invalidatePromises);
 
-      // Show success message
       toast.showSuccess(
         t("task.messages.updateSuccess"),
         t("task.messages.updateSuccessDetail", { content: result.content }),
@@ -190,7 +184,6 @@ export function useTasksMutations() {
     },
   });
 
-  // Delete task mutation
   const deleteMutation = useMutation({
     mutationFn: ({ id }: { id: UUID }) => tasksApi.delete(id),
     onSuccess: async (_, variables) => {
@@ -231,7 +224,6 @@ export function useTasksMutations() {
 
       await Promise.all(invalidatePromises);
 
-      // Show success message
       toast.showSuccess(t("task.messages.deleteSucceeded"));
     },
     onError: (error: Error) => {
@@ -242,7 +234,6 @@ export function useTasksMutations() {
     },
   });
 
-  // Reorder tasks mutation
   const reorderMutation = useMutation({
     mutationFn: (taskOrders: { id: UUID; display_order: number }[]) =>
       tasksApi.reorder(taskOrders),
@@ -267,7 +258,6 @@ export function useTasksMutations() {
         await invalidateAllVisionHierarchies(queryClient);
       }
 
-      // Show success message
       toast.showSuccess(t("task.messages.sortUpdateSuccess"));
     },
     onError: (error: Error) => {
@@ -278,7 +268,6 @@ export function useTasksMutations() {
     },
   });
 
-  // Move task mutation
   const moveMutation = useMutation({
     mutationFn: ({
       id,
@@ -308,7 +297,6 @@ export function useTasksMutations() {
 
       // 精确缓存失效策略：只失效相关的查询
       const invalidatePromises: Promise<void>[] = [
-        // 失效新vision hierarchy
         invalidateVisionsHierarchy(queryClient, result.vision_id),
       ];
 
@@ -337,7 +325,6 @@ export function useTasksMutations() {
 
       await Promise.all(invalidatePromises);
 
-      // Show success message
       toast.showSuccess(
         t("task.messages.moveSuccess"),
         t("task.messages.moveSuccessDetail", { content: result.content }),

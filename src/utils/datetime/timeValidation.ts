@@ -1,12 +1,3 @@
-/**
- * Time validation utilities for timelog data
- *
- * This module provides functions to validate time entries and detect anomalies:
- * - Negative duration detection
- * - Time overlap detection
- * - Gap detection and placeholder generation
- */
-
 import type { Timelog } from "@/services/api";
 import type { UUID } from "@/types/primitive";
 import { createDateBoundaries, sortTimeEntriesByTime } from "./datetime";
@@ -59,9 +50,6 @@ export interface ProcessedEntry
   validationResult?: TimeValidationResult;
 }
 
-/**
- * Check if an entry has negative duration
- */
 function hasNegativeDuration(entry: Timelog): boolean {
   if (!entry.start_time || !entry.end_time) {
     return false;
@@ -84,7 +72,6 @@ function intervalsOverlap(
   start2: Date,
   end2: Date,
 ): boolean {
-  // Convert to timestamps for easier comparison
   const s1 = start1.getTime();
   const e1 = end1.getTime();
   const s2 = start2.getTime();
@@ -94,10 +81,6 @@ function intervalsOverlap(
   return s1 < e2 && s2 < e1;
 }
 
-/**
- * Find all overlapping entries in a list
- * Returns array of entry indices that have overlaps
- */
 function findOverlappingEntries(entries: Timelog[]): number[] {
   const overlappingIndices = new Set<number>();
 
@@ -125,9 +108,6 @@ function findOverlappingEntries(entries: Timelog[]): number[] {
   return Array.from(overlappingIndices);
 }
 
-/**
- * Validate a single time entry
- */
 function validateTimeEntry(
   entry: Timelog,
   allEntries: Timelog[],
@@ -161,20 +141,17 @@ function generatePlaceholderEntries(
 ): PlaceholderEntry[] {
   const placeholders: PlaceholderEntry[] = [];
 
-  // Create start and end of day timestamps using shared utility
   const { startOfDay: dayStart, endOfDay: dayEnd } = createDateBoundaries(
     selectedDate,
     timezone,
   );
 
-  // Filter and sort valid entries by start time, then end time
   const validEntries = sortTimeEntriesByTime(
     entries.filter((entry) => entry.start_time && entry.end_time),
   );
 
   let currentTime = dayStart;
 
-  // Check gap before first entry
   if (validEntries.length > 0) {
     const firstEntryStart = new Date(validEntries[0].start_time!);
 
@@ -187,7 +164,6 @@ function generatePlaceholderEntries(
     const duration =
       normalizedFirstEntryStart.getTime() - normalizedCurrentTime.getTime();
     if (duration > 0) {
-      // Only create placeholder if duration > 0
       placeholders.push({
         id: `placeholder_${currentTime.getTime()}_${firstEntryStart.getTime()}`,
         title: t("timeLog.messages.unrecorded"),
@@ -206,7 +182,6 @@ function generatePlaceholderEntries(
     currentTime = new Date(validEntries[0].end_time!);
   }
 
-  // Check gaps between entries
   for (let i = 1; i < validEntries.length; i++) {
     const prevEntryEnd = new Date(validEntries[i - 1].end_time!);
     const currentEntryStart = new Date(validEntries[i].start_time!);
@@ -220,7 +195,6 @@ function generatePlaceholderEntries(
     const duration =
       normalizedCurrentEntryStart.getTime() - normalizedPrevEntryEnd.getTime();
     if (duration > 0) {
-      // Only create placeholder if duration > 0
       placeholders.push({
         id: `placeholder_${prevEntryEnd.getTime()}_${currentEntryStart.getTime()}`,
         title: t("timeLog.messages.unrecorded"),
@@ -240,7 +214,6 @@ function generatePlaceholderEntries(
     currentTime = new Date(validEntries[i].end_time!);
   }
 
-  // Check gap after last entry
   if (validEntries.length > 0) {
     // 标准化时间到分钟进行比较
     const normalizedCurrentTime = new Date(currentTime);
@@ -250,10 +223,9 @@ function generatePlaceholderEntries(
 
     const duration =
       normalizedDayEnd.getTime() - normalizedCurrentTime.getTime();
-    const minDuration = 1 * 60 * 1000; // 1分钟的最小占位时长
+    const minDuration = 1 * 60 * 1000;
 
     if (duration > minDuration) {
-      // Only create placeholder if duration > 5 minutes
       placeholders.push({
         id: `placeholder_${currentTime.getTime()}_${dayEnd.getTime()}`,
         title: t("timeLog.messages.unrecorded"),
@@ -271,7 +243,6 @@ function generatePlaceholderEntries(
     }
   }
 
-  // If no entries exist, create one big placeholder for the entire day
   if (validEntries.length === 0) {
     placeholders.push({
       id: `placeholder_${dayStart.getTime()}_${dayEnd.getTime()}`,
@@ -303,7 +274,6 @@ export function processTimeEntries(
 ): ProcessedEntry[] {
   const processedEntries: ProcessedEntry[] = [];
 
-  // Add validation results to actual entries
   entries.forEach((entry) => {
     const validationResult = validateTimeEntry(entry, entries);
     processedEntries.push({
@@ -313,7 +283,6 @@ export function processTimeEntries(
     });
   });
 
-  // Generate and add placeholder entries
   const placeholders = generatePlaceholderEntries(
     entries,
     selectedDate,
@@ -321,7 +290,6 @@ export function processTimeEntries(
     timezone,
   );
   placeholders.forEach((placeholder) => {
-    // Convert PlaceholderEntry to ProcessedEntry by adding missing properties
     const processedPlaceholder: ProcessedEntry = {
       ...placeholder,
       tracking_method: "placeholder",
@@ -331,7 +299,6 @@ export function processTimeEntries(
     processedEntries.push(processedPlaceholder);
   });
 
-  // Sort all entries by start time, then end time for stable ordering
   sortTimeEntriesByTime(processedEntries);
 
   return processedEntries;

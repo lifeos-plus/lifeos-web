@@ -5,7 +5,6 @@ const normalizeNewlines = (input: string): string => {
 const SEPARATOR_LENGTH = 3;
 
 /**
- * Split raw textarea input into separate notes.
  * Only blank lines (no spaces/tabs) count toward the separator.
  */
 export function splitBulkNoteInput(rawInput: string): string[] {
@@ -50,9 +49,6 @@ export function splitBulkNoteInput(rawInput: string): string[] {
   return notes;
 }
 
-/**
- * Join note contents back into the textarea format.
- */
 export function joinBulkNotes(notes: string[]): string {
   const trimmed = notes
     .map((note) => note.trim())

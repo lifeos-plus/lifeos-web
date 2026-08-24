@@ -1,5 +1,3 @@
-// Centralized module configuration for display names and navigation
-
 import type { IconName } from "@/components/icons";
 
 type NavColor = "green" | "blue" | "orange" | "pink";
@@ -21,9 +19,7 @@ export type ModuleKey =
 interface ModuleConfig {
   key: ModuleKey;
   path: string;
-  /** Navigation highlight color */
   navColor: NavColor;
-  /** Whether to show this module in the top navigation */
   showInNav?: boolean;
   /** Icon used in navigation and settings */
   iconName: IconName;
@@ -32,7 +28,6 @@ interface ModuleConfig {
 export interface ModuleConfigWithI18n extends ModuleConfig {
   /** The human readable title used for page titles */
   displayName: string;
-  /** Label used in the navigation bar */
   navLabel: string;
   /** Optional short description to be shown under the title on the page */
   description?: string;

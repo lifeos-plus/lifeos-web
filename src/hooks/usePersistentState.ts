@@ -9,10 +9,6 @@ interface PersistentStateOptions<T> {
   deserialize?: (value: string) => T;
 }
 
-/**
- * Custom hook for managing persistent state with localStorage
- * Supports automatic expiration and custom serialization
- */
 export function usePersistentState<T>({
   key,
   defaultValue,
@@ -61,7 +57,6 @@ export function usePersistentState<T>({
   );
   // Note: deserialize is used only during initial state creation above
 
-  // Use ref to store the latest defaultValue
   const defaultValueRef = useRef(defaultValue);
   defaultValueRef.current = defaultValue;
 
@@ -70,7 +65,6 @@ export function usePersistentState<T>({
     setIsLoaded(true);
   }, []);
 
-  // Update localStorage when state changes
   const updateState = useCallback(
     (newState: T | ((prev: T) => T)) => {
       setState((prevState) => {
@@ -98,7 +92,6 @@ export function usePersistentState<T>({
     [key, stableSerialize],
   );
 
-  // Clear the stored state
   const clearState = useCallback(() => {
     localStorage.removeItem(key);
     setState(defaultValueRef.current);

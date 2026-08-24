@@ -25,14 +25,12 @@ interface AreaSelectProps
    * When selected, it maps to undefined for the parent.
    */
   showAllOption?: boolean;
-  /** Custom label for the "All" option. Defaults to i18n common.all */
   allLabel?: string;
   /**
    * Whether to show an explicit "None" option as an item.
    * When selected, it maps to null for the parent.
    */
   showNoneOption?: boolean;
-  /** Custom label for the "None" option. Defaults to i18n common.none */
   noneLabel?: string;
   /**
    * How to treat clear action (e.g. clicking clear icon on the select)
@@ -156,7 +154,6 @@ const AreaSelect = React.forwardRef<
             return;
           }
 
-          // Explicit special options
           if (showAllOption && selected === SelectorSpecialValue.All) {
             onChange(undefined);
             return;

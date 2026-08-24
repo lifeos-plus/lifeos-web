@@ -20,11 +20,6 @@ interface AreaManagerModalProps {
   onClose: () => void;
 }
 
-/**
- * AreaManagerModal
- * A comprehensive modal component for managing life areas.
- * Handles all area CRUD operations with a unified interface.
- */
 const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
   isOpen,
   onClose,
@@ -52,7 +47,6 @@ const AreaManagerModal: React.FC<AreaManagerModalProps> = ({
     onClose,
   });
 
-  // Common icons for areas
   const iconOptions = [
     { value: "work", label: t("areaManager.icons.work") },
     { value: "health", label: t("areaManager.icons.health") },

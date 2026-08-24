@@ -7,7 +7,7 @@ import AsyncEntitySelect, {
 import type { SelectorValue } from "./selectorTypes";
 
 interface EnumOption {
-  value: string; // UI normalized value as string
+  value: string;
   label: string;
   disabled?: boolean;
 }
@@ -17,23 +17,17 @@ interface EnumSelectProps
   value?: SelectorValue;
   onChange: (value: SelectorValue) => void;
   options: EnumOption[];
-  idPrefix?: string; // prefix for generating unique IDs
-  label?: string; // optional label for the select field
-  showLabel?: boolean; // whether to show the label
+  idPrefix?: string;
+  label?: string;
+  showLabel?: boolean;
   /** Main control id. Used verbatim for input and label htmlFor. */
   id?: string;
-  /** Whether to include empty-value option. Default: false (filter out). */
   includeEmptyOption?: boolean;
-  /** Whether to auto-adjust width based on content. Default: false. */
   autoWidth?: boolean;
-  "aria-describedby"?: string; // ID of element that describes this select
+  "aria-describedby"?: string;
   dropdownZIndexClassName?: string;
 }
 
-/**
- * EnumSelect
- * Thin wrapper for selecting from a fixed list of values with consistent UI.
- */
 const EnumSelect: React.FC<EnumSelectProps> = ({
   value,
   onChange,

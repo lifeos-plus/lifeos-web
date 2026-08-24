@@ -39,7 +39,7 @@ interface TimeEntryModalProps {
   ) => void;
   entry?: Timelog | null;
   selectedDate: Date;
-  preloadedTasks?: TaskWithSubtasks[]; // 添加预加载任务支持
+  preloadedTasks?: TaskWithSubtasks[];
   mode?: "default" | "draft";
   onDraftSubmit?: (payload: TimelogCreate) => void | Promise<void>;
   sessionId: string;
@@ -100,15 +100,12 @@ const TimeEntryModal = ({
   const timezonePreference = useSystemTimezone();
   const activeTimezone = timezonePreference.timezone;
 
-  // Ref for auto-focusing title input
   const titleInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Initialize form data when modal opens
   useEffect(() => {
     if (isOpen) {
       if (entry) {
-        // Edit mode - populate form with existing data
         setFormData({
           title: entry.title,
           start_time: entry.start_time || "",
@@ -121,7 +118,6 @@ const TimeEntryModal = ({
           tracking_method: "manual",
         });
       } else {
-        // Create mode - initialize with defaults
         const currentTime = getNearestFiveMinuteTime(
           new Date(),
           activeTimezone,
@@ -158,11 +154,8 @@ const TimeEntryModal = ({
     selectedDate,
   ]);
 
-  // Removed user-edited flag effect
-
   // persons are selected via PersonSelector; no extra reference load here
 
-  // Optimize input change handler with useCallback
   const handleInputChange = useCallback(
     (field: string, value: string | number | number[]) => {
       setFormData((prev) => ({
@@ -173,7 +166,6 @@ const TimeEntryModal = ({
     [],
   );
 
-  // 自动设置任务规划为今天的辅助函数
   const autoSetTaskPlanningToday = useCallback(
     async (taskId: UUID, entryTime: string): Promise<boolean> => {
       try {
@@ -208,7 +200,6 @@ const TimeEntryModal = ({
     [activeTimezone],
   );
 
-  // 检查时间是否在24小时内的辅助函数
   const isWithin24Hours = useCallback((timeString: string) => {
     const now = new Date();
     const entryTime = new Date(timeString);
@@ -220,7 +211,6 @@ const TimeEntryModal = ({
   const { createTimelogAsync, updateTimelogAsync } =
     useTimelogMutations();
 
-  // Optimize submit handler with useCallback
   const sessionAwareClose = useCallback(() => {
     onClose({ sessionId });
   }, [onClose, sessionId]);
@@ -333,8 +323,6 @@ const TimeEntryModal = ({
     ],
   );
 
-  // Removed dirty-state JSON calculations
-
   const attemptClose = useCallback(() => {
     if (!loading) {
       setError(null);
@@ -342,12 +330,10 @@ const TimeEntryModal = ({
     }
   }, [loading, sessionAwareClose, setError]);
 
-  // Optimize close handler with useCallback
   const handleClose = useCallback(() => {
     if (!loading) attemptClose();
   }, [loading, attemptClose]);
 
-  // Optimize time change handlers with useCallback
   const handleStartTimeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({
@@ -383,7 +369,6 @@ const TimeEntryModal = ({
     [activeTimezone, selectedDate, formData.start_time],
   );
 
-  // Optimize area change handler with useCallback
   const handleAreaChange = useCallback((v: UUID | null | undefined) => {
     setFormData((prev) => ({
       ...prev,
@@ -391,12 +376,10 @@ const TimeEntryModal = ({
     }));
   }, []);
 
-  // Optimize person selection change handler with useCallback
   const handlePersonSelectionChange = useCallback((personIds: UUID[]) => {
     setFormData((prev) => ({ ...prev, person_ids: personIds }));
   }, []);
 
-  // Optimize task selection change handler with useCallback
   const handleTaskSelectionChange = useCallback((taskId: UUID | null) => {
     setFormData((prev) => ({
       ...prev,
@@ -404,7 +387,6 @@ const TimeEntryModal = ({
     }));
   }, []);
 
-  // Optimize title change handler with useCallback
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       handleInputChange("title", e.target.value);
@@ -462,7 +444,6 @@ const TimeEntryModal = ({
       }
     >
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
         <div className="mb-4">
           <label
             htmlFor="title"
@@ -482,7 +463,6 @@ const TimeEntryModal = ({
           />
         </div>
 
-        {/* Time Range */}
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label
@@ -520,7 +500,6 @@ const TimeEntryModal = ({
           </div>
         </div>
 
-        {/* Area */}
         <div className="mb-4">
           <div className="flex items-center gap-2">
             <AreaSelect
@@ -533,7 +512,6 @@ const TimeEntryModal = ({
           </div>
         </div>
 
-        {/* Associated Persons */}
         <div className="mb-4">
           <PersonSelector
             selectedPersonIds={formData.person_ids || ([] as UUID[])}
@@ -544,7 +522,6 @@ const TimeEntryModal = ({
           />
         </div>
 
-        {/* Related Task */}
         <div className="mb-4">
           <TaskSelector
             {...taskSelectorProps}

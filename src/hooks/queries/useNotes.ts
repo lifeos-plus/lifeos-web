@@ -30,7 +30,6 @@ export function useNotes(
   const toast = useToast();
   const { t } = useTranslation();
 
-  // 1. 使用 useInfiniteQuery 获取笔记列表 (分页逻辑)
   const {
     data,
     error,
@@ -64,13 +63,11 @@ export function useNotes(
     return pages.flatMap((page) => page.items ?? []);
   }, [pages]);
 
-  // 2. 使用 useQuery 获取统计数据
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: notesKeys.stats(),
     queryFn: notesApi.getStats,
   });
 
-  // 3. 使用 useMutation 进行创建操作
   const createNoteMutation = useMutation({
     mutationFn: (noteData: NoteCreate) => notesApi.create(noteData),
     onSuccess: async (createdNote) => {
@@ -87,7 +84,6 @@ export function useNotes(
     },
   });
 
-  // 4. 使用 useMutation 进行更新操作
   const updateNoteMutation = useMutation({
     mutationFn: (variables: { noteId: UUID; data: NoteUpdate }) =>
       notesApi.update(variables.noteId, variables.data),
@@ -105,7 +101,6 @@ export function useNotes(
     },
   });
 
-  // 5. 使用 useMutation 进行删除操作
   const deleteNoteMutation = useMutation({
     mutationFn: (noteId: UUID) => notesApi.delete(noteId),
     onSuccess: async (_, noteId) => {

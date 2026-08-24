@@ -15,7 +15,6 @@ import TagManager from "@/components/TagManagerModal";
 import { useToast } from "@/contexts/ToastContext";
 // Inline editing is replaced by CreateNoteModal
 
-// Note components
 import { NoteInputForm } from "@/components/notes/NoteInputForm";
 import { NotesList } from "@/components/notes/NotesList";
 import { NotesSidebar } from "@/components/notes/NotesSidebar";
@@ -39,16 +38,6 @@ import { arraysEqual } from "@/utils/core";
 import { NotesBulkImportPanel } from "@/components/notes/NotesBulkImportPanel";
 import { NotesModeBanner } from "@/components/notes/NotesModeBanner";
 
-/**
- * NotesPage component for LifeOS Web UI.
- *
- * This component implements the Quick Notes feature with:
- * - Instant response for note creation
- * - Background synchronization with backend
- * - Clean, minimalist interface focused on speed
- * - Tag support for better organization
- * - REFACTORED: Uses custom hooks for better separation of concerns
- */
 function NotesPage() {
   const { t } = useTranslation();
 
@@ -127,7 +116,6 @@ function NotesPage() {
   const selectedFilterTag = selectedFilterTags[0] ?? null;
   const selectedFilterPerson = selectedFilterPersons[0] ?? null;
 
-  // Create person lookup map for efficient access
   const handleAdvancedParamsChange = useCallback(
     (next: NotesAdvancedSearchFormState) => {
       let nextStartIso: string | null = null;
@@ -298,14 +286,11 @@ function NotesPage() {
     setModalEditingNote(null);
   }, []);
 
-  // Note deletion state
   const [deletingNoteId, setDeletingNoteId] = useState<UUID | null>(null);
 
-  // Person detail modal state
   const [selectedPersonForDetail, setSelectedPersonForDetail] =
     useState<PersonSummary | null>(null);
 
-  // Person form modal state
   const [showPersonFormModal, setShowPersonFormModal] =
     useState<boolean>(false);
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
@@ -316,9 +301,7 @@ function NotesPage() {
     createTag: createNoteTag,
   } = useTagSelectorSource({ entityType: "note" });
 
-  // Tag management modal state
   const [showTagManager, setShowTagManager] = useState(false);
-  // Page header via context
   const { setHeader } = usePageHeader();
 
   useEffect(() => {
@@ -338,15 +321,9 @@ function NotesPage() {
     return () => setHeader({ actions: undefined });
   }, [setHeader, t]);
 
-  /**
-   * Load person tags for the form modal
-   */
   // Person tags via shared cache
   // Note tags 现在通过 useTagSelectorSource 自动加载，无需手动加载
 
-  /**
-   * Handle note deletion with confirmation
-   */
   const handleDeleteNote = useCallback(async (noteId: UUID) => {
     setDeletingNoteId(noteId);
   }, []);
@@ -363,13 +340,9 @@ function NotesPage() {
     }
   }, [deletingNoteId, deleteNote]);
 
-  /**
-   * Handle person edit from detail modal
-   */
   const handlePersonEdit = useCallback(
     async (person: PersonSummary | Person) => {
       try {
-        // Fetch full person details for editing
         const fullPerson = await personsApi.getById(person.id);
         setEditingPerson(fullPerson);
         setShowPersonFormModal(true);
@@ -381,9 +354,6 @@ function NotesPage() {
     [],
   );
 
-  /**
-   * Handle person form modal success
-   */
   const handlePersonFormSuccess = useCallback(() => {
     setShowPersonFormModal(false);
     setEditingPerson(null);
@@ -413,9 +383,6 @@ function NotesPage() {
     }
   }, [deletingPerson, showError, showSuccess, t]);
 
-  /**
-   * Handle creating new note tag
-   */
   const handleCreateNoteTag = useCallback(
     async (tagName: string): Promise<Tag> => {
       try {
@@ -429,9 +396,6 @@ function NotesPage() {
     [createNoteTag, refreshNoteTags, t],
   );
 
-  /**
-   * Handle tag management modal
-   */
 
   // const handleOpenPersonsPage = useCallback(() => {
   //   window.open("/people", "_blank");

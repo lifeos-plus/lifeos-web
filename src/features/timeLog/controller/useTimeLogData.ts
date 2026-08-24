@@ -40,7 +40,6 @@ interface UseTimeLogDataReturn {
   confirmBatchDelete: () => Promise<void>;
   cancelBatchDelete: () => void;
   setIsSelectMode: (value: boolean) => void;
-  // Advanced search support
   setAdvancedSearchResultsFromHook: (results: ProcessedEntry[]) => void;
   selectionHandlers: {
     handleSelectEntry: (entryId: UUID, checked: boolean) => void;
@@ -69,7 +68,6 @@ export const useTimeLogData = ({
     timezone,
   };
 
-  // Local state for UI interactions
   const [selectedEntryIds, setSelectedEntryIds] = useState<Set<UUID>>(
     new Set(),
   );
@@ -91,7 +89,6 @@ export const useTimeLogData = ({
     setAdvancedSearchResults([]);
   }, [queryMode]);
 
-  // Query for single day entries
   const {
     data: singleDayData,
     isLoading: isLoadingSingleDay,
@@ -117,7 +114,6 @@ export const useTimeLogData = ({
         // select (instead of queryFn) keeps the cache in raw Timelog shape, so
         // optimistic updates from useTimelogMutations are re-processed here.
         let processed = processTimeEntries(events, selectedDate, timezone);
-        // Apply sort order
         if (sortOrder === "desc") {
           processed = [...processed].reverse();
         }
@@ -130,7 +126,6 @@ export const useTimeLogData = ({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Process entries based on query mode
   let processedEntries: ProcessedEntry[] = [];
   if (queryMode === "advanced") {
     processedEntries = advancedSearchResults;
@@ -142,7 +137,6 @@ export const useTimeLogData = ({
   const error =
     queryMode === "single" ? (singleDayError?.message ?? null) : null;
 
-  // Delete single entry mutation
   const deleteEntryMutation = useMutation({
     mutationFn: (entryId: UUID) => timelogsApi.delete(entryId),
     onSuccess: () => {
@@ -156,7 +150,6 @@ export const useTimeLogData = ({
     },
   });
 
-  // Batch delete mutation
   const batchDeleteMutation = useMutation({
     mutationFn: (eventIds: UUID[]) => timelogsApi.batchDelete(eventIds),
     onSuccess: (result) => {
@@ -171,7 +164,6 @@ export const useTimeLogData = ({
         );
       } else {
         toast.showSuccess(t("timeLog.messages.bulkDeleteSuccess"));
-        // Clear selection after successful deletion
         setSelectedEntryIds(new Set());
         setIsSelectMode(false);
       }
@@ -225,7 +217,6 @@ export const useTimeLogData = ({
     setDeletingEntryCount(0);
   };
 
-  // Batch selection functions
   const handleSelectEntry = (entryId: UUID, checked: boolean) => {
     setSelectedEntryIds((prev) => {
       const newSet = new Set(prev);
@@ -242,13 +233,11 @@ export const useTimeLogData = ({
     let allEntryIds: UUID[];
 
     if (queryMode === "advanced") {
-      // 在高级搜索模式下，使用 advancedSearchResults
       // 这些数据应该已经通过 setAdvancedSearchResultsFromHook 同步
       allEntryIds = advancedSearchResults
         .filter((entry) => !entry.isPlaceholder)
         .map((entry) => entry.id as UUID);
     } else {
-      // 在单日模式下，使用 processedEntries (来自 TanStack Query)
       allEntryIds = processedEntries
         .filter((entry) => !entry.isPlaceholder)
         .map((entry) => entry.id as UUID);
@@ -261,12 +250,10 @@ export const useTimeLogData = ({
     let allEntryIds: UUID[];
 
     if (queryMode === "advanced") {
-      // 在高级搜索模式下，使用 advancedSearchResults
       allEntryIds = advancedSearchResults
         .filter((entry) => !entry.isPlaceholder)
         .map((entry) => entry.id as UUID);
     } else {
-      // 在单日模式下，使用 processedEntries (来自 TanStack Query)
       allEntryIds = processedEntries
         .filter((entry) => !entry.isPlaceholder)
         .map((entry) => entry.id as UUID);
@@ -287,7 +274,6 @@ export const useTimeLogData = ({
     setSelectedEntryIds(new Set());
   };
 
-  // Advanced search support
   const setAdvancedSearchResultsFromHook = useCallback(
     (results: ProcessedEntry[]) => {
       setAdvancedSearchResults(results);

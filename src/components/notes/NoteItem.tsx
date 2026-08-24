@@ -453,7 +453,6 @@ const NoteItem = React.memo<NoteItemProps>(
       }
     }, [associationTooltip, areaMap, t, timezone]);
 
-    // 复制笔记内容到剪贴板
     const handleCopy = async () => {
       const result = await copyToClipboardWithMessages(
         note.content,

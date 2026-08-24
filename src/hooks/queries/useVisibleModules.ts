@@ -7,10 +7,6 @@ import { preferencesApi } from "@/services/api/preferences";
 const VISIBLE_MODULES_KEY = "navigation.visible_modules";
 const VISIBLE_MODULES_SYNC_KEY = "navigation.visible_modules.sync";
 
-/**
- * Hook to manage visible modules in the navigation rail.
- * Value is a list of module keys.
- */
 export function useVisibleModules() {
   const { modules } = useModuleConfig();
 
@@ -43,10 +39,7 @@ export function useVisibleModules() {
     },
   });
 
-  // Update allowed keys when preference meta is available
   useEffect(() => {
-    // This effect will be triggered when the preference is bootstrapped
-    // We need to get the meta information to update allowed keys
     const updateAllowedKeys = async () => {
       try {
         const res =
@@ -61,7 +54,6 @@ export function useVisibleModules() {
         );
         setAllowedKeys(localAllowed);
       } catch (_e) {
-        // Fallback to default allowed keys
         setAllowedKeys(new Set(MODULES.map((m) => m.key)));
       }
     };

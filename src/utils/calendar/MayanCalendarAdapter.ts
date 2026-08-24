@@ -16,10 +16,6 @@ import {
 } from "@/utils/datetime";
 import { t } from "@/i18n";
 
-/**
- * Mayan 13-Moon calendar adapter implementation
- * Handles all calendar operations for the Mayan 13-Moon calendar system
- */
 export class MayanCalendarAdapter implements CalendarAdapter {
   private firstDayOfWeek: number;
   private sevenYearAnchorDate: string;
@@ -720,9 +716,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     return this.shiftAdjacentPeriodRange("week", startDate, deltaWeeks);
   }
 
-  /**
-   * Get the current week range based on Mayan calendar
-   */
   getCurrentWeekRange(): { start: string; end: string } {
     const range = this.getMayanWeekRange(new Date());
     return {
@@ -731,9 +724,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     };
   }
 
-  /**
-   * Get the current month range based on Mayan calendar
-   */
   getCurrentMonthRange(): { start: string; end: string } {
     const info = this.getMayanMoonInfo(new Date());
     return {
@@ -742,9 +732,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     };
   }
 
-  /**
-   * Shift month range by specified number of months for Mayan calendar
-   */
   shiftMonthRange(
     startDate: string,
     deltaMonths: number,

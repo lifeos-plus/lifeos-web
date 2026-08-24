@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import ActionButton from "@/components/ActionButton";
 import ErrorDisplay from "@/components/ErrorDisplay";
 
-// 尺寸配置常量
 const SIZE_CONFIG = {
   sm: "max-w-md",
   md: "max-w-lg",
@@ -17,7 +16,6 @@ const SIZE_CONFIG = {
   "2xl": "max-w-6xl",
 } as const;
 
-// 响应式样式计算工具函数
 const getResponsiveClasses = (size: keyof typeof SIZE_CONFIG) => {
   const baseSize = SIZE_CONFIG[size];
   // 使用DaisyUI标准的高度类，提供更好的响应式支持
@@ -31,7 +29,6 @@ const getResponsiveClasses = (size: keyof typeof SIZE_CONFIG) => {
   return `${baseSize} w-full ${minHeight} ${maxHeight} mx-2 sm:mx-0`;
 };
 
-// 模态框内容组件
 interface ModalContentProps {
   children: React.ReactNode;
   error?: string | null;
@@ -77,7 +74,6 @@ const ModalContent: React.FC<ModalContentProps> = ({
       flex="1"
       minHeight="0"
     >
-      {/* 错误提示 - 内联模式 */}
       {error && errorDisplayMode === "inline" && (
         <ErrorDisplay
           error={error}
@@ -99,7 +95,6 @@ const ModalContent: React.FC<ModalContentProps> = ({
         />
       )}
 
-      {/* 加载遮罩 */}
       {showLoadingOverlay && loading && (
         <div className="absolute inset-0 bg-base-100/80 flex items-center justify-center z-loading-overlay rounded-lg">
           <div className="flex flex-col items-center gap-2">
@@ -111,7 +106,6 @@ const ModalContent: React.FC<ModalContentProps> = ({
         </div>
       )}
 
-      {/* 加载指示器 */}
       {showLoadingSpinner && loading && (
         <div className="flex justify-center items-center py-3">
           <span
@@ -136,50 +130,30 @@ interface ModalBaseProps {
   onClose: () => void;
   closeDisabled?: boolean;
   children: React.ReactNode;
-  /** class applied to the dialog container */
   className?: string;
-  /** class applied to the overlay */
   overlayClassName?: string;
-  /** optional preset size for container width */
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   role?: "dialog" | "alertdialog";
   ariaLabel?: string;
   ariaLabelledBy?: string;
-  /** an optional title to be displayed in the modal header */
   title?: React.ReactNode;
   /** optional header node; if provided, it overrides title rendering */
   header?: React.ReactNode;
-  /** optional footer node; if provided, ModalBase renders a unified footer */
   footer?: React.ReactNode;
-  /** whether clicking overlay closes the modal (default: false) */
   overlayClosable?: boolean;
 
-  // 新增：状态管理相关props
-  /** 加载状态 */
   loading?: boolean;
-  /** 错误信息 */
   error?: string | null;
-  /** 错误信息关闭回调 */
   onErrorDismiss?: () => void;
-  /** 是否显示加载遮罩 */
   showLoadingOverlay?: boolean;
-  /** 加载遮罩文本 */
   loadingOverlayText?: string;
-  /** 错误显示模式 */
   errorDisplayMode?: "inline" | "toast" | "none";
 
-  // 新增：加载指示器相关props
-  /** 是否显示加载指示器 */
   showLoadingSpinner?: boolean;
-  /** 加载指示器大小 */
   loadingSpinnerSize?: "sm" | "md" | "lg";
 
-  // 新增：关闭按钮相关props
-  /** 是否显示内置关闭按钮 */
   showCloseButton?: boolean;
-  /** Modal 主体滚动策略 */
   bodyOverflow?: "visible" | "auto" | "hidden" | "scroll";
-  /** Modal 主体额外类名 */
   bodyClassName?: string;
   /** Render above an existing modal while preserving the shared modal shell. */
   nested?: boolean;
@@ -208,7 +182,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
   footer,
   overlayClosable = false,
 
-  // 新增状态管理props
   loading = false,
   error = null,
   onErrorDismiss,
@@ -216,11 +189,9 @@ const ModalBase: React.FC<ModalBaseProps> = ({
   loadingOverlayText = undefined,
   errorDisplayMode = "inline",
 
-  // 新增加载指示器props
   showLoadingSpinner = false,
   loadingSpinnerSize = "md",
 
-  // 新增关闭按钮props
   showCloseButton = true,
   bodyOverflow = "auto",
   bodyClassName,
@@ -256,7 +227,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
     }
   }, [isOpen]);
 
-  // Register into modal stack and handle focus restore
   useEffect(() => {
     if (!isOpen) return;
     previouslyFocusedElementRef.current = document.activeElement as HTMLElement;
@@ -278,7 +248,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
 
   const wrapperCls = "flex items-center justify-center w-full h-full";
 
-  // 使用工具函数计算响应式样式
   const responsiveClasses = getResponsiveClasses(size);
   const containerCls =
     `bg-base-100 rounded-lg shadow ${responsiveClasses} flex flex-col border border-base-300 transition-opacity duration-200 ${
@@ -316,7 +285,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
           onClick={stopPropagation}
           style={{ position: "relative" }}
         >
-          {/* 内置关闭按钮 - 右上角 */}
           {showCloseButton && (
             <ActionButton
               label={ariaLabel || t("common.close")}
@@ -329,9 +297,7 @@ const ModalBase: React.FC<ModalBaseProps> = ({
               iconOnly
             />
           )}
-          {/* Content wrapper: unified paddings and gaps for header/body/footer */}
           <div className="flex flex-col gap-y-2 sm:gap-y-3 px-3 py-3 sm:px-4 sm:py-3 md:px-5 md:py-4 h-full min-h-0">
-            {/* Header - unified style */}
             {(header || title) && (
               <div className="flex-shrink-0 pl-2">
                 <h2
@@ -343,7 +309,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
               </div>
             )}
 
-            {/* Body with scrolling (unified) - 使用新的内容组件 */}
             <ModalContent
               error={error}
               onErrorDismiss={onErrorDismiss}
@@ -359,7 +324,6 @@ const ModalBase: React.FC<ModalBaseProps> = ({
               <div className="p-2">{children}</div>
             </ModalContent>
 
-            {/* Footer - unified style */}
             {footer && <div className="flex-shrink-0">{footer}</div>}
           </div>
         </div>

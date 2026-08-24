@@ -18,7 +18,6 @@ export default function AppShell({ children }: AppShellProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const location = useLocation();
 
-  // Handle escape key to close drawer
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isDrawerOpen) {
@@ -30,7 +29,6 @@ export default function AppShell({ children }: AppShellProps) {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isDrawerOpen]);
 
-  // Close drawer when route changes
   useEffect(() => {
     setIsDrawerOpen(false);
   }, [location.pathname]);
@@ -47,11 +45,9 @@ export default function AppShell({ children }: AppShellProps) {
           onChange={() => setIsDrawerOpen(!isDrawerOpen)}
         />
 
-        {/* Drawer content */}
         <div className="drawer-content flex w-full min-w-0 max-w-full flex-col">
           <AppBar onMenuClick={() => setIsDrawerOpen(true)} />
 
-          {/* Page content area */}
           <main
             style={{ paddingTop: "var(--appbar-height)" }}
             className="flex-1 min-w-0 overflow-hidden xl:pl-[calc(var(--rail-width))]"
@@ -61,7 +57,6 @@ export default function AppShell({ children }: AppShellProps) {
           </main>
         </div>
 
-        {/* Drawer side - only visible on mobile and medium screens */}
         <div className="drawer-side xl:hidden">
           <label
             htmlFor="navigation-drawer"
@@ -71,7 +66,6 @@ export default function AppShell({ children }: AppShellProps) {
           <NavigationRail onItemClick={() => setIsDrawerOpen(false)} />
         </div>
 
-        {/* Desktop sidebar - only visible on extra large screens */}
         <div className="hidden xl:block xl:fixed xl:left-0 xl:top-[var(--appbar-height)] xl:bottom-0 xl:z-sidebar">
           <NavigationRail />
         </div>
@@ -102,7 +96,6 @@ function NavigationRail({ onItemClick }: NavigationRailProps) {
   return (
     <aside className="w-28 md:w-32 lg:w-36 h-full bg-base-100 shadow-sm">
       <div className="h-full flex flex-col">
-        {/* Navigation items - scrollable area with flexible height */}
         <div
           className="overflow-y-auto py-3 min-h-0"
           style={{
@@ -144,7 +137,6 @@ function NavigationRail({ onItemClick }: NavigationRailProps) {
           })}
         </div>
 
-        {/* User section - fixed height at bottom */}
         <div
           className="border-t border-base-300 p-3 bg-base-100"
           style={{ height: "100px", minHeight: "100px" }}
@@ -178,7 +170,6 @@ function AppBar({ onMenuClick }: AppBarProps) {
     >
       <div className="h-full flex items-center justify-between px-2 xs:px-3 md:px-4 lg:px-6">
         <div className="flex items-center gap-3 min-w-0">
-          {/* Mobile menu button */}
           <ActionButton
             label={t("common.openNavigationMenu")}
             icon={

@@ -60,37 +60,18 @@ export interface PlanningGroup {
   children?: PlanningGroup[];
 }
 
-/**
- * Calendar adapter interface for different calendar systems
- * Provides a unified interface for calendar operations regardless of the underlying calendar system
- */
 export interface CalendarAdapter {
-  /**
-   * Get the start of the year containing the given date
-   */
   getYearStart(date: Date): Date;
 
-  /**
-   * Get the start of the week containing the given date
-   */
   getWeekStart(date: Date): Date;
 
-  /**
-   * Get the next period start date based on cycle type
-   */
   getNextPeriod(currentDate: Date, cycleType: ExtendedPlanningViewType): Date;
 
-  /**
-   * Get the previous period start date based on cycle type
-   */
   getPreviousPeriod(
     currentDate: Date,
     cycleType: ExtendedPlanningViewType,
   ): Date;
 
-  /**
-   * Build planning groups for a specific view type and date
-   */
   buildPlanningGroups(
     viewType: ExtendedPlanningViewType,
     date: Date,
@@ -98,9 +79,6 @@ export interface CalendarAdapter {
     firstDayOfWeek?: number,
   ): PlanningGroup[];
 
-  /**
-   * Get the number of days in a planning cycle
-   */
   getPlanningCycleDays(
     cycleType: ExtendedPlanningViewType,
     baseDate?: Date,
@@ -111,14 +89,8 @@ export interface CalendarAdapter {
    */
   isSpecialDay?(date: Date): boolean;
 
-  /**
-   * Get the display name for a special day
-   */
   getSpecialDayName?(date: Date): string;
 
-  /**
-   * Shift week range by specified number of weeks
-   */
   shiftWeekRange(
     startDate: string,
     endDate: string,

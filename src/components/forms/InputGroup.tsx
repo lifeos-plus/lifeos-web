@@ -7,11 +7,6 @@ interface InputGroupProps {
   children: React.ReactNode;
 }
 
-/**
- * InputGroup - 输入框组合容器组件
- *
- * 用于拼接输入框与按钮/图标，维持统一内边距与响应布局
- */
 const InputGroup: React.FC<InputGroupProps> = ({
   align = "start",
   wrap = true,

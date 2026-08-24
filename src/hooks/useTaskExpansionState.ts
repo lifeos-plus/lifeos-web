@@ -7,14 +7,9 @@ interface UseTaskExpansionStateOptions {
   expireInHours?: number; // Default 48 hours
 }
 
-/**
- * Custom hook for managing task expansion state with persistence
- * Supports both scoped (by parent) and global task expansion
- */
 export function useTaskExpansionState(options: UseTaskExpansionStateOptions) {
   const { key, expireInHours = 48 } = options;
 
-  // Stable serialize/deserialize functions for expanded tasks
   const serializeExpandedTasks = useCallback(
     (record: Record<string, Set<UUID>>) => {
       const serialized: Record<string, UUID[]> = {};
@@ -47,7 +42,6 @@ export function useTaskExpansionState(options: UseTaskExpansionStateOptions) {
     [key],
   );
 
-  // Expanded tasks state (Record<string, Set<UUID>>)
   // The scope can be vision ID, planning group ID, or any other identifier
   const {
     state: expandedTasksByScope,
@@ -62,7 +56,6 @@ export function useTaskExpansionState(options: UseTaskExpansionStateOptions) {
     deserialize: deserializeExpandedTasks,
   });
 
-  // Get expanded tasks for a specific scope
   const getExpandedTasks = useCallback(
     (scope: string): Set<UUID> => {
       if (!tasksLoaded) return new Set();
@@ -71,7 +64,6 @@ export function useTaskExpansionState(options: UseTaskExpansionStateOptions) {
     [expandedTasksByScope, tasksLoaded],
   );
 
-  // Toggle task expansion for a specific scope
   const toggleTaskExpansion = useCallback(
     (scope: string, taskId: UUID) => {
       setExpandedTasksByScope((prev) => {

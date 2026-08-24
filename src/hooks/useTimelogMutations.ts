@@ -22,9 +22,6 @@ import type {
 import type { UUID } from "@/types/primitive";
 import { logger } from "@/utils/core";
 
-/**
- * Hook for managing timelogs mutations (create, update, delete)
- */
 export function useTimelogMutations() {
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -49,7 +46,6 @@ export function useTimelogMutations() {
     }
   };
 
-  // Create timelog mutation
   const createMutation = useMutation({
     mutationFn: (data: TimelogCreate) => timelogsApi.create(data),
     onSuccess: async (result: Timelog) => {
@@ -78,7 +74,6 @@ export function useTimelogMutations() {
     },
   });
 
-  // Update timelog mutation
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: UUID; data: TimelogUpdate }) =>
       timelogsApi.update(id, data),
@@ -113,7 +108,6 @@ export function useTimelogMutations() {
     },
   });
 
-  // Delete single timelog mutation
   const deleteMutation = useMutation({
     mutationFn: (id: UUID) => timelogsApi.delete(id),
     onSuccess: async (_, eventId) => {
@@ -128,7 +122,6 @@ export function useTimelogMutations() {
         invalidateTimelogTaskDependencies(queryClient, [previous]),
       ]);
 
-      // Show success message
       toast.showSuccess(t("timeLog.messages.timeLogDeleteSuccess"));
     },
     onError: (error: Error) => {
@@ -139,7 +132,6 @@ export function useTimelogMutations() {
     },
   });
 
-  // Batch delete timelogs mutation
   const batchDeleteMutation = useMutation({
     mutationFn: (eventIds: UUID[]) => timelogsApi.batchDelete(eventIds),
     onSuccess: async (result, eventIds) => {
@@ -184,7 +176,6 @@ export function useTimelogMutations() {
     },
   });
 
-  // Batch create timelogs mutation
   const batchCreateMutation = useMutation({
     mutationFn: (timelogs: TimelogCreate[]) =>
       timelogsApi.batchCreate(timelogs),
@@ -222,7 +213,6 @@ export function useTimelogMutations() {
     },
   });
 
-  // Batch update timelogs mutation
   const batchUpdateMutation = useMutation({
     mutationFn: (params: {
       timelog_ids: UUID[];

@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
       placeholderData: (previousData: unknown) => previousData,
     },
     mutations: {
-      retry: false, // Don't retry mutations by default
+      retry: false,
     },
   },
 });

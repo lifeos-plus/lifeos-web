@@ -16,7 +16,6 @@ interface ConfirmDialogProps {
 }
 
 /**
- * Friendly confirmation dialog component
  * Replaces the native confirm() dialog with a more user-friendly modal
  */
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({

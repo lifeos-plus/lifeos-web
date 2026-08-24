@@ -22,7 +22,6 @@ export function applyThemeWithTransition(theme: Exclude<AppTheme, "system">) {
   // Remove initializing class to enable transitions
   document.documentElement.classList.remove("theme-initializing");
 
-  // Apply theme
   document.documentElement.setAttribute("data-theme", theme);
 }
 

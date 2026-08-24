@@ -102,10 +102,8 @@ function HabitItem({
       : 0
     : 0;
 
-  // 构建习惯标题+描述容器（占据满行）
   const titleDescriptionContainer = (
     <div className="space-y-3">
-      {/* 习惯标题 + 状态标签 */}
       <div className="flex items-center space-x-3 min-w-0">
         <h2 className="text-xl  whitespace-nowrap flex items-center gap-2">
           <Icon name="repeat" size={20} aria-hidden className="text-primary" />
@@ -114,7 +112,6 @@ function HabitItem({
         <StatusBadge status={habit.status} type="habit" />
       </div>
 
-      {/* 习惯描述 */}
       {habit.description && (
         <p className="text-base text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
           {habit.description}
@@ -123,7 +120,6 @@ function HabitItem({
     </div>
   );
 
-  // 构建元数据容器
   const metadataContainer = (
     <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm text-base-content/70 font-normal text-left w-full">
       <div className="flex items-center gap-1 min-w-0">
@@ -163,7 +159,6 @@ function HabitItem({
     </div>
   );
 
-  // 构建操作容器（操作按钮组）
   const actionContainer = (
     <div className="flex-shrink-0">
       <div className="flex items-center gap-2">
@@ -193,10 +188,8 @@ function HabitItem({
     </div>
   );
 
-  // 构建习惯标题（标题+描述容器）
   const habitTitle = titleDescriptionContainer;
 
-  // 构建习惯副标题（元数据+操作按钮）
   const habitSubtitle = (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 w-full">
       <div className="flex-shrink-0">{metadataContainer}</div>
@@ -215,7 +208,6 @@ function HabitItem({
     >
       <div className="p-4 lg:p-6">
         <div className="w-full space-y-4">
-          {/* 详细统计信息 */}
           {effectiveStats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-base-200 rounded-lg">
               <div className="text-center">
@@ -253,7 +245,6 @@ function HabitItem({
             </div>
           )}
 
-          {/* 习惯动作列表 */}
           {isExpanded && (
             <HabitActionList
               habitId={habit.id}
@@ -317,7 +308,6 @@ function HabitsPage() {
     );
   }, [allHabits, t]);
 
-  // Data
   const {
     habits,
     isLoading,
@@ -339,7 +329,6 @@ function HabitsPage() {
     setHeader({
       actions: (
         <div className="flex items-center gap-3">
-          {/* Status filter group */}
           <div className="flex items-center gap-2">
             <EnumSelect
               value={statusFilter ?? ALL_FILTER_VALUE}
@@ -355,7 +344,6 @@ function HabitsPage() {
             />
           </div>
 
-          {/* Action buttons group */}
           <div className="flex items-center gap-2">
             <CreateNewButton
               label={t("common.create_new")}
@@ -372,7 +360,6 @@ function HabitsPage() {
     return () => setHeader({ actions: undefined });
   }, [setHeader, t, statusFilter, statusOptions]);
 
-  // Handlers
 
   const handleEditHabit = useCallback((habit: Habit) => {
     setPrefillHabit(null);

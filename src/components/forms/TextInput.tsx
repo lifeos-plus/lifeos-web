@@ -4,13 +4,9 @@ type TextInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "size"
 > & {
-  /** DaisyUI control size. */
   size?: "sm" | "md" | "lg";
 };
 
-/**
- * Standard DaisyUI text input.
- */
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   ({ className = "", size = "md", type = "text", ...rest }, ref) => {
     const sizeClasses = {

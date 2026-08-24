@@ -21,7 +21,6 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
   customFooterActions,
 }) => {
   const { t } = useTranslation();
-  // Get preferences for this group
   const groupPreferences = config.items
     .map((item) => {
       const preferenceKey = `${config.id}.${item.key}`;
