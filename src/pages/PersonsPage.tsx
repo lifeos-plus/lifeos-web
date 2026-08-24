@@ -22,14 +22,6 @@ import { tagsKeys } from "@/services/api/queryKeys";
 import type { UUID } from "@/types/primitive";
 import type { PersonActivityType } from "@/services/api/persons";
 
-/**
- * PersonsPage - Main page for the social module
- *
- * This page provides:
- * - Person management interface
- * - Person activity timeline view
- * - Navigation between different views
- */
 const PersonsPage: React.FC = () => {
   const { t } = useTranslation();
   // Simplify view: use modal for timeline and show both persons and tags as modules
@@ -38,7 +30,6 @@ const PersonsPage: React.FC = () => {
   );
   const [showTagManager, setShowTagManager] = useState(false);
 
-  // Tag filtering state
   const [filteredByTag, setFilteredByTag] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<UUID | null>(null);
   const { state: tagFiltersExpanded, setState: setTagFiltersExpanded } =
@@ -48,7 +39,6 @@ const PersonsPage: React.FC = () => {
       expireInHours: 0,
     });
 
-  // Use the paginated activities hook
   type ActivityFilter = "all" | PersonActivityType;
   const [activitiesPage, setActivitiesPage] = useState(1);
   const activitiesPageSize = 50;
@@ -133,7 +123,6 @@ const PersonsPage: React.FC = () => {
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [sortedPersonTags, getCategoryDisplayName]);
 
-  // Toggle person tag filtering.
   const togglePersonTagFilter = useCallback(
     (tag: Tag) => {
       const nextState = getNextPersonTagFilterState(
@@ -146,11 +135,9 @@ const PersonsPage: React.FC = () => {
     [filteredByTag, selectedTagId],
   );
 
-  // Handle search query change from PersonManager
   const handleSearchQueryChange = useCallback(
     (query: string) => {
       if (query.trim() && filteredByTag) {
-        // Reset to all persons when searching
         setFilteredByTag(false);
         setSelectedTagId(null);
       }
@@ -160,7 +147,6 @@ const PersonsPage: React.FC = () => {
 
   const [createPersonSignal, setCreatePersonSignal] = useState(0);
 
-  // Page header via context
   const { setHeader } = usePageHeader();
 
   React.useEffect(() => {
@@ -187,14 +173,12 @@ const PersonsPage: React.FC = () => {
     return () => setHeader({ actions: undefined });
   }, [setHeader, t, setShowTagManager]);
 
-  // Load person activities
   const handleLoadPersonActivities = useCallback((person: PersonSummary) => {
     setSelectedPerson(person);
   }, []);
 
   return (
     <PageLayout>
-      {/* Tags Filter Container */}
       <ExpandableCard
         isExpanded={tagFiltersExpanded}
         onToggleExpansion={() =>
@@ -235,7 +219,6 @@ const PersonsPage: React.FC = () => {
         </div>
       </ExpandableCard>
 
-      {/* Persons List Container */}
       <PersonManager
         filteredByTag={filteredByTag}
         selectedTagId={selectedTagId}
@@ -244,7 +227,6 @@ const PersonsPage: React.FC = () => {
         createRequestSignal={createPersonSignal}
       />
 
-      {/* Tag Manager Modal */}
       <TagManager
         isOpen={showTagManager}
         onClose={() => setShowTagManager(false)}
@@ -255,7 +237,6 @@ const PersonsPage: React.FC = () => {
         }}
       />
 
-      {/* Timeline Modal */}
       <PersonTimelineModal
         person={selectedPerson}
         isOpen={!!selectedPerson}

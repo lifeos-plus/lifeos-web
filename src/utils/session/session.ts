@@ -1,5 +1,4 @@
 /**
- * Generate a session identifier for modal interactions.
  * Uses crypto.randomUUID when available, with a fallback for older browsers.
  */
 export function createModalSessionId(): string {

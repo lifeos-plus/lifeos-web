@@ -13,11 +13,8 @@ type NativeCheckboxProps = Omit<
 >;
 
 interface CheckboxProps extends NativeCheckboxProps {
-  /** 是否处于不确定状态（半选状态） */
   indeterminate?: boolean;
-  /** 尺寸大小 */
   size?: "sm" | "md" | "lg";
-  /** 样式变体 */
   variant?:
     | "primary"
     | "secondary"
@@ -26,15 +23,10 @@ interface CheckboxProps extends NativeCheckboxProps {
     | "warning"
     | "error"
     | "info";
-  /** 标签文本 */
   label?: string;
-  /** 描述文本 */
   description?: string;
-  /** 错误信息 */
   error?: string;
-  /** 子元素（当需要自定义内容时使用） */
   children?: React.ReactNode;
-  /** 变化回调（返回最新选中状态） */
   onCheckedChange?: (
     checked: boolean,
     event: React.ChangeEvent<HTMLInputElement>,
@@ -42,13 +34,9 @@ interface CheckboxProps extends NativeCheckboxProps {
 }
 
 interface CheckboxRef {
-  /** 获取输入元素 */
   inputElement: HTMLInputElement | null;
-  /** 设置焦点 */
   focus: () => void;
-  /** 移除焦点 */
   blur: () => void;
-  /** 选中 */
   select: () => void;
 }
 

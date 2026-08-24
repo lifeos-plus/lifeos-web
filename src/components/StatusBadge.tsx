@@ -11,9 +11,6 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-/**
- * StatusBadge - Reusable component for displaying status badges
- */
 const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
   type,

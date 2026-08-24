@@ -6,14 +6,9 @@ import {
   type ModuleKey,
 } from "@/config/modulesConfig";
 
-/**
- * Hook to get internationalized module configurations
- * Returns module configs with translated displayName, navLabel, and description
- */
 export function useModuleConfig() {
   const { t } = useTranslation();
 
-  // Get all modules with i18n
   const modulesWithI18n: ModuleConfigWithI18n[] = useMemo(() => {
     return MODULES.map((module) => ({
       ...module,
@@ -23,12 +18,10 @@ export function useModuleConfig() {
     }));
   }, [t]);
 
-  // Get modules that should be shown in navigation
   const navModules: ModuleConfigWithI18n[] = useMemo(() => {
     return modulesWithI18n.filter((module) => module.showInNav);
   }, [modulesWithI18n]);
 
-  // Get module by key with i18n
   const getModuleByKey = useCallback(
     (key: ModuleKey): ModuleConfigWithI18n | undefined => {
       return modulesWithI18n.find((module) => module.key === key);
@@ -36,7 +29,6 @@ export function useModuleConfig() {
     [modulesWithI18n],
   );
 
-  // Get module by path with i18n
   const getModuleByPath = useCallback(
     (path: string): ModuleConfigWithI18n | undefined => {
       return modulesWithI18n.find((module) => module.path === path);
@@ -44,7 +36,6 @@ export function useModuleConfig() {
     [modulesWithI18n],
   );
 
-  // Create lookup maps with i18n
   const keyToModuleWithI18n: Record<ModuleKey, ModuleConfigWithI18n> =
     useMemo(() => {
       return modulesWithI18n.reduce(

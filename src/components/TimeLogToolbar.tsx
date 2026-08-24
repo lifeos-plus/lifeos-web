@@ -65,7 +65,6 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
       padding="md"
       layout="three-column"
     >
-      {/* 左列：导入与返回按钮 */}
       <div className="flex justify-start gap-2 flex-wrap">
         {!isImportMode && (
           <ActionButton
@@ -91,7 +90,6 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
         )}
       </div>
 
-      {/* 中列：日期切换与今天 */}
       <div className="flex items-center gap-2 justify-start sm:justify-center">
         <PeriodNavigation
           periodType="day"
@@ -105,7 +103,6 @@ const TimeLogToolbar: React.FC<TimeLogToolbarProps> = ({
         />
       </div>
 
-      {/* 右列：模式切换 */}
       <div className="flex justify-end">
         <ActionButton
           label={

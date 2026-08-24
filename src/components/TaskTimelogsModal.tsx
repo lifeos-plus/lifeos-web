@@ -19,12 +19,6 @@ interface TaskTimelogsModalProps {
   task: TaskWithSubtasks | null;
 }
 
-/**
- * TaskTimelogsModal - Independent modal for displaying time records associated with a task
- *
- * This modal shows all timelogs (timelog records) that are associated
- * with a specific task, ordered by time (newest first).
- */
 const TaskTimelogsModal: React.FC<TaskTimelogsModalProps> = ({
   isOpen,
   onClose,
@@ -69,7 +63,6 @@ const TaskTimelogsModal: React.FC<TaskTimelogsModalProps> = ({
     }
   }, [page, safeTotalPages]);
 
-  // Calculate duration for an event
   const calculateDuration = (event: Timelog): string => {
     if (!event.start_time || !event.end_time) {
       return t("taskTimelogs.duration");

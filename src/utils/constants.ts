@@ -1,4 +1,3 @@
-// Vision and Task Management Constants
 import { t } from "@/i18n";
 import type { IconName } from "@/components/icons";
 

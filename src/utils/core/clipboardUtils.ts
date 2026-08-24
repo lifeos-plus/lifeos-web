@@ -1,8 +1,3 @@
-/**
- * Universal clipboard utility with fallback support
- * Provides consistent copy functionality across the application
- */
-
 export interface CopyResult {
   success: boolean;
   message: string;
@@ -18,7 +13,6 @@ export interface CopyResult {
  */
 async function copyToClipboard(text: string): Promise<CopyResult> {
   try {
-    // Try modern clipboard API first
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
       return {

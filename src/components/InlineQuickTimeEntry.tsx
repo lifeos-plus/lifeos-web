@@ -165,16 +165,13 @@ export default function InlineQuickTimeEntry({
 
   const toast = useToast();
 
-  // TanStack Query mutations
   const { createTimelogAsync } = useTimelogMutations();
   const { updateTaskAsync: updateTaskPlanningAsync } = useTasksMutations();
 
-  // Sync external preselected task id to local state
   useEffect(() => {
     setSelectedTaskId(preselectedTaskId || null);
   }, [preselectedTaskId]);
 
-  // Autofill when a task is preselected externally
   useEffect(() => {
     const run = async () => {
       if (!preselectedTaskId || preselectedTaskId === null) return;
@@ -192,7 +189,6 @@ export default function InlineQuickTimeEntry({
           // Vision not found or other error, continue without vision data
         }
 
-        // Use extracted helper functions
         autoFillTitle(task);
         autoFillArea(vision);
         applyTaskPersons(task.person ?? undefined);
@@ -352,21 +348,17 @@ export default function InlineQuickTimeEntry({
   // const [selectedTask, setSelectedTask] = useState<TaskWithSubtasks | null>(null);
   const [loading, setLoading] = useState(false);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
-  // Flag to track if we should use props for time initialization
   const [shouldInitializeFromProps, setShouldInitializeFromProps] =
     useState(true);
   // removed duplicate state declarations for areas
 
-  // Refs for keyboard navigation
   const formRef = useRef<HTMLFormElement | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const areaRef = useRef<HTMLInputElement>(null);
 
-  // Load reference data on component mount
   // Use cached reference data where possible
   const { areas: areasFromCache } = useAreas();
 
-  // Time log task planning settings
   const { value: autoSetTaskPlanning } = usePreferenceWithBootstrap<boolean>({
     key: "timeLog.auto_set_task_planning",
     defaultValue: false,
@@ -412,7 +404,6 @@ export default function InlineQuickTimeEntry({
     [timezone],
   );
 
-  // Human readable duration label
   const formStartTime = formData.start_time;
   const formEndTime = formData.end_time;
 
@@ -422,11 +413,9 @@ export default function InlineQuickTimeEntry({
     return formatDuration(clampDurationMinutes(minutes));
   }, [formStartTime, formEndTime]);
 
-  // Initialize form times from props
   useEffect(() => {
     if (!shouldInitializeFromProps) return;
 
-    // If start time is empty, use current time
     const effectiveStartTime =
       initialStartTime || getNearestFiveMinuteTime(selectedDate, timezone);
 
@@ -462,7 +451,6 @@ export default function InlineQuickTimeEntry({
     timezone,
   ]);
 
-  // Focus title input when component mounts
   useEffect(() => {
     setTimeout(() => {
       titleRef.current?.focus();
@@ -477,7 +465,6 @@ export default function InlineQuickTimeEntry({
   };
 
   const saveEntry = async () => {
-    // Validation
     if (!formData.title.trim()) {
       onError(t("quickTimeEntry.validation.titleRequired"));
       titleRef.current?.focus();
@@ -509,7 +496,6 @@ export default function InlineQuickTimeEntry({
     const requestSessionId = sessionIdRef.current;
 
     try {
-      // Create start and end datetime objects
       const prepared: TimelogCreate = {
         ...formData,
         task_id: selectedTaskId !== null ? selectedTaskId : undefined,
@@ -536,7 +522,6 @@ export default function InlineQuickTimeEntry({
       }
 
       // Success message is handled by the mutation hook
-      // Additional success message for task planning if applied
       if (autoPlanningApplied) {
         toast.showSuccess(
           t("quickTimeEntry.messages.saveSuccessWithTask"),
@@ -549,7 +534,6 @@ export default function InlineQuickTimeEntry({
       const isLatestSession = sessionIdRef.current === requestSessionId;
 
       if (isLatestSession) {
-        // Reset form state for next entry
         const now = new Date();
         const currentTime = getNearestFiveMinuteTime(now, timezone);
         const startISO = hhmmToISO(selectedDate, currentTime);
@@ -596,18 +580,15 @@ export default function InlineQuickTimeEntry({
     }
   };
 
-  // Handle task selection with auto-fill title and area inherited from vision
   const handleTaskSelect = (
     task: TaskWithSubtasks | null,
     vision?: Vision | null,
   ) => {
-    // Initialize lastAutoTitleRef if not set
     if (!lastAutoTitleRef.current) {
       lastAutoTitleRef.current = "";
     }
 
     if (task) {
-      // Use extracted helper functions for auto-fill
       autoFillTitle(task);
       autoFillArea(vision);
       if (task.person && task.person.length > 0) {
@@ -626,7 +607,6 @@ export default function InlineQuickTimeEntry({
     }
   };
 
-  // When external task id changes, trigger autofill via TaskSelector callback path
   useEffect(() => {
     if (!selectedTaskId) return;
     // We don't have the full task object here; rely on vision-based autofill via AreaSelect if available.
@@ -636,7 +616,6 @@ export default function InlineQuickTimeEntry({
 
   // Helpers kept for potential future preview UI; not used now after preview removal
 
-  // Helper function to auto-set task planning to today
   const autoSetTaskPlanningToday = async (taskId: UUID, entryTime: string) => {
     try {
       const dateString = formatDate(entryTime, timezone);
@@ -657,7 +636,6 @@ export default function InlineQuickTimeEntry({
     }
   };
 
-  // Helper function to check if time is within 24 hours
   const isWithin24Hours = (timeString: string) => {
     const now = new Date();
     const entryTime = new Date(timeString);
@@ -666,7 +644,6 @@ export default function InlineQuickTimeEntry({
     return hoursDiff <= 24;
   };
 
-  // Helper functions for auto-fill logic
   const autoFillTitle = (task: TaskWithSubtasks | ApiTask) => {
     const isEmpty = !formData.title.trim();
     const wasAutoFilled = formData.title === lastAutoTitleRef.current;
@@ -755,9 +732,7 @@ export default function InlineQuickTimeEntry({
         </h4>
       </div>
 
-      {/* Task single-select (left) + Templates (right) */}
       <div className="mt-1 mb-5 flex min-w-0 flex-col items-start justify-between gap-3 lg:flex-row">
-        {/* Left: inline compact TaskSelector */}
         <div className="w-full lg:w-56">
           <TaskSelector
             value={selectedTaskId}
@@ -773,7 +748,6 @@ export default function InlineQuickTimeEntry({
           />
         </div>
 
-        {/* Right: templates */}
         <div className="min-w-0 flex-1 w-full lg:w-auto">
           <div className="flex items-center gap-2 mb-2 justify-start lg:justify-end">
             <ActionButton
@@ -820,7 +794,6 @@ export default function InlineQuickTimeEntry({
                     });
                   })()}
                 >
-                  {/* area color dot */}
                   {(() => {
                     const areaById = tpl.area_id
                       ? areas.find((d) => d.id === tpl.area_id)
@@ -850,9 +823,7 @@ export default function InlineQuickTimeEntry({
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-        {/* Quick input row */}
         <div className="flex min-w-0 flex-col items-start gap-3 lg:flex-row lg:items-center">
-          {/* Start Time */}
           <div className="flex-shrink-0 w-full lg:w-auto mt-4">
             <label
               htmlFor={`${idPrefix}-start-time`}
@@ -874,7 +845,6 @@ export default function InlineQuickTimeEntry({
             />
           </div>
 
-          {/* End Time */}
           <div className="flex-shrink-0 w-full lg:w-auto  mt-4">
             <label
               htmlFor={`${idPrefix}-end-time`}
@@ -896,7 +866,6 @@ export default function InlineQuickTimeEntry({
             />
           </div>
 
-          {/* Duration (minutes) */}
           <div className="flex-shrink-0 w-full lg:w-auto  mt-4">
             <label
               htmlFor={`${idPrefix}-duration`}
@@ -926,7 +895,6 @@ export default function InlineQuickTimeEntry({
             />
           </div>
 
-          {/* Task Title */}
           <div className="mt-4 min-w-0 flex-1">
             <label
               htmlFor={`${idPrefix}-title`}
@@ -950,7 +918,6 @@ export default function InlineQuickTimeEntry({
             />
           </div>
 
-          {/* Area */}
           <div className="flex-shrink-0 w-22 mt-2">
             <AreaSelect
               ref={areaRef}
@@ -968,7 +935,6 @@ export default function InlineQuickTimeEntry({
           </div>
 
           {/* Tasks field removed as per new compact picker above */}
-          {/* Persons */}
           <div className="flex-shrink-0 w-28 mt-2">
             <PersonSelector
               selectedPersonIds={selectedPersonIds}
@@ -984,7 +950,6 @@ export default function InlineQuickTimeEntry({
           </div>
         </div>
 
-        {/* Bottom action buttons */}
         <div className="pt-2">
           <FormActions
             loading={loading}
@@ -1000,7 +965,6 @@ export default function InlineQuickTimeEntry({
         </div>
       </form>
 
-      {/* Manager Modal */}
       {showTemplateManager && (
         <QuickTemplatesManagerModal
           isOpen={showTemplateManager}

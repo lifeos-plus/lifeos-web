@@ -10,28 +10,23 @@ export function useModalState() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Set loading state
   const setLoadingState = useCallback((isLoading: boolean) => {
     setLoading(isLoading);
   }, []);
 
-  // Set error state
   const setErrorState = useCallback((errorMessage: string | null) => {
     setError(errorMessage);
   }, []);
 
-  // Clear error state
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  // Reset all states
   const resetState = useCallback(() => {
     setLoading(false);
     setError(null);
   }, []);
 
-  // Async wrapper for operations with automatic loading state management
   const withLoading = useCallback(
     async <T>(operation: () => Promise<T>): Promise<T> => {
       try {

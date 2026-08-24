@@ -1,4 +1,3 @@
-// Form components
 export { default as FormField } from "./FormField";
 export { default as InputGroup } from "./InputGroup";
 export { default as TextInput } from "./TextInput";

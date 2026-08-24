@@ -1,11 +1,5 @@
 import { useEffect } from "react";
 
-/**
- * useEscapeToClose
- *
- * Adds a global Escape key listener while the modal/dialog is open.
- * When Escape is pressed, it calls onClose unless disabled.
- */
 export function useEscapeToClose(
   isOpen: boolean,
   onClose: () => void,

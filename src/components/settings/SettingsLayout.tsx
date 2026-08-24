@@ -37,7 +37,6 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
     <PageLayout>
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-6 ">
-          {/* Sidebar Navigation */}
           <div className="flex-shrink-0 lg:basis-[30%] lg:max-w-xs">
             <div className="sticky top-4">
               <div className="p-4">
@@ -63,7 +62,6 @@ const SettingsLayout: React.FC<SettingsLayoutProps> = ({
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1 min-w-0 lg:basis-[70%]">
             {activeGroupConfig ? (
               <SettingGroup

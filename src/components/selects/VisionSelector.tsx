@@ -17,15 +17,15 @@ interface VisionSelectorProps {
   size?: SelectSize;
   className?: string;
   allowUndefined?: boolean; // when true, empty value maps to null
-  fullWidth?: boolean; // when false, do not force w-full
-  idPrefix?: string; // prefix for generating unique IDs
-  label?: string; // optional label for the select field
-  showLabel?: boolean; // whether to show the label (default: false for inline usage)
-  showDefaultOption?: boolean; // whether to show "使用默认愿景" option
-  defaultToInboxVision?: boolean; // whether to default to inbox vision when no value is set
-  filterStatus?: string[]; // filter visions by status (default: ["active"])
+  fullWidth?: boolean;
+  idPrefix?: string;
+  label?: string;
+  showLabel?: boolean;
+  showDefaultOption?: boolean;
+  defaultToInboxVision?: boolean;
+  filterStatus?: string[];
   showStatus?: boolean; // whether to show status prefix in format [status]title (default: false)
-  error?: string | null; // error message to display
+  error?: string | null;
 }
 
 // Stable default to avoid creating a new array on every render
@@ -53,7 +53,6 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
     const { t } = useTranslation();
     const hasAutoSelectedRef = useRef(false);
 
-    // Use i18n translation as default placeholder if not provided
     const finalPlaceholder = placeholder || t("common.please_select");
 
     const {
@@ -76,7 +75,6 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
       return all.filter((v) => filterStatus.includes(v.status));
     }, [visions, filterStatus]);
 
-    // Auto-select default inbox vision if requested and no value is set
     useEffect(() => {
       if (
         defaultToInboxVision &&
@@ -98,7 +96,6 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
       onChange,
     ]);
 
-    // Build options for AsyncEntitySelect
     const options = useMemo(() => {
       const items: {
         id: UUID | string;
@@ -125,7 +122,6 @@ const VisionSelector: React.FC<VisionSelectorProps> = React.memo(
       availableVisions.forEach((v) => {
         if (showDefaultOption && v.id === defaultInboxVision) return;
 
-        // Format label with status prefix if showStatus is enabled
         const label = showStatus
           ? `[${t(`status.${v.status}`)}] ${v.name}`
           : v.name;

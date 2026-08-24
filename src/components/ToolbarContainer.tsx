@@ -9,11 +9,6 @@ interface ToolbarContainerProps {
   layout?: "flex" | "three-column";
 }
 
-/**
- * Shared visual container and responsive layout for page toolbars.
- *
- * Padding controls density; layout controls content arrangement.
- */
 const ToolbarContainer: React.FC<ToolbarContainerProps> = ({
   children,
   className = "",

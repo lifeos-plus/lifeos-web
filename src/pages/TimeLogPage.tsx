@@ -87,7 +87,6 @@ const TimeLogPage = () => {
     saveScrollPosition,
   });
 
-  // Modal states
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [editingEntry, setEditingEntry] = useState<Timelog | null>(null);
   const [entryModalSessionId, setEntryModalSessionId] = useState<string | null>(
@@ -96,7 +95,6 @@ const TimeLogPage = () => {
 
   // Scroll position persistence handled by useTimeLogUIState
 
-  // Area manager modal state
   const [showAreaManager, setShowAreaManager] = useState(false);
   const [showQuickTemplatesManager, setShowQuickTemplatesManager] =
     useState(false);
@@ -143,7 +141,6 @@ const TimeLogPage = () => {
 
   // Request concurrency guards - removed as it's now handled in the hook
 
-  // Advanced search states
   const { showError, showInfo } = useToast();
   const { setHeader } = usePageHeader();
 
@@ -288,14 +285,12 @@ const TimeLogPage = () => {
 
   // name/color lookup handled by AreaBadge via areaMap
 
-  // Derived: filtered entries (memoized)
   // Unified loading flag for table rendering
   const isTableLoading = useMemo(
     () => (queryMode === "advanced" ? advancedSearch.isLoading : loading),
     [queryMode, advancedSearch.isLoading, loading],
   );
 
-  // Handle area filter change
   const handleAreaFilterChange = (
     areaId: UUID | null | undefined,
   ) => {
@@ -317,7 +312,6 @@ const TimeLogPage = () => {
 
   // no-op: filteredEntries derived by useMemo
 
-  // Restore scroll position after entries are loaded
   useEffect(() => {
     if (scrollPosition > 0 && !loading) {
       window.scrollTo({ top: scrollPosition, behavior: "auto" });
@@ -327,7 +321,6 @@ const TimeLogPage = () => {
 
   return (
     <PageLayout>
-      {/* Date selector and toolbar */}
 
       <div className="w-full">
         <TimeLogToolbar
@@ -361,7 +354,6 @@ const TimeLogPage = () => {
         />
       ) : (
         <>
-          {/* Advanced Search Panel */}
           {queryMode === "advanced" && (
             <div className="w-full">
               <AdvancedSearchPanel
@@ -447,7 +439,6 @@ const TimeLogPage = () => {
             </div>
           )}
 
-          {/* Pagination for Advanced Search */}
           {queryMode === "advanced" && advancedSearch.data.length > 0 && (
             <Container className="mb-4">
               <div className="w-full flex items-center justify-between">
@@ -522,7 +513,6 @@ const TimeLogPage = () => {
             </Container>
           )}
 
-          {/* Error Message */}
           <ErrorDisplay error={error} className="mb-4" />
 
           {isTableLoading && (
@@ -546,7 +536,6 @@ const TimeLogPage = () => {
             />
           </div>
 
-          {/* Entries Table */}
           <div className="w-full">
             {queryMode === "advanced" &&
               advancedSearch.data.length > 0 &&
@@ -645,7 +634,6 @@ const TimeLogPage = () => {
         </>
       )}
 
-      {/* Time Entry Modal */}
       {showEntryModal && entryModalSessionId && (
         <TimeEntryModal
           isOpen={showEntryModal}
@@ -710,7 +698,6 @@ const TimeLogPage = () => {
         />
       )}
 
-      {/* Confirmation Dialogs */}
       {deletingEntryId && (
         <ConfirmDialog
           isOpen={!!deletingEntryId}

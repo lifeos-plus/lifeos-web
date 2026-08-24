@@ -38,9 +38,6 @@ function parseInputToDateTime(
   return null;
 }
 
-/*
- * Format a date string to Chinese locale date-time string for user display.
- */
 export function formatDateTime(dateString: string, timezone?: string): string {
   if (!dateString) return "";
   const dt = parseInputToDateTime(dateString, timezone);
@@ -221,7 +218,6 @@ export function getCurrentWeekRange(firstDayOfWeek: number = 1): {
   // Convert firstDayOfWeek to JavaScript day format (0=Sunday, 1=Monday, etc.)
   const jsFirstDay = firstDayOfWeek === 7 ? 0 : firstDayOfWeek;
 
-  // Calculate days to first day of week
   const diffToFirstDay = (day - jsFirstDay + 7) % 7;
 
   const weekStart = new Date(today);
@@ -245,7 +241,6 @@ export function getCurrentMonthRangeLocal(): { start: string; end: string } {
   const year = today.getFullYear();
   const month = today.getMonth();
 
-  // First day of current month
   const firstDay = new Date(year, month, 1);
 
   // Last day of current month (next month 1st - 1 day) with time set to 23:59:59
@@ -277,7 +272,6 @@ export function shiftMonthRange(
   const currentYear = y;
   const currentMonth = m - 1;
 
-  // Calculate target year and month
   let targetYear = currentYear;
   let targetMonth = currentMonth + deltaMonths;
 
@@ -291,7 +285,6 @@ export function shiftMonthRange(
     targetYear += 1;
   }
 
-  // Calculate complete month range for target month
   const newStart = new Date(targetYear, targetMonth, 1);
   const newEnd = new Date(targetYear, targetMonth + 1, 1);
   newEnd.setDate(newEnd.getDate() - 1);

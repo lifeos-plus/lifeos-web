@@ -48,7 +48,6 @@ export const preferencesApi = {
     value: T,
     module: string = "general",
   ) {
-    // Backend expects PUT with body containing { value, module }
     const payload: PreferenceUpdate = {
       value,
       module,

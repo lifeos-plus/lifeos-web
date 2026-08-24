@@ -1,4 +1,3 @@
-// src/components/PlannedEventModal.tsx
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -81,7 +80,6 @@ export default function PlannedEventModal({
     null, // Start with null to avoid placeholder selection
   );
 
-  // Delete related states
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteType, setDeleteType] = useState<"single" | "all_future" | "all">(
     "single",
@@ -90,7 +88,6 @@ export default function PlannedEventModal({
     "all",
   );
 
-  // Shared areas via hook
   const areasRaw = useAreas();
 
   // Memoize areas to prevent unnecessary re-renders
@@ -103,7 +100,6 @@ export default function PlannedEventModal({
   );
   const effectiveScope = allowScopedEditing ? editScope : "all";
 
-  // Toast notifications
   const toastRaw = useToast();
 
   // Memoize toast object to prevent unnecessary re-renders
@@ -113,7 +109,6 @@ export default function PlannedEventModal({
   const initializedRef = useRef(false);
   const initialFormDataRef = useRef<PlannedEventCreate | null>(null);
 
-  // Initialize form data when modal opens (once per open)
   useEffect(() => {
     if (!isOpen) {
       initializedRef.current = false;
@@ -174,9 +169,6 @@ export default function PlannedEventModal({
     return formatDateTime(plannedEvent.start_time, resolvedTimezone);
   }, [plannedEvent?.start_time, resolvedTimezone]);
 
-  /**
-   * Handle form input changes
-   */
   const handleInputChange = useCallback(
     (
       e: React.ChangeEvent<
@@ -299,9 +291,6 @@ export default function PlannedEventModal({
 
   // Tags UI removed; keeping data field for compatibility.
 
-  /**
-   * Handle recurrence rule changes
-   */
   const handleRecurrenceChange = useCallback((rrule: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -310,7 +299,6 @@ export default function PlannedEventModal({
     }));
   }, []);
 
-  // Optimize area change handler
   const handleAreaChange = useCallback((v: UUID | null | undefined) => {
     setFormData((prev) => ({
       ...prev,
@@ -318,9 +306,6 @@ export default function PlannedEventModal({
     }));
   }, []);
 
-  /**
-   * Handle form submission
-   */
   const handleSubmit = useCallback(
     async (formEvent: React.FormEvent) => {
       formEvent.preventDefault();
@@ -373,7 +358,6 @@ export default function PlannedEventModal({
                 : undefined,
             );
 
-            // 显示成功提示
             toast.showSuccess(
               t("eventModal.success.updateTitle"),
               t("eventModal.success.updateMessage", { title: formData.title }),
@@ -381,7 +365,6 @@ export default function PlannedEventModal({
           } else {
             await plannedEventsApi.create(formData);
 
-            // 显示成功提示
             toast.showSuccess(
               t("eventModal.success.createTitle"),
               t("eventModal.success.createMessage", { title: formData.title }),
@@ -397,7 +380,6 @@ export default function PlannedEventModal({
             : t("eventModal.errors.saveFailed");
         setError(errorMessage);
 
-        // 显示错误提示
         toast.showError(
           t("eventModal.errors.saveTitle"),
           t("eventModal.errors.saveMessage", { error: errorMessage }),
@@ -417,16 +399,12 @@ export default function PlannedEventModal({
     ],
   );
 
-  /**
-   * Handle actual deletion
-   */
   const handleDelete = useCallback(
     async (type: "single" | "all_future" | "all") => {
       if (!plannedEvent) return;
 
       try {
         await withLoading(async () => {
-          // Call delete API with delete type
           const requiresInstanceContext =
             plannedEvent.is_recurring && type !== "all";
           await plannedEventsApi.delete(plannedEvent.id, {
@@ -440,7 +418,6 @@ export default function PlannedEventModal({
               : undefined,
           });
 
-          // 显示成功提示
           const deleteTypeText = {
             single: t("eventModal.deleteTypes.single"),
             all_future: t("eventModal.deleteTypes.allFuture"),
@@ -455,8 +432,8 @@ export default function PlannedEventModal({
             }),
           );
 
-          onSave(); // Refresh the parent component
-          onClose(); // Close the modal
+          onSave();
+          onClose();
         });
       } catch (err) {
         const errorMessage =
@@ -465,7 +442,6 @@ export default function PlannedEventModal({
             : t("eventModal.errors.deleteFailed");
         setError(errorMessage);
 
-        // 显示错误提示
         toast.showError(
           t("eventModal.errors.deleteTitle"),
           t("eventModal.errors.saveMessage", { error: errorMessage }),
@@ -477,9 +453,6 @@ export default function PlannedEventModal({
     [plannedEvent, withLoading, onSave, onClose, toast, setError, t],
   );
 
-  /**
-   * Handle delete button click
-   */
   const handleDeleteClick = useCallback(() => {
     if (!plannedEvent) return;
 
@@ -490,7 +463,6 @@ export default function PlannedEventModal({
     }
   }, [plannedEvent, handleDelete]);
 
-  // Optimize delete button click handler for delete confirm
   const handleDeleteConfirm = useCallback(() => {
     handleDelete(deleteType);
   }, [handleDelete, deleteType]);
@@ -502,12 +474,10 @@ export default function PlannedEventModal({
     }
   }, [loading, onClose, setError]);
 
-  // Optimize error dismiss handler
   const handleErrorDismiss = useCallback(() => {
     setError(null);
   }, [setError]);
 
-  // Optimize delete confirm close handler
   const handleDeleteConfirmClose = useCallback(() => {
     setShowDeleteConfirm(false);
   }, []);
@@ -539,12 +509,10 @@ export default function PlannedEventModal({
         />
       }
     >
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="space-y-3 sm:space-y-4 lg:space-y-5"
       >
-        {/* 1. 关联任务 - 放在最上方 */}
         <div>
           <TaskSelector
             {...taskSelectorProps}
@@ -553,7 +521,6 @@ export default function PlannedEventModal({
           />
         </div>
 
-        {/* 2. 标题 + 领域 - 响应式排列 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {/* Title - 移动端全宽，平板占1/2，桌面占2/3 */}
           <div className="sm:col-span-2 lg:col-span-2">
@@ -587,10 +554,8 @@ export default function PlannedEventModal({
           </div>
         </div>
 
-        {/* 3. 时间设置 */}
         <div className="bg-base-200 rounded-lg p-3 sm:p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {/* All day toggle */}
             <div className="sm:col-span-2">
               <Checkbox
                 id="is_all_day"
@@ -613,7 +578,6 @@ export default function PlannedEventModal({
               />
             </div>
 
-            {/* Start time */}
             <div>
               <label
                 htmlFor="start-time-selector"
@@ -645,7 +609,6 @@ export default function PlannedEventModal({
               />
             </div>
 
-            {/* End time */}
             {!formData.is_all_day && (
               <div>
                 <label
@@ -680,7 +643,6 @@ export default function PlannedEventModal({
           </div>
         </div>
 
-        {/* 4. 循环设置 */}
         {allowScopedEditing && (
           <div className="bg-base-200 rounded-lg p-3 sm:p-4 space-y-3">
             <div className="text-sm  text-base-content">

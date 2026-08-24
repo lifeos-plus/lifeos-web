@@ -22,10 +22,6 @@ export const MENSTRUAL_SYMPTOM_OPTIONS = [
   "constipation",
 ] as const;
 
-/**
- * Render one menstrual symptom for display: known symptom codes map to
- * translated labels, while user-entered custom symptoms pass through raw.
- */
 export function displaySymptom(
   symptom: string,
   translate: (key: string) => string,

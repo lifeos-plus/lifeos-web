@@ -19,7 +19,6 @@ interface RecurrenceSelectorProps {
   startDate?: Date; // Used for intelligent defaults
 }
 
-// Predefined recurrence presets
 const RECURRENCE_PRESETS = [
   { preset: "none", rrule: "" },
   { preset: "daily", rrule: "FREQ=DAILY" },
@@ -53,7 +52,6 @@ export default function RecurrenceSelector({
     weekdays: [],
   });
 
-  // Initialize component state based on current RRULE value
   useEffect(() => {
     if (value) {
       const matchingPreset = RECURRENCE_PRESETS.find(
@@ -65,7 +63,6 @@ export default function RecurrenceSelector({
       } else {
         setSelectedPreset("custom");
         setShowCustom(true);
-        // Parse existing RRULE to populate custom config
         parseRRuleToCustomConfig(value);
       }
     } else {
@@ -74,7 +71,6 @@ export default function RecurrenceSelector({
     }
   }, [value]);
 
-  // Parse RRULE string to custom configuration (basic implementation)
   const parseRRuleToCustomConfig = (rrule: string) => {
     // This is a simplified parser - in production you might want a more robust solution
     const parts = rrule.split(";");
@@ -126,7 +122,6 @@ export default function RecurrenceSelector({
     setCustomConfig(config as CustomRecurrenceConfig);
   };
 
-  // Generate intelligent default description based on start date
   const getIntelligentDescription = (preset: string): string => {
     if (!startDate) return t(`recurrence.${preset}`);
 
@@ -153,7 +148,6 @@ export default function RecurrenceSelector({
     }
   };
 
-  // Handle preset selection
   const handlePresetChange = (preset: string) => {
     setSelectedPreset(preset);
 
@@ -169,7 +163,6 @@ export default function RecurrenceSelector({
     }
   };
 
-  // Generate RRULE from custom configuration
   const generateCustomRRule = (config: CustomRecurrenceConfig): string => {
     let rrule = `FREQ=${config.frequency}`;
 
@@ -200,7 +193,6 @@ export default function RecurrenceSelector({
     return rrule;
   };
 
-  // Generate description from custom configuration
   const generateCustomDescription = (
     config: CustomRecurrenceConfig,
   ): string => {
@@ -264,7 +256,6 @@ export default function RecurrenceSelector({
     }
   };
 
-  // Handle custom configuration changes
   const handleCustomConfigChange = (
     updates: Partial<CustomRecurrenceConfig>,
   ) => {
@@ -277,7 +268,6 @@ export default function RecurrenceSelector({
 
   return (
     <div className="space-y-4">
-      {/* Preset Selection */}
       <div>
         <EnumSelect
           id="recurrence-preset-select"
@@ -294,14 +284,12 @@ export default function RecurrenceSelector({
         />
       </div>
 
-      {/* Custom Configuration */}
       {showCustom && (
         <div className="border-t border-base-300 pt-4 space-y-4">
           <h4 className="text-sm  text-base-content/70">
             {t("recurrence.customTitle")}
           </h4>
 
-          {/* Frequency Selection */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <EnumSelect
@@ -346,7 +334,6 @@ export default function RecurrenceSelector({
             </div>
           </div>
 
-          {/* Weekly Configuration */}
           {customConfig.frequency === "WEEKLY" && (
             <div>
               <label className={`${FORM_LABEL_CLASS} mb-2`}>
@@ -382,7 +369,6 @@ export default function RecurrenceSelector({
             </div>
           )}
 
-          {/* Monthly Configuration */}
           {customConfig.frequency === "MONTHLY" && (
             <div>
               <label className={`${FORM_LABEL_CLASS} mb-2`}>
@@ -490,7 +476,6 @@ export default function RecurrenceSelector({
             </div>
           )}
 
-          {/* Yearly Configuration */}
           {customConfig.frequency === "YEARLY" && (
             <div>
               <EnumSelect
@@ -516,7 +501,6 @@ export default function RecurrenceSelector({
         </div>
       )}
 
-      {/* Preview */}
       {selectedPreset !== "none" && selectedPreset !== "custom" && (
         <div className="text-sm bg-base-200 p-2 rounded">
           {t("recurrence.previewPrefix")}

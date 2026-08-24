@@ -7,12 +7,7 @@ import type { UUID } from "@/types/primitive";
 
 const DEFAULT_INBOX_VISION_KEY = "todos.default_inbox_vision";
 
-/**
- * Hook to get and manage user's default inbox vision preference
- * @returns Object with defaultInboxVision value, available visions, loading state, and save function
- */
 export function useDefaultInboxVision() {
-  // 1. 获取可用愿景列表
   const page = 1;
   const size = 100;
   const {
@@ -33,7 +28,6 @@ export function useDefaultInboxVision() {
     [availableVisionsRaw],
   );
 
-  // 2. 使用 usePreferenceWithBootstrap 管理偏好设置
   const {
     value: defaultInboxVision,
     loading: preferenceLoading,
@@ -57,17 +51,14 @@ export function useDefaultInboxVision() {
     },
   });
 
-  // 3. 保存默认收件箱愿景
   const saveDefaultInboxVision = async (visionId: UUID | null) => {
     return await saveValue(visionId);
   };
 
-  // 4. 更新默认收件箱愿景本地状态
   const updateDefaultInboxVision = (visionId: UUID | null) => {
     updateValue(visionId);
   };
 
-  // 5. 重置为默认
   const resetToDefault = () => {
     updateValue(null);
   };
