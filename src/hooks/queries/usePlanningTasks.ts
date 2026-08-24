@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   tasksApi,
   type Task,
+  type TaskWithSubtasks,
   toISODate,
 } from "@/services/api/tasks";
 import { tasksKeys } from "@/services/api/queryKeys";

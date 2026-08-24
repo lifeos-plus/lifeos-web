@@ -61,24 +61,6 @@ const deepUpsertTaskInValue = (
     return { result: value, changed: false };
   }
 
-  if (value instanceof Map) {
-    const taskKey = String(taskId);
-    if (!value.has(taskKey)) {
-      return { result: value, changed: false };
-    }
-    const { result, changed } = patchTaskRelationshipCountsInValue(
-      value.get(taskKey),
-      taskId,
-      patch,
-    );
-    if (!changed) {
-      return { result: value, changed: false };
-    }
-    const nextMap = new Map(value);
-    nextMap.set(taskKey, result);
-    return { result: nextMap, changed: true };
-  }
-
   if (isTaskLike(value)) {
     const originalTask = value as Task;
     let nextTask: Task = originalTask;
@@ -215,6 +197,24 @@ const patchTaskRelationshipCountsInValue = (
       return { result: nextArray, changed: true };
     }
     return { result: value, changed: false };
+  }
+
+  if (value instanceof Map) {
+    const taskKey = String(taskId);
+    if (!value.has(taskKey)) {
+      return { result: value, changed: false };
+    }
+    const { result, changed } = patchTaskRelationshipCountsInValue(
+      value.get(taskKey),
+      taskId,
+      patch,
+    );
+    if (!changed) {
+      return { result: value, changed: false };
+    }
+    const nextMap = new Map(value);
+    nextMap.set(taskKey, result);
+    return { result: nextMap, changed: true };
   }
 
   if (isTaskLike(value)) {
