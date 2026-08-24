@@ -52,7 +52,7 @@ interface VisionManagerProps {
  * VisionManager - Component for managing visions and their tasks
  */
 const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
-  ({ statusFilter = "active", areaFilter }, ref) => {
+  ({ statusFilter, areaFilter }, ref) => {
     const { t } = useTranslation();
 
     // Use custom hook for vision management
