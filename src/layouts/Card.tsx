@@ -70,10 +70,18 @@ export interface CardAction {
 }
 
 interface CardProps {
-  /** 卡片标题（可为空；可为字符串或 React 元素；为空时不显示 Header 区域） */
+  /** 可为空；为空时不显示 Header 区域 */
   title?: string | React.ReactNode;
-  /** 加载状态，禁用所有交互 */
+  description?: string;
+  headerAction?: React.ReactNode;
+  footerActions?: CardAction[];
+  error?: string | null;
   loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+  children: React.ReactNode;
+  withTopBorder?: boolean;
+  size?: "sm" | "md" | "lg";
   /**
    * 质感等级 - 渐进式质感增强系统
    * - subtle: 基础质感，轻微增强（适用于密集布局）
@@ -81,6 +89,8 @@ interface CardProps {
    * - elevated: 高级质感，焦点卡片（重要内容、悬浮状态）
    */
   elevation?: "subtle" | "moderate" | "elevated";
+  contentOverflow?: "visible" | "auto" | "hidden" | "scroll";
+  contentClassName?: string;
 }
 
 const Card: React.FC<CardProps> = ({
