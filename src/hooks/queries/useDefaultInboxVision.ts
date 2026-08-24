@@ -21,9 +21,12 @@ export function useDefaultInboxVision() {
     error: visionsError,
   } = useQuery({
     queryKey: visionsKeys.list({ status: "active", page, size }),
-    queryFn: () => visionsApi.getAll("active", page, size),
-    select: (data) =>
-      (data.items ?? []).map((v) => ({ id: v.id, name: v.name })),
+    queryFn: async () => {
+      const response = await visionsApi.getAll("active", page, size);
+      // 与 useVisionManager 共享同一缓存 key，统一返回 items 数组形状
+      return response.items ?? [];
+    },
+    select: (items) => items.map((v) => ({ id: v.id, name: v.name })),
   });
   const availableVisions = useMemo(
     () => availableVisionsRaw ?? [],

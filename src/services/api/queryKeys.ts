@@ -18,6 +18,9 @@ export const notesKeys = {
     page?: number;
     size?: number;
   }) => [...notesKeys.lists(), filters] as const,
+  /** Distinct from the infinite list key, which stores InfiniteData pages. */
+  associatedList: (filters: Record<string, unknown>) =>
+    [...notesKeys.all, "associated-list", filters] as const,
   advancedSearch: (filters: NoteAdvancedSearchPayload) =>
     [...notesKeys.all, "advanced-search", filters] as const,
   stats: () => [...notesKeys.all, "stats"] as const,
@@ -204,6 +207,9 @@ export const habitsKeys = {
   lists: () => [...habitsKeys.all, "list"] as const,
   list: (filters: { statusFilter?: string; page?: number; size?: number }) =>
     [...habitsKeys.lists(), filters] as const,
+  /** Distinct from list keys: the payload is an object map, not a list. */
+  associations: () =>
+    [...habitsKeys.all, "habit-task-associations"] as const,
   actionsInRange: (filters: {
     startDate: string;
     endDate: string;
