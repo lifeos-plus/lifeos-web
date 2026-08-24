@@ -1,4 +1,3 @@
-// Common, cross-domain API types
 import type { components } from "@/services/api/generated/schema";
 
 type PersonSummaryTransport = components["schemas"]["PersonSummaryResponse"];

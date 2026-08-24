@@ -62,20 +62,15 @@ const replaceTaskInHierarchy = (
 
   return { changed, tasks: nextTasks };
 };
-/**
- * Custom hook for managing vision-related state and operations.
- * statusFilter undefined means "all" (backend receives no status_filter).
- */
+// statusFilter undefined means "all" (backend receives no status_filter)
 export const useVisionManager = (statusFilter?: string) => {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { t } = useTranslation();
 
-  // Confirmation states
   const [deletingVision, setDeletingVision] = useState<Vision | null>(null);
   const [harvestingVision, setHarvestingVision] = useState<Vision | null>(null);
 
-  // UI state management with persistence
   const {
     expandedVisions,
     expandedTasksByScope,
@@ -111,14 +106,13 @@ export const useVisionManager = (statusFilter?: string) => {
       const response = await habitsApi.getHabitTaskAssociations();
       return response.associations;
     },
-    enabled: visions.length > 0, // 只有当有愿景时才加载
+    enabled: visions.length > 0,
   });
   const habitTaskAssociations = useMemo(
     () => habitTaskAssociationsData ?? {},
     [habitTaskAssociationsData],
   );
 
-  // 3. 任务状态管理 - 使用本地状态存储已加载的任务
   const [visionTasks, setVisionTasks] = useState<
     Record<UUID, TaskWithSubtasks[]>
   >({});
@@ -148,7 +142,6 @@ export const useVisionManager = (statusFilter?: string) => {
           return prev;
         }
 
-        // 同时更新React Query缓存中的数据
         const hierarchyKey = visionsKeys.hierarchy(targetVisionId);
         queryClient.setQueryData(
           hierarchyKey,
@@ -170,7 +163,6 @@ export const useVisionManager = (statusFilter?: string) => {
     [setVisionTasks, queryClient],
   );
 
-  // Error handler
   const handleError = useCallback(
     (error: unknown, defaultMessage: string) => {
       const message = error instanceof Error ? error.message : defaultMessage;
@@ -180,12 +172,10 @@ export const useVisionManager = (statusFilter?: string) => {
     [toast],
   );
 
-  // 刷新愿景数据
   const loadVisions = useCallback(async () => {
     await invalidateVisionsLists(queryClient);
   }, [queryClient]);
 
-  // 4. 任务加载逻辑 - 使用 useQuery 获取特定愿景的任务
   const loadVisionTasks = useCallback(
     async (visionId: UUID, force: boolean = false) => {
       if (!force && visionTasks[visionId]) {
@@ -216,12 +206,10 @@ export const useVisionManager = (statusFilter?: string) => {
         let loadingTimeout: number | null = null;
 
         if (force) {
-          // 对于强制刷新（如创建任务后），延迟300ms再显示loading
           loadingTimeout = window.setTimeout(() => {
             setVisionTasksLoading((prev) => ({ ...prev, [visionId]: true }));
           }, 300);
         } else {
-          // 对于初次加载，立即显示loading
           setVisionTasksLoading((prev) => ({ ...prev, [visionId]: true }));
         }
 
@@ -238,7 +226,6 @@ export const useVisionManager = (statusFilter?: string) => {
           });
         }
 
-        // 清除延迟的loading定时器
         if (loadingTimeout) {
           clearTimeout(loadingTimeout);
         }
@@ -248,14 +235,12 @@ export const useVisionManager = (statusFilter?: string) => {
           [visionId]: hierarchy.root_tasks,
         }));
 
-        // 确保loading状态被重置
         setVisionTasksLoading((prev) => ({
           ...prev,
           [visionId]: false,
         }));
       } catch (err) {
         handleError(err, `Failed to load tasks for vision ${visionId}`);
-        // 确保在错误情况下也重置loading状态
         setVisionTasksLoading((prev) => ({
           ...prev,
           [visionId]: false,
@@ -297,7 +282,6 @@ export const useVisionManager = (statusFilter?: string) => {
 
   // 习惯关联数据已通过 useQuery 自动管理，无需手动加载
 
-  // Load tasks for expanded visions when visions are loaded and UI state is ready
   // Coalesce expanded tasks auto-load to once per vision per mount
   useEffect(() => {
     if (!uiStateLoaded || visions.length === 0 || expandedVisions.size === 0) {
@@ -316,12 +300,11 @@ export const useVisionManager = (statusFilter?: string) => {
       for (const id of toLoad) {
         await loadVisionTasks(id);
       }
-    }, 300); // 300ms delay to ensure layout is stable
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [uiStateLoaded, visions, expandedVisions, loadVisionTasks, visionTasks]);
 
-  // Restore scroll position when UI state is loaded
   useEffect(() => {
     if (uiStateLoaded) {
       // Small delay to ensure DOM is ready
@@ -332,7 +315,6 @@ export const useVisionManager = (statusFilter?: string) => {
     }
   }, [uiStateLoaded, restoreScrollPosition]);
 
-  // 5. 愿景操作 - 使用 useMutation
   const requestDeleteVision = useCallback((vision: Vision) => {
     setDeletingVision(vision);
   }, []);
@@ -412,13 +394,11 @@ export const useVisionManager = (statusFilter?: string) => {
     harvestVisionMutation.mutate(payload);
   }, [harvestingVision, harvestVisionMutation]);
 
-  // Enhanced expansion state management with task loading
   const handleVisionExpansion = useCallback(
     async (visionId: UUID) => {
       const isCurrentlyExpanded = expandedVisions.has(visionId);
 
       if (!isCurrentlyExpanded) {
-        // Load tasks when expanding
         await loadVisionTasks(visionId);
       }
 
@@ -428,7 +408,6 @@ export const useVisionManager = (statusFilter?: string) => {
   );
 
   return {
-    // State
     visions,
     loading,
     error: error?.message || null,
@@ -440,7 +419,6 @@ export const useVisionManager = (statusFilter?: string) => {
     deletingVision,
     harvestingVision,
 
-    // Operations
     loadVisions,
     loadVisionTasks,
     requestDeleteVision,
@@ -452,7 +430,6 @@ export const useVisionManager = (statusFilter?: string) => {
     toggleVisionExpansion: handleVisionExpansion,
     toggleTaskExpansion,
 
-    // Utility
     handleError,
     setVisionTasks,
     applyTaskAttributesUpdate,

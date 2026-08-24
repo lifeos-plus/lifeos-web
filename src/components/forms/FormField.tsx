@@ -17,11 +17,6 @@ interface FormFieldProps {
   children: React.ReactNode;
 }
 
-/**
- * FormField - 表单字段容器组件
- *
- * 统一封装表单控件的标签、说明、错误展示与布局
- */
 const FormField: React.FC<FormFieldProps> = ({
   label,
   htmlFor,

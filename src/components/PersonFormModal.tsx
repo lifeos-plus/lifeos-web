@@ -21,14 +21,6 @@ interface PersonFormModalProps {
   onRequestDelete?: (person: Person) => void;
 }
 
-/**
- * PersonFormModal - Modal component for creating/editing persons
- *
- * This component provides a modal interface for:
- * - Creating new persons
- * - Editing existing persons
- * - Managing person tags and relationships
- */
 const PersonFormModal: React.FC<PersonFormModalProps> = ({
   isOpen,
   onClose,
@@ -38,7 +30,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Form state
   const [formData, setFormData] = useState<PersonCreate>({
     name: "",
     nicknames: [],
@@ -116,7 +107,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     },
     [refreshPersonTags],
   );
-  // Removed local formError; rely on modal state's error
 
   const handleClose = () => {
     if (!loading) {
@@ -125,7 +115,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     }
   };
 
-  // Initialize form data when editing person changes
   useEffect(() => {
     if (editingPerson) {
       const locationTags =
@@ -154,7 +143,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     setError(null);
   }, [editingPerson, isOpen, setError]);
 
-  // Handle form input changes
   const handleInputChange = (
     field: keyof PersonCreate,
     value: string | string[] | number[],
@@ -165,7 +153,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     }));
   };
 
-  // Handle nickname input
   const addNickname = () => {
     if (
       nicknameInput.trim() &&
@@ -186,7 +173,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     );
   };
 
-  // Handle tag changes from TagSelector
   const handleTagsChange = (tagIds: UUID[]) => {
     handleInputChange("tag_ids", tagIds);
   };
@@ -195,8 +181,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
     setLocationTagIds(tagIds);
   };
 
-  // Handle creating new tag
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -223,7 +207,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           saved = await personsApi.update(editingPerson.id, cleanedData);
           onSuccess({ updatedPerson: saved, created: false });
 
-          // 显示成功提示
           toast.showSuccess(
             t("personForm.updateSuccess"),
             t("personForm.updateSuccessMessage", { name: cleanedData.name }),
@@ -232,7 +215,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           saved = (await personsApi.create(cleanedData)) as unknown as Person;
           onSuccess({ updatedPerson: saved, created: true });
 
-          // 显示成功提示
           toast.showSuccess(
             t("personForm.createSuccess"),
             t("personForm.createSuccessMessage", { name: cleanedData.name }),
@@ -246,7 +228,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
         err instanceof Error ? err.message : "Failed to save person";
       setError(errorMessage);
 
-      // 显示错误提示
       toast.showError(
         t("personForm.saveError"),
         t("eventModal.errors.saveMessage", { error: errorMessage }),
@@ -291,7 +272,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
         onSubmit={handleSubmit}
         className="space-y-3 sm:space-y-4 lg:space-y-5"
       >
-        {/* Name Field */}
         <FormField label={t("personDetail.name")} htmlFor="person-name-input">
           <TextInput
             id="person-name-input"
@@ -304,7 +284,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           />
         </FormField>
 
-        {/* Nicknames Field */}
         <FormField
           label={t("personDetail.nicknames")}
           htmlFor="person-nickname-input"
@@ -343,7 +322,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           </div>
         </FormField>
 
-        {/* Birth Date Field */}
         <FormField
           label={t("personDetail.birthDate")}
           htmlFor="person-birth-date-input"
@@ -358,7 +336,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           />
         </FormField>
 
-        {/* Location Tags Field */}
         <div>
           <TagSelector
             availableTags={availableLocationTags}
@@ -373,7 +350,6 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
           />
         </div>
 
-        {/* Tags Field */}
         <div>
           <TagSelector
             availableTags={availableRelationshipTags}

@@ -1,6 +1,4 @@
 /**
- * Interface font options.
- *
  * Fonts are plain CSS font-family stacks (no web-font downloads needed), so
  * the app stays local-first. The catalog covers generic typefaces (sans /
  * serif / mono) as well as named fonts optimized for Simplified Chinese, so

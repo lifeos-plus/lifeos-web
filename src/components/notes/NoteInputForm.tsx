@@ -34,7 +34,7 @@ export function NoteInputForm({
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Memoize filterStatus to prevent unnecessary re-renders
+  // Memoize to prevent unnecessary re-renders
   const taskFilterStatus = useMemo(() => ACTIVE_TASK_STATUSES, []);
 
   const handleReset = useCallback(() => {
@@ -45,9 +45,6 @@ export function NoteInputForm({
     textareaRef.current?.focus();
   }, []);
 
-  /**
-   * Handle form submission
-   */
   const handleSubmit = useCallback(async () => {
     if (!content.trim()) return;
 
@@ -59,7 +56,6 @@ export function NoteInputForm({
         selectedTaskId !== null ? selectedTaskId : undefined,
       );
 
-      // Clear form after successful creation
       handleReset();
     } catch (error) {
       // Error handling is done by the parent component
@@ -74,9 +70,6 @@ export function NoteInputForm({
     handleReset,
   ]);
 
-  /**
-   * Handle Enter key press for quick note creation
-   */
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
@@ -87,9 +80,6 @@ export function NoteInputForm({
     [handleSubmit],
   );
 
-  /**
-   * Handle creating new note tag
-   */
   const handleCreateNoteTag = useCallback(
     async (tagName: string): Promise<Tag> => {
       return await onCreateTag(tagName);

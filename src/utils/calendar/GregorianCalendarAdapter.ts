@@ -19,10 +19,6 @@ import {
   shiftMonthRange,
 } from "@/utils/datetime";
 
-/**
- * Gregorian calendar adapter implementation
- * Handles all calendar operations for the standard Gregorian calendar
- */
 export class GregorianCalendarAdapter implements CalendarAdapter {
   private firstDayOfWeek: number;
   private sevenYearAnchorDate: string;
@@ -167,7 +163,6 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
     const yearTasks = this.getTasksByPlanningType(tasks, "year");
     const monthTasks = this.getTasksByPlanningType(tasks, "month");
 
-    // Filter year tasks for current year
     const yearStart = new Date(year, 0, 1);
     const yearEnd = new Date(year, 11, 31);
     const yearTasksInCurrentYear = yearTasks.filter((task) =>
@@ -182,7 +177,6 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
       children: [],
     };
 
-    // Add 12 months
     for (let month = 0; month < 12; month++) {
       const monthDate = new Date(year, month, 1);
       const monthEnd = new Date(year, month + 1, 0);
@@ -371,7 +365,6 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
     _baseDate?: Date,
     monthNames?: string[],
   ): Array<{ index: number; name: string }> {
-    // Use provided month names or default to English month names
     const defaultMonthNames = [
       "January",
       "February",
@@ -391,7 +384,7 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
 
     return Array.from({ length: 12 }, (_, i) => ({
       index: i + 1,
-      name: namesToUse[i] || `Month ${i + 1}`, // Fallback if month name not provided
+      name: namesToUse[i] || `Month ${i + 1}`,
     }));
   }
 
@@ -407,7 +400,6 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
     // Convert firstDayOfWeek to JavaScript day format (0=Sunday, 1=Monday, etc.)
     const jsFirstDay = firstDayOfWeek === 7 ? 0 : firstDayOfWeek;
 
-    // Calculate days to first day of week
     const daysToFirstDay = (dayOfWeek - jsFirstDay + 7) % 7;
 
     const firstDay = new Date(date);
@@ -456,23 +448,14 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
     return weeks;
   }
 
-  /**
-   * Get the current week range based on Gregorian calendar
-   */
   getCurrentWeekRange(): { start: string; end: string } {
     return getCurrentWeekRange(this.firstDayOfWeek);
   }
 
-  /**
-   * Get the current month range based on Gregorian calendar
-   */
   getCurrentMonthRange(): { start: string; end: string } {
     return getCurrentMonthRangeLocal();
   }
 
-  /**
-   * Shift month range by specified number of months for Gregorian calendar
-   */
   shiftMonthRange(
     startDate: string,
     deltaMonths: number,

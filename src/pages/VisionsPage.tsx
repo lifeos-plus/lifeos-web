@@ -18,13 +18,6 @@ import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import { useAllVisions } from "@/hooks/queries/useAllVisions";
 import type { UUID } from "@/types/primitive";
 
-/**
- * VisionPage - Independent page for vision management
- *
- * This page provides a dedicated interface for managing user visions,
- * including creating, editing, and tracking vision progress.
- * Similar to NotesPage and TimeLogPage, this is a standalone feature page.
- */
 const VisionPage: React.FC = () => {
   const { t } = useTranslation();
   const vmRef = useRef<VisionManagerHandle>(null);

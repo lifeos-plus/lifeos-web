@@ -28,15 +28,6 @@ interface PersonManagerProps {
 const PERSON_ROW_CELL_HOVER_CLASS =
   "transition-colors group-hover:bg-primary/10 group-focus-within:bg-primary/10";
 
-/**
- * PersonManager - Component for managing persons and their relationships
- *
- * This component provides a comprehensive interface for:
- * - Creating new persons
- * - Editing existing persons
- * - Viewing person details and anniversaries
- * - Displaying filtered persons list
- */
 const PersonManager: React.FC<PersonManagerProps> = ({
   filteredByTag = false,
   selectedTagId = null,
@@ -46,7 +37,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // State declarations
   const [actionError, setActionError] = useState<string | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -59,7 +49,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  // Sorting state
   const [sortField, setSortField] = useState<
     "name" | "nickname" | "location" | "birth_date" | "tags"
   >("name");
@@ -113,10 +102,8 @@ const PersonManager: React.FC<PersonManagerProps> = ({
 
   const combinedError = actionError || listError?.message || null;
 
-  // Debounced search function
   const debouncedSearch = useCallback(
     (value: string) => {
-      // Clear existing timer
       if (debounceTimer.current) {
         window.clearTimeout(debounceTimer.current);
       }
@@ -126,10 +113,8 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         return;
       }
 
-      // Set up new timer for debounced search
       debounceTimer.current = window.setTimeout(() => {
         setSearchQuery(value.trim());
-        // Notify parent component about search query change
         onSearchQueryChange?.(value.trim());
       }, 300); // 300ms delay for better responsiveness
     },
@@ -148,7 +133,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     handleCreateClick();
   }, [createRequestSignal]);
 
-  // Handle form modal success
   const handleFormSuccess = (_result?: {
     updatedPerson?: Person;
     created?: boolean;
@@ -157,13 +141,11 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     setEditingPerson(null);
   };
 
-  // Handle opening create form
   const handleCreateClick = () => {
     setEditingPerson(null);
     setShowFormModal(true);
   };
 
-  // Handle opening edit form
   const handleEditClick = async (person: PersonSummary | Person) => {
     try {
       setActionError(null);
@@ -180,7 +162,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     }
   };
 
-  // Handle person deletion (unified confirm dialog)
   const handleDelete = (person: PersonSummary) => {
     setEditingPerson(null);
     setDeletingPerson(person);
@@ -192,7 +173,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     setDeletingPerson(null);
   };
 
-  // Handle person selection for detailed view
   const handlePersonSelect = async (person: PersonSummary) => {
     try {
       setActionError(null);
@@ -215,11 +195,10 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     setNotePerson(null);
   }, []);
 
-  // Handle search input with IME support
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchInput(value); // Update input immediately for UI responsiveness
-    debouncedSearch(value); // Trigger debounced search
+    debouncedSearch(value);
   };
 
   const handleCompositionStart = () => {
@@ -236,19 +215,15 @@ const PersonManager: React.FC<PersonManagerProps> = ({
     debouncedSearch(value);
   };
 
-  // Handle sorting
   const handleSort = (field: typeof sortField) => {
     if (sortField === field) {
-      // Toggle direction if same field
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      // Set new field with ascending direction
       setSortField(field);
       setSortDirection("asc");
     }
   };
 
-  // Sort persons based on current sort settings
   const filteredAndSortedPersons = React.useMemo(() => {
     const sorted = [...persons].sort((a, b) => {
       let aValue: string | number = "";
@@ -338,7 +313,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         </div>
       )}
 
-      {/* Persons List using ListContainer */}
       <ListContainer
         title={t("personManager.list", { count: total ?? persons.length })}
         headerAction={
@@ -385,7 +359,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         }
       >
         <div className="px-6 py-4">
-          {/* Clickable header row inside content to support sorting */}
           <div
             className="grid gap-0 bg-primary/10 border border-primary/20 rounded-md px-4 py-2 mb-2"
             style={{ gridTemplateColumns: "200px 200px 200px 160px 1fr 180px" }}
@@ -460,7 +433,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
             </div>
           </div>
 
-          {/* Data rows */}
           <div
             className="grid gap-y-2 gap-x-0"
             style={{ gridTemplateColumns: "200px 200px 200px 160px 1fr 180px" }}
@@ -587,7 +559,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         </div>
       </ListContainer>
 
-      {/* Person Detail Modal */}
       <PersonDetailModal
         person={selectedPerson}
         isOpen={!!selectedPerson}
@@ -595,7 +566,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         onEdit={handleEditClick}
       />
 
-      {/* Person Form Modal */}
       <PersonFormModal
         isOpen={showFormModal}
         onClose={() => setShowFormModal(false)}
@@ -610,7 +580,6 @@ const PersonManager: React.FC<PersonManagerProps> = ({
         preSelectedPersonIds={notePerson ? [notePerson.id] : undefined}
       />
 
-      {/* Confirmation Dialog */}
       {deletingPerson && (
         <ConfirmDialog
           isOpen={!!deletingPerson}

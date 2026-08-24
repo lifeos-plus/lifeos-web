@@ -99,13 +99,11 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
       const allFailedIds: UUID[] = [];
       const allErrors: string[] = [];
 
-      // 分批处理
       for (let i = 0; i < totalBatches; i++) {
         const startIndex = i * batchSize;
         const endIndex = Math.min(startIndex + batchSize, eventIds.length);
         const batchIds = eventIds.slice(startIndex, endIndex);
 
-        // 显示进度信息
         if (totalBatches > 1) {
           showInfo(
             t("batchEdit.title"),
@@ -220,7 +218,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
         }
       }
 
-      // 显示最终结果
       if (totalUpdated > 0) {
         const successTitle = t("batchEdit.success.title");
         const successMessage =
@@ -312,7 +309,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
 
   return (
     <ModalBase isOpen={isOpen} onClose={handleClose}>
-      {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl  text-base-content">
           {getModalTitle()}
@@ -345,7 +341,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
         )}
       </div>
 
-      {/* Edit Mode Selection */}
       <div className="mb-6">
         <label className={`${FORM_LABEL_CLASS} mb-3`}>
           {t("batchEdit.editType.label")}
@@ -374,9 +369,7 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="bg-base-100 rounded-lg p-4 mb-6 ">
-        {/* Persons Edit Mode */}
         {editMode === "person" && (
           <div className="space-y-4">
             <div>
@@ -420,7 +413,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
           </div>
         )}
 
-        {/* Title Edit Mode */}
         {editMode === "title" && (
           <div className="space-y-4">
             <div>
@@ -483,7 +475,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
           </div>
         )}
 
-        {/* Task Edit Mode */}
         {editMode === "task" && (
           <div className="space-y-4">
             <div>
@@ -529,7 +520,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
           </div>
         )}
 
-        {/* Area Edit Mode */}
         {editMode === "area" && (
           <div className="space-y-4">
             <div>
@@ -574,7 +564,6 @@ const BatchEditModal: React.FC<BatchEditModalProps> = ({
         )}
       </div>
 
-      {/* Action Buttons */}
       <div className="pt-4 border-t border-base-200">
         <ActionButtonGroup splitOpposite>
           <ActionButton

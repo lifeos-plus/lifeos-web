@@ -69,7 +69,6 @@ interface UseHabitsReturn {
 export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
   const queryClient = useQueryClient();
 
-  // 1. 获取习惯列表
   const {
     data: habitsData,
     isLoading,
@@ -87,7 +86,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
 
   const habits = habitsData || [];
 
-  // 2. 创建习惯
   const createHabitMutation = useMutation({
     mutationFn: (habit: HabitCreate) => habitsApi.create(habit),
     onSuccess: async (created) => {
@@ -102,7 +100,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     },
   });
 
-  // 3. 更新习惯
   const updateHabitMutation = useMutation({
     mutationFn: ({ id, habit }: { id: UUID; habit: HabitUpdate }) =>
       habitsApi.update(id, habit),
@@ -120,7 +117,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     },
   });
 
-  // 4. 删除习惯
   const deleteHabitMutation = useMutation({
     mutationFn: ({ id }: { id: UUID }) => habitsApi.delete(id),
     onSuccess: async (_, variables) => {
@@ -138,7 +134,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     },
   });
 
-  // 5. 更新行动状态
   const updateActionMutation = useMutation({
     mutationFn: ({
       habitId,
@@ -159,7 +154,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     },
   });
 
-  // 5. 更新行动状态
   const updateActionStatus = (
     habitId: UUID,
     action: HabitAction,
@@ -173,7 +167,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     });
   };
 
-  // 6. 更新行动备注
   const updateActionNotes = (
     habitId: UUID,
     action: HabitAction,
@@ -187,7 +180,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     });
   };
 
-  // 7. 创建习惯
   const createHabit = (habit: HabitCreate): Promise<Habit> => {
     return new Promise((resolve, reject) => {
       createHabitMutation.mutate(habit, {
@@ -201,7 +193,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     });
   };
 
-  // 8. 更新习惯
   const updateHabit = (id: UUID, habit: HabitUpdate): Promise<Habit> => {
     return new Promise((resolve, reject) => {
       updateHabitMutation.mutate(
@@ -218,7 +209,6 @@ export function useHabits(filters: UseHabitsFilters = {}): UseHabitsReturn {
     });
   };
 
-  // 9. 删除习惯
   const deleteHabit = (id: UUID) => {
     deleteHabitMutation.mutate({ id });
   };

@@ -48,7 +48,6 @@ export const addTaskToHierarchyCache = (
         };
       }
 
-      // 将新任务转换为TaskWithSubtasks格式
       const taskWithSubtasks: TaskWithSubtasks = {
         ...newTask,
         subtasks: [],
@@ -56,7 +55,6 @@ export const addTaskToHierarchyCache = (
         depth: 0,
       };
 
-      // 如果是根任务（没有parent_task_id），添加到根任务列表
       if (!newTask.parent_task_id) {
         return {
           ...oldData,
@@ -64,7 +62,6 @@ export const addTaskToHierarchyCache = (
         };
       }
 
-      // 如果是子任务，需要找到父任务并添加到其subtasks中
       const addToParent = (
         tasks: TaskWithSubtasks[],
         parentId: UUID,

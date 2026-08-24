@@ -10,9 +10,6 @@ interface EmptyStateProps {
   className?: string;
 }
 
-/**
- * EmptyState - Reusable component for displaying empty states
- */
 const EmptyState: React.FC<EmptyStateProps> = ({
   icon,
   title,

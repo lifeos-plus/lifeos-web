@@ -3,15 +3,10 @@ import React, { forwardRef } from "react";
 type TextAreaResize = "none" | "both" | "horizontal" | "vertical" | "y";
 
 type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-  /** DaisyUI control size. */
   size?: "sm" | "md" | "lg";
-  /** CSS resize behavior. */
   resize?: TextAreaResize;
 };
 
-/**
- * Standard DaisyUI textarea.
- */
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (
     { className = "", size = "md", resize = "none", rows = 3, ...rest },

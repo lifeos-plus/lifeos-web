@@ -105,7 +105,6 @@ const NotesAdvancedSearchPanel = ({
       }
     }
 
-    // 如果搜索触发标志为true，则执行搜索
     if (searchTriggerRef.current) {
       searchTriggerRef.current = false;
       onSearch();
@@ -122,7 +121,6 @@ const NotesAdvancedSearchPanel = ({
     hasPendingKeywordRef.current = false;
     searchTriggerRef.current = true;
 
-    // 总是触发参数更新
     onParamsChange({
       ...paramsRef.current,
       keyword: currentDraft,
@@ -542,7 +540,6 @@ const NotesAdvancedSearchPanel = ({
               variant="outline"
               onClick={() => {
                 commitKeywordForExport();
-                // 使用相同的策略来确保参数更新后再执行导出
                 setTimeout(() => {
                   onExport();
                 }, 0);

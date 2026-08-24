@@ -7,9 +7,6 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-/**
- * LoadingSpinner - Reusable component for displaying loading states
- */
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message,
   size = "md",

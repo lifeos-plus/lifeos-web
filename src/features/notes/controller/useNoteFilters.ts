@@ -28,7 +28,6 @@ export function useNoteFilters(
   >(null);
   const [showUntaggedOnly, setShowUntaggedOnly] = useState<boolean>(false);
 
-  // Filter notes based on selected tag or person (for display purposes)
   // This maintains the original behavior where clicking tag/person immediately filters
   const filteredNotes = useMemo(() => {
     if (showUntaggedOnly) {
@@ -81,7 +80,6 @@ export function useNoteFilters(
     return personStats;
   }, [stats]);
 
-  // Get unique persons from server statistics
   const uniquePersons = useMemo(() => {
     if (!stats) return [];
 
@@ -90,7 +88,7 @@ export function useNoteFilters(
         id: personStat.id,
         name: personStat.name,
         display_name: personStat.display_name,
-        primary_nickname: personStat.display_name, // Use display_name as primary nickname
+        primary_nickname: personStat.display_name,
         birth_date: null,
         location: null,
         tags: [],
@@ -98,18 +96,15 @@ export function useNoteFilters(
       .sort((a, b) => a.display_name.localeCompare(b.display_name));
   }, [stats]);
 
-  // Handle tag click for filtering (immediate effect)
   const handleTagClick = useCallback(
     async (tag: Tag) => {
       if (selectedFilterTags.some((t) => t.id === tag.id)) {
-        // If clicking the same tag, clear the filter
         setSelectedFilterTags([]);
         setSelectedFilterPersons([]);
         setSelectedFilterTaskId(null);
         setShowUntaggedOnly(false);
         await onLoadFilteredNotes(null);
       } else {
-        // Set new filter tag and clear person filter and untagged filter
         setSelectedFilterTags([tag]);
         setSelectedFilterPersons([]);
         setSelectedFilterTaskId(null);
@@ -120,18 +115,15 @@ export function useNoteFilters(
     [selectedFilterTags, onLoadFilteredNotes],
   );
 
-  // Handle person click for filtering (immediate effect)
   const handlePersonClick = useCallback(
     async (person: PersonSummary) => {
       if (selectedFilterPersons.some((p) => p.id === person.id)) {
-        // If clicking the same person, clear the filter
         setSelectedFilterPersons([]);
         setSelectedFilterTags([]);
         setSelectedFilterTaskId(null);
         setShowUntaggedOnly(false);
         await onLoadFilteredNotes(null);
       } else {
-        // Set new filter person and clear tag filter and untagged filter
         setSelectedFilterPersons([person]);
         setSelectedFilterTags([]);
         setSelectedFilterTaskId(null);
@@ -142,7 +134,6 @@ export function useNoteFilters(
     [selectedFilterPersons, onLoadFilteredNotes],
   );
 
-  // Handle task click for filtering (immediate effect)
   const handleTaskClick = useCallback(
     async (taskId: UUID) => {
       if (selectedFilterTaskId === String(taskId)) {
@@ -162,16 +153,13 @@ export function useNoteFilters(
     [selectedFilterTaskId, onLoadFilteredNotes],
   );
 
-  // Handle untagged filter toggle
   const handleUntaggedToggle = useCallback(async () => {
     if (showUntaggedOnly) {
-      // If currently showing untagged, clear all filters
       setShowUntaggedOnly(false);
       setSelectedFilterTags([]);
       setSelectedFilterPersons([]);
       await onLoadFilteredNotes(null);
     } else {
-      // Set untagged filter and clear other filters
       setShowUntaggedOnly(true);
       setSelectedFilterTags([]);
       setSelectedFilterPersons([]);
@@ -179,12 +167,10 @@ export function useNoteFilters(
     }
   }, [showUntaggedOnly, onLoadFilteredNotes]);
 
-  // Apply text search filter to backend (independent of tag/person filters)
   const applyTextSearch = useCallback(async () => {
-    setIsSearchApplied(true); // Mark that search has been applied
+    setIsSearchApplied(true);
 
     if (searchKeyword.trim()) {
-      // Apply text search while preserving current tag/person/untagged filters
       const filter: {
         tag_id?: UUID;
         person_id?: UUID;
@@ -209,7 +195,6 @@ export function useNoteFilters(
 
       await onLoadFilteredNotes(filter);
     } else {
-      // Clear text search, but keep tag/person/untagged filters
       const filter: {
         tag_id?: UUID;
         person_id?: UUID;
@@ -245,12 +230,11 @@ export function useNoteFilters(
     onLoadFilteredNotes,
   ]);
 
-  // Clear all filters
   const clearAllFilters = useCallback(async () => {
     setSelectedFilterTags([]);
     setSelectedFilterPersons([]);
     setSearchKeyword("");
-    setIsSearchApplied(false); // Reset search applied state
+    setIsSearchApplied(false);
     setShowUntaggedOnly(false);
     setSelectedFilterTaskId(null);
     await onLoadFilteredNotes(null);
@@ -262,15 +246,11 @@ export function useNoteFilters(
     selectedFilterPersons,
     showUntaggedOnly,
 
-    // Filtered results
     filteredNotes,
-
-    // Statistics and derived data from server
     tagUsageStats,
     personUsageStats,
     uniquePersons,
 
-    // Filter actions
     handleTagClick,
     handlePersonClick,
     handleTaskClick,
@@ -278,11 +258,9 @@ export function useNoteFilters(
     applyTextSearch,
     clearAllFilters,
 
-    // Search state
     isSearchApplied,
     searchKeyword,
 
-    // Direct setters for external use
     setSelectedFilterTag: (tag: Tag | null) =>
       setSelectedFilterTags(tag ? [tag] : []),
     setSelectedFilterPerson: (person: PersonSummary | null) =>

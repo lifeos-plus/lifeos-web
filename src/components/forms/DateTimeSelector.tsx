@@ -12,25 +12,16 @@ import TextInput from "./TextInput";
 import { FORM_LABEL_COMPACT_CLASS } from "./styles";
 
 interface DateTimeSelectorProps {
-  /** Current ISO datetime string */
   value: string;
-  /** Whether this is for an all-day planned event (date only) */
   isAllDay?: boolean;
-  /** Whether the selector is disabled */
   disabled?: boolean;
-  /** Callback when datetime changes */
   onChange: (isoString: string) => void;
-  /** Placeholder text */
   placeholder?: string;
-  /** HTML id for the date input */
   dateId?: string;
-  /** HTML id for the time input */
   timeId?: string;
-  /** Custom quick time options */
   quickTimeOptions?: string[];
-  /** Additional CSS classes */
   className?: string;
-  /** Preferred timezone (falls back to the cached system preference or UTC) */
+  /** Falls back to the cached system preference or UTC */
   timezone?: string;
 }
 
@@ -61,10 +52,8 @@ export default function DateTimeSelector({
 }: DateTimeSelectorProps) {
   const { t } = useTranslation();
 
-  // Get user's timezone
   const userTimezone = useMemo(() => normalizeTimezone(timezone), [timezone]);
 
-  // Parse current value to date and time parts (timezone-aware)
   const { datePart, timePart } = useMemo(() => {
     if (!value) {
       return { datePart: "", timePart: "" };

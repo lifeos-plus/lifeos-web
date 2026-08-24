@@ -2,29 +2,18 @@ import React from "react";
 import Container from "./Container";
 
 interface ListContainerProps {
-  /** 列表标题 */
   title: string;
   /** 是否隐藏头部（在外层已有标题/工具栏时使用） */
   hideHeader?: boolean;
-  /** 标题右侧的操作按钮 */
   headerAction?: React.ReactNode;
-  /** 列表内容 */
   children: React.ReactNode;
-  /** 空状态时的内容 */
   emptyState?: React.ReactNode;
-  /** 容器尺寸 */
   size?: "sm" | "md" | "lg";
-  /** 额外的 CSS 类名 */
   className?: string;
-  /** Extra class names for the content region. */
   contentClassName?: string;
-  /** 是否显示顶部边框（用于分隔） */
   withTopBorder?: boolean;
-  /** 是否显示阴影 */
   shadow?: boolean | "none" | "sm" | "md" | "lg";
-  /** Optional structural border. */
   borderVariant?: "none" | "subtle";
-  /** 列标题配置（用于表格布局） */
   columns?: Array<{
     key: string;
     label: string;
@@ -47,7 +36,6 @@ const ListContainer: React.FC<ListContainerProps> = ({
   borderVariant = "none",
   columns,
 }) => {
-  // 构建容器的基础类名 - 使用统一的卡片设计规范
   const containerClasses = [
     withTopBorder ? "border-t-2 border-t-primary" : "",
     className,
@@ -58,12 +46,10 @@ const ListContainer: React.FC<ListContainerProps> = ({
   const resolvedShadow =
     typeof shadow === "string" ? shadow : shadow === false ? "none" : "md";
 
-  // 标题尺寸
   const titleSizeClass =
     size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-sm";
   const contentClasses = `min-w-0 flex-1 text-sm ${contentClassName || "overflow-auto"}`;
 
-  // 获取列对齐样式
   const getColumnAlignClass = (align?: "left" | "center" | "right") => {
     switch (align) {
       case "center":
@@ -82,7 +68,6 @@ const ListContainer: React.FC<ListContainerProps> = ({
       shadow={resolvedShadow}
       overflow="hidden"
     >
-      {/* Header */}
       {!hideHeader && (
         <div className="px-4 py-3 border-b border-base-300">
           <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -100,7 +85,6 @@ const ListContainer: React.FC<ListContainerProps> = ({
         </div>
       )}
 
-      {/* Column Headers */}
       {columns && columns.length > 0 && (
         <div className="px-4 py-3 bg-primary/10 border-b border-primary/20">
           <div
@@ -123,7 +107,6 @@ const ListContainer: React.FC<ListContainerProps> = ({
         </div>
       )}
 
-      {/* Content */}
       <div className={contentClasses}>{children || emptyState}</div>
     </Container>
   );

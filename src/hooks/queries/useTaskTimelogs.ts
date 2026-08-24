@@ -5,9 +5,6 @@ import type { Timelog } from "@/services/api";
 import type { TimelogListResponse } from "@/services/api/timelogs";
 import type { UUID } from "@/types/primitive";
 
-/**
- * Hook to fetch timelogs for a single task
- */
 export function useTaskTimelogs(
   taskId: UUID,
   options?: { enabled?: boolean; page?: number; size?: number },
@@ -33,10 +30,6 @@ export function useTaskTimelogs(
   });
 }
 
-/**
- * Hook to fetch timelogs for multiple tasks
- * This will create individual queries for each task and combine the results
- */
 export function useMultipleTaskTimelogs(
   taskIds: UUID[],
   options?: { enabled?: boolean },

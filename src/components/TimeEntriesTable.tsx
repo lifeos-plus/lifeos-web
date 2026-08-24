@@ -47,7 +47,6 @@ interface TimeEntriesTableProps {
   preloadedTasks: TaskWithSubtasks[];
   /** 是否禁用快捷添加功能，通常在编辑模式下使用 */
   disableQuickEntry?: boolean;
-  /** 领域筛选相关属性 */
   selectedAreaId: UUID | null | "" | typeof SelectorSpecialValue.None;
   onAreaChange: (areaId: UUID | null | undefined) => void;
   onCreateNoteForEntry?: (entry: ProcessedEntry) => void;
@@ -78,7 +77,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
   onViewNotesForEntry,
 }) => {
   const { t } = useTranslation();
-  // Inline quick entry states
   const [expandedTimeRange, setExpandedTimeRange] = useState<string | null>(
     null,
   );
@@ -98,7 +96,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
     focusOffset: (rect) => ({ x: -rect.width / 2, y: -16 }),
   });
 
-  // Unified function to update inline times
   const updateInlineTimes = useCallback(
     (startTime: string, endTime: string) => {
       setInlineStartTime(startTime);
@@ -207,7 +204,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
       return;
     }
 
-    // 在禁用快捷添加模式下，不自动展开
     if (disableQuickEntry) {
       return;
     }
@@ -296,12 +292,10 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
   );
 
   const handlePlaceholderClick = (placeholder: PlaceholderEntry) => {
-    // 在批量操作模式下，不允许展开快速添加记录
     if (isSelectMode) {
       return;
     }
 
-    // 在禁用快捷添加模式下，不允许展开
     if (disableQuickEntry) {
       return;
     }
@@ -319,7 +313,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
     setExpandedTimeRange(timeRange);
     setInlineSessionId(createModalSessionId());
 
-    // Call the parent's onPlaceholderClick if provided
     if (_onPlaceholderClick) {
       _onPlaceholderClick(placeholder);
     }

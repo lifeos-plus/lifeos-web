@@ -13,7 +13,6 @@ interface AreaSorterProps {
   disabled?: boolean;
   refreshTrigger?: number; // Add refresh trigger prop
   id?: string; // Add id prop for accessibility
-  /** Whether to show a Clear All option */
   showClearAll?: boolean;
 }
 
@@ -31,7 +30,6 @@ export default function AreaSorter({
   const [areasLoading, setAreasLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load areas
   useEffect(() => {
     const loadAreas = async () => {
       try {
@@ -63,7 +61,6 @@ export default function AreaSorter({
     };
   }, [areas, areaOrder]);
 
-  // Handle move up/down buttons based on the complete order we display
   const moveArea = (areaId: UUID, direction: "up" | "down") => {
     const workingOrder = [...completeOrder];
     const currentIndex = workingOrder.indexOf(areaId);

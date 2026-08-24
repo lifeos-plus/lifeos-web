@@ -97,7 +97,6 @@ const getBuiltinCategoriesForEntityType = (
   return ENTITY_TYPE_DEFAULT_CATEGORIES[normalized] || [];
 };
 
-// Helper functions
 const getEntityTypeDisplayName = (
   entityType: string,
   t: (key: string) => string,
@@ -124,12 +123,10 @@ const sortTagsByUsageAndName = (tags: TagWithStats[]): TagWithStats[] => {
     const aUsage = a.usageStats?.total_usage || 0;
     const bUsage = b.usageStats?.total_usage || 0;
 
-    // First sort by usage count (descending)
     if (aUsage !== bUsage) {
       return bUsage - aUsage;
     }
 
-    // If usage is the same, sort by name (ascending)
     return a.name.localeCompare(b.name);
   });
 };
@@ -154,17 +151,6 @@ const getDefaultCategoryForTag = (
   entityType: string | null | undefined,
 ) => normalizeTagCategory(tagCategory, entityType);
 
-/**
- * TagManager - Unified component for managing all types of tags
- *
- * This component provides:
- * - Viewing all existing tags grouped by entity type
- * - Creating new tags with type selection
- * - Editing existing tag names (but not types)
- * - Deleting tags with confirmation
- * - Displaying tag usage statistics
- * - Built-in header with title and close button
- */
 const TagManager: React.FC<TagManagerProps> = ({
   isOpen,
   onClose,
@@ -183,7 +169,6 @@ const TagManager: React.FC<TagManagerProps> = ({
     [normalizedEntityTypeScope],
   );
   const { t } = useTranslation();
-  // local UI-only states
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showCreateCategoryForm, setShowCreateCategoryForm] = useState(false);
   const [newCategoryLabel, setNewCategoryLabel] = useState("");
@@ -207,7 +192,6 @@ const TagManager: React.FC<TagManagerProps> = ({
   const [isApplyingBulkCategory, setIsApplyingBulkCategory] = useState(false);
   const modalTitleId = useId();
 
-  // Toast notifications
   const toast = useToast();
 
   // Unified modal state (best practice aligning with TaskEditModal)
@@ -373,7 +357,6 @@ const TagManager: React.FC<TagManagerProps> = ({
     }
   }, [combinedLoading]);
 
-  // Generic error handler
   const handleError = useCallback(
     (error: unknown, operation: string) => {
       const errorMessage =
@@ -636,9 +619,6 @@ const TagManager: React.FC<TagManagerProps> = ({
     }
   };
 
-  // Grouping is computed inline at render from query results
-
-  // Handle tag creation
   const handleCreateTag = async (tagData: TagCreate) => {
     try {
       const scopedTagData: TagCreate = {
@@ -659,7 +639,6 @@ const TagManager: React.FC<TagManagerProps> = ({
         t("tagManager.success.createMessage", { name: scopedTagData.name }),
       );
 
-      // Close form
       setShowCreateForm(false);
       setCreateCategoryPreset(null);
     } catch (err) {
@@ -675,7 +654,6 @@ const TagManager: React.FC<TagManagerProps> = ({
     }
   };
 
-  // Handle tag update
   const handleUpdateTag = async (tagId: UUID, updates: TagUpdate) => {
     try {
       await withLoading(async () => {
@@ -689,7 +667,6 @@ const TagManager: React.FC<TagManagerProps> = ({
         t("tagManager.success.updateMessage", { name: updates.name }),
       );
 
-      // Exit edit mode
       setEditingTagId(null);
     } catch (err) {
       const errorMessage =
@@ -704,7 +681,6 @@ const TagManager: React.FC<TagManagerProps> = ({
     }
   };
 
-  // Handle tag deletion
   const handleDeleteTag = useCallback(
     async (tagId: UUID) => {
       setDeletingTagId(null);
@@ -763,7 +739,6 @@ const TagManager: React.FC<TagManagerProps> = ({
       size="xl"
     >
       <div className="space-y-4">
-        {/* Create Form */}
         <TagCreateForm
           entityTypes={entityTypes}
           categoryOptions={categoryOptions}
@@ -781,7 +756,6 @@ const TagManager: React.FC<TagManagerProps> = ({
           visible={showCreateForm}
         />
 
-        {/* Create Button */}
         {!showCreateForm && (
           <div className="flex justify-center py-2">
             <ActionButton
@@ -1031,7 +1005,6 @@ const TagManager: React.FC<TagManagerProps> = ({
           </div>
         </Card>
 
-        {/* Tag Groups */}
         <div className="max-h-[48rem] overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-base-100 hover:scrollbar-thumb-base-content/30">
           {(() => {
             const activeCategory =
@@ -1203,7 +1176,6 @@ const TagManager: React.FC<TagManagerProps> = ({
           })()}
         </div>
 
-        {/* Delete Confirmation Dialog */}
         <ConfirmDialog
           isOpen={deletingTagId !== null}
           title={t("tagManager.confirmDelete.title")}
@@ -1247,7 +1219,6 @@ const TagManager: React.FC<TagManagerProps> = ({
   );
 };
 
-// Tag Create Form Component
 interface TagCreateFormProps {
   entityTypes: string[];
   categoryOptions: TagCategoryOption[];
@@ -1322,7 +1293,6 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
         name: formData.name.trim().toLowerCase(),
       });
 
-      // Reset form
       setFormData({
         name: "",
         entity_type: normalizedEntityType,
@@ -1448,7 +1418,6 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   );
 };
 
-// Tag Group Component
 interface TagGroupProps {
   group: TagGroup;
   onTagUpdate: (tagId: UUID, updates: TagUpdate) => Promise<void>;
@@ -1537,7 +1506,6 @@ const TagGroup: React.FC<TagGroupProps> = ({
   );
 };
 
-// Tag Item Component
 interface TagItemProps {
   tag: TagWithStats;
   onUpdate: (tagId: UUID, updates: TagUpdate) => Promise<void>;
@@ -1724,14 +1692,12 @@ const TagItem: React.FC<TagItemProps> = ({
         {tag.name}
       </span>
 
-      {/* Usage Statistics */}
       {tag.usageStats && (
         <Badge tone="ghost" size="xs">
           {tag.usageStats.total_usage}
         </Badge>
       )}
 
-      {/* Interactive Icons */}
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all duration-200">
         <EditButton onClick={onEditStart} size="sm" className="p-0.5" />
         <DeleteButton

@@ -24,26 +24,6 @@ interface TaskManagementWrapperProps extends TaskManagementConfig {
   inheritPlanningFromParent?: boolean;
 }
 
-/**
- * TaskManagementWrapper - 任务管理包装器组件
- *
- * 提供统一的任务管理能力，包括：
- * 1. 任务编辑、删除、状态更新
- * 2. 添加子任务、查看时间记录
- * 3. 任务重排序
- * 4. 相关的模态框和对话框
- *
- * 使用方式：
- * <TaskManagementWrapper onTaskUpdate={handleUpdate} allVisions={visions}>
- *   {(taskManagement) => (
- *     <YourComponent
- *       onEditTask={taskManagement.actions.handleEditTask}
- *       onDeleteTask={taskManagement.actions.handleDeleteTask}
- *       // ... 其他 props
- *     />
- *   )}
- * </TaskManagementWrapper>
- */
 const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
   children,
   allVisions = [],
@@ -92,7 +72,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
     <>
       {children(taskManagement)}
 
-      {/* 任务编辑模态框 */}
       {taskManagement.isEditModalOpen && taskManagement.editModalSessionId && (
         <TaskEditModal
           isOpen={taskManagement.isEditModalOpen}
@@ -122,7 +101,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
         />
       )}
 
-      {/* 删除确认对话框 */}
       {taskManagement.isDeleteConfirmOpen && taskManagement.deletingTask && (
         <ConfirmDialog
           isOpen={taskManagement.isDeleteConfirmOpen}
@@ -137,7 +115,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
         />
       )}
 
-      {/* 状态级联确认对话框 */}
       {taskManagement.statusCascade && (() => {
         const affected = taskManagement.statusCascade.affectedSubtasks;
         const shown = affected.slice(0, 8);
@@ -164,7 +141,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
         );
       })()}
 
-      {/* 时间记录查看模态框 */}
       {taskManagement.isTimeRecordsModalOpen &&
         taskManagement.viewingTimeRecords && (
           <TaskTimelogsModal
@@ -174,7 +150,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
           />
         )}
 
-      {/* 任务笔记查看模态框 */}
       {taskManagement.isNotesModalOpen && taskManagement.viewingNotes && (
         <TaskNotesModal
           isOpen={taskManagement.isNotesModalOpen}
@@ -183,7 +158,6 @@ const TaskManagementWrapper: React.FC<TaskManagementWrapperProps> = ({
         />
       )}
 
-      {/* 创建笔记模态框 */}
       {taskManagement.isCreateNoteModalOpen && (
         <CreateNoteModal
           isOpen={taskManagement.isCreateNoteModalOpen}

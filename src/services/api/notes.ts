@@ -31,7 +31,6 @@ export type NoteSummary = Pick<Note, "id" | "content" | "created_at" | "updated_
 export type NoteCreate = components["schemas"]["NoteCreate"];
 export type NoteUpdate = components["schemas"]["NoteUpdate"];
 
-// New interfaces for statistics and filtering
 export interface NoteStats {
   total_notes: number;
   tag_stats: Array<{
@@ -189,7 +188,6 @@ export const notesApi = {
       .then(toNoteList);
   },
 
-  // New method to get statistics (aggregated from split endpoints)
   getStats: async (): Promise<NoteStats> => {
     const [notes, tagUsage, personUsage] = await Promise.all([
       notesApi.fetchPaged({ page: 1, size: 1 }),

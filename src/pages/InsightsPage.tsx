@@ -130,7 +130,6 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
     : "text-warning";
   return (
     <div className="flex items-center gap-3">
-      {/* 日期 - 使用常规大小 */}
       <div
         className="w-32 text-base  text-base-content/80 flex-shrink-0 flex items-center justify-center"
         title={labelTitle ?? displayLabel}
@@ -145,7 +144,6 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
         {coverage.label}
       </div>
 
-      {/* 条带图 - 改进样式 */}
       <div className="flex-1 min-w-0">
         <div className="flex h-12 bg-base-200 rounded-lg overflow-hidden shadow-sm">
           {rows.map((r) => {
@@ -191,7 +189,6 @@ const StatisticItem: React.FC<StatisticItemProps> = ({
 
 function InsightsPage() {
   const { t } = useTranslation();
-  // Page header
   const { setHeader } = usePageHeader();
 
   useEffect(() => {
@@ -704,13 +701,11 @@ function InsightsPage() {
 
   return (
     <PageLayout>
-      {/* 统计工具条（响应式布局） */}
       <ToolbarContainer
         className="mb-4 w-full max-w-full overflow-hidden"
         padding="md"
         layout="three-column"
       >
-        {/* 左列：视图选择器 */}
         <div className="flex flex-col gap-2 w-full lg:w-auto">
           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
             <span className="text-sm sm:text-base  shrink-0">
@@ -758,7 +753,6 @@ function InsightsPage() {
           </div>
         </div>
 
-        {/* 中列：日期导航（居中） */}
         <div className="flex items-center justify-center w-full lg:w-auto">
           <PeriodNavigation
             periodType={viewType}
@@ -773,7 +767,6 @@ function InsightsPage() {
           />
         </div>
 
-        {/* 右列：功能按钮 */}
         <div className="hidden lg:flex justify-end gap-2">
           <ActionButton
             label={t("insights.refreshStats")}
@@ -794,7 +787,6 @@ function InsightsPage() {
         </div>
       </ToolbarContainer>
 
-      {/* 视图模式和对比选项 - 响应式布局 */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-4 text-sm text-base-content">
         <div className="flex items-center gap-4 flex-wrap">
           <RadioGroup
@@ -814,7 +806,6 @@ function InsightsPage() {
             onChange={(nextValue) => setViewMode(nextValue as typeof viewMode)}
           />
         </div>
-        {/* 日期范围输入 */}
         <div className="flex items-center gap-3 sm:ml-auto">
           <TextInput
             id="start-date"
@@ -992,7 +983,6 @@ function InsightsPage() {
         </Container>
       )}
 
-      {/* 统计视图（使用 ListContainer 重构） */}
       {!displayError && (
         <ListContainer
           title={t("insights.statsTitle")}

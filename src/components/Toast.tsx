@@ -3,9 +3,6 @@ import { useTranslation } from "react-i18next";
 import { ToastContext, type ToastMessage } from "@/contexts/ToastContext";
 import ActionButton from "./ActionButton";
 
-/**
- * Individual Toast component
- */
 const Toast: React.FC<{
   toast: ToastMessage;
   onClose: (id: string) => void;
@@ -164,9 +161,6 @@ const Toast: React.FC<{
   );
 };
 
-/**
- * Toast Container component
- */
 const ToastContainer: React.FC<{
   toasts: ToastMessage[];
   onClose: (id: string) => void;
@@ -184,9 +178,6 @@ const ToastContainer: React.FC<{
   );
 };
 
-/**
- * Toast Provider component
- */
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

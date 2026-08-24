@@ -27,9 +27,7 @@ interface AdvancedSearchPanelProps {
   onParamsChange: (params: AdvancedSearchParams) => void;
   onSearch: () => void;
   onReset: () => void;
-  // Task selector source data.
   tasks: { id: UUID; name: string }[];
-  // Batch operation controls.
   isSelectMode: boolean;
   onSelectModeToggle: (value: boolean) => void;
   selectedEntryIds: Set<UUID>;
@@ -68,14 +66,12 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     params.description_keyword || "",
   );
 
-  // Batch edit modal state
   const [showBatchEditModal, setShowBatchEditModal] = useState(false);
 
   // Use ref to get latest params without dependency
   const paramsRef = useRef(params);
   paramsRef.current = params;
 
-  // Debounced update of parent state - use ref to store timeout ID
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -95,7 +91,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     [onParamsChange],
   );
 
-  // Handle keyword input change with debouncing
   const handleKeywordChange = useCallback(
     (value: string) => {
       setLocalKeyword(value);
@@ -124,7 +119,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     setTimeout(() => onSearch(), 0);
   }, [flushKeywordToParent, onSearch]);
 
-  // Handle other parameter changes
   const handleParamChange = useCallback(
     (
       key: keyof AdvancedSearchParams,
@@ -142,7 +136,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   const stableFilterStatus = useMemo(() => ALL_TASK_STATUSES, []);
 
   const preloadedTasks = useMemo(() => {
-    // Use default inbox vision if available, otherwise use null as fallback
     // Following data protocol: UUID fields should use null for empty values
     const visionId = defaultInboxVision || null;
 
@@ -205,7 +198,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     <>
       <Card title={t("timeLog.advancedSearch.title")}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-          {/* Start Date */}
           <div>
             <label
               htmlFor="start-date"
@@ -230,7 +222,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          {/* End Date */}
           <div>
             <label
               htmlFor="end-date"
@@ -255,7 +246,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          {/* Area Selection */}
           <div>
             <AreaSelect
               value={
@@ -272,7 +262,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          {/* Task Selection */}
           <div>
             <TaskSelector
               {...taskSelectorProps}
@@ -321,7 +310,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          {/* Description Keyword */}
           <FormField
             label={t("timeLog.advancedSearch.keyword")}
             htmlFor="description-keyword"
@@ -339,9 +327,7 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
           </FormField>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-2">
-          {/* Left side buttons */}
           <div className="flex flex-wrap gap-2">
             {!isSelectMode && (
               <ActionButton
@@ -354,7 +340,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             )}
           </div>
 
-          {/* Right side buttons */}
           <div className="flex flex-wrap gap-2">
             <ActionButton
               label={t("timeLog.advancedSearch.search")}
@@ -373,10 +358,8 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
           </div>
         </div>
 
-        {/* Batch Operations Section */}
         <div className="mt-6 pt-4">
           <div className="flex flex-col items-center gap-3">
-            {/* Batch operations controls - only show when in select mode */}
             {isSelectMode && (
               <div className="flex w-full flex-wrap justify-start gap-2">
                 <ActionButton
@@ -420,7 +403,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             )}
           </div>
 
-          {/* Selection info */}
           {isSelectMode && (
             <div className="mt-2 text-sm">
               {t("timeLog.advancedSearch.selectedRecords", {
@@ -436,7 +418,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
         </div>
       </Card>
 
-      {/* Batch Edit Modal */}
       <BatchEditModal
         isOpen={showBatchEditModal}
         onClose={() => setShowBatchEditModal(false)}

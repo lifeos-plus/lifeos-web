@@ -32,7 +32,6 @@ function SettingsPage() {
   const { t } = useTranslation();
   const toast = useToast();
 
-  // Initialize preference hooks directly
   const themeSettings = useTheme();
   const fontSettings = useFont();
   const visibleModulesSettings = useVisibleModules();
@@ -181,15 +180,12 @@ function SettingsPage() {
     ],
   );
 
-  // Get settings configuration with props
   const groupsConfig = useSettingsConfig({
     calendarSystem: calendarSystemSettings.value,
   });
 
-  // Area manager modal state
   const [showAreaManager, setShowAreaManager] = useState(false);
 
-  // Create preferences map for easy access
   const preferences = useMemo(
     () => ({
       "appearance.theme": {

@@ -151,7 +151,6 @@ export default function CreateNoteModal({
     ];
   }, [isTaskSelectionLocked, lockedTaskOptionId, lockedTaskLabel, t]);
 
-  // 编辑模式下初始化表单数据
   useEffect(() => {
     if (mode === "edit" && existingNote) {
       setContent(existingNote.content);
@@ -206,7 +205,6 @@ export default function CreateNoteModal({
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // 重置表单状态
   const resetForm = useCallback(() => {
     setContent("");
     setSelectedPersonIds(uniqueUuidList(preSelectedPersonIds));
@@ -244,14 +242,12 @@ export default function CreateNoteModal({
   // Stable filter status for TaskSelector to avoid re-triggering effects
   const taskFilterStatus = useMemo(() => ACTIVE_TASK_STATUSES, []);
 
-  // 当模态框打开时，聚焦到文本区域
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => textareaRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
-  // 如果未传入标题且有任务ID，则拉取一次任务内容作为展示文案
   useEffect(() => {
     const loadTaskTitle = async () => {
       if (!isOpen) return;
@@ -280,7 +276,6 @@ export default function CreateNoteModal({
     [isTagSelectionLocked, lockedTagIds],
   );
 
-  // 处理表单提交
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -315,12 +310,10 @@ export default function CreateNoteModal({
     ],
   );
 
-  // 处理键盘快捷键
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        // 触发表单提交
         formRef.current?.requestSubmit();
       }
     },
@@ -485,7 +478,6 @@ export default function CreateNoteModal({
         onSubmit={handleSubmit}
         className="space-y-6 max-h-[85vh] overflow-auto"
       >
-        {/* 笔记内容 */}
         <FormField label={""} htmlFor="note-content" required>
           <TextArea
             id="note-content"
@@ -504,7 +496,6 @@ export default function CreateNoteModal({
         </FormField>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* 人员选择器 */}
           <div>
             <PersonSelector
               selectedPersonIds={selectedPersonIds}
@@ -517,7 +508,6 @@ export default function CreateNoteModal({
             />
           </div>
 
-          {/* 标签选择器 */}
           <div>
             <TagSelector
               availableTags={availableNoteTags}
@@ -531,7 +521,6 @@ export default function CreateNoteModal({
             />
           </div>
 
-          {/* 任务选择：支持锁定或自由选择 */}
           <div>
             <TaskSelector
               value={selectedTaskId ?? null}

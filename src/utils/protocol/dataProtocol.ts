@@ -14,9 +14,6 @@
  * - null: 字段被明确设置为空值（用户想要清空该字段）
  * - 有效值: 字段被设置为该值
  */
-/**
- * 数据清理配置
- */
 interface DataCleanupConfig {
   /** 是否将空字符串转换为 null */
   nullifyEmptyStrings?: boolean;
@@ -67,7 +64,6 @@ function cleanPayload<T extends Record<string, unknown>>(
       continue;
     }
 
-    // 处理字符串
     if (typeof value === "string") {
       cleanedValue = trimStrings ? value.trim() : value;
       if (cleanedValue === "" && nullifyEmptyStrings) {
@@ -75,12 +71,10 @@ function cleanPayload<T extends Record<string, unknown>>(
       }
     }
 
-    // 处理数组
     if (Array.isArray(value)) {
       if (value.length === 0 && nullifyEmptyArrays) {
         cleanedValue = null; // 空数组转 null，表示明确设置为空
       } else {
-        // 清理数组中的空值
         const filtered = value.filter((item) => {
           if (typeof item === "string") {
             return trimStrings ? item.trim() !== "" : item !== "";
@@ -92,7 +86,6 @@ function cleanPayload<T extends Record<string, unknown>>(
       }
     }
 
-    // 只保留非 undefined 的值
     if (cleanedValue !== undefined) {
       result[key as keyof T] = cleanedValue as T[keyof T];
     }

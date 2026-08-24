@@ -99,7 +99,6 @@ export function HabitActionList({
     onCenterDateChange(new Date(date));
   };
 
-  // Get today's date
   const today = new Date();
 
   const habitStartDate = parseDateStringToLocalDate(startDate);
@@ -251,7 +250,6 @@ export function HabitActionList({
 
   const displayDays = getDisplayDays(selectedDate);
 
-  // Get actions for recent days
   const getActionForDate = (date: Date) => {
     const dateStr = formatDateKey(date);
     if (isDailyCadence) {
@@ -327,14 +325,12 @@ export function HabitActionList({
     updateCenterDate(newMonth);
   };
 
-  // Handle date selection from calendar
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setSelectedMonth(date);
     updateCenterDate(date);
   };
 
-  // Navigate to previous/next five occurrence periods.
   const navigatePeriod = (direction: "prev" | "next") => {
     const step = direction === "prev" ? -5 : 5;
     let newDate: Date | null = null;
@@ -366,9 +362,7 @@ export function HabitActionList({
 
   return (
     <div className="space-y-6">
-      {/* Lower Section - Calendar and Recent List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Side - Monthly Calendar View */}
         <Surface padding="lg" elevation="moderate">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg  text-base-content">
@@ -416,14 +410,12 @@ export function HabitActionList({
                 dateKey >= selectedMonthRange.start &&
                 dateKey <= selectedMonthRange.end;
 
-              // Determine calendar cell status
               let cellStatus = "";
               let cellBgColor = "";
               let cellBorderColor = "";
               let statusText = "";
 
               if (action) {
-                // Has action record - use unified status configuration
                 const statusConfig =
                   HABIT_ACTION_STATUS_CONFIG[
                     action.status as keyof typeof HABIT_ACTION_STATUS_CONFIG
@@ -433,7 +425,6 @@ export function HabitActionList({
                 cellBorderColor = statusConfig.borderColor;
                 statusText = statusConfig.label;
               } else {
-                // No action record - normal calendar display
                 cellStatus = "no-action";
                 cellBgColor = "bg-transparent";
                 cellBorderColor = "border-base-300";
@@ -473,7 +464,6 @@ export function HabitActionList({
           </div>
         </Surface>
 
-        {/* Right Side - 5 Days View */}
         <Surface padding="lg" elevation="moderate">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg  text-base-content">

@@ -48,14 +48,10 @@ interface VisionManagerProps {
   areaFilter?: UUID | null;
 }
 
-/**
- * VisionManager - Component for managing visions and their tasks
- */
 const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
   ({ statusFilter, areaFilter }, ref) => {
     const { t } = useTranslation();
 
-    // Use custom hook for vision management
     const {
       visions,
       loading,
@@ -93,18 +89,15 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       );
     }, [areaFilter, visions]);
 
-    // UI state management for scroll position
     const { saveScrollPosition, restoreScrollPosition } = useVisionUIState();
     const scrollTimeoutRef = useRef<number | null>(null);
 
-    // Modal state
     const [showVisionModal, setShowVisionModal] = useState(false);
     const [editingVision, setEditingVision] = useState<Vision | null>(null);
     const [showTimeRecordsModal, setShowTimeRecordsModal] = useState(false);
     const [viewingTimeRecordsTask, setViewingTimeRecordsTask] =
       useState<TaskWithSubtasks | null>(null);
 
-    // Task management state for creating tasks
     const [showTaskEditModal, setShowTaskEditModal] = useState(false);
     const [taskModalSessionId, setTaskModalSessionId] = useState<string | null>(
       null,
@@ -117,10 +110,8 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
     // Reference data (areas map) with caching/TTL
     const { areaMap } = useAreas();
 
-    // Toast notifications
     const toast = useToast();
 
-    // 扁平化任务树的辅助函数
     const getFlattenedTasks = useCallback((tasks: TaskWithSubtasks[]) => {
       const result: TaskWithSubtasks[] = [];
       const flatten = (taskList: TaskWithSubtasks[]) => {
@@ -178,7 +169,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       [loadVisionTasks],
     );
 
-    // Handle scroll position saving
     useEffect(() => {
       const handleScroll = () => {
         // Debounce scroll events to avoid excessive localStorage writes
@@ -201,7 +191,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       };
     }, [saveScrollPosition]);
 
-    // Vision handlers
     const handleCreateVision = useCallback(() => {
       setEditingVision(null);
       setShowVisionModal(true);
@@ -244,7 +233,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       [requestDeleteVision],
     );
 
-    // Recompute effort and derived experience for one vision.
     const handleRecomputeVisionEfforts = useCallback(
       async (vision: Vision) => {
         try {
@@ -357,7 +345,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
         setTaskCreationMode("single");
         setTaskModalSessionId(null);
 
-        // 如果任务被创建或结构发生变化，刷新任务列表
         if (
           (result?.updatedTask || result?.structureChanged) &&
           rootTaskVisionId
@@ -368,7 +355,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       [loadVisionTasks, rootTaskVisionId, taskModalSessionId],
     );
 
-    // Time records handlers with debouncing
     const [clickedVisionId, setClickedVisionId] = useState<UUID | null>(null);
 
     const startViewTimeRecords = useCallback(
@@ -393,7 +379,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
       setViewingTimeRecordsTask(null);
     }, []);
 
-    // Expose methods to parent component
     useImperativeHandle(ref, () => ({
       openCreateVision: handleCreateVision,
     }));
@@ -405,7 +390,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
         onSave={handleVisionSave}
         vision={editingVision}
         onRequestDelete={(v) => {
-          // 关闭编辑态并触发外层删除流程
           handleVisionModalClose();
           if (v) {
             handleDeleteVision(v);
@@ -450,10 +434,8 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
             const tasks = visionTasks[vision.id] || [];
             const isExpanded = expandedVisions.has(vision.id);
 
-            // 构建愿景标题+描述容器（占据满行）
             const titleDescriptionContainer = (
               <div className="space-y-3">
-                {/* 愿景标题 + 领域标签 */}
                 <div className="flex items-center space-x-3 min-w-0">
                   <h2 className="text-xl  whitespace-nowrap flex items-center gap-2">
                     <Icon
@@ -470,7 +452,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
                   />
                 </div>
 
-                {/* 愿景描述 */}
                 {vision.description && (
                   <p className="text-base text-base-content/70 line-clamp-2 lg:line-clamp-3 font-normal break-words">
                     {vision.description}
@@ -479,7 +460,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
               </div>
             );
 
-            // 构建元数据容器
             const metadataContainer = (
               <div className="flex flex-wrap items-start justify-start gap-2 sm:gap-4 lg:gap-6 text-sm text-base-content/70 font-normal text-left w-full">
                 <div className="flex items-center gap-1 min-w-0">
@@ -505,11 +485,9 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
               </div>
             );
 
-            // 构建操作容器（操作按钮组 - 所有按钮直接显示，响应式尺寸）
             const actionContainer = (
               <div className="flex-shrink-0">
                 <ActionButtonGroup gap="sm" align="end">
-                  {/* 编辑 */}
                   <EditButton
                     onClick={(e) => {
                       e.stopPropagation();
@@ -517,7 +495,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
                     }}
                     size="sm"
                   />
-                  {/* 创建根任务 */}
                   <ActionButton
                     label=""
                     iconName="plus"
@@ -540,7 +517,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
                       handleBulkCreateTasks(vision);
                     }}
                   />
-                  {/* 重新计算 */}
                   <ActionButton
                     label=""
                     iconName="refresh"
@@ -555,18 +531,14 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
               </div>
             );
 
-            // 构建愿景标题（标题+描述容器）
             const visionTitle = titleDescriptionContainer;
 
-            // 构建愿景副标题（元数据+操作按钮 - 大屏幕时同行显示，元数据靠左，操作按钮靠右）
             const visionSubtitle = (
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4 w-full">
                 <div className="flex-shrink-0">{metadataContainer}</div>
                 <div className="flex-shrink-0">{actionContainer}</div>
               </div>
             );
-
-            // 操作按钮组已移到副标题区域，这里不再需要单独定义
 
             const isTaskListLoading = visionTasksLoading[vision.id] ?? false;
 
@@ -627,7 +599,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
                                 "visions.vision.actions.createRootTask",
                               )}
                               onAction={() => {
-                                // 创建根任务 - 直接调用 TaskManagementWrapper 的创建功能
                                 taskManagement.actions.handleAddSubtask();
                               }}
                               className="py-6 lg:py-8"
@@ -681,7 +652,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
           })}
         </div>
 
-        {/* Modals */}
         {visionEditModal}
 
         {taskModalSessionId && (
@@ -710,7 +680,6 @@ const VisionManager = forwardRef<VisionManagerHandle, VisionManagerProps>(
           task={viewingTimeRecordsTask}
         />
 
-        {/* Confirmation Dialogs */}
         {deletingVision && (
           <ConfirmDialog
             isOpen={!!deletingVision}

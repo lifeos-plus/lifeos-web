@@ -195,7 +195,7 @@ export const tasksApi = {
         fields: opts.fields ?? "basic",
       });
       out.push(...response.items);
-      if (response.items.length < pageSize) break; // no more data
+      if (response.items.length < pageSize) break;
       if (response.pagination?.pages && page >= response.pagination.pages)
         break;
       page += 1;
@@ -247,7 +247,6 @@ export const tasksApi = {
   },
 
   async create(task: TaskCreate): Promise<Task> {
-    // 将 parent_task_id 为 0 的值改为 null
     if (task.parent_task_id === "") {
       task = { ...task, parent_task_id: null };
     }
@@ -258,7 +257,6 @@ export const tasksApi = {
   },
 
   async update(id: UUID, task: TaskUpdate): Promise<Task> {
-    // 将 parent_task_id 为 0 的值改为 null
     if (task.parent_task_id === "") {
       task = { ...task, parent_task_id: null };
     }
@@ -298,7 +296,6 @@ export const tasksApi = {
     newVisionId?: UUID | null,
     newDisplayOrder: number = 0,
   ): Promise<TaskMoveResponse> {
-    // 将 parent_task_id 为 0 的值改为 null
     const moveData = {
       old_parent_task_id: oldParentTaskId === "" ? null : oldParentTaskId,
       new_parent_task_id: newParentTaskId === "" ? null : newParentTaskId,

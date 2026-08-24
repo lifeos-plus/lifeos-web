@@ -37,7 +37,6 @@ interface TaskMutationResultPayload {
   visionIdHint?: UUID | null;
 }
 
-// 定义任务保存结果的类型
 interface TaskSaveResult {
   updatedTask?: TaskUpdateSummary;
   structureChanged?: boolean;
@@ -51,14 +50,14 @@ interface TaskSaveResult {
 }
 
 export interface TaskManagementConfig {
-  onTaskUpdate?: () => void; // 任务更新后的回调
+  onTaskUpdate?: () => void;
   onNoteCreated?: () => void; // 创建笔记后的回调（默认不刷新，由调用方决定）
-  visionId?: UUID; // 可选的愿景ID，用于某些操作
-  allVisions?: Vision[]; // 所有可用的愿景列表
+  visionId?: UUID;
+  allVisions?: Vision[];
   allTasks?: TaskWithSubtasks[]; // 所有任务列表，用于父任务选择
   // VisionManager 特殊需求
-  onTaskUpdateWithVisionId?: (visionId: UUID) => void; // 带愿景ID的任务更新回调
-  getFlattenedTasks?: (tasks: TaskWithSubtasks[]) => TaskWithSubtasks[]; // 扁平化任务树的函数
+  onTaskUpdateWithVisionId?: (visionId: UUID) => void;
+  getFlattenedTasks?: (tasks: TaskWithSubtasks[]) => TaskWithSubtasks[];
   onTaskAttributesUpdate?: (task: TaskUpdateSummary) => void;
   onTaskStructureChange?: (
     payload: TaskMutationResultPayload & {
@@ -206,7 +205,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [onTaskStructureChange, onTaskUpdateWithVisionId, visionId, onTaskUpdate],
   );
 
-  // 任务删除 mutation
   const deleteTaskMutation = useMutation({
     mutationFn: (taskId: UUID) => tasksApi.delete(taskId),
     onSuccess: async (_, taskId) => {
@@ -234,7 +232,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     },
   });
 
-  // 任务状态更新 mutation
   const updateTaskStatusMutation = useMutation({
     mutationFn: ({
       taskId,
@@ -271,7 +268,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     },
   });
 
-  // 任务重排序 mutation
   const reorderTasksMutation = useMutation({
     mutationFn: (taskOrders: Array<{ id: UUID; display_order: number }>) =>
       tasksApi.reorder(taskOrders),
@@ -301,7 +297,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     },
   });
 
-  // 状态管理
   const [state, setState] = useState<TaskManagementState>({
     editingTask: null,
     isEditModalOpen: false,
@@ -321,7 +316,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     statusCascade: null,
   });
 
-  // 任务编辑处理
   const handleEditTask = useCallback((task: TaskWithSubtasks) => {
     const sessionId = createModalSessionId();
     setState((prev) => ({
@@ -334,7 +328,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 任务编辑保存处理
   const handleTaskSave = useCallback(
     (result?: TaskSaveResult) => {
       if (
@@ -397,7 +390,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [state, visionId, triggerStructureChange, triggerAttributesUpdate],
   );
 
-  // 关闭编辑模态框
   const closeEditModal = useCallback((context?: { sessionId?: string }) => {
     setState((prev) => {
       if (
@@ -419,7 +411,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     });
   }, []);
 
-  // 任务删除处理
   const handleDeleteTask = useCallback((task: TaskWithSubtasks) => {
     setState((prev) => ({
       ...prev,
@@ -428,7 +419,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 确认删除任务
   const confirmDeleteTask = useCallback(() => {
     if (!state.deletingTask) return;
 
@@ -443,7 +433,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     deleteTaskMutation.mutate(taskId);
   }, [state.deletingTask, deleteTaskMutation]);
 
-  // 关闭删除确认对话框
   const closeDeleteConfirm = useCallback(() => {
     setState((prev) => ({
       ...prev,
@@ -455,7 +444,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
   // 应用状态更新（保留滚动位置和焦点）
   const applyStatusUpdate = useCallback(
     (taskId: UUID, status: string, applyToSubtasks: boolean) => {
-      // 保存当前滚动位置和焦点
       const activeElement = document.activeElement as HTMLElement | null;
       const activeElementRole = activeElement?.getAttribute("role");
       const shouldRestoreFocus =
@@ -472,7 +460,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
         { taskId, status, applyToSubtasks },
         {
           onSuccess: () => {
-            // 恢复滚动位置和焦点
             requestAnimationFrame(() => {
               window.scrollTo(savedPosition.scrollX, savedPosition.scrollY);
               if (savedPosition.activeElement?.focus) {
@@ -520,7 +507,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [applyStatusUpdate],
   );
 
-  // 关闭状态级联确认对话框
   const closeStatusCascade = useCallback(() => {
     setState((prev) => ({ ...prev, statusCascade: null }));
   }, []);
@@ -533,7 +519,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     applyStatusUpdate(pending.task.id, pending.newStatus, true);
   }, [state.statusCascade, applyStatusUpdate]);
 
-  // 添加子任务处理
   const handleAddSubtask = useCallback(
     (parentId?: UUID | null) => {
       const sessionId = createModalSessionId();
@@ -556,7 +541,7 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
         // 而是使用 null 来表示新任务，让 TaskEditModal 处理
         setState((prev) => ({
           ...prev,
-          editingTask: null, // 使用 null 表示新任务
+          editingTask: null,
           isEditModalOpen: true,
           creatingSubtask: true,
           parentTaskId: parentId,
@@ -580,7 +565,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [allTasks],
   );
 
-  // 查看时间记录处理
   const handleViewTimeRecords = useCallback((task: TaskWithSubtasks) => {
     setState((prev) => ({
       ...prev,
@@ -589,7 +573,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 关闭时间记录模态框
   const closeTimeRecordsModal = useCallback(() => {
     setState((prev) => ({
       ...prev,
@@ -598,7 +581,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 查看笔记处理
   const handleViewNotes = useCallback((task: TaskWithSubtasks) => {
     setState((prev) => ({
       ...prev,
@@ -607,7 +589,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 关闭笔记模态框
   const closeNotesModal = useCallback(() => {
     setState((prev) => ({
       ...prev,
@@ -616,7 +597,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     }));
   }, []);
 
-  // 创建新笔记的处理
   const handleOpenCreateNoteModal = useCallback((task: TaskWithSubtasks) => {
     setState((prev) => ({
       ...prev,
@@ -693,7 +673,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [onTaskUpdate, queryClient, state.creatingTimelogForTask?.id],
   );
 
-  // 任务重排序处理
   const handleTasksReorder = useCallback(
     async (reorderedTasks: TaskWithSubtasks[]) => {
       // Empty payload indicates cross-level moves from DraggableTaskList; force a full refresh
@@ -717,7 +696,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
     [reorderTasksMutation, triggerStructureChange, visionId],
   );
 
-  // 返回状态和操作
   const actions: TaskManagementActions = {
     handleEditTask,
     handleTaskSave,

@@ -81,13 +81,10 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
         : "bg-base-200/30 hover:bg-base-200";
   }
 
-  // Calculate display date
   const getDisplayDate = () => {
     if (queryMode === "single") {
-      // Single day mode: show selected date
       return formatDateInTimezone(selectedDate, timezone);
     } else {
-      // Advanced query mode: show actual record date
       if (entry.start_time) {
         return formatDate(entry.start_time, timezone);
       }

@@ -18,14 +18,12 @@ export function useLanguage() {
   const [bootstrapped, setBootstrapped] = useState(false);
   const PREFERENCE_KEY = "system.language";
 
-  // Language options for UI
   const languageOptions: LanguageOption[] = [
     { value: "auto", label: t("settings.language.system") },
     { value: "zh", label: "中文" },
     { value: "en", label: "English" },
   ];
 
-  // Get current language from i18n
   const getCurrentLanguage = useCallback((): Language => {
     const detectedLanguage = i18n.language;
     if (detectedLanguage === "zh" || detectedLanguage === "zh-CN") {
@@ -36,12 +34,10 @@ export function useLanguage() {
     return "auto";
   }, [i18n.language]);
 
-  // Initialize current language
   useEffect(() => {
     setCurrentLanguage(getCurrentLanguage());
   }, [i18n.language, getCurrentLanguage]);
 
-  // Bootstrap from backend preference once on mount
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -73,14 +69,12 @@ export function useLanguage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Change language
   const changeLanguage = async (language: Language): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
       if (language === "auto") {
-        // Use browser language detection
         const detectedLanguage = i18n.services.languageDetector.detect();
         if (detectedLanguage) {
           await i18n.changeLanguage(detectedLanguage);
@@ -103,7 +97,6 @@ export function useLanguage() {
     }
   };
 
-  // Save language preference to backend and localStorage
   const saveLanguage = async (language: Language): Promise<boolean> => {
     try {
       setLoading(true);

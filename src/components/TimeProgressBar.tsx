@@ -27,12 +27,6 @@ interface AreaTimeData {
   percentage: number;
 }
 
-/**
- * TimeProgressBar - Displays 24-hour time allocation by area
- *
- * This component creates a horizontal progress bar showing how time is distributed
- * across different areas throughout the day, sorted by duration.
- */
 const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
   entries,
   areas,
@@ -42,12 +36,10 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
   className,
 }) => {
   const { t } = useTranslation();
-  // Optional server minutes per area for local day
   const [serverMinutes, setServerMinutes] = useState<Record<UUID, number> | null>(
     null,
   );
 
-  // Read-only area order via TanStack Query cache
   const { order: areaOrder } = useAreaOrderReadOnly();
 
   useEffect(() => {
@@ -66,11 +58,9 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
       })
       .catch(() => setServerMinutes(null));
   }, [localDateISO, timezone]);
-  // Calculate time allocation by area
   const calculateTimeAllocation = useMemo((): AreaTimeData[] => {
     const areaTimeMap = new Map<UUID, number>();
 
-    // Initialize all areas with 0 minutes
     areas.forEach((area) => {
       areaTimeMap.set(area.id, 0);
     });
@@ -109,10 +99,8 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
       });
     }
 
-    // Calculate total time (should be 24 hours = 1440 minutes)
     const totalMinutes = 1440; // Fixed 24 hours
 
-    // Convert to array and calculate percentages
     const areaTimeData: AreaTimeData[] = Array.from(
       areaTimeMap.entries(),
     )
@@ -138,22 +126,19 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
           };
         }
       })
-      .filter((item) => item.totalMinutes > 0) // Only show areas with time
+      .filter((item) => item.totalMinutes > 0)
       .sort((a, b) => {
         // Sort by backend order first, then by duration descending
         const aOrder = areaOrder.indexOf(a.areaId);
         const bOrder = areaOrder.indexOf(b.areaId);
 
-        // If both areas are in the order, sort by order
         if (aOrder !== -1 && bOrder !== -1) {
           return aOrder - bOrder;
         }
 
-        // If only one is in the order, prioritize the one in order
         if (aOrder !== -1) return -1;
         if (bOrder !== -1) return 1;
 
-        // If neither is in the order, sort by duration descending
         return b.totalMinutes - a.totalMinutes;
       });
 
@@ -194,7 +179,6 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
   }
 
   // Always show the progress bar, even if no time is recorded
-  // If no time is recorded, show 100% unknown
   if (timeAllocation.length === 0) {
     timeAllocation.push({
       areaId: "-1",
@@ -207,7 +191,6 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
 
   return (
     <Card className={cardClassName}>
-      {/* Legend */}
       <div className="flex flex-wrap gap-3 mb-3">
         {timeAllocation.map((item: AreaTimeData) => (
           <div key={item.areaId} className="flex items-center gap-2">
@@ -221,7 +204,6 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
           </div>
         ))}
       </div>
-      {/* Progress Bar */}
       <div className="flex h-6 bg-base-200 rounded-lg overflow-hidden mt-3">
         {timeAllocation.map((item: AreaTimeData) => (
           <div

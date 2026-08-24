@@ -90,7 +90,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     tag_id: filters.tagId,
   } as const;
 
-  // 1. 获取人员列表
   const {
     data: personsData,
     isLoading,
@@ -111,7 +110,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
   const persons = personsData?.items || [];
   const total = personsData?.pagination?.total || 0;
 
-  // 2. 创建人员
   const createPersonMutation = useMutation({
     mutationFn: (person: PersonCreate) => personsApi.create(person),
     onSuccess: async (created) => {
@@ -124,7 +122,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     },
   });
 
-  // 3. 更新人员
   const updatePersonMutation = useMutation({
     mutationFn: ({ id, person }: { id: UUID; person: PersonUpdate }) =>
       personsApi.update(id, person),
@@ -138,7 +135,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     },
   });
 
-  // 4. 删除人员
   const deletePersonMutation = useMutation({
     mutationFn: ({ id }: { id: UUID }) => personsApi.delete(id),
     onSuccess: async (_, variables) => {
@@ -155,22 +151,18 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     },
   });
 
-  // 6. 创建人员
   const createPerson = (person: PersonCreate) => {
     createPersonMutation.mutate(person);
   };
 
-  // 7. 更新人员
   const updatePerson = (id: UUID, person: PersonUpdate) => {
     updatePersonMutation.mutate({ id, person });
   };
 
-  // 8. 删除人员
   const deletePerson = (id: UUID) => {
     deletePersonMutation.mutate({ id });
   };
 
-  // 9. 加载人员活动记录 - 使用 prefetchQuery 预加载数据
   const loadPersonActivities = (personId: UUID) => {
     const defaultPage = 1;
     const defaultPageSize = 50;
@@ -185,7 +177,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     });
   };
 
-  // 10. 刷新数据
   const refreshData = () => {
     void invalidatePersonsLists(queryClient);
   };

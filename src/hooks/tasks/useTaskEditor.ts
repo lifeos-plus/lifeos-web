@@ -174,7 +174,6 @@ export function useTaskEditor(
 
       if (parentTask) {
         initialVisionId = parentTask.vision_id || null;
-        // 按需继承父任务的规划周期属性
         if (inheritPlanningFromParent) {
           initialPlanningCycleType =
             parentTask.planning_cycle_type || undefined;

@@ -41,12 +41,6 @@ const areMenuPositionsEqual = (
   );
 };
 
-/**
- * Hook for intelligent dropdown menu positioning with boundary detection
- *
- * Automatically determines whether to open dropdown above or below trigger element
- * based on available viewport space.
- */
 export const useBoundaryAwarePosition = (config: BoundaryConfig) => {
   const [menuPos, setMenuPos] = useState<MenuPositionState>({
     top: 0,
@@ -73,7 +67,6 @@ export const useBoundaryAwarePosition = (config: BoundaryConfig) => {
       // Use ref to get latest config without dependency
       const currentConfig = configRef.current;
 
-      // Calculate estimated menu height
       const maxItems = currentConfig.maxVisibleItems || 8;
       const estimatedHeight =
         actualMenuHeight ||
@@ -82,28 +75,23 @@ export const useBoundaryAwarePosition = (config: BoundaryConfig) => {
           currentConfig.maxHeight || 300,
         );
 
-      // Calculate available space
       const spaceBelow = viewportHeight - rect.bottom - bottomPadding;
       const spaceAbove = rect.top - bottomPadding;
 
-      // Determine opening direction and position
       let top: number;
       let maxHeight: number;
       let openDirection: "down" | "up";
 
       if (spaceBelow >= estimatedHeight || spaceBelow >= spaceAbove) {
-        // Open downward
         top = rect.bottom + gapSize;
         maxHeight = Math.min(estimatedHeight, spaceBelow - gapSize);
         openDirection = "down";
       } else {
-        // Open upward
         top = rect.top - estimatedHeight - gapSize;
         maxHeight = Math.min(estimatedHeight, spaceAbove - gapSize);
         openDirection = "up";
       }
 
-      // Ensure minimum position constraints
       const minTop = bottomPadding;
       if (top < minTop) {
         top = minTop;

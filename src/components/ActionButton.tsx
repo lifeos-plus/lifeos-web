@@ -18,10 +18,10 @@ interface ActionButtonProps {
   disabled?: boolean;
   className?: string;
   icon?: React.ReactNode; // emoji or SVG/icon component
-  iconName?: IconName; // standardized icon library name
+  iconName?: IconName;
   iconSize?: number;
   type?: "button" | "submit" | "reset";
-  ariaLabel?: string; // accessibility label
+  ariaLabel?: string;
   ariaHasPopup?: React.AriaAttributes["aria-haspopup"];
   ariaExpanded?: boolean;
   ariaPressed?: boolean;
@@ -41,43 +41,35 @@ interface ActionButtonGroupProps {
   splitOpposite?: boolean;
   /** Optional: render a top border and spacing commonly used in modals */
   withTopBorder?: boolean;
-  /** Optional: additional CSS classes */
   className?: string;
 }
 
 interface FormActionsProps {
-  // 基础配置
   loading?: boolean;
   disabled?: boolean;
 
-  // 按钮文本
   submitText?: string;
   cancelText?: string;
 
-  // 按钮图标
   submitIcon?: React.ReactNode;
   cancelIcon?: React.ReactNode;
 
-  // 按钮颜色（daisyUI semantic colors）
+  // daisyUI semantic colors
   submitColor?: ActionColor;
   cancelColor?: ActionColor;
 
-  // 按钮大小
   size?: "sm" | "md" | "lg";
 
-  // 事件处理
   onSubmit?: () => void;
   onCancel?: () => void;
   /** edit-mode destructive action; replaces the default cancel action */
   onDelete?: () => void;
   deleteDisabled?: boolean;
 
-  // 布局配置
   showTopBorder?: boolean;
   /** optional custom left slot; when provided, replaces the default cancel button */
   leftSlot?: React.ReactNode;
 
-  // 样式配置
   className?: string;
 }
 
@@ -92,7 +84,7 @@ function resolveBtnClasses(color: ActionColor, variant: ActionVariant): string {
           ? "btn-warning"
           : color === "error"
             ? "btn-error"
-            : "btn-neutral"; // default
+            : "btn-neutral";
   const variantClass =
     variant === "outline"
       ? "btn-outline"
@@ -329,7 +321,6 @@ function FormActions({
   className = "",
 }: FormActionsProps) {
   const { t } = useTranslation();
-  // 渲染提交按钮图标
   const renderSubmitIcon = () => {
     if (loading) {
       return <span className="loading loading-spinner loading-xs"></span>;
@@ -343,7 +334,6 @@ function FormActions({
       withTopBorder={showTopBorder}
       className={className}
     >
-      {/* Custom action, edit-mode delete, or the default create-mode cancel action. */}
       {leftSlot ?? (
         onDelete ? (
           <DeleteButton
@@ -365,7 +355,6 @@ function FormActions({
         )
       )}
 
-      {/* 提交按钮 */}
       <ActionButton
         label={submitText || t("common.submit")}
         icon={renderSubmitIcon()}
@@ -446,29 +435,23 @@ export const DeleteButton: React.FC<
 };
 
 interface CreateNewButtonProps {
-  // 基础配置
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   loading?: boolean;
 
-  // 文本配置
   label?: string; // 默认使用 t("common.add")
   tooltip?: string;
   showLabel?: boolean; // 默认 true
 
-  // 图标配置
   icon?: React.ReactNode; // 默认使用 PlusIcon
-  showIcon?: boolean; // 是否显示图标，默认 true
+  showIcon?: boolean; // 默认 true
 
-  // 样式配置
   color?: ActionColor; // 默认 "primary"
   size?: ActionSize; // 默认 "sm"
   variant?: ActionVariant; // 默认 "ghost"
 
-  // 预设样式模式
   mode?: "subtle" | "prominent"; // 默认 "subtle"
 
-  // 其他配置
   className?: string;
   ariaLabel?: string;
 }
@@ -502,7 +485,6 @@ export const CreateNewButton: React.FC<CreateNewButtonProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // 根据模式确定样式配置
   const getStyleConfig = () => {
     if (mode === "prominent") {
       return {
@@ -510,7 +492,6 @@ export const CreateNewButton: React.FC<CreateNewButtonProps> = ({
         variant: variant || "solid",
       };
     } else {
-      // subtle 模式
       return {
         color: color || "primary",
         variant: variant || "ghost",
@@ -520,7 +501,6 @@ export const CreateNewButton: React.FC<CreateNewButtonProps> = ({
 
   const styleConfig = getStyleConfig();
 
-  // 渲染图标
   const renderIcon = () => {
     if (loading) {
       return <span className="loading loading-spinner loading-xs"></span>;
@@ -532,11 +512,9 @@ export const CreateNewButton: React.FC<CreateNewButtonProps> = ({
     return null;
   };
 
-  // 确定按钮文本
   const resolvedLabel = label ?? t("common.add");
   const buttonLabel = showLabel ? resolvedLabel : "";
 
-  // 确定 aria-label
   const buttonAriaLabel = ariaLabel || resolvedLabel || t("common.add");
 
   return (

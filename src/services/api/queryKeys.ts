@@ -1,5 +1,3 @@
-// Query Keys Factory for TanStack Query
-// This file provides a centralized way to manage query keys for all data entities
 import type { UUID } from "@/types/primitive";
 import type { NoteAdvancedSearchPayload } from "./notes";
 import type { AggregationGranularity } from "./stats";

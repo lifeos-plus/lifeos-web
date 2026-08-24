@@ -15,13 +15,9 @@ export interface SettingItemConfig {
   description?: string;
   placeholder?: string;
   /**
-   * When true, SettingItem will not render the outer label text. Useful when
-   * the custom renderer provides its own heading.
+   * Useful when the custom renderer provides its own heading.
    */
   hideLabel?: boolean;
-  /**
-   * When true, SettingItem will not render the outer description text.
-   */
   hideDescription?: boolean;
   options?: Array<{ value: string; label: string }>;
   render?: (props: {

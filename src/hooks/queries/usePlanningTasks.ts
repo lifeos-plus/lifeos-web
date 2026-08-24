@@ -41,7 +41,6 @@ async function fetchPlanningTaskSet(
     size,
   });
   const tasks = response.items ?? [];
-  // filter out deleted if any
   const filtered = tasks.filter(
     (t) =>
       (t as unknown as { deleted_at?: string | null }).deleted_at == null,
