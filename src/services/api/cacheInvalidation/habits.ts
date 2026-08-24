@@ -4,6 +4,7 @@ import { habitsKeys } from "@/services/api/queryKeys";
 import {
   isHabitActionWindowQuery,
   isHabitsActionsQuery,
+  isHabitsAssociationsQuery,
   isHabitsListQuery,
   type QueryLike,
 } from "@/services/api/queryPredicates";
@@ -12,7 +13,9 @@ import type { UUID } from "@/types/primitive";
 
 export const invalidateHabitsLists = (queryClient: QueryClient) =>
   queryClient.invalidateQueries({
-    predicate: (query) => isHabitsListQuery(query as QueryLike),
+    predicate: (query) =>
+      isHabitsListQuery(query as QueryLike) ||
+      isHabitsAssociationsQuery(query as QueryLike),
   });
 
 export const invalidateHabitStats = (queryClient: QueryClient, id: UUID) =>

@@ -134,6 +134,15 @@ export const isHabitsListQuery = (query: QueryLike): boolean => {
   );
 };
 
+export const isHabitsAssociationsQuery = (query: QueryLike): boolean => {
+  if (!Array.isArray(query.queryKey)) return false;
+  return (
+    query.queryKey.length >= 2 &&
+    query.queryKey[0] === "habits" &&
+    query.queryKey[1] === "habit-task-associations"
+  );
+};
+
 export const isHabitsActionsQuery = (query: QueryLike): boolean => {
   if (!Array.isArray(query.queryKey)) return false;
   return (

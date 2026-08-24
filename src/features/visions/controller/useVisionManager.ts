@@ -100,9 +100,9 @@ export const useVisionManager = (statusFilter?: string) => {
   });
   const visions = useMemo(() => visionsData?.items ?? [], [visionsData]);
 
-  // 2. 使用 useQuery 获取习惯-任务关联
+  // 2. 使用 useQuery 获取习惯-任务关联（专属 key，避免与习惯列表查询共享缓存）
   const { data: habitTaskAssociationsData } = useQuery({
-    queryKey: habitsKeys.list({}),
+    queryKey: habitsKeys.associations(),
     queryFn: async () => {
       const response = await habitsApi.getHabitTaskAssociations();
       return response.associations;

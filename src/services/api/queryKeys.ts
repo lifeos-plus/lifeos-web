@@ -204,6 +204,10 @@ export const habitsKeys = {
   lists: () => [...habitsKeys.all, "list"] as const,
   list: (filters: { statusFilter?: string; page?: number; size?: number }) =>
     [...habitsKeys.lists(), filters] as const,
+  /** Habit-to-task associations. Distinct from list keys: the payload is an
+   *  object map, and sharing a key with list queries corrupts their cache. */
+  associations: () =>
+    [...habitsKeys.all, "habit-task-associations"] as const,
   actionsInRange: (filters: {
     startDate: string;
     endDate: string;
