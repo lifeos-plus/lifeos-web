@@ -3,15 +3,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   tasksApi,
   type Task,
-  type TaskWithSubtasks,
   toISODate,
 } from "@/services/api/tasks";
 import { tasksKeys } from "@/services/api/queryKeys";
 import type { UUID } from "@/types/primitive";
 import {
-  toTooltipLookupEntry,
-  type TaskTooltipLookupEntry,
-} from "@/components/tooltips/tooltipData";
+  buildTaskHierarchy,
+  buildTaskLookup,
+} from "@/utils/query";
 import { logger } from "@/utils/core";
 
 type PlanningCycleType = "7years" | "year" | "month" | "week" | "day";
@@ -21,48 +20,6 @@ type PlanningCycleType = "7years" | "year" | "month" | "week" | "day";
  * 批量接口一次请求即可拉回全部父任务（上限与后端 id_in 契约一致）。
  */
 const MAX_PARENT_LOOKUP_FETCHES = 100;
-
-function buildTaskHierarchy(flatTasks: Task[]): TaskWithSubtasks[] {
-  const taskMap = new Map<UUID, TaskWithSubtasks>();
-  const rootTasks: TaskWithSubtasks[] = [];
-
-  flatTasks.forEach((task) => {
-    taskMap.set(task.id, {
-      ...task,
-      subtasks: [],
-      completion_percentage: 0,
-      depth: 0,
-    } as TaskWithSubtasks);
-  });
-
-  flatTasks.forEach((task) => {
-    const node = taskMap.get(task.id)!;
-    if (task.parent_task_id) {
-      const parent = taskMap.get(task.parent_task_id);
-      if (parent) {
-        parent.subtasks.push(node);
-        node.depth = parent.depth + 1;
-      } else {
-        rootTasks.push(node);
-      }
-    } else {
-      rootTasks.push(node);
-    }
-  });
-
-  return rootTasks;
-}
-
-function buildTaskLookup(
-  flatTasks: Task[],
-  extraParents: Task[],
-): Map<string, TaskTooltipLookupEntry> {
-  const lookup = new Map<string, TaskTooltipLookupEntry>();
-  [...flatTasks, ...extraParents].forEach((task) => {
-    lookup.set(String(task.id), toTooltipLookupEntry(task));
-  });
-  return lookup;
-}
 
 /**
  * 拉取规划视图任务，并轻量补拉不在结果集中的直接父任务。
