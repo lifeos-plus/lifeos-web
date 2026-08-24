@@ -27,7 +27,7 @@ export function useAssociatedNotesController({
     error,
     refetch,
   } = useQuery({
-    queryKey: notesKeys.list(listFilters),
+    queryKey: notesKeys.associatedList(listFilters as Record<string, unknown>),
     queryFn: ({ signal }) =>
       notesApi.fetchPaged(
         {
