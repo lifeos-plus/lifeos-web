@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 
 import {
   isNotesListQuery,
+  isNotesAssociatedListQuery,
   isNotesAdvancedSearchQuery,
   isNotesStatsQuery,
   type QueryLike,
@@ -9,7 +10,9 @@ import {
 
 export const invalidateNotesLists = (queryClient: QueryClient) =>
   queryClient.invalidateQueries({
-    predicate: (query) => isNotesListQuery(query as QueryLike),
+    predicate: (query) =>
+      isNotesListQuery(query as QueryLike) ||
+      isNotesAssociatedListQuery(query as QueryLike),
   });
 
 export const invalidateNotesAdvancedSearch = (queryClient: QueryClient) =>

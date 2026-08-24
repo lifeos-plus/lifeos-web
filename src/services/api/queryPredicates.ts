@@ -31,6 +31,15 @@ export const isNotesListQuery = (query: QueryLike): boolean => {
   );
 };
 
+export const isNotesAssociatedListQuery = (query: QueryLike): boolean => {
+  if (!Array.isArray(query.queryKey)) return false;
+  return (
+    query.queryKey.length >= 2 &&
+    query.queryKey[0] === "notes" &&
+    query.queryKey[1] === "associated-list"
+  );
+};
+
 export const isNotesStatsQuery = (query: QueryLike): boolean => {
   if (!Array.isArray(query.queryKey)) return false;
   return (

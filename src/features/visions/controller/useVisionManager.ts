@@ -89,16 +89,22 @@ export const useVisionManager = (statusFilter?: string) => {
   const page = 1;
   const size = 100;
 
-  // 1. 使用 useQuery 获取愿景列表
+  // 1. 使用 useQuery 获取愿景列表。
+  //    查询结果统一为 items 数组：该 key 与 useVisions / useDefaultInboxVision
+  //    共享缓存（statusFilter 为 undefined 时 key 序列化相同），形状必须一致，
+  //    否则其他页面会命中对象缓存并在 .map 时崩溃。
   const {
     data: visionsData,
     isLoading: loading,
     error,
   } = useQuery({
     queryKey: visionsKeys.list({ status: statusFilter, page, size }),
-    queryFn: () => visionsApi.getAll(statusFilter, page, size),
+    queryFn: async () => {
+      const response = await visionsApi.getAll(statusFilter, page, size);
+      return response.items ?? [];
+    },
   });
-  const visions = useMemo(() => visionsData?.items ?? [], [visionsData]);
+  const visions = useMemo(() => visionsData ?? [], [visionsData]);
 
   // 2. 使用 useQuery 获取习惯-任务关联（专属 key，避免与习惯列表查询共享缓存）
   const { data: habitTaskAssociationsData } = useQuery({

@@ -18,6 +18,11 @@ export const notesKeys = {
     page?: number;
     size?: number;
   }) => [...notesKeys.lists(), filters] as const,
+  /** Single-page note lists for "associated notes" modals. Distinct from the
+   *  infinite list key: the infinite list stores InfiniteData pages, and the
+   *  two shapes must never share a cache key. */
+  associatedList: (filters: Record<string, unknown>) =>
+    [...notesKeys.all, "associated-list", filters] as const,
   advancedSearch: (filters: NoteAdvancedSearchPayload) =>
     [...notesKeys.all, "advanced-search", filters] as const,
   stats: () => [...notesKeys.all, "stats"] as const,
