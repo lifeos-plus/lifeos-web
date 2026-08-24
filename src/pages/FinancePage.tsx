@@ -69,7 +69,6 @@ import {
 import { FinanceAssetSymbol } from "@/features/finance/AmountText";
 import { financeTextClass } from "@/features/finance/styles";
 import { useFinanceAssetSource } from "@/features/finance/useFinanceAssetSource";
-import { duplicateTree } from "@/features/finance/treeCopy";
 
 const PRESETS: PresetConfig[] = [
   {
@@ -642,12 +641,7 @@ export function FinanceTreesWorkspace() {
   });
 
   const copyTreeMutation = useMutation({
-    mutationFn: (source: FinanceTree) =>
-      duplicateTree(
-        financeApi,
-        source,
-        trees.map((item) => item.name),
-      ),
+    mutationFn: (source: FinanceTree) => financeApi.copyTree(source.id),
     onSuccess: async (copiedTree) => {
       toast.showSuccess(t("finance.messages.treeCopied"));
       setSelectedTreeId(copiedTree.id);

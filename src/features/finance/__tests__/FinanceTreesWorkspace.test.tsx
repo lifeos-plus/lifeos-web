@@ -8,10 +8,8 @@ import { FinanceTreesWorkspace } from "@/pages/FinancePage";
 import type {
   FinanceAsset,
   FinanceAssetListResponse,
-  FinanceNodeCreate,
   FinanceTree,
   FinanceTreeListResponse,
-  FinanceTreeNode,
 } from "@/services/api/finance";
 import { renderWithProviders } from "@test/utils";
 
@@ -19,9 +17,7 @@ const financeApiMocks = vi.hoisted(() => ({
   listAssets: vi.fn(),
   listTrees: vi.fn(),
   getTree: vi.fn(),
-  createTree: vi.fn(),
-  createNode: vi.fn(),
-  deleteTree: vi.fn(),
+  copyTree: vi.fn(),
 }));
 
 vi.mock("@/services/api/finance", () => ({
@@ -40,34 +36,22 @@ const treeListResponse = (items: FinanceTree[]): FinanceTreeListResponse => ({
   meta: {},
 });
 
-const sourceNodes: FinanceTreeNode[] = [
-  {
-    id: "node-assets",
-    parent_id: null,
-    name: "Assets",
-    currency_code: "USD",
-    path: "node-assets",
-    depth: 0,
-    display_order: 1,
-  },
-  {
-    id: "node-cash",
-    parent_id: "node-assets",
-    name: "Cash",
-    currency_code: null,
-    path: "node-assets/node-cash",
-    depth: 1,
-    display_order: 2,
-  },
-];
-
 const sourceTree: FinanceTree = {
   id: "tree-source",
   name: "Personal",
   primary_currency: "USD",
   display_order: 10,
   is_default: true,
-  nodes: sourceNodes,
+  nodes: [],
+};
+
+const copiedTree: FinanceTree = {
+  id: "tree-copy",
+  name: "Personal Copy",
+  primary_currency: "USD",
+  display_order: 10,
+  is_default: false,
+  nodes: [],
 };
 
 describe("FinanceTreesWorkspace", () => {
@@ -83,39 +67,20 @@ describe("FinanceTreesWorkspace", () => {
         },
       ]),
     );
-    financeApiMocks.listTrees.mockResolvedValue(treeListResponse([sourceTree]));
-    financeApiMocks.getTree.mockResolvedValue(sourceTree);
-    financeApiMocks.createTree.mockImplementation(
-      async (payload: Parameters<typeof financeApiMocks.createTree>[0]) =>
-        ({
-          id: "tree-copy",
-          name: payload.name,
-          primary_currency: payload.primary_currency,
-          display_order: payload.display_order,
-          is_default: payload.is_default ?? false,
-          nodes: null,
-        }) satisfies FinanceTree,
+    financeApiMocks.listTrees
+      .mockResolvedValueOnce(treeListResponse([sourceTree]))
+      .mockResolvedValue(treeListResponse([sourceTree, copiedTree]));
+    financeApiMocks.getTree.mockImplementation(async (treeId: string) =>
+      treeId === "tree-source" ? sourceTree : copiedTree,
     );
-    financeApiMocks.createNode.mockImplementation(
-      async (_treeId: string, payload: FinanceNodeCreate) =>
-        ({
-          id: payload.name === "Assets" ? "copy-assets" : "copy-cash",
-          parent_id: payload.parent_id ?? null,
-          name: payload.name,
-          currency_code: payload.currency_code ?? null,
-          path: "",
-          depth: payload.parent_id ? 1 : 0,
-          display_order: payload.display_order ?? 0,
-        }) satisfies FinanceTreeNode,
-    );
-    financeApiMocks.deleteTree.mockResolvedValue(undefined);
+    financeApiMocks.copyTree.mockResolvedValue(copiedTree);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it("copies the current tree and replays its nodes under remapped parents", async () => {
+  it("copies the current tree through the atomic endpoint and selects the copy", async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<FinanceTreesWorkspace />, {
@@ -128,29 +93,9 @@ describe("FinanceTreesWorkspace", () => {
     await user.click(await screen.findByRole("button", { name: "common.copy" }));
 
     await waitFor(() => {
-      expect(financeApiMocks.createTree).toHaveBeenCalledTimes(1);
+      expect(financeApiMocks.copyTree).toHaveBeenCalledTimes(1);
     });
-    expect(financeApiMocks.createTree).toHaveBeenCalledWith({
-      name: "Personal Copy",
-      primary_currency: "USD",
-      display_order: 10,
-      is_default: false,
-    });
-
-    await waitFor(() => {
-      expect(financeApiMocks.createNode).toHaveBeenCalledTimes(2);
-    });
-    expect(financeApiMocks.createNode).toHaveBeenNthCalledWith(1, "tree-copy", {
-      name: "Assets",
-      parent_id: null,
-      currency_code: "USD",
-      display_order: 1,
-    });
-    expect(financeApiMocks.createNode).toHaveBeenNthCalledWith(2, "tree-copy", {
-      name: "Cash",
-      parent_id: "copy-assets",
-      currency_code: null,
-      display_order: 2,
-    });
+    expect(financeApiMocks.copyTree).toHaveBeenCalledWith("tree-source");
+    expect(await screen.findByText("Personal Copy")).toBeInTheDocument();
   });
 });
