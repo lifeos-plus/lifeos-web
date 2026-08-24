@@ -17,7 +17,9 @@ const financeApiMocks = vi.hoisted(() => ({
   listAssets: vi.fn(),
   listTrees: vi.fn(),
   getTree: vi.fn(),
+  createTree: vi.fn(),
   copyTree: vi.fn(),
+  updateTree: vi.fn(),
 }));
 
 vi.mock("@/services/api/finance", () => ({
@@ -54,6 +56,15 @@ const copiedTree: FinanceTree = {
   nodes: [],
 };
 
+const createdTree: FinanceTree = {
+  id: "tree-created",
+  name: "New Tree",
+  primary_currency: "USD",
+  display_order: 1000,
+  is_default: false,
+  nodes: [],
+};
+
 describe("FinanceTreesWorkspace", () => {
   beforeEach(() => {
     financeApiMocks.listAssets.mockResolvedValue(
@@ -74,13 +85,15 @@ describe("FinanceTreesWorkspace", () => {
       treeId === "tree-source" ? sourceTree : copiedTree,
     );
     financeApiMocks.copyTree.mockResolvedValue(copiedTree);
+    financeApiMocks.updateTree.mockResolvedValue(copiedTree);
+    financeApiMocks.createTree.mockResolvedValue(createdTree);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it("copies the current tree through the atomic endpoint and selects the copy", async () => {
+  it("copies the current tree, activates the copy, and opens its edit form", async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<FinanceTreesWorkspace />, {
@@ -96,6 +109,61 @@ describe("FinanceTreesWorkspace", () => {
       expect(financeApiMocks.copyTree).toHaveBeenCalledTimes(1);
     });
     expect(financeApiMocks.copyTree).toHaveBeenCalledWith("tree-source");
-    expect(await screen.findByText("Personal Copy")).toBeInTheDocument();
+
+    // The edit form opens automatically, pre-filled with the copy (not the source).
+    expect(await screen.findByText("finance.tree.editTree")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Personal Copy")).toBeInTheDocument();
+
+    // Saving keeps the copied tree as the target; the source is untouched.
+    await user.click(screen.getByRole("button", { name: "common.save" }));
+    await waitFor(() => {
+      expect(financeApiMocks.updateTree).toHaveBeenCalledWith("tree-copy", {
+        name: "Personal Copy",
+        primary_currency: "USD",
+        display_order: 10,
+        is_default: false,
+      });
+    });
+    expect(financeApiMocks.updateTree).toHaveBeenCalledTimes(1);
+  });
+
+  it("creates a tree through the API and selects it", async () => {
+    financeApiMocks.listTrees.mockReset();
+    financeApiMocks.listTrees.mockResolvedValue(
+      treeListResponse([sourceTree, createdTree]),
+    );
+    financeApiMocks.getTree.mockImplementation(async (treeId: string) =>
+      treeId === "tree-source" ? sourceTree : createdTree,
+    );
+    const user = userEvent.setup();
+
+    renderWithProviders(<FinanceTreesWorkspace />, {
+      wrapper: ({ children }: PropsWithChildren) => (
+        <ModalProvider>{children}</ModalProvider>
+      ),
+    });
+
+    expect(await screen.findByText("Personal")).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "finance.tree.createTree" }),
+    );
+
+    await user.type(
+      await screen.findByPlaceholderText("finance.tree.treeNamePlaceholder"),
+      "New Tree",
+    );
+    await user.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => {
+      expect(financeApiMocks.createTree).toHaveBeenCalledWith({
+        name: "New Tree",
+        primary_currency: "USD",
+        display_order: 1000,
+        is_default: false,
+      });
+    });
+
+    // The newly created tree is activated.
+    expect(await screen.findByText("New Tree")).toBeInTheDocument();
   });
 });

@@ -30,6 +30,7 @@ import {
   type FinanceTreeUpdate,
 } from "@/services/api/finance";
 import {
+  addFinanceTreeToListCache,
   invalidateAllFinanceSnapshotLists,
   invalidateFinanceTree,
   invalidateFinanceSnapshot,
@@ -574,6 +575,7 @@ export function FinanceTreesWorkspace() {
       toast.showSuccess(t("finance.messages.treeCreated"));
       setTreeFormVisible(false);
       setTreeFormMode("create");
+      addFinanceTreeToListCache(queryClient, createdTree);
       setSelectedTreeId(createdTree.id);
       await invalidateTreeLists(createdTree);
     },
@@ -644,7 +646,10 @@ export function FinanceTreesWorkspace() {
     mutationFn: (source: FinanceTree) => financeApi.copyTree(source.id),
     onSuccess: async (copiedTree) => {
       toast.showSuccess(t("finance.messages.treeCopied"));
+      addFinanceTreeToListCache(queryClient, copiedTree);
       setSelectedTreeId(copiedTree.id);
+      setTreeFormMode("edit");
+      setTreeFormVisible(true);
       await invalidateTreeLists(copiedTree);
     },
     onError: (error) => {

@@ -5,6 +5,7 @@ import {
   type FinanceRateSnapshotListResponse,
   type FinanceSnapshot,
   type FinanceSnapshotListResponse,
+  type FinanceTree,
   type FinanceTreeListResponse,
 } from "@/services/api/finance";
 import { financeKeys } from "@/services/api/queryKeys";
@@ -26,6 +27,27 @@ export const invalidateFinanceTree = (
     queryKey: financeKeys.tree(treeId),
     exact: true,
   });
+
+export const addFinanceTreeToListCache = (
+  queryClient: QueryClient,
+  tree: FinanceTree,
+) => {
+  queryClient.setQueryData<FinanceTreeListResponse>(
+    financeKeys.trees(),
+    (existing) => {
+      if (!existing) return existing;
+      const alreadyPresent = existing.items.some((item) => item.id === tree.id);
+      return {
+        ...existing,
+        items: prependUnique(existing.items, tree),
+        pagination: {
+          ...existing.pagination,
+          total: existing.pagination.total + (alreadyPresent ? 0 : 1),
+        },
+      };
+    },
+  );
+};
 
 export const removeFinanceTreeFromListCache = (
   queryClient: QueryClient,
