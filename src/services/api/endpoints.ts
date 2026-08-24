@@ -102,6 +102,7 @@ export const ENDPOINTS = {
     RATE_SNAPSHOT_BY_ID: (id: string) => `${API_V1}/finance/rate-snapshots/${id}`,
     ENSURE_DEFAULT_TREE: `${API_V1}/finance/trees/ensure-default`,
     TREE_BY_ID: (id: string) => `${API_V1}/finance/trees/${id}`,
+    TREE_COPY: (id: string) => `${API_V1}/finance/trees/${id}/copy`,
     TREE_NODES: (treeId: string) => `${API_V1}/finance/trees/${treeId}/nodes`,
     NODE_BY_ID: (id: string) => `${API_V1}/finance/nodes/${id}`,
     SNAPSHOTS: `${API_V1}/finance/snapshots`,

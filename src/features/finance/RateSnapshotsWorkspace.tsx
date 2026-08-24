@@ -44,8 +44,8 @@ import {
   nowDateTimeLocal,
   formatAmountForAsset,
   rateSnapshotLabel,
+  type FinanceFormMode,
   type RateRowState,
-  type RateSnapshotFormMode,
 } from "./utils";
 import { financeTextClass } from "./styles";
 import { useFinanceAssetSource } from "./useFinanceAssetSource";
@@ -59,7 +59,7 @@ export function RateSnapshotsWorkspace() {
   const { assets, createAsset } = useFinanceAssetSource();
   const [selectedRateSnapshotId, setSelectedRateSnapshotId] = useState<UUID | null>(null);
   const [rateFormVisible, setRateFormVisible] = useState(false);
-  const [rateFormMode, setRateFormMode] = useState<RateSnapshotFormMode>("create");
+  const [rateFormMode, setRateFormMode] = useState<FinanceFormMode>("create");
   const [pendingDeleteRateSnapshot, setPendingDeleteRateSnapshot] =
     useState<FinanceRateSnapshot | null>(null);
   const [deletedRateSnapshotIds, setDeletedRateSnapshotIds] = useState<Set<UUID>>(

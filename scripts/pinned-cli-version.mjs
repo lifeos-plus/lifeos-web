@@ -10,7 +10,7 @@
 
 import { pathToFileURL } from "node:url";
 
-export const DEFAULT_SCHEMA_VERSION = "v1.3.0";
+export const DEFAULT_SCHEMA_VERSION = "v1.3.1";
 const PEP440_VERSION_PATTERN = /^\d+\.\d+\.\d+[0-9A-Za-z.+-]*$/;
 
 export function resolveSchemaVersion() {

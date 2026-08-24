@@ -1638,6 +1638,7 @@
       "treeCreated": "Finance tree created",
       "treeUpdated": "Finance tree updated",
       "treeDeleted": "Finance tree deleted",
+      "treeCopied": "Finance tree copied",
       "nodeCreated": "Finance node created",
       "nodeUpdated": "Finance node updated",
       "nodeDeleted": "Finance node deleted",

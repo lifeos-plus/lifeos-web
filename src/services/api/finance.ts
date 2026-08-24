@@ -57,6 +57,8 @@ export const financeApi = {
     http.patch<FinanceTree>(ENDPOINTS.FINANCE.TREE_BY_ID(treeId), payload),
   deleteTree: (treeId: UUID) =>
     http.delete<void>(ENDPOINTS.FINANCE.TREE_BY_ID(treeId)),
+  copyTree: (treeId: UUID) =>
+    http.post<FinanceTree>(ENDPOINTS.FINANCE.TREE_COPY(treeId), undefined),
   listRateSnapshots: (params: { page?: number; size?: number } = {}) =>
     http.get<FinanceRateSnapshotListResponse>(
       ENDPOINTS.FINANCE.RATE_SNAPSHOTS,

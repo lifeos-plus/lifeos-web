@@ -403,6 +403,26 @@ export interface paths {
         patch: operations["update_tree_api_v1_finance_trees__tree_id__patch"];
         trace?: never;
     };
+    "/api/v1/finance/trees/{tree_id}/copy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Copy Tree
+         * @description Copy a finance tree and all of its nodes into a new tree.
+         */
+        post: operations["copy_tree_api_v1_finance_trees__tree_id__copy_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/finance/trees/{tree_id}/nodes": {
         parameters: {
             query?: never;
@@ -2539,6 +2559,14 @@ export interface components {
             title?: string | null;
         };
         /**
+         * FinanceTreeCopy
+         * @description Payload for copying a finance tree.
+         */
+        FinanceTreeCopy: {
+            /** Name */
+            name?: string | null;
+        };
+        /**
          * FinanceTreeCreate
          * @description Payload for creating a finance tree.
          */
@@ -3906,6 +3934,8 @@ export interface components {
             fields: string;
             /** First Day Of Week */
             first_day_of_week: number | null;
+            /** Id In */
+            id_in: string | null;
             /** Planning Cycle Start Date */
             planning_cycle_start_date: string | null;
             /** Planning Cycle Type */
@@ -5713,6 +5743,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["FinanceTreeUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinanceTreeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    copy_tree_api_v1_finance_trees__tree_id__copy_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tree_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["FinanceTreeCopy"] | null;
             };
         };
         responses: {
@@ -7922,6 +7987,7 @@ export interface operations {
             query?: {
                 page?: number;
                 size?: number;
+                id_in?: string | null;
                 vision_id?: string | null;
                 vision_in?: string | null;
                 status_filter?: string | null;

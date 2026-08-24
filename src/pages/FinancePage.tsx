@@ -53,8 +53,8 @@ import {
   type FinanceNodeFormState,
   type FinanceTab,
   type FinanceToolbarTab,
+  type FinanceFormMode,
   type PresetConfig,
-  type SnapshotFormMode,
   type TreeNodeWithChildren,
 } from "@/features/finance/utils";
 import {
@@ -175,7 +175,7 @@ function FinancePresetWorkspace({ preset }: { preset: PresetConfig }) {
   const activeTimezone = useSystemTimezone().timezone;
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<UUID | null>(null);
   const [snapshotFormVisible, setSnapshotFormVisible] = useState(false);
-  const [snapshotFormMode, setSnapshotFormMode] = useState<SnapshotFormMode>("create");
+  const [snapshotFormMode, setSnapshotFormMode] = useState<FinanceFormMode>("create");
   const [selectedTreeId, setSelectedTreeId] = useState<UUID | null>(null);
   const [pendingDeleteSnapshot, setPendingDeleteSnapshot] = useState<FinanceSnapshot | null>(null);
   const [deletedSnapshotIds, setDeletedSnapshotIds] = useState<Set<UUID>>(() => new Set());
@@ -501,7 +501,7 @@ function FinancePresetWorkspace({ preset }: { preset: PresetConfig }) {
   );
 }
 
-function FinanceTreesWorkspace() {
+export function FinanceTreesWorkspace() {
   const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -636,6 +636,18 @@ function FinanceTreesWorkspace() {
       });
       setSelectedTreeId(context?.previousSelectedTreeId ?? null);
       await queryClient.invalidateQueries({ queryKey: financeKeys.trees() });
+      toast.showError(t("common.error"), error instanceof Error ? error.message : String(error));
+    },
+  });
+
+  const copyTreeMutation = useMutation({
+    mutationFn: (source: FinanceTree) => financeApi.copyTree(source.id),
+    onSuccess: async (copiedTree) => {
+      toast.showSuccess(t("finance.messages.treeCopied"));
+      setSelectedTreeId(copiedTree.id);
+      await invalidateTreeLists(copiedTree);
+    },
+    onError: (error) => {
       toast.showError(t("common.error"), error instanceof Error ? error.message : String(error));
     },
   });
@@ -802,13 +814,15 @@ function FinanceTreesWorkspace() {
               rightSlot={
                 <SnapshotActionButtons
                   editLabel={t("common.edit")}
+                  copyLabel={t("common.copy")}
                   deleteLabel={t("common.delete")}
-                  disabled={deleteTreeMutation.isPending}
+                  disabled={deleteTreeMutation.isPending || copyTreeMutation.isPending}
                   deleteDisabled={deleteTreeMutation.isPending}
                   onEdit={() => {
                     setTreeFormMode("edit");
                     setTreeFormVisible(true);
                   }}
+                  onCopy={() => copyTreeMutation.mutate(tree)}
                   onDelete={() => setPendingDeleteTree(tree)}
                 />
               }
@@ -1017,7 +1031,7 @@ function SnapshotModule({
   snapshotDetail: FinanceSnapshot | null;
   snapshotDetailLoading: boolean;
   snapshotFormVisible: boolean;
-  snapshotFormMode: SnapshotFormMode;
+  snapshotFormMode: FinanceFormMode;
   snapshotSubmitting: boolean;
   snapshotUpdating: boolean;
   snapshotDeleting: boolean;

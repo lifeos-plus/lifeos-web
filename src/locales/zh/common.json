@@ -1638,6 +1638,7 @@
       "treeCreated": "财务树已创建",
       "treeUpdated": "财务树已更新",
       "treeDeleted": "财务树已删除",
+      "treeCopied": "财务树已复制",
       "nodeCreated": "财务节点已创建",
       "nodeUpdated": "财务节点已更新",
       "nodeDeleted": "财务节点已删除",

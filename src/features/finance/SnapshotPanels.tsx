@@ -31,9 +31,9 @@ import {
   nowDateTimeLocal,
   rateSnapshotLabel,
   todayDate,
+  type FinanceFormMode,
   type PresetConfig,
   type SnapshotAmountState,
-  type SnapshotFormMode,
   type TreeNodeWithChildren,
 } from "./utils";
 
@@ -66,7 +66,7 @@ export function SnapshotFormPanel({
   treeNodes: TreeNodeWithChildren[];
   rateSnapshots: FinanceRateSnapshot[];
   submitting: boolean;
-  mode: SnapshotFormMode;
+  mode: FinanceFormMode;
   initialSnapshot?: FinanceSnapshot | null;
   onSubmit: (payload: {
     title?: string | null;
