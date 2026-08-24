@@ -42,14 +42,11 @@ const createWrapper = (queryClient: QueryClient) =>
     );
   };
 
-// Mounts the visions controller so it writes the habit-task associations cache.
 function VisionMount() {
   useVisionManager("active");
   return null;
 }
 
-// Mirrors the Habits page: renders the habit list by calling .map on the
-// habits query result, exactly like HabitsPage does.
 function HabitsProbe() {
   const { habits } = useHabits({ statusFilter: undefined });
   return <div data-testid="probe">{habits.map((h) => h.title).join(",")}</div>;
@@ -92,16 +89,14 @@ describe("habits all-status filter vs habit-task associations cache", () => {
     });
     const wrapper = createWrapper(queryClient);
 
-    // First visit the Visions page: associations get cached.
     const visionView = render(<VisionMount />, { wrapper });
     await waitFor(() => {
       expect(getAssociationsMock).toHaveBeenCalled();
     });
     visionView.unmount();
 
-    // Now open the Habits page with the "All" status filter. The page must
-    // not resolve the associations object from the cache (regression:
-    // "TypeError: x.map is not a function").
+    // Regression: the all-status habits list must not resolve the cached
+    // associations object ("TypeError: x.map is not a function").
     render(<HabitsProbe />, { wrapper });
     await waitFor(() => {
       expect(screen.getByTestId("probe").textContent).toBe(

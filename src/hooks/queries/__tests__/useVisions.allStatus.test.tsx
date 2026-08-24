@@ -40,13 +40,11 @@ const createWrapper = (queryClient: QueryClient) =>
     );
   };
 
-// Mirrors the Visions page with the "All" status filter selected.
 function VisionManagerMount() {
   useVisionManager(undefined);
   return null;
 }
 
-// Mirrors the Calendar page: maps over the useVisions() result.
 function VisionsProbe() {
   const { visions } = useVisions();
   return <div data-testid="probe">{visions.map((v) => v.name).join(",")}</div>;
@@ -74,17 +72,14 @@ describe("useVisions after useVisionManager cached the all-status list", () => {
     });
     const wrapper = createWrapper(queryClient);
 
-    // Visit the Visions page first with the "All" filter: the manager writes
-    // the shared ["visions","list",{page:1,size:100}] key.
     const visionView = render(<VisionManagerMount />, { wrapper });
     await waitFor(() => {
       expect(getAllMock).toHaveBeenCalled();
     });
     visionView.unmount();
 
-    // Now open the Calendar page: useVisions resolves the same key and must
-    // get an array, not the raw response object (regression:
-    // "TypeError: L.map is not a function").
+    // Regression: useVisions must resolve the shared list key to an array,
+    // not the raw response object ("TypeError: L.map is not a function").
     render(<VisionsProbe />, { wrapper });
     await waitFor(() => {
       expect(screen.getByTestId("probe").textContent).toBe("Alpha,Beta");

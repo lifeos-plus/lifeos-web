@@ -27,8 +27,6 @@ export function useAssociatedNotesController({
     error,
     refetch,
   } = useQuery({
-    // 独立 key：notesKeys.list 被 useNotes 的 useInfiniteQuery 占用（InfiniteData
-    // 形状），单页关联列表若共用该 key 会互相污染缓存并导致数据错乱/崩溃。
     queryKey: notesKeys.associatedList(listFilters as Record<string, unknown>),
     queryFn: ({ signal }) =>
       notesApi.fetchPaged(

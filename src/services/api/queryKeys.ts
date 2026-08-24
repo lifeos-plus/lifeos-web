@@ -18,9 +18,7 @@ export const notesKeys = {
     page?: number;
     size?: number;
   }) => [...notesKeys.lists(), filters] as const,
-  /** Single-page note lists for "associated notes" modals. Distinct from the
-   *  infinite list key: the infinite list stores InfiniteData pages, and the
-   *  two shapes must never share a cache key. */
+  /** Distinct from the infinite list key, which stores InfiniteData pages. */
   associatedList: (filters: Record<string, unknown>) =>
     [...notesKeys.all, "associated-list", filters] as const,
   advancedSearch: (filters: NoteAdvancedSearchPayload) =>
@@ -209,8 +207,7 @@ export const habitsKeys = {
   lists: () => [...habitsKeys.all, "list"] as const,
   list: (filters: { statusFilter?: string; page?: number; size?: number }) =>
     [...habitsKeys.lists(), filters] as const,
-  /** Habit-to-task associations. Distinct from list keys: the payload is an
-   *  object map, and sharing a key with list queries corrupts their cache. */
+  /** Distinct from list keys: the payload is an object map, not a list. */
   associations: () =>
     [...habitsKeys.all, "habit-task-associations"] as const,
   actionsInRange: (filters: {
