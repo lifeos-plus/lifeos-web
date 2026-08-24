@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   addFinanceRateSnapshotToListCache,
+  addFinanceTreeToListCache,
   invalidateFinanceAssets,
   invalidateFinanceSnapshot,
   invalidateFinanceSnapshots,
@@ -19,6 +20,7 @@ import type {
   FinanceRateSnapshotListResponse,
   FinanceSnapshot,
   FinanceSnapshotListResponse,
+  FinanceTree,
   FinanceTreeListResponse,
 } from "@/services/api/finance";
 import { financeKeys } from "@/services/api/queryKeys";
@@ -128,6 +130,64 @@ describe("finance cache invalidation helpers", () => {
       expect.any(Function),
     );
     expect(next.items.map((item) => item.id)).toEqual(["tree-2"]);
+    expect(next.pagination.total).toBe(1);
+  });
+
+  it("prepends new trees into the cached tree list", () => {
+    const copiedTree = {
+      id: "tree-copy",
+      name: "Tree 1 Copy",
+      primary_currency: "USD",
+      display_order: 0,
+      is_default: false,
+    } as FinanceTree;
+    const existing = {
+      items: [
+        {
+          id: "tree-1",
+          name: "Tree 1",
+          primary_currency: "USD",
+          display_order: 0,
+          is_default: true,
+        },
+      ],
+      pagination: { page: 1, size: 50, total: 1, pages: 1 },
+      meta: {},
+    } as FinanceTreeListResponse;
+
+    addFinanceTreeToListCache(queryClient, copiedTree);
+
+    const [, updater] = setQueryDataMock.mock.calls[0];
+    const next = updater(existing) as FinanceTreeListResponse;
+
+    expect(setQueryDataMock).toHaveBeenCalledWith(
+      financeKeys.trees(),
+      expect.any(Function),
+    );
+    expect(next.items.map((item) => item.id)).toEqual(["tree-copy", "tree-1"]);
+    expect(next.pagination.total).toBe(2);
+  });
+
+  it("does not duplicate trees already present in the cached tree list", () => {
+    const existingTree = {
+      id: "tree-copy",
+      name: "Tree 1 Copy",
+      primary_currency: "USD",
+      display_order: 0,
+      is_default: false,
+    } as FinanceTree;
+    const existing = {
+      items: [existingTree],
+      pagination: { page: 1, size: 50, total: 1, pages: 1 },
+      meta: {},
+    } as FinanceTreeListResponse;
+
+    addFinanceTreeToListCache(queryClient, existingTree);
+
+    const [, updater] = setQueryDataMock.mock.calls[0];
+    const next = updater(existing) as FinanceTreeListResponse;
+
+    expect(next.items.map((item) => item.id)).toEqual(["tree-copy"]);
     expect(next.pagination.total).toBe(1);
   });
 
