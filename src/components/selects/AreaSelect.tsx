@@ -125,7 +125,7 @@ const AreaSelect = React.forwardRef<
       if (!sortByCount) {
         return counted;
       }
-      // 稳定排序：计数相同保持原有顺序
+      // Stable sort: equal counts keep the original order
       return [...counted].sort(
         (a, b) =>
           (optionCounts[b.id] ?? 0) - (optionCounts[a.id] ?? 0),

@@ -230,13 +230,22 @@ describe("HabitsPage", () => {
     );
     const select = getByRole("combobox") as HTMLSelectElement;
 
-    // 全部选项在最前，其余按计数降序
-    expect(Array.from(select.options).map((o) => o.textContent)).toEqual([
-      "common.all (3)",
-      "Active (2)",
-      "Completed (1)",
-      "Paused (0)",
-      "Expired (0)",
+    // "All" 选项在最前，其余按计数降序（不依赖具体翻译文本）
+    const optionValues = Array.from(select.options).map((o) => o.value);
+    const optionTexts = Array.from(select.options).map((o) => o.textContent);
+    expect(optionValues).toEqual([
+      "__all__",
+      "active",
+      "completed",
+      "paused",
+      "expired",
+    ]);
+    expect(optionTexts[0]).toBe("common.all (3)");
+    expect(optionTexts.slice(1)).toEqual([
+      expect.stringMatching(/^.+ \(2\)$/),
+      expect.stringMatching(/^.+ \(1\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
     ]);
     expect(select.value).toBe("active");
   });

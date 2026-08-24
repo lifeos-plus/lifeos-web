@@ -64,7 +64,7 @@ const replaceTaskInHierarchy = (
 };
 /**
  * Custom hook for managing vision-related state and operations.
- * statusFilter 为 undefined 时表示"全部"（后端不传 status_filter）。
+ * statusFilter undefined means "all" (backend receives no status_filter).
  */
 export const useVisionManager = (statusFilter?: string) => {
   const queryClient = useQueryClient();

@@ -105,14 +105,21 @@ describe("VisionsPage", () => {
     };
     expect(managerProps.statusFilter).toBe("active");
 
-    // 状态选项：全部最前，其余按计数降序
+    // 状态选项：全部最前，其余按计数降序（不依赖具体翻译文本）
     const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
     expect(enumProps.value).toBe("active");
-    expect(enumProps.options.map((o) => o.label)).toEqual([
-      "common.all (3)",
-      "Active (2)",
-      "Fruit (1)",
-      "Archived (0)",
+    expect(enumProps.options.map((o) => o.value)).toEqual([
+      "__all__",
+      "active",
+      "fruit",
+      "archived",
+    ]);
+    const labels = enumProps.options.map((o) => o.label);
+    expect(labels[0]).toBe("common.all (3)");
+    expect(labels.slice(1)).toEqual([
+      expect.stringMatching(/^.+ \(2\)$/),
+      expect.stringMatching(/^.+ \(1\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
     ]);
 
     // 区域选项计数（含全部/无 特殊选项）

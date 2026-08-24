@@ -3,9 +3,9 @@ import { visionsApi } from "@/services/api/visions";
 import { visionsKeys } from "@/services/api/queryKeys";
 
 /**
- * 拉取全部状态的愿景（size 取后端上限 500），
- * 用于筛选选项的计数展示。与按状态筛选的渲染列表使用不同的
- * query key，独立缓存、互不影响。
+ * Fetches visions across all statuses (size capped at the backend limit of
+ * 500) to power filter-option counts. Uses a query key distinct from the
+ * status-filtered render list so the two caches stay independent.
  */
 export function useAllVisions() {
   const page = 1;

@@ -30,10 +30,10 @@ const VisionPage: React.FC = () => {
   const vmRef = useRef<VisionManagerHandle>(null);
   const { setHeader } = usePageHeader();
 
-  // 全部愿景（无状态筛选），用于筛选选项的计数展示
+  // All visions (no status filter) powering the filter-option counts
   const { visions: allVisions } = useAllVisions();
 
-  // Status filter state; undefined 表示"全部"
+  // Status filter state; undefined means "all"
   const [statusFilter, setStatusFilter] = useState<string | undefined>(
     "active",
   );
@@ -41,7 +41,7 @@ const VisionPage: React.FC = () => {
     UUID | null | undefined
   >(undefined);
 
-  // 状态筛选选项：附加 "(n)" 计数并按计数降序，最前为"全部"
+  // Status filter options: "(n)" counts, sorted by count, "All" first
   const statusOptions = useMemo(() => {
     const countsByStatus = new Map<string, number>();
     for (const vision of allVisions) {
@@ -57,7 +57,7 @@ const VisionPage: React.FC = () => {
     );
   }, [allVisions, t]);
 
-  // 区域筛选选项计数：key 为选项 id（含 __all__ / __none__ 特殊值）
+  // Area filter option counts keyed by option id (incl. __all__ / __none__)
   const areaCounts = useMemo(() => {
     const counts: Record<string, number> = {
       [SelectorSpecialValue.All]: allVisions.length,

@@ -285,10 +285,10 @@ function HabitsPage() {
   const { setHeader } = usePageHeader();
   const { adapter: calendarAdapter, calendarSystem } = useCalendarAdapter();
 
-  // 全部习惯（无状态筛选），用于筛选选项的计数展示
+  // All habits (no status filter) powering the filter-option counts
   const { habits: allHabits } = useAllHabits();
 
-  // State; statusFilter 为 undefined 时表示"全部"
+  // State; statusFilter undefined means "all"
   const [statusFilter, setStatusFilter] = useState<string | undefined>(
     "active",
   );
@@ -301,7 +301,7 @@ function HabitsPage() {
     task_id?: UUID | null;
   } | null>(null);
 
-  // 状态筛选选项：附加 "(n)" 计数并按计数降序，最前为"全部"
+  // Status filter options: "(n)" counts, sorted by count, "All" first
   const statusOptions = useMemo(() => {
     const countsByStatus = new Map<string, number>();
     for (const habit of allHabits) {

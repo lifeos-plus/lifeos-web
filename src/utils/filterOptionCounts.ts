@@ -1,12 +1,14 @@
 /**
- * 筛选选项计数工具。
+ * Utilities for building counted filter options.
  *
- * 为 EnumSelect 之类的静态筛选选项附加 "(n)" 计数，并按计数降序排列
- * （n 相同时保持原有顺序，排序是稳定的）。
+ * Appends "(n)" counts to static filter options (e.g. status) and sorts
+ * them by count descending. The sort is stable, so ties keep the original
+ * order of the base options.
  */
+import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 
-/** "全部" 选项的固定 value（与 SelectorSpecialValue.All 保持一致）。 */
-export const ALL_FILTER_VALUE = "__all__";
+/** Value of the "All" option; reuses the shared selector special value. */
+export const ALL_FILTER_VALUE = SelectorSpecialValue.All;
 
 export interface CountableFilterOption {
   value: string;
@@ -14,12 +16,12 @@ export interface CountableFilterOption {
 }
 
 /**
- * 为筛选选项构建带计数与排序的选项列表。
+ * Build a counted and sorted option list from base options.
  *
- * @param baseOptions 基础选项（如状态选项），保持原有语义顺序
- * @param countsByValue 各 value 对应的对象数量
- * @param allOption 可选：在最前面插入"全部"选项（计数为 totalCount）
- * @returns 每个选项 label 形如 "Active (3)"，按计数降序排列
+ * @param baseOptions Base options preserving their semantic order
+ * @param countsByValue Object count per option value
+ * @param allOption Optional "All" option prepended with the total count
+ * @returns Options labelled like "Active (3)", sorted by count descending
  */
 export function buildCountedFilterOptions(
   baseOptions: CountableFilterOption[],
