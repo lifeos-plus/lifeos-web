@@ -212,4 +212,30 @@ describe("PlanningPage", () => {
 
     await waitFor(() => expect(prefetchMock).toHaveBeenCalled());
   });
+
+  it("warms adjacent periods only after the initial one-time view warm-up", async () => {
+    const user = userEvent.setup();
+
+    usePlanningTasksMock.mockReturnValue({
+      tasks: [],
+      query: { isLoading: false, error: null },
+      prefetch: prefetchMock,
+    } satisfies UsePlanningTasksMockResult);
+
+    renderWithProviders(<PlanningPage />);
+
+    await waitFor(() => expect(prefetchMock).toHaveBeenCalled());
+    const initialCallCount = prefetchMock.mock.calls.length;
+    // 首次预热：其余 4 个视图类型 + 当前视图的相邻 2 个周期
+    expect(initialCallCount).toBe(6);
+
+    const weekOption = screen.getByRole("radio", { name: "target.week" });
+    await user.click(weekOption);
+
+    await waitFor(() =>
+      expect(prefetchMock.mock.calls.length).toBeGreaterThan(initialCallCount),
+    );
+    // 视图切换后只预取相邻周期，不再重复预热全部视图类型
+    expect(prefetchMock.mock.calls.length - initialCallCount).toBe(2);
+  });
 });

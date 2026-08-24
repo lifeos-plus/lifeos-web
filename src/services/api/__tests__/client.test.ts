@@ -63,6 +63,24 @@ describe("local web http client", () => {
     });
   });
 
+  it("captures Retry-After seconds from 429 responses", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ detail: "Rate limit exceeded" }), {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "Retry-After": "17",
+        },
+      }),
+    );
+
+    await expect(http.get("/api/v1/test")).rejects.toMatchObject({
+      message: "Rate limit exceeded",
+      status: 429,
+      retryAfter: 17,
+    });
+  });
+
   it("emits ApiError instances for HTTP failures", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response("Not found", { status: 404, statusText: "Not Found" }),

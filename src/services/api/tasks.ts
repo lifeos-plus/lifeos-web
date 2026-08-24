@@ -57,6 +57,7 @@ const toTaskUpdateTransport = ({
 export type TaskFieldsMode = "basic" | "full";
 
 export interface TaskListFilters {
+  id_in?: UUID[];
   vision_id?: UUID;
   vision_in?: string[];
   status_filter?: string;
@@ -81,11 +82,15 @@ export const tasksApi = {
     visionId?: UUID,
     statusFilter?: string,
     extra?: TaskListFilters,
+    options?: { silent?: boolean },
   ): Promise<TaskListResponse> {
     const params: Record<string, string | number | boolean | undefined> = {
       vision_id: visionId,
       status_filter: statusFilter,
     };
+    if (extra?.id_in && extra.id_in.length > 0) {
+      params.id_in = extra.id_in.join(",");
+    }
     if (extra?.vision_in && extra.vision_in.length > 0) {
       params.vision_in = extra.vision_in.join(",");
     }
@@ -104,7 +109,9 @@ export const tasksApi = {
     if (extra?.query) params.query = extra.query;
     const fields: TaskFieldsMode = extra?.fields ?? "basic";
     params.fields = fields;
-    return http.get<TaskListTransport>(ENDPOINTS.TASKS.BASE, params);
+    return http.get<TaskListTransport>(ENDPOINTS.TASKS.BASE, params, {
+      silent: options?.silent,
+    });
   },
 
   async searchSelectorPage(opts: {
@@ -214,6 +221,25 @@ export const tasksApi = {
     return http.get<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), undefined, {
       silent: true,
     });
+  },
+
+  /**
+   * 静默批量读取任务（一次请求，支持跨周期父任务等子集补拉）：
+   * 失败时不触发全局错误提示，调用方负责降级处理。
+   */
+  async getByIdsQuiet(ids: UUID[]): Promise<Task[]> {
+    if (ids.length === 0) return [];
+    const response = await tasksApi.getAll(
+      undefined,
+      undefined,
+      {
+        id_in: ids.slice(0, 100),
+        fields: "full",
+        size: Math.min(ids.length, 100),
+      },
+      { silent: true },
+    );
+    return response.items ?? [];
   },
 
   async getWithSubtasks(id: UUID): Promise<TaskWithSubtasks> {

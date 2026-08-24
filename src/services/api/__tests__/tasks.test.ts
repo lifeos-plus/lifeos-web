@@ -83,3 +83,46 @@ describe("tasksApi.getTimelogs", () => {
     expect(init.method).toBe("GET");
   });
 });
+
+describe("tasksApi.getByIdsQuiet", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("batch-fetches tasks through the id_in filter in one silent request", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          items: [{ id: "parent-a" }, { id: "parent-b" }],
+          pagination: { page: 1, size: 2, total: 2, pages: 1 },
+          meta: { id_in: "parent-a,parent-b" },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    const items = await tasksApi.getByIdsQuiet([
+      "parent-a" as never,
+      "parent-b" as never,
+    ]);
+
+    expect(items).toHaveLength(2);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(
+      localUrl(
+        `${ENDPOINTS.TASKS.BASE}?id_in=parent-a%2Cparent-b&size=2&fields=full`,
+      ),
+    );
+    expect(init.method).toBe("GET");
+  });
+
+  it("returns an empty list without issuing a request for empty input", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    await expect(tasksApi.getByIdsQuiet([])).resolves.toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
