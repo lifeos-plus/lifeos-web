@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { type ReactNode } from "react";
 
@@ -55,6 +55,11 @@ const habitsState: {
 
 const useHabitsMock = vi.fn(() => habitsState.value);
 
+const { useHabitManagerOptionsRef, allHabitsState } = vi.hoisted(() => ({
+  useHabitManagerOptionsRef: { current: undefined as unknown },
+  allHabitsState: { value: [] as Habit[] },
+}));
+
 vi.mock("@/contexts/PageHeaderContext", () => ({
   usePageHeader: () => ({
     setHeader: setHeaderMock,
@@ -62,7 +67,43 @@ vi.mock("@/contexts/PageHeaderContext", () => ({
 }));
 
 vi.mock("@/features/habits/controller/useHabitManager", () => ({
-  useHabitManager: () => useHabitsMock(),
+  useHabitManager: (options: unknown) => {
+    useHabitManagerOptionsRef.current = options;
+    return useHabitsMock();
+  },
+}));
+
+vi.mock("@/hooks/queries/useAllHabits", () => ({
+  useAllHabits: () => ({
+    habits: allHabitsState.value,
+    isLoading: false,
+    error: null,
+  }),
+}));
+
+vi.mock("@/components/selects/EnumSelect", () => ({
+  __esModule: true,
+  default: ({
+    value,
+    onChange,
+    options,
+  }: {
+    value?: string | undefined | null;
+    onChange: (value: string) => void;
+    options: Array<{ value: string; label: string }>;
+  }) => (
+    <select
+      data-testid="habit-status-filter"
+      value={String(value ?? "")}
+      onChange={(event) => onChange(event.target.value)}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  ),
 }));
 
 vi.mock("@/components/ActionButton", () => ({
@@ -171,5 +212,53 @@ describe("HabitsPage", () => {
     expect(
       screen.getByRole("heading", { name: /Morning Planning/ }),
     ).toBeInTheDocument();
+  });
+
+  it("renders status filter with an all option and per-status counts", () => {
+    allHabitsState.value = [
+      { id: "h1", title: "A", status: "active", start_date: "2025-01-01", duration_days: 30 },
+      { id: "h2", title: "B", status: "active", start_date: "2025-01-01", duration_days: 30 },
+      { id: "h3", title: "C", status: "completed", start_date: "2025-01-01", duration_days: 30 },
+    ] as unknown as Habit[];
+
+    renderWithProviders(<HabitsPage />);
+
+    const actions = setHeaderMock.mock.calls[0][0]
+      .actions as ReactNode;
+    const { getByRole } = render(
+      <div>{actions}</div>,
+    );
+    const select = getByRole("combobox") as HTMLSelectElement;
+
+    // 全部选项在最前，其余按计数降序
+    expect(Array.from(select.options).map((o) => o.textContent)).toEqual([
+      "common.all (3)",
+      "Active (2)",
+      "Completed (1)",
+      "Paused (0)",
+      "Expired (0)",
+    ]);
+    expect(select.value).toBe("active");
+  });
+
+  it("selecting the all option clears the status filter", () => {
+    allHabitsState.value = [
+      { id: "h1", title: "A", status: "active", start_date: "2025-01-01", duration_days: 30 },
+    ] as unknown as Habit[];
+
+    renderWithProviders(<HabitsPage />);
+
+    const actions = setHeaderMock.mock.calls[0][0]
+      .actions as ReactNode;
+    const { getByRole } = render(
+      <div>{actions}</div>,
+    );
+    const select = getByRole("combobox") as HTMLSelectElement;
+
+    fireEvent.change(select, { target: { value: "__all__" } });
+
+    expect(useHabitManagerOptionsRef.current).toEqual({
+      statusFilter: undefined,
+    });
   });
 });

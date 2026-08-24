@@ -202,7 +202,7 @@ export const statsKeys = {
 export const habitsKeys = {
   all: ["habits"] as const,
   lists: () => [...habitsKeys.all, "list"] as const,
-  list: (filters: { statusFilter?: string }) =>
+  list: (filters: { statusFilter?: string; page?: number; size?: number }) =>
     [...habitsKeys.lists(), filters] as const,
   actionsInRange: (filters: {
     startDate: string;

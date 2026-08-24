@@ -41,6 +41,16 @@ interface AreaSelectProps
    * - "preserve": ignore clear (keep current value)
    */
   clearBehavior?: "all" | "none" | "preserve";
+  /**
+   * Optional counts per option id (including special ids like "__all__" / "__none__").
+   * When provided, each option label is suffixed with " (n)".
+   */
+  optionCounts?: Record<string, number>;
+  /**
+   * When true (requires optionCounts), options are sorted by count descending
+   * (stable: ties keep the original order).
+   */
+  sortByCount?: boolean;
 }
 
 /**
@@ -68,6 +78,8 @@ const AreaSelect = React.forwardRef<
       showNoneOption = false,
       noneLabel,
       clearBehavior = "all",
+      optionCounts,
+      sortByCount = false,
       ...otherProps
     },
     ref,
@@ -101,6 +113,24 @@ const AreaSelect = React.forwardRef<
       }
       return special.length > 0 ? [...special, ...options] : options;
     }, [showAllOption, allLabel, showNoneOption, noneLabel, options, t]);
+
+    const optionsWithCounts: EntityOption[] = useMemo(() => {
+      if (!optionCounts) {
+        return optionsWithSpecial;
+      }
+      const counted = optionsWithSpecial.map((option) => ({
+        ...option,
+        label: `${option.label} (${optionCounts[option.id] ?? 0})`,
+      }));
+      if (!sortByCount) {
+        return counted;
+      }
+      // 稳定排序：计数相同保持原有顺序
+      return [...counted].sort(
+        (a, b) =>
+          (optionCounts[b.id] ?? 0) - (optionCounts[a.id] ?? 0),
+      );
+    }, [optionCounts, sortByCount, optionsWithSpecial]);
 
     const effectivePlaceholder = placeholder ?? t("common.please_select");
 
@@ -143,7 +173,7 @@ const AreaSelect = React.forwardRef<
 
           onChange(selected as UUID);
         }}
-        options={optionsWithSpecial}
+        options={optionsWithCounts}
         placeholder={effectivePlaceholder}
         label={effectiveLabel}
         showLabel={showLabel}

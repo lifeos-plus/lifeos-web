@@ -63,9 +63,10 @@ const replaceTaskInHierarchy = (
   return { changed, tasks: nextTasks };
 };
 /**
- * Custom hook for managing vision-related state and operations
+ * Custom hook for managing vision-related state and operations.
+ * statusFilter 为 undefined 时表示"全部"（后端不传 status_filter）。
  */
-export const useVisionManager = (statusFilter: string = "active") => {
+export const useVisionManager = (statusFilter?: string) => {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { t } = useTranslation();

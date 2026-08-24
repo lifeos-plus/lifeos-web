@@ -1,9 +1,14 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 
 import { useHabitManager } from "@/features/habits/controller/useHabitManager";
 import type { Habit, HabitAction } from "@/services/api/habits";
+import { useAllHabits } from "@/hooks/queries/useAllHabits";
+import {
+  ALL_FILTER_VALUE,
+  buildCountedFilterOptions,
+} from "@/utils/filterOptionCounts";
 import EmptyState from "@/components/EmptyState";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -280,8 +285,13 @@ function HabitsPage() {
   const { setHeader } = usePageHeader();
   const { adapter: calendarAdapter, calendarSystem } = useCalendarAdapter();
 
-  // State
-  const [statusFilter, setStatusFilter] = useState<string>("active");
+  // 全部习惯（无状态筛选），用于筛选选项的计数展示
+  const { habits: allHabits } = useAllHabits();
+
+  // State; statusFilter 为 undefined 时表示"全部"
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(
+    "active",
+  );
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [prefillHabit, setPrefillHabit] = useState<{
@@ -290,6 +300,22 @@ function HabitsPage() {
     duration_days: number;
     task_id?: UUID | null;
   } | null>(null);
+
+  // 状态筛选选项：附加 "(n)" 计数并按计数降序，最前为"全部"
+  const statusOptions = useMemo(() => {
+    const countsByStatus = new Map<string, number>();
+    for (const habit of allHabits) {
+      countsByStatus.set(
+        habit.status,
+        (countsByStatus.get(habit.status) ?? 0) + 1,
+      );
+    }
+    return buildCountedFilterOptions(
+      HABIT_STATUS_FILTER_OPTIONS,
+      countsByStatus,
+      { allLabel: t("common.all"), totalCount: allHabits.length },
+    );
+  }, [allHabits, t]);
 
   // Data
   const {
@@ -316,9 +342,13 @@ function HabitsPage() {
           {/* Status filter group */}
           <div className="flex items-center gap-2">
             <EnumSelect
-              value={statusFilter}
-              onChange={(value) => setStatusFilter(value as string)}
-              options={HABIT_STATUS_FILTER_OPTIONS}
+              value={statusFilter ?? ALL_FILTER_VALUE}
+              onChange={(value) =>
+                setStatusFilter(
+                  value === ALL_FILTER_VALUE ? undefined : (value as string),
+                )
+              }
+              options={statusOptions}
               id="habit-status-filter"
               showLabel={false}
               autoWidth={false}
@@ -340,7 +370,7 @@ function HabitsPage() {
       ),
     });
     return () => setHeader({ actions: undefined });
-  }, [setHeader, t, statusFilter]);
+  }, [setHeader, t, statusFilter, statusOptions]);
 
   // Handlers
 

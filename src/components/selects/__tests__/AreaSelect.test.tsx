@@ -140,4 +140,60 @@ describe("AreaSelect", () => {
     (secondProps.onChange as (val: SelectorValue) => void)(undefined);
     expect(preserve).not.toHaveBeenCalled();
   });
+
+  it("suffixes labels with counts and sorts by count when optionCounts is provided", () => {
+    const handleChange = vi.fn();
+    const Component = getAreaSelect();
+
+    render(
+      <Component
+        value={"area-1" as UUID}
+        onChange={handleChange}
+        showAllOption
+        showNoneOption
+        optionCounts={{
+          [SelectorSpecialValue.All]: 5,
+          [SelectorSpecialValue.None]: 1,
+          "area-1": 3,
+          "area-2": 2,
+        }}
+        sortByCount
+      />,
+    );
+
+    const props = mockAsyncSelect.mock.calls[0][0] as Record<string, unknown>;
+    const options = props.options as Array<{ id: string; label: string }>;
+    expect(options).toEqual([
+      { id: SelectorSpecialValue.All, label: "common.all (5)" },
+      { id: "area-1", label: "Health (3)" },
+      { id: "area-2", label: "Career (2)" },
+      { id: SelectorSpecialValue.None, label: "common.none (1)" },
+    ]);
+  });
+
+  it("keeps original option order when sortByCount is not set", () => {
+    const handleChange = vi.fn();
+    const Component = getAreaSelect();
+
+    render(
+      <Component
+        value={"area-1" as UUID}
+        onChange={handleChange}
+        showAllOption
+        optionCounts={{
+          [SelectorSpecialValue.All]: 5,
+          "area-1": 3,
+          "area-2": 2,
+        }}
+      />,
+    );
+
+    const props = mockAsyncSelect.mock.calls[0][0] as Record<string, unknown>;
+    const options = props.options as Array<{ id: string; label: string }>;
+    expect(options).toEqual([
+      { id: SelectorSpecialValue.All, label: "common.all (5)" },
+      { id: "area-1", label: "Health (3)" },
+      { id: "area-2", label: "Career (2)" },
+    ]);
+  });
 });
