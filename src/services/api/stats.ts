@@ -5,8 +5,9 @@ import type { components } from "./generated/schema";
 export type DailyAreaRow = components["schemas"]["DailyAreaResponse"];
 export type AggregationGranularity = components["schemas"]["AggregatedAreaResponse"]["granularity"];
 export type AggregatedAreaRow = components["schemas"]["AggregatedAreaResponse"];
+export type AggregatedAreaPeriod = components["schemas"]["AggregatedAreaPeriodResponse"];
 export type DailyAreaListResponse = components["schemas"]["ListResponse_DailyAreaResponse_DailyAreaMeta_"];
-export type AggregatedAreaListResponse = components["schemas"]["ListResponse_AggregatedAreaResponse_AggregatedAreaMeta_"];
+export type AggregatedAreaListResponse = components["schemas"]["AggregatedAreasListResponse"];
 export type DayBreakdownListResponse = components["schemas"]["ListResponse_DayBreakdownResponse_DayBreakdownMeta_"];
 
 export const statsApi = {

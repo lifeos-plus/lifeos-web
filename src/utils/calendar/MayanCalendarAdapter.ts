@@ -344,6 +344,11 @@ export class MayanCalendarAdapter implements CalendarAdapter {
         direction > 0 ? range.end : range.start,
       );
       boundary.setDate(boundary.getDate() + direction);
+      // The Day Out of Time belongs to no week or moon, so week/month
+      // navigation skips past it instead of landing on a single-day period.
+      if (this.isMayanDayOutOfTime(boundary)) {
+        boundary.setDate(boundary.getDate() + direction);
+      }
       range = this.getPeriodRange(viewType, boundary);
     }
 

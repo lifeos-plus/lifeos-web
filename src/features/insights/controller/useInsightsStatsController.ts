@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   statsApi,
+  type AggregatedAreaListResponse,
+  type AggregatedAreaPeriod,
   type AggregatedAreaRow,
   type AggregationGranularity,
   type DailyAreaRow,
@@ -23,6 +25,7 @@ interface UseInsightsStatsControllerParams {
 interface UseInsightsStatsControllerResult {
   dailyStats: DailyAreaRow[];
   aggregatedRows: AggregatedAreaRow[];
+  aggregatedPeriods: AggregatedAreaPeriod[];
   isLoading: boolean;
   displayError: string | null;
   refreshStats: () => Promise<void>;
@@ -66,7 +69,7 @@ export function useInsightsStatsController({
     placeholderData: [],
   });
 
-  const aggregatedQuery = useQuery<AggregatedAreaRow[]>({
+  const aggregatedQuery = useQuery<AggregatedAreaListResponse>({
     queryKey: statsKeys.aggregatedAreas({
       granularity,
       start: startDate,
@@ -81,14 +84,27 @@ export function useInsightsStatsController({
         startDate,
         endDate,
       );
-      return response.items ?? [];
+      return response;
     },
     enabled: Boolean(ready && startDate && endDate && granularity !== "day"),
     staleTime: 10 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    placeholderData: [],
+    placeholderData: {
+      items: [],
+      periods: [],
+      pagination: { page: 1, size: 1000, total: 0, pages: 0 },
+      meta: {
+        granularity,
+        start: startDate,
+        end: endDate,
+        timezone: activeTimezone,
+        area_ids: null,
+        first_day_of_week: normalizedFirstDayOfWeek,
+        calendar_system: calendarSystem,
+      },
+    } as AggregatedAreaListResponse,
   });
 
   const dailyStats = useMemo(() => {
@@ -98,7 +114,12 @@ export function useInsightsStatsController({
 
   const aggregatedRows = useMemo(() => {
     if (granularity === "day") return [];
-    return aggregatedQuery.data ?? [];
+    return aggregatedQuery.data?.items ?? [];
+  }, [aggregatedQuery.data, granularity]);
+
+  const aggregatedPeriods = useMemo(() => {
+    if (granularity === "day") return [];
+    return aggregatedQuery.data?.periods ?? [];
   }, [aggregatedQuery.data, granularity]);
 
   const queryError = useMemo(() => {
@@ -162,6 +183,7 @@ export function useInsightsStatsController({
   return {
     dailyStats,
     aggregatedRows,
+    aggregatedPeriods,
     isLoading: dailyQuery.isFetching || aggregatedQuery.isFetching,
     displayError: refreshError || queryError,
     refreshStats,
