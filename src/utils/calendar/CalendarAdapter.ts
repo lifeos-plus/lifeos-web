@@ -88,6 +88,21 @@ export const resolvePlanningCycleStart = (
   return range.start;
 };
 
+export const taskBelongsToPeriod = (
+  cycleType: PlanningViewType,
+  task: TaskWithSubtasks,
+  periodStart: string,
+  adapter: CalendarAdapter,
+): boolean => {
+  if (!task.planning_cycle_start_date) {
+    return false;
+  }
+  return (
+    resolvePlanningCycleStart(cycleType, task.planning_cycle_start_date, adapter) ===
+    periodStart
+  );
+};
+
 export interface PlanningGroup {
   id: string;
   label: string;

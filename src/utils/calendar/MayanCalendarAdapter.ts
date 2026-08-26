@@ -9,6 +9,7 @@ import {
   DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   normalizePlanningViewType,
   parseMayanNewYearStart,
+  taskBelongsToPeriod,
   taskPlanningWindowOverlaps,
 } from "./CalendarAdapter";
 import type { TaskWithSubtasks } from "@/services/api";
@@ -514,7 +515,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     const sevenYearTasks = this.getTasksByPlanningType(tasks, "7years");
 
     const tasksInCurrentPeriod = sevenYearTasks.filter((task) =>
-      taskPlanningWindowOverlaps(task, start, end),
+      taskBelongsToPeriod("7years", task, formatDateKey(start), this),
     );
 
     return [
@@ -533,16 +534,12 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     tasks: TaskWithSubtasks[],
   ): PlanningGroup[] {
     const mayanYearStart = this.getMayanYearStart(date);
-    const nextMayanYearStart = new Date(mayanYearStart);
-    nextMayanYearStart.setFullYear(mayanYearStart.getFullYear() + 1);
-    const mayanYearEnd = new Date(nextMayanYearStart);
-    mayanYearEnd.setDate(mayanYearEnd.getDate() - 1);
     const yearTasks = this.getTasksByPlanningType(tasks, "year");
     const monthTasks = this.getTasksByPlanningType(tasks, "month");
     const dayTasks = this.getTasksByPlanningType(tasks, "day");
 
     const tasksInMayanYear = yearTasks.filter((task) =>
-      taskPlanningWindowOverlaps(task, mayanYearStart, mayanYearEnd),
+      taskBelongsToPeriod("year", task, formatDateKey(mayanYearStart), this),
     );
 
     const yearGroup: PlanningGroup = {
@@ -607,7 +604,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
           label: t("calendar.noTimeDay"),
           date: info.start,
           tasks: monthTasks.filter((task) =>
-            taskPlanningWindowOverlaps(task, info.start, info.end),
+            taskBelongsToPeriod("month", task, formatDateKey(info.start), this),
           ),
           children: [],
         },
@@ -619,14 +616,14 @@ export class MayanCalendarAdapter implements CalendarAdapter {
       label: t("calendar.mayanMoon", { index: info.moonIndex }),
       date: info.start,
       tasks: monthTasks.filter((task) =>
-        taskPlanningWindowOverlaps(task, info.start, info.end),
+        taskBelongsToPeriod("month", task, formatDateKey(info.start), this),
       ),
       children: [],
     };
 
     info.weeks.forEach((w) => {
       const weekTasksIn = weekTasks.filter((task) =>
-        taskPlanningWindowOverlaps(task, w.start, w.end),
+        taskBelongsToPeriod("week", task, formatDateKey(w.start), this),
       );
       monthGroup.children!.push({
         id: `mayan-week-${w.start.toISOString()}`,
@@ -655,7 +652,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
           label: t("calendar.noTimeDay"),
           date: range.start,
           tasks: weekTasks.filter((task) =>
-            taskPlanningWindowOverlaps(task, range.start, range.end),
+            taskBelongsToPeriod("week", task, formatDateKey(range.start), this),
           ),
           children: [],
         },
@@ -663,7 +660,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     }
 
     const weekTasksInWeek = weekTasks.filter((task) =>
-      taskPlanningWindowOverlaps(task, range.start, range.end),
+      taskBelongsToPeriod("week", task, formatDateKey(range.start), this),
     );
 
     const weekGroup: PlanningGroup = {
