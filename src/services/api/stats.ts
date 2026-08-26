@@ -33,6 +33,8 @@ export const statsApi = {
     end: string,
     options?: {
       areaIds?: UUID[];
+      page?: number;
+      size?: number;
     },
   ) {
     return http.get<AggregatedAreaListResponse>(
@@ -42,6 +44,8 @@ export const statsApi = {
         start,
         end,
         area_ids: options?.areaIds,
+        page: options?.page,
+        size: options?.size,
       },
     );
   },

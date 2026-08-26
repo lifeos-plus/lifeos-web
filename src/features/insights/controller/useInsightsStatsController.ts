@@ -31,6 +31,30 @@ interface UseInsightsStatsControllerResult {
   refreshStats: () => Promise<void>;
 }
 
+const AGGREGATED_PAGE_SIZE = 1000;
+
+const emptyAggregatedResponse = (
+  granularity: AggregationGranularity,
+  startDate: string,
+  endDate: string,
+  timezone: string,
+  firstDayOfWeek: number,
+  calendarSystem: "gregorian" | "mayan_13_moon",
+): AggregatedAreaListResponse => ({
+  items: [],
+  periods: [],
+  pagination: { page: 1, size: AGGREGATED_PAGE_SIZE, total: 0, pages: 0 },
+  meta: {
+    granularity,
+    start: startDate,
+    end: endDate,
+    timezone,
+    area_ids: null,
+    first_day_of_week: firstDayOfWeek,
+    calendar_system: calendarSystem,
+  },
+});
+
 export function useInsightsStatsController({
   ready,
   startDate,
@@ -79,32 +103,46 @@ export function useInsightsStatsController({
       calendar_system: calendarSystem,
     }),
     queryFn: async () => {
-      const response = await statsApi.getAggregatedAreas(
+      const firstPage = await statsApi.getAggregatedAreas(
         granularity,
         startDate,
         endDate,
+        { page: 1, size: AGGREGATED_PAGE_SIZE },
       );
-      return response;
+      const pageCount = firstPage.pagination.pages;
+      if (pageCount <= 1) return firstPage;
+      // A long timeline (for example 91 moons over a seven-year month view)
+      // can exceed one page of rows; fetch the rest so no bucket loses its
+      // area breakdown or totals.
+      const remainingPages = await Promise.all(
+        Array.from({ length: pageCount - 1 }, (_, index) =>
+          statsApi.getAggregatedAreas(granularity, startDate, endDate, {
+            page: index + 2,
+            size: AGGREGATED_PAGE_SIZE,
+          }),
+        ),
+      );
+      return {
+        ...firstPage,
+        items: [
+          ...firstPage.items,
+          ...remainingPages.flatMap((page) => page.items),
+        ],
+      };
     },
     enabled: Boolean(ready && startDate && endDate && granularity !== "day"),
     staleTime: 10 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    placeholderData: {
-      items: [],
-      periods: [],
-      pagination: { page: 1, size: 1000, total: 0, pages: 0 },
-      meta: {
-        granularity,
-        start: startDate,
-        end: endDate,
-        timezone: activeTimezone,
-        area_ids: null,
-        first_day_of_week: normalizedFirstDayOfWeek,
-        calendar_system: calendarSystem,
-      },
-    } as AggregatedAreaListResponse,
+    placeholderData: emptyAggregatedResponse(
+      granularity,
+      startDate,
+      endDate,
+      activeTimezone,
+      normalizedFirstDayOfWeek,
+      calendarSystem,
+    ),
   });
 
   const dailyStats = useMemo(() => {

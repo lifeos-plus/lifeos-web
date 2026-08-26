@@ -104,7 +104,74 @@ describe("useInsightsStatsController", () => {
       "month",
       "2026-06-20",
       "2026-08-10",
+      { page: 1, size: 1000 },
     );
+  });
+
+  it("fetches every page and merges rows for long timelines", async () => {
+    getAggregatedAreasMock
+      .mockResolvedValueOnce({
+        items: [
+          {
+            granularity: "month",
+            period_start: "2026-06-27",
+            period_end: "2026-07-24",
+            area_id: "area-1",
+            minutes: 60,
+          },
+        ],
+        periods: [{ period_start: "2026-06-27", period_end: "2026-07-24" }],
+        pagination: { page: 1, size: 1000, total: 2, pages: 2 },
+        meta: {
+          granularity: "month",
+          start: "2026-06-20",
+          end: "2026-08-10",
+          timezone: "America/Toronto",
+          area_ids: null,
+          first_day_of_week: 1,
+          calendar_system: "mayan_13_moon",
+        },
+      })
+      .mockResolvedValueOnce({
+        items: [
+          {
+            granularity: "month",
+            period_start: "2026-07-26",
+            period_end: "2026-08-22",
+            area_id: "area-2",
+            minutes: 30,
+          },
+        ],
+        periods: [],
+        pagination: { page: 2, size: 1000, total: 2, pages: 2 },
+        meta: {
+          granularity: "month",
+          start: "2026-06-20",
+          end: "2026-08-10",
+          timezone: "America/Toronto",
+          area_ids: null,
+          first_day_of_week: 1,
+          calendar_system: "mayan_13_moon",
+        },
+      });
+
+    const { result } = renderHook(
+      () => useInsightsStatsController(BASE_PARAMS),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.aggregatedRows).toHaveLength(2);
+    });
+
+    expect(getAggregatedAreasMock).toHaveBeenCalledTimes(2);
+    expect(result.current.aggregatedRows.map((row) => row.area_id)).toEqual([
+      "area-1",
+      "area-2",
+    ]);
+    expect(result.current.aggregatedPeriods).toEqual([
+      { period_start: "2026-06-27", period_end: "2026-07-24" },
+    ]);
   });
 
   it("keeps aggregated buckets empty for day granularity", async () => {
