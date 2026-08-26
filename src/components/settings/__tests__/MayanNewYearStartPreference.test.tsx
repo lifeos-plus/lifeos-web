@@ -84,7 +84,7 @@ describe("MayanNewYearStartPreference", () => {
     expect(daySelect().options).toHaveLength(28);
   });
 
-  it("disables the input while saving or loading", () => {
+  it("disables the selectors while saving or loading", () => {
     render(
       <MayanNewYearStartPreference
         {...baseProps}
