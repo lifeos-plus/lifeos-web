@@ -5,8 +5,10 @@ import type {
 } from "./CalendarAdapter";
 import {
   countInclusiveLocalDates,
-  DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  DEFAULT_MAYAN_NEW_YEAR_START,
+  DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   normalizePlanningViewType,
+  parseMayanNewYearStart,
   taskPlanningWindowOverlaps,
 } from "./CalendarAdapter";
 import type { TaskWithSubtasks } from "@/services/api";
@@ -18,14 +20,27 @@ import { t } from "@/i18n";
 
 export class MayanCalendarAdapter implements CalendarAdapter {
   private firstDayOfWeek: number;
-  private sevenYearAnchorDate: string;
+  private sevenYearAnchorYear: number;
+  private newYearMonth: number;
+  private newYearDay: number;
 
   constructor(
     firstDayOfWeek: number = 1,
-    sevenYearAnchorDate: string = DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+    sevenYearAnchorYear: number = DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
+    mayanNewYearStart: string = DEFAULT_MAYAN_NEW_YEAR_START,
   ) {
     this.firstDayOfWeek = firstDayOfWeek;
-    this.sevenYearAnchorDate = sevenYearAnchorDate;
+    this.sevenYearAnchorYear = sevenYearAnchorYear;
+    const [month, day] = parseMayanNewYearStart(mayanNewYearStart);
+    this.newYearMonth = month;
+    this.newYearDay = day;
+  }
+
+  private normalizeDate(date: Date): Date {
+    if (date.getMonth() === 1 && date.getDate() === 29) {
+      return new Date(date.getFullYear(), 1, 28);
+    }
+    return date;
   }
 
   /**
@@ -67,12 +82,13 @@ export class MayanCalendarAdapter implements CalendarAdapter {
    * @returns Date object representing the start of the Mayan year
    */
   getMayanYearStart(date: Date): Date {
-    const y = date.getFullYear();
-    const july26ThisYear = new Date(y, 6, 26);
-    if (date >= july26ThisYear) {
-      return new Date(y, 6, 26);
+    const normalized = this.normalizeDate(date);
+    const y = normalized.getFullYear();
+    const startThisYear = new Date(y, this.newYearMonth - 1, this.newYearDay);
+    if (normalized >= startThisYear) {
+      return startThisYear;
     }
-    return new Date(y - 1, 6, 26);
+    return new Date(y - 1, this.newYearMonth - 1, this.newYearDay);
   }
 
   private getDateOrdinal(date: Date): number {
@@ -103,17 +119,18 @@ export class MayanCalendarAdapter implements CalendarAdapter {
    * @returns Day of year (1-365)
    */
   private getMayanDayOfYear(date: Date): number {
-    const start = this.getMayanYearStart(date);
+    const normalized = this.normalizeDate(date);
+    const start = this.getMayanYearStart(normalized);
     const millisecondsPerDay = 24 * 60 * 60 * 1000;
     let dayOfYear =
       Math.floor(
-        (this.getDateOrdinal(date) - this.getDateOrdinal(start)) /
+        (this.getDateOrdinal(normalized) - this.getDateOrdinal(start)) /
           millisecondsPerDay,
       ) + 1;
     const leapDay = this.getLeapDayForYear(start);
     if (
       leapDay &&
-      this.getDateOrdinal(date) > this.getDateOrdinal(leapDay)
+      this.getDateOrdinal(normalized) > this.getDateOrdinal(leapDay)
     ) {
       // February 29 is intercalary, so it must not shift later moon/week indices.
       dayOfYear -= 1;
@@ -310,7 +327,11 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   }
 
   private getSevenYearAnchorStart(): Date {
-    return this.getMayanYearStart(parseDateKey(this.sevenYearAnchorDate));
+    return new Date(
+      this.sevenYearAnchorYear,
+      this.newYearMonth - 1,
+      this.newYearDay,
+    );
   }
 
   private getSevenYearPeriodStart(date: Date): Date {

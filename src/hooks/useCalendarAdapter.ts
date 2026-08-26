@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { usePreferenceWithBootstrap } from "./queries/usePreferenceWithBootstrap";
 import {
-  DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  DEFAULT_MAYAN_NEW_YEAR_START,
+  DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   createCalendarAdapter,
 } from "@/utils/calendar";
-import { isDateKey, parseDateKey } from "@/utils/datetime";
+import { parseDateKey } from "@/utils/datetime";
 import type {
   CalendarAdapter,
   CalendarSystem,
@@ -15,7 +16,8 @@ interface CalendarAdapterState {
   adapter: CalendarAdapter;
   calendarSystem: CalendarSystem;
   firstDayOfWeek: number;
-  sevenYearAnchorDate: string;
+  sevenYearAnchorYear: number;
+  mayanNewYearStart: string;
   loading: boolean;
 }
 
@@ -33,11 +35,21 @@ export function useCalendarAdapter(): CalendarAdapterState {
     module: "calendar",
     validator: (value) => Number.isFinite(value) && value >= 1 && value <= 7,
   });
-  const sevenYearAnchorPreference = usePreferenceWithBootstrap<string>({
-    key: "calendar.seven_year_anchor_date",
-    defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  const sevenYearAnchorPreference = usePreferenceWithBootstrap<number>({
+    key: "calendar.seven_year_anchor_year",
+    defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
     module: "calendar",
-    validator: isDateKey,
+    validator: (value) =>
+      typeof value === "number" &&
+      Number.isInteger(value) &&
+      value >= 1 &&
+      value <= 9999,
+  });
+  const mayanNewYearPreference = usePreferenceWithBootstrap<string>({
+    key: "calendar.mayan_new_year_start",
+    defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
+    module: "calendar",
+    validator: (value) => /^\d{2}-\d{2}$/.test(value),
   });
 
   const calendarSystem: CalendarSystem =
@@ -47,27 +59,37 @@ export function useCalendarAdapter(): CalendarAdapterState {
   const firstDayOfWeek = Number.isFinite(firstDayPreference.value)
     ? firstDayPreference.value
     : 1;
-  const sevenYearAnchorDate = isDateKey(sevenYearAnchorPreference.value)
-    ? sevenYearAnchorPreference.value
-    : DEFAULT_SEVEN_YEAR_ANCHOR_DATE;
+  const sevenYearAnchorYear =
+    typeof sevenYearAnchorPreference.value === "number" &&
+    Number.isInteger(sevenYearAnchorPreference.value)
+      ? sevenYearAnchorPreference.value
+      : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR;
+  const mayanNewYearStart =
+    typeof mayanNewYearPreference.value === "string" &&
+    /^\d{2}-\d{2}$/.test(mayanNewYearPreference.value)
+      ? mayanNewYearPreference.value
+      : DEFAULT_MAYAN_NEW_YEAR_START;
 
   const adapter = useMemo(() => {
     return createCalendarAdapter(
       calendarSystem,
       firstDayOfWeek,
-      sevenYearAnchorDate,
+      sevenYearAnchorYear,
+      mayanNewYearStart,
     );
-  }, [calendarSystem, firstDayOfWeek, sevenYearAnchorDate]);
+  }, [calendarSystem, firstDayOfWeek, sevenYearAnchorYear, mayanNewYearStart]);
 
   return {
     adapter,
     calendarSystem,
     firstDayOfWeek,
-    sevenYearAnchorDate,
+    sevenYearAnchorYear,
+    mayanNewYearStart,
     loading:
       calendarSystemPreference.loading ||
       firstDayPreference.loading ||
-      sevenYearAnchorPreference.loading,
+      sevenYearAnchorPreference.loading ||
+      mayanNewYearPreference.loading,
   };
 }
 
