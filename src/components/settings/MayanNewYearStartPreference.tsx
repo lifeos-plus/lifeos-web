@@ -44,9 +44,10 @@ const MayanNewYearStartPreference = ({
       if (!DRAFT_PATTERN.test(raw)) {
         return;
       }
-      setDraft(raw);
+      const normalized = normalizeMayanNewYearStart(raw);
+      setDraft(normalized);
       if (MONTH_DAY_PATTERN.test(raw)) {
-        void onCommit(normalizeMayanNewYearStart(raw));
+        void onCommit(normalized);
       }
     },
     [onCommit],

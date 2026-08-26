@@ -29,14 +29,8 @@ export const normalizeMayanNewYearStart = (value: unknown): string => {
   if (typeof value !== "string" || !/^\d{2}-\d{2}$/.test(value)) {
     return DEFAULT_MAYAN_NEW_YEAR_START;
   }
-  const [month, day] = value.split("-").map(Number);
-  if (month < 1 || month > 12 || day < 1 || day > 31) {
-    return DEFAULT_MAYAN_NEW_YEAR_START;
-  }
-  if (month === 2 && day === 29) {
-    return "02-28";
-  }
-  return value;
+  const [month, day] = parseMayanNewYearStart(value);
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 };
 
 export const normalizePlanningViewType = (

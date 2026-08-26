@@ -4,6 +4,8 @@ import {
   createCalendarAdapter,
   GregorianCalendarAdapter,
   MayanCalendarAdapter,
+  normalizeMayanNewYearStart,
+  parseMayanNewYearStart,
 } from "@/utils/calendar";
 
 describe("createCalendarAdapter", () => {
@@ -21,5 +23,13 @@ describe("createCalendarAdapter", () => {
     expect(() => createCalendarAdapter("martian" as never, 1)).toThrowError(
       /Unsupported calendar system/,
     );
+  });
+
+  it("normalizes February 29 new year starts to February 28", () => {
+    expect(parseMayanNewYearStart("02-29")).toEqual([2, 28]);
+    expect(parseMayanNewYearStart("07-26")).toEqual([7, 26]);
+    expect(normalizeMayanNewYearStart("02-29")).toBe("02-28");
+    expect(normalizeMayanNewYearStart("07-26")).toBe("07-26");
+    expect(normalizeMayanNewYearStart("13-01")).toBe("07-26");
   });
 });
