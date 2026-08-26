@@ -260,14 +260,14 @@ function SettingsPage() {
         ...calendarSevenYearAnchorYearSettings,
         saveValue: async (value: unknown) =>
           await calendarSevenYearAnchorYearSettings.saveValue(
-            typeof value === "number" && Number.isInteger(value)
-              ? value
+            Number.isFinite(Number(value))
+              ? Number(value)
               : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
           ),
         updateValue: (value: unknown) =>
           calendarSevenYearAnchorYearSettings.updateValue(
-            typeof value === "number" && Number.isInteger(value)
-              ? value
+            Number.isFinite(Number(value))
+              ? Number(value)
               : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
           ),
       },
