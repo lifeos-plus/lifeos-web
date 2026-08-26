@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   statsApi,
+  type AggregatedAreaListResponse,
+  type AggregatedAreaPeriod,
   type AggregatedAreaRow,
   type AggregationGranularity,
   type DailyAreaRow,
@@ -23,10 +25,35 @@ interface UseInsightsStatsControllerParams {
 interface UseInsightsStatsControllerResult {
   dailyStats: DailyAreaRow[];
   aggregatedRows: AggregatedAreaRow[];
+  aggregatedPeriods: AggregatedAreaPeriod[];
   isLoading: boolean;
   displayError: string | null;
   refreshStats: () => Promise<void>;
 }
+
+const AGGREGATED_PAGE_SIZE = 1000;
+
+const emptyAggregatedResponse = (
+  granularity: AggregationGranularity,
+  startDate: string,
+  endDate: string,
+  timezone: string,
+  firstDayOfWeek: number,
+  calendarSystem: "gregorian" | "mayan_13_moon",
+): AggregatedAreaListResponse => ({
+  items: [],
+  periods: [],
+  pagination: { page: 1, size: AGGREGATED_PAGE_SIZE, total: 0, pages: 0 },
+  meta: {
+    granularity,
+    start: startDate,
+    end: endDate,
+    timezone,
+    area_ids: null,
+    first_day_of_week: firstDayOfWeek,
+    calendar_system: calendarSystem,
+  },
+});
 
 export function useInsightsStatsController({
   ready,
@@ -66,7 +93,7 @@ export function useInsightsStatsController({
     placeholderData: [],
   });
 
-  const aggregatedQuery = useQuery<AggregatedAreaRow[]>({
+  const aggregatedQuery = useQuery<AggregatedAreaListResponse>({
     queryKey: statsKeys.aggregatedAreas({
       granularity,
       start: startDate,
@@ -76,19 +103,46 @@ export function useInsightsStatsController({
       calendar_system: calendarSystem,
     }),
     queryFn: async () => {
-      const response = await statsApi.getAggregatedAreas(
+      const firstPage = await statsApi.getAggregatedAreas(
         granularity,
         startDate,
         endDate,
+        { page: 1, size: AGGREGATED_PAGE_SIZE },
       );
-      return response.items ?? [];
+      const pageCount = firstPage.pagination.pages;
+      if (pageCount <= 1) return firstPage;
+      // A long timeline (for example 91 moons over a seven-year month view)
+      // can exceed one page of rows; fetch the rest so no bucket loses its
+      // area breakdown or totals.
+      const remainingPages = await Promise.all(
+        Array.from({ length: pageCount - 1 }, (_, index) =>
+          statsApi.getAggregatedAreas(granularity, startDate, endDate, {
+            page: index + 2,
+            size: AGGREGATED_PAGE_SIZE,
+          }),
+        ),
+      );
+      return {
+        ...firstPage,
+        items: [
+          ...firstPage.items,
+          ...remainingPages.flatMap((page) => page.items),
+        ],
+      };
     },
     enabled: Boolean(ready && startDate && endDate && granularity !== "day"),
     staleTime: 10 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    placeholderData: [],
+    placeholderData: emptyAggregatedResponse(
+      granularity,
+      startDate,
+      endDate,
+      activeTimezone,
+      normalizedFirstDayOfWeek,
+      calendarSystem,
+    ),
   });
 
   const dailyStats = useMemo(() => {
@@ -98,7 +152,12 @@ export function useInsightsStatsController({
 
   const aggregatedRows = useMemo(() => {
     if (granularity === "day") return [];
-    return aggregatedQuery.data ?? [];
+    return aggregatedQuery.data?.items ?? [];
+  }, [aggregatedQuery.data, granularity]);
+
+  const aggregatedPeriods = useMemo(() => {
+    if (granularity === "day") return [];
+    return aggregatedQuery.data?.periods ?? [];
   }, [aggregatedQuery.data, granularity]);
 
   const queryError = useMemo(() => {
@@ -162,6 +221,7 @@ export function useInsightsStatsController({
   return {
     dailyStats,
     aggregatedRows,
+    aggregatedPeriods,
     isLoading: dailyQuery.isFetching || aggregatedQuery.isFetching,
     displayError: refreshError || queryError,
     refreshStats,
