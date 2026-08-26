@@ -91,6 +91,18 @@ describe("useSettingsConfig", () => {
         type: "custom",
       }),
     );
+    const rendered = mayanNewYearItem?.render?.({
+      value: "03-01",
+      onChange: vi.fn(),
+      onSave: vi.fn(async () => true),
+      onCommit: vi.fn(async () => true),
+      saving: false,
+      loading: false,
+      error: null,
+      disabled: false,
+      id: "mayan-new-year-start",
+    });
+    expect(rendered).toBeTruthy();
   });
 
   it("exposes a health group with weight unit and body height preferences", () => {
