@@ -109,7 +109,8 @@ describe("MayanCalendarAdapter", () => {
     });
   });
 
-  it("navigates week boundaries through Day Out of Time", () => {
+  it("skips the Day Out of Time when navigating weeks", () => {
+    // Backward from week 1 lands on week 52, never on the single-day period.
     expect(
       adapter.shiftPeriodRange(
         "week",
@@ -118,8 +119,8 @@ describe("MayanCalendarAdapter", () => {
         -1,
       ),
     ).toEqual({
-      start: "2026-07-25",
-      end: "2026-07-25",
+      start: "2026-07-18",
+      end: "2026-07-24",
     });
     expect(
       adapter.shiftPeriodRange(
@@ -132,6 +133,7 @@ describe("MayanCalendarAdapter", () => {
       start: "2026-07-18",
       end: "2026-07-24",
     });
+    // Two real weeks forward from week 52 advance to week 2.
     expect(
       adapter.shiftPeriodRange(
         "week",
@@ -140,12 +142,13 @@ describe("MayanCalendarAdapter", () => {
         2,
       ),
     ).toEqual({
-      start: "2026-07-26",
-      end: "2026-08-01",
+      start: "2026-08-02",
+      end: "2026-08-08",
     });
   });
 
-  it("navigates month boundaries through Day Out of Time", () => {
+  it("skips the Day Out of Time when navigating months", () => {
+    // Forward from moon 13 lands on moon 1 of the next year.
     expect(
       adapter.shiftPeriodRange(
         "month",
@@ -154,8 +157,8 @@ describe("MayanCalendarAdapter", () => {
         1,
       ),
     ).toEqual({
-      start: "2026-07-25",
-      end: "2026-07-25",
+      start: "2026-07-26",
+      end: "2026-08-22",
     });
     expect(
       adapter.shiftPeriodRange(
@@ -234,14 +237,16 @@ describe("MayanCalendarAdapter", () => {
   });
 
   it("uses calendar boundaries for planning period navigation", () => {
+    // Week/month navigation skips the Day Out of Time: previous week from
+    // week 1 is week 52, and next month from moon 13 is moon 1.
     expect(adapter.getPreviousPeriod(new Date(2026, 6, 26), "week")).toEqual(
-      new Date(2026, 6, 25),
+      new Date(2026, 6, 18),
     );
     expect(adapter.getNextPeriod(new Date(2026, 6, 25), "week")).toEqual(
       new Date(2026, 6, 26),
     );
     expect(adapter.getNextPeriod(new Date(2026, 6, 24), "month")).toEqual(
-      new Date(2026, 6, 25),
+      new Date(2026, 6, 26),
     );
   });
 

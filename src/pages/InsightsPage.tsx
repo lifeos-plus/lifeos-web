@@ -15,7 +15,7 @@ import HoverTooltipOverlay from "@/components/HoverTooltipOverlay";
 import { useHoverTooltip } from "@/hooks/useHoverTooltip";
 import { usePageHeader } from "@/contexts/PageHeaderContext";
 import PageLayout from "@/layouts/PageLayout";
-import { formatDate, formatDuration } from "@/utils/datetime";
+import { formatDate, formatDuration, parseDateKey } from "@/utils/datetime";
 import { Icon } from "@/components/icons";
 import type { Area } from "@/services/api/areas";
 import ActionButton from "@/components/ActionButton";
@@ -36,10 +36,7 @@ import {
   buildPeriodCoverage,
   type PeriodCoverage,
 } from "@/features/insights/periodCoverage";
-import {
-  buildBucketBoundaries,
-  parseLocalDate,
-} from "@/features/insights/periodBuckets";
+import { toPeriodBoundaries } from "@/features/insights/periodBoundaries";
 import { getReadableTextColor, UNKNOWN_AREA_COLOR } from "@/utils/areaColors";
 
 type AreaBucket = {
@@ -65,8 +62,8 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const calculateInclusiveDays = (start: string, end?: string | null): number => {
   if (!start) return 0;
-  const startDate = parseLocalDate(start);
-  const endDate = end ? parseLocalDate(end) : startDate;
+  const startDate = parseDateKey(start);
+  const endDate = end ? parseDateKey(end) : startDate;
   const startTime = startDate.getTime();
   const endTime = endDate.getTime();
   const lower = Math.min(startTime, endTime);
@@ -76,8 +73,8 @@ const calculateInclusiveDays = (start: string, end?: string | null): number => {
 };
 
 const calculateBucketCapacityMinutes = (start: string, end: string): number => {
-  const startDate = parseLocalDate(start);
-  const endDate = parseLocalDate(end);
+  const startDate = parseDateKey(start);
+  const endDate = parseDateKey(end);
   const diffDays =
     Math.floor((endDate.getTime() - startDate.getTime()) / MS_PER_DAY) + 1;
   return Math.max(diffDays, 0) * 24 * 60;
@@ -274,24 +271,30 @@ function InsightsPage() {
   }, [areas]);
 
   const normalizedFirstDayOfWeek = firstDayOfWeek ?? 1;
-  const { dailyStats, aggregatedRows, isLoading, displayError, refreshStats } =
-    useInsightsStatsController({
-      ready,
-      startDate,
-      endDate,
-      granularity,
-      activeTimezone,
-      firstDayOfWeek: normalizedFirstDayOfWeek,
-      calendarSystem,
-      refreshErrorMessage: t("insights.loadingStats"),
-    });
+  const {
+    dailyStats,
+    aggregatedRows,
+    aggregatedPeriods,
+    isLoading,
+    displayError,
+    refreshStats,
+  } = useInsightsStatsController({
+    ready,
+    startDate,
+    endDate,
+    granularity,
+    activeTimezone,
+    firstDayOfWeek: normalizedFirstDayOfWeek,
+    calendarSystem,
+    refreshErrorMessage: t("insights.loadingStats"),
+  });
 
   const handleSelectDate = useCallback(
     (date: Date) => {
       const periodRange = calendarAdapter.getPeriodRange(viewType, date);
       setStartDate(periodRange.start);
       setEndDate(periodRange.end);
-      setSelectedDate(parseLocalDate(periodRange.start));
+      setSelectedDate(parseDateKey(periodRange.start));
     },
     [calendarAdapter, setEndDate, setSelectedDate, setStartDate, viewType],
   );
@@ -333,12 +336,10 @@ function InsightsPage() {
         totalLoggedMinutes: number;
       }>;
 
-    const boundaries = buildBucketBoundaries(
-      granularity,
-      startDate,
-      endDate,
-      calendarAdapter,
-    );
+    // The backend owns calendar bucket logic and returns the complete,
+    // ordered bucket timeline (including buckets without data), so the page
+    // renders it directly instead of re-deriving periods client-side.
+    const boundaries = toPeriodBoundaries(aggregatedPeriods);
 
     const lookup = new Map<string, AggregatedAreaRow[]>();
     aggregatedRows.forEach((row) => {
@@ -381,10 +382,8 @@ function InsightsPage() {
     });
   }, [
     aggregatedRows,
+    aggregatedPeriods,
     granularity,
-    startDate,
-    endDate,
-    calendarAdapter,
     selectedAreas,
     areaOrder,
   ]);

@@ -1148,7 +1148,12 @@ export interface paths {
         };
         /**
          * List Aggregated Areas
-         * @description Return aggregated timelog minutes by LifeOS area.
+         * @description Return the complete bucket timeline and aggregated minutes by LifeOS area.
+         *
+         *     ``periods`` lists every bucket in the requested range at the given
+         *     granularity — including buckets with no timelogs — so clients can render
+         *     the full timeline without re-deriving calendar periods. ``items`` holds
+         *     per-area rows only for buckets that have data.
          */
         get: operations["list_aggregated_areas_api_v1_stats_aggregated_areas_get"];
         put?: never;
@@ -1983,6 +1988,13 @@ export interface components {
             /** Timezone */
             timezone: string;
         };
+        /** AggregatedAreaPeriodResponse */
+        AggregatedAreaPeriodResponse: {
+            /** Period End */
+            period_end: string;
+            /** Period Start */
+            period_start: string;
+        };
         /** AggregatedAreaResponse */
         AggregatedAreaResponse: {
             /** Area Id */
@@ -1998,6 +2010,18 @@ export interface components {
             period_end: string;
             /** Period Start */
             period_start: string;
+        };
+        /**
+         * AggregatedAreasListResponse
+         * @description Complete bucket timeline plus per-area rows for aggregated stats.
+         */
+        AggregatedAreasListResponse: {
+            /** Items */
+            items: components["schemas"]["AggregatedAreaResponse"][];
+            meta: components["schemas"]["AggregatedAreaMeta"];
+            pagination: components["schemas"]["Pagination"];
+            /** Periods */
+            periods: components["schemas"]["AggregatedAreaPeriodResponse"][];
         };
         /** AnniversaryListMeta */
         AnniversaryListMeta: {
@@ -2870,13 +2894,6 @@ export interface components {
         LatestTimelogEndResponse: {
             /** End Time */
             end_time: string | null;
-        };
-        /** ListResponse[AggregatedAreaResponse, AggregatedAreaMeta] */
-        ListResponse_AggregatedAreaResponse_AggregatedAreaMeta_: {
-            /** Items */
-            items: components["schemas"]["AggregatedAreaResponse"][];
-            meta: components["schemas"]["AggregatedAreaMeta"];
-            pagination: components["schemas"]["Pagination"];
         };
         /** ListResponse[AnniversaryResponse, AnniversaryListMeta] */
         ListResponse_AnniversaryResponse_AnniversaryListMeta_: {
@@ -7489,7 +7506,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ListResponse_AggregatedAreaResponse_AggregatedAreaMeta_"];
+                    "application/json": components["schemas"]["AggregatedAreasListResponse"];
                 };
             };
             /** @description Validation Error */
