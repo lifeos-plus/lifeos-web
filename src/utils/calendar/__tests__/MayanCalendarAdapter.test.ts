@@ -355,4 +355,33 @@ describe("MayanCalendarAdapter with custom new year start", () => {
       end: "2028-02-27",
     });
   });
+
+  it("places the Day Out of Time node on the configured date in year groups", () => {
+    const [yearGroup] = customAdapter.buildPlanningGroups(
+      "year",
+      new Date(2028, 1, 28),
+      [],
+    );
+    const dayOutOfTimeNode = yearGroup.children!.at(-1)!;
+
+    expect(dayOutOfTimeNode.id).toBe("mayan-day-out-of-time-2027");
+    expect(dayOutOfTimeNode.date).toEqual(new Date(2028, 1, 28));
+  });
+
+  it("derives display year and year selection from the configured new year start", () => {
+    expect(customAdapter.getDisplayYear("2028-03-01")).toBe(2028);
+    expect(customAdapter.getDisplayYear("2028-01-15")).toBe(2027);
+    expect(customAdapter.getDateForYearSelection(2028)).toEqual(
+      new Date(2028, 2, 1),
+    );
+  });
+});
+
+describe("MayanCalendarAdapter display helpers with default new year start", () => {
+  const adapter = new MayanCalendarAdapter();
+
+  it("keeps the legacy July 26 display behavior", () => {
+    expect(adapter.getDisplayYear("2026-07-26")).toBe(2026);
+    expect(adapter.getDateForYearSelection(2026)).toEqual(new Date(2026, 6, 26));
+  });
 });

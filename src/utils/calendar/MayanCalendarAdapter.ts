@@ -43,6 +43,19 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     return date;
   }
 
+  private getDayOutOfTime(yearStart: Date): Date {
+    const nextStart = new Date(yearStart);
+    nextStart.setFullYear(yearStart.getFullYear() + 1);
+    const dayOutOfTime = new Date(nextStart);
+    dayOutOfTime.setDate(nextStart.getDate() - 1);
+    if (dayOutOfTime.getMonth() === 1 && dayOutOfTime.getDate() === 29) {
+      // February 29 is treated as February 28 so the 13-moon year stays
+      // fixed at 365 days without intercalary-day boundary special cases.
+      dayOutOfTime.setDate(28);
+    }
+    return dayOutOfTime;
+  }
+
   /**
    * Convert a date to Mayan calendar parts
    * @param date - The date to convert
@@ -77,7 +90,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
 
   /**
    * Get the start of the Mayan year for a given date
-   * Mayan year starts at July 26 each Gregorian year
+   * Mayan year starts on the configured month-day each Gregorian year
    * @param date - The date to get Mayan year start for
    * @returns Date object representing the start of the Mayan year
    */
@@ -239,7 +252,8 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   /**
    * Check if a date is the Day Out of Time in the Mayan 13-Moon calendar
    * @param date - The date to check
-   * @returns true if the date is the Day Out of Time (July 25)
+   * @returns true if the date is the Day Out of Time (the day before the
+   * configured new year start)
    */
   private isMayanDayOutOfTime(date: Date): boolean {
     const parts = this.toMayanParts(date);
@@ -563,7 +577,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     }
 
     // Day out of time (single day)
-    const outOfTimeDate = new Date(mayanYearStart.getFullYear() + 1, 6, 25);
+    const outOfTimeDate = this.getDayOutOfTime(mayanYearStart);
     const outOfTimeTasks = dayTasks.filter((task) =>
       taskPlanningWindowOverlaps(task, outOfTimeDate, outOfTimeDate),
     );
@@ -893,8 +907,8 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     const month = parseInt(match[2]); // 1-12
     const day = parseInt(match[3]);
 
-    if (month === 7 && day === 26) {
-      // New format: stored as July 26, use the year directly
+    if (month === this.newYearMonth && day === this.newYearDay) {
+      // Stored as the configured Mayan new year start, use the year directly
       return year;
     } else if (month === 1 && day === 1) {
       // Old format: January 1st, assume user intended the Gregorian year
@@ -908,6 +922,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   }
 
   getDateForYearSelection(year: number): Date {
-    return new Date(year, 6, 26);
+    return new Date(year, this.newYearMonth - 1, this.newYearDay);
   }
 }
