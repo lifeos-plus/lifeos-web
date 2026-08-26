@@ -698,15 +698,20 @@
       "description": "Choose your preferred calendar system and weekly structure.",
       "system": {
         "label": "Calendar System",
-        "description": "Default Gregorian calendar. When Mayan 13 Moon calendar is selected, each month has 28 days, with July 26th as New Year."
+        "description": "Default Gregorian calendar. When Mayan 13 Moon calendar is selected, each month has 28 days; the New Year starts on the configured month-day (July 26 by default)."
       },
       "firstDay": {
         "label": "First Day of Week",
         "description": "Default Monday. This setting controls Gregorian week boundaries."
       },
-      "sevenYearAnchorDate": {
-        "label": "Seven-Year Start Date",
-        "description": "Choose a date whose calendar year anchors seven-year periods. Gregorian uses the selected date's year; Mayan 13 Moon uses the Mayan year containing that date."
+      "mayanNewYearStart": {
+        "label": "Mayan New Year Start",
+        "description": "Month-day (MM-DD) when the Mayan New Year starts; the day before is the Day Out of Time. Defaults to 07-26. February 29 is treated as February 28.",
+        "placeholder": "MM-DD"
+      },
+      "sevenYearAnchorYear": {
+        "label": "Seven-Year Anchor Year",
+        "description": "Calendar year that anchors seven-year periods. Gregorian periods start January 1 of the anchor year; Mayan periods start on the configured Mayan New Year day of that year."
       }
     },
     "planningSettings": {

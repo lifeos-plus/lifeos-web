@@ -10,6 +10,9 @@ import { NOTE_COLLAPSE_ALLOWED_LINES } from "@/hooks/notes/useNoteCollapsePrefer
 import VisionExperienceRatesTable from "@/components/settings/VisionExperienceRatesTable";
 import VisionExperienceDefaultPreference from "@/components/settings/VisionExperienceDefaultPreference";
 import HealthHeightPreference from "@/components/settings/HealthHeightPreference";
+import MayanNewYearStartPreference, {
+  type MayanNewYearStartPreferenceProps,
+} from "@/components/settings/MayanNewYearStartPreference";
 import { FONT_CATALOG } from "@/config/fontCatalog";
 import { Icon, type IconName } from "@/components/icons";
 import type { UUID } from "@/types/primitive";
@@ -148,11 +151,26 @@ export const useSettingsConfig = (
           ],
         },
         {
-          key: "sevenYearAnchorDate",
-          type: "date",
-          label: t("settings.calendar.sevenYearAnchorDate.label"),
-          description: t("settings.calendar.sevenYearAnchorDate.description"),
+          key: "sevenYearAnchorYear",
+          type: "number",
+          label: t("settings.calendar.sevenYearAnchorYear.label"),
+          description: t("settings.calendar.sevenYearAnchorYear.description"),
+          min: 1,
+          max: 9999,
         },
+        ...(context.calendarSystem === "mayan_13_moon"
+          ? [
+              {
+                key: "mayanNewYearStart",
+                type: "custom" as const,
+                label: t("settings.calendar.mayanNewYearStart.label"),
+                description: t("settings.calendar.mayanNewYearStart.description"),
+                render: (props: MayanNewYearStartPreferenceProps) => (
+                  <MayanNewYearStartPreference {...props} />
+                ),
+              },
+            ]
+          : []),
         ...(context.calendarSystem === "mayan_13_moon"
           ? []
           : [

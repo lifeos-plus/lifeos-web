@@ -286,16 +286,16 @@ describe("MayanCalendarAdapter", () => {
     });
   });
 
-  it("anchors 7-year ranges to the Mayan year containing the configured date", () => {
-    const anchoredAdapter = new MayanCalendarAdapter(1, "2026-07-20");
+  it("anchors 7-year ranges to the configured anchor year", () => {
+    const anchoredAdapter = new MayanCalendarAdapter(1, 2026);
 
     expect(anchoredAdapter.getPeriodRange("7years", new Date(2026, 6, 26))).toEqual({
-      start: "2025-07-26",
-      end: "2032-07-25",
+      start: "2026-07-26",
+      end: "2033-07-25",
     });
     expect(anchoredAdapter.getPeriodRange("7years", new Date(2025, 6, 25))).toEqual({
-      start: "2018-07-26",
-      end: "2025-07-25",
+      start: "2019-07-26",
+      end: "2026-07-25",
     });
   });
 
@@ -303,5 +303,85 @@ describe("MayanCalendarAdapter", () => {
     const adapter = new MayanCalendarAdapter();
 
     expect(adapter.getSpecialDayName(new Date("2024-07-26T00:00:00Z"))).toBeTruthy();
+  });
+});
+
+describe("MayanCalendarAdapter with custom new year start", () => {
+  const customAdapter = new MayanCalendarAdapter(1, 2025, "03-01");
+
+  it("uses the configured month-day as year start and Day Out of Time", () => {
+    expect(
+      customAdapter.getPeriodRange("year", new Date(2028, 1, 28)),
+    ).toEqual({
+      start: "2027-03-01",
+      end: "2028-02-29",
+    });
+    expect(
+      customAdapter.getPeriodRange("month", new Date(2028, 1, 28)),
+    ).toEqual({
+      start: "2028-02-28",
+      end: "2028-02-28",
+    });
+    expect(
+      customAdapter.getPeriodRange("week", new Date(2028, 1, 28)),
+    ).toEqual({
+      start: "2028-02-28",
+      end: "2028-02-28",
+    });
+    expect(
+      customAdapter.getPeriodRange("7years", new Date(2028, 2, 1)),
+    ).toEqual({
+      start: "2025-03-01",
+      end: "2032-02-29",
+    });
+  });
+
+  it("treats February 29 as the Day Out of Time", () => {
+    expect(
+      customAdapter.getPeriodRange("month", new Date(2028, 1, 29)),
+    ).toEqual({
+      start: "2028-02-29",
+      end: "2028-02-29",
+    });
+  });
+
+  it("normalizes a February 29 new year start to February 28", () => {
+    const leapBirthdayAdapter = new MayanCalendarAdapter(1, 2025, "02-29");
+
+    expect(
+      leapBirthdayAdapter.getPeriodRange("year", new Date(2027, 1, 28)),
+    ).toEqual({
+      start: "2027-02-28",
+      end: "2028-02-27",
+    });
+  });
+
+  it("places the Day Out of Time node on the configured date in year groups", () => {
+    const [yearGroup] = customAdapter.buildPlanningGroups(
+      "year",
+      new Date(2028, 1, 28),
+      [],
+    );
+    const dayOutOfTimeNode = yearGroup.children!.at(-1)!;
+
+    expect(dayOutOfTimeNode.id).toBe("mayan-day-out-of-time-2027");
+    expect(dayOutOfTimeNode.date).toEqual(new Date(2028, 1, 28));
+  });
+
+  it("derives display year and year selection from the configured new year start", () => {
+    expect(customAdapter.getDisplayYear("2028-03-01")).toBe(2028);
+    expect(customAdapter.getDisplayYear("2028-01-15")).toBe(2027);
+    expect(customAdapter.getDateForYearSelection(2028)).toEqual(
+      new Date(2028, 2, 1),
+    );
+  });
+});
+
+describe("MayanCalendarAdapter display helpers with default new year start", () => {
+  const adapter = new MayanCalendarAdapter();
+
+  it("keeps the legacy July 26 display behavior", () => {
+    expect(adapter.getDisplayYear("2026-07-26")).toBe(2026);
+    expect(adapter.getDateForYearSelection(2026)).toEqual(new Date(2026, 6, 26));
   });
 });
