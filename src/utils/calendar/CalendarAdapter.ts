@@ -4,7 +4,34 @@ import { parseDateKey } from "@/utils/datetime";
 export type PlanningViewType = "7years" | "year" | "month" | "week" | "day";
 export type ExtendedPlanningViewType = PlanningViewType | "sevenYear";
 
-export const DEFAULT_SEVEN_YEAR_ANCHOR_DATE = "2025-07-26";
+export const DEFAULT_SEVEN_YEAR_ANCHOR_YEAR = 2025;
+export const DEFAULT_MAYAN_NEW_YEAR_START = "07-26";
+
+export const parseMayanNewYearStart = (value: string): [number, number] => {
+  const [month, day] = value.split("-").map(Number);
+  if (
+    !Number.isInteger(month) ||
+    !Number.isInteger(day) ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  ) {
+    return [7, 26];
+  }
+  if (month === 2 && day === 29) {
+    return [2, 28];
+  }
+  return [month, day];
+};
+
+export const normalizeMayanNewYearStart = (value: unknown): string => {
+  if (typeof value !== "string" || !/^\d{2}-\d{2}$/.test(value)) {
+    return DEFAULT_MAYAN_NEW_YEAR_START;
+  }
+  const [month, day] = parseMayanNewYearStart(value);
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+};
 
 export const normalizePlanningViewType = (
   viewType: ExtendedPlanningViewType,

@@ -698,15 +698,20 @@
       "description": "选择偏好的日历体系与每周结构。",
       "system": {
         "label": "日历体系",
-        "description": "默认公历。选择玛雅13月亮历时，每月固定28天，07-26为新年。"
+        "description": "默认公历。选择玛雅13月亮历时，每月固定28天；新年开始日可在下方配置（默认 07-26）。"
       },
       "firstDay": {
         "label": "每周第一天",
         "description": "默认周一。该设置控制公历周边界。"
       },
-      "sevenYearAnchorDate": {
-        "label": "七年起始日期",
-        "description": "选择一个日期，用它所在的历法年份锚定七年周期。公历使用该日期所在年份；玛雅13月亮历使用该日期所在的玛雅年。"
+      "mayanNewYearStart": {
+        "label": "玛雅新年开始日",
+        "description": "玛雅新年开始的公历「月-日」（MM-DD），前一天为无时间日。默认 07-26；2 月 29 日按 2 月 28 日处理。",
+        "placeholder": "MM-DD"
+      },
+      "sevenYearAnchorYear": {
+        "label": "七年锚点年份",
+        "description": "锚定七年周期的公历年份。公历七年从该年 1 月 1 日开始；玛雅历七年从该年的玛雅新年开始日算起。"
       }
     },
     "planningSettings": {

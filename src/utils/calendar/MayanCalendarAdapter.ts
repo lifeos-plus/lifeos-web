@@ -5,8 +5,10 @@ import type {
 } from "./CalendarAdapter";
 import {
   countInclusiveLocalDates,
-  DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  DEFAULT_MAYAN_NEW_YEAR_START,
+  DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   normalizePlanningViewType,
+  parseMayanNewYearStart,
   taskPlanningWindowOverlaps,
 } from "./CalendarAdapter";
 import type { TaskWithSubtasks } from "@/services/api";
@@ -18,14 +20,40 @@ import { t } from "@/i18n";
 
 export class MayanCalendarAdapter implements CalendarAdapter {
   private firstDayOfWeek: number;
-  private sevenYearAnchorDate: string;
+  private sevenYearAnchorYear: number;
+  private newYearMonth: number;
+  private newYearDay: number;
 
   constructor(
     firstDayOfWeek: number = 1,
-    sevenYearAnchorDate: string = DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+    sevenYearAnchorYear: number = DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
+    mayanNewYearStart: string = DEFAULT_MAYAN_NEW_YEAR_START,
   ) {
     this.firstDayOfWeek = firstDayOfWeek;
-    this.sevenYearAnchorDate = sevenYearAnchorDate;
+    this.sevenYearAnchorYear = sevenYearAnchorYear;
+    const [month, day] = parseMayanNewYearStart(mayanNewYearStart);
+    this.newYearMonth = month;
+    this.newYearDay = day;
+  }
+
+  private normalizeDate(date: Date): Date {
+    if (date.getMonth() === 1 && date.getDate() === 29) {
+      return new Date(date.getFullYear(), 1, 28);
+    }
+    return date;
+  }
+
+  private getDayOutOfTime(yearStart: Date): Date {
+    const nextStart = new Date(yearStart);
+    nextStart.setFullYear(yearStart.getFullYear() + 1);
+    const dayOutOfTime = new Date(nextStart);
+    dayOutOfTime.setDate(nextStart.getDate() - 1);
+    if (dayOutOfTime.getMonth() === 1 && dayOutOfTime.getDate() === 29) {
+      // February 29 is treated as February 28 so the 13-moon year stays
+      // fixed at 365 days without intercalary-day boundary special cases.
+      dayOutOfTime.setDate(28);
+    }
+    return dayOutOfTime;
   }
 
   /**
@@ -62,17 +90,18 @@ export class MayanCalendarAdapter implements CalendarAdapter {
 
   /**
    * Get the start of the Mayan year for a given date
-   * Mayan year starts at July 26 each Gregorian year
+   * Mayan year starts on the configured month-day each Gregorian year
    * @param date - The date to get Mayan year start for
    * @returns Date object representing the start of the Mayan year
    */
   getMayanYearStart(date: Date): Date {
-    const y = date.getFullYear();
-    const july26ThisYear = new Date(y, 6, 26);
-    if (date >= july26ThisYear) {
-      return new Date(y, 6, 26);
+    const normalized = this.normalizeDate(date);
+    const y = normalized.getFullYear();
+    const startThisYear = new Date(y, this.newYearMonth - 1, this.newYearDay);
+    if (normalized >= startThisYear) {
+      return startThisYear;
     }
-    return new Date(y - 1, 6, 26);
+    return new Date(y - 1, this.newYearMonth - 1, this.newYearDay);
   }
 
   private getDateOrdinal(date: Date): number {
@@ -103,17 +132,18 @@ export class MayanCalendarAdapter implements CalendarAdapter {
    * @returns Day of year (1-365)
    */
   private getMayanDayOfYear(date: Date): number {
-    const start = this.getMayanYearStart(date);
+    const normalized = this.normalizeDate(date);
+    const start = this.getMayanYearStart(normalized);
     const millisecondsPerDay = 24 * 60 * 60 * 1000;
     let dayOfYear =
       Math.floor(
-        (this.getDateOrdinal(date) - this.getDateOrdinal(start)) /
+        (this.getDateOrdinal(normalized) - this.getDateOrdinal(start)) /
           millisecondsPerDay,
       ) + 1;
     const leapDay = this.getLeapDayForYear(start);
     if (
       leapDay &&
-      this.getDateOrdinal(date) > this.getDateOrdinal(leapDay)
+      this.getDateOrdinal(normalized) > this.getDateOrdinal(leapDay)
     ) {
       // February 29 is intercalary, so it must not shift later moon/week indices.
       dayOfYear -= 1;
@@ -222,7 +252,8 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   /**
    * Check if a date is the Day Out of Time in the Mayan 13-Moon calendar
    * @param date - The date to check
-   * @returns true if the date is the Day Out of Time (July 25)
+   * @returns true if the date is the Day Out of Time (the day before the
+   * configured new year start)
    */
   private isMayanDayOutOfTime(date: Date): boolean {
     const parts = this.toMayanParts(date);
@@ -310,7 +341,11 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   }
 
   private getSevenYearAnchorStart(): Date {
-    return this.getMayanYearStart(parseDateKey(this.sevenYearAnchorDate));
+    return new Date(
+      this.sevenYearAnchorYear,
+      this.newYearMonth - 1,
+      this.newYearDay,
+    );
   }
 
   private getSevenYearPeriodStart(date: Date): Date {
@@ -542,7 +577,7 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     }
 
     // Day out of time (single day)
-    const outOfTimeDate = new Date(mayanYearStart.getFullYear() + 1, 6, 25);
+    const outOfTimeDate = this.getDayOutOfTime(mayanYearStart);
     const outOfTimeTasks = dayTasks.filter((task) =>
       taskPlanningWindowOverlaps(task, outOfTimeDate, outOfTimeDate),
     );
@@ -872,8 +907,8 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     const month = parseInt(match[2]); // 1-12
     const day = parseInt(match[3]);
 
-    if (month === 7 && day === 26) {
-      // New format: stored as July 26, use the year directly
+    if (month === this.newYearMonth && day === this.newYearDay) {
+      // Stored as the configured Mayan new year start, use the year directly
       return year;
     } else if (month === 1 && day === 1) {
       // Old format: January 1st, assume user intended the Gregorian year
@@ -887,6 +922,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
   }
 
   getDateForYearSelection(year: number): Date {
-    return new Date(year, 6, 26);
+    return new Date(year, this.newYearMonth - 1, this.newYearDay);
   }
 }

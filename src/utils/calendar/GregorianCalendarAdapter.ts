@@ -5,7 +5,7 @@ import type {
 } from "./CalendarAdapter";
 import {
   countInclusiveLocalDates,
-  DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   normalizePlanningViewType,
   taskPlanningWindowOverlaps,
 } from "./CalendarAdapter";
@@ -21,14 +21,14 @@ import {
 
 export class GregorianCalendarAdapter implements CalendarAdapter {
   private firstDayOfWeek: number;
-  private sevenYearAnchorDate: string;
+  private sevenYearAnchorYear: number;
 
   constructor(
     firstDayOfWeek: number = 1,
-    sevenYearAnchorDate: string = DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+    sevenYearAnchorYear: number = DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
   ) {
     this.firstDayOfWeek = firstDayOfWeek;
-    this.sevenYearAnchorDate = sevenYearAnchorDate;
+    this.sevenYearAnchorYear = sevenYearAnchorYear;
   }
 
   getYearStart(date: Date): Date {
@@ -87,8 +87,7 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
   }
 
   private getSevenYearAnchorStart(): Date {
-    const anchorDate = parseDateKey(this.sevenYearAnchorDate);
-    return new Date(anchorDate.getFullYear(), 0, 1);
+    return new Date(this.sevenYearAnchorYear, 0, 1);
   }
 
   private getSevenYearPeriodStart(date: Date): Date {

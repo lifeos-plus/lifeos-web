@@ -16,7 +16,6 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useFont } from "@/contexts/FontContext";
 import { SettingsLayout } from "@/components/settings";
 import { useSettingsConfig } from "@/config/settingsConfig";
-import { isDateKey } from "@/utils/datetime";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import type { UUID } from "@/types/primitive";
 import { VISION_EXPERIENCE_RATE_MAX } from "@/utils/constants";
@@ -26,7 +25,11 @@ import {
   coerceNoteCollapseValue,
   useNoteCollapsePreference,
 } from "@/hooks/notes/useNoteCollapsePreference";
-import { DEFAULT_SEVEN_YEAR_ANCHOR_DATE } from "@/utils/calendar";
+import {
+  DEFAULT_MAYAN_NEW_YEAR_START,
+  DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
+  normalizeMayanNewYearStart,
+} from "@/utils/calendar";
 
 function SettingsPage() {
   const { t } = useTranslation();
@@ -53,12 +56,23 @@ function SettingsPage() {
       value >= 1 &&
       value <= 7,
   });
-  const calendarSevenYearAnchorDateSettings =
-    usePreferenceWithBootstrap<string>({
-      key: "calendar.seven_year_anchor_date",
-      defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+  const calendarSevenYearAnchorYearSettings =
+    usePreferenceWithBootstrap<number>({
+      key: "calendar.seven_year_anchor_year",
+      defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
       module: "calendar",
-    validator: isDateKey,
+      validator: (value) =>
+        typeof value === "number" &&
+        Number.isInteger(value) &&
+        value >= 1 &&
+        value <= 9999,
+    });
+  const calendarMayanNewYearStartSettings =
+    usePreferenceWithBootstrap<string>({
+      key: "calendar.mayan_new_year_start",
+      defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
+      module: "calendar",
+      validator: (value) => /^\d{2}-\d{2}$/.test(value),
     });
 
   const visionExperienceSettings = usePreferenceWithBootstrap<number>({
@@ -242,15 +256,30 @@ function SettingsPage() {
         updateValue: (value: unknown) =>
           calendarFirstDaySettings.updateValue(Number(value)),
       },
-      "calendar.sevenYearAnchorDate": {
-        ...calendarSevenYearAnchorDateSettings,
+      "calendar.sevenYearAnchorYear": {
+        ...calendarSevenYearAnchorYearSettings,
         saveValue: async (value: unknown) =>
-          await calendarSevenYearAnchorDateSettings.saveValue(
-            isDateKey(value) ? value : DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+          await calendarSevenYearAnchorYearSettings.saveValue(
+            typeof value === "number" && Number.isInteger(value)
+              ? value
+              : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
           ),
         updateValue: (value: unknown) =>
-          calendarSevenYearAnchorDateSettings.updateValue(
-            isDateKey(value) ? value : DEFAULT_SEVEN_YEAR_ANCHOR_DATE,
+          calendarSevenYearAnchorYearSettings.updateValue(
+            typeof value === "number" && Number.isInteger(value)
+              ? value
+              : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
+          ),
+      },
+      "calendar.mayanNewYearStart": {
+        ...calendarMayanNewYearStartSettings,
+        saveValue: async (value: unknown) =>
+          await calendarMayanNewYearStartSettings.saveValue(
+            normalizeMayanNewYearStart(value),
+          ),
+        updateValue: (value: unknown) =>
+          calendarMayanNewYearStartSettings.updateValue(
+            normalizeMayanNewYearStart(value),
           ),
       },
       "visions.experienceRatePerHour": {
@@ -358,7 +387,8 @@ function SettingsPage() {
       visibleModulesSettings,
       calendarSystemSettings,
       calendarFirstDaySettings,
-      calendarSevenYearAnchorDateSettings,
+      calendarSevenYearAnchorYearSettings,
+      calendarMayanNewYearStartSettings,
       visionExperiencePreference,
       noteCollapseSettings,
       areaOrderSettings,

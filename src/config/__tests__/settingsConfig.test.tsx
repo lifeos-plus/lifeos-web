@@ -49,8 +49,8 @@ describe("useSettingsConfig", () => {
           ]),
         }),
         expect.objectContaining({
-          key: "sevenYearAnchorDate",
-          type: "date",
+          key: "sevenYearAnchorYear",
+          type: "number",
         }),
         expect.objectContaining({
           key: "firstDayOfWeek",
@@ -73,16 +73,36 @@ describe("useSettingsConfig", () => {
     const firstDayItem = calendarGroup?.items.find(
       (item) => item.key === "firstDayOfWeek",
     );
-    const anchorDateItem = calendarGroup?.items.find(
-      (item) => item.key === "sevenYearAnchorDate",
+    const anchorYearItem = calendarGroup?.items.find(
+      (item) => item.key === "sevenYearAnchorYear",
+    );
+    const mayanNewYearItem = calendarGroup?.items.find(
+      (item) => item.key === "mayanNewYearStart",
     );
 
     expect(firstDayItem).toBeUndefined();
-    expect(anchorDateItem).toEqual(
+    expect(anchorYearItem).toEqual(
       expect.objectContaining({
-        type: "date",
+        type: "number",
       }),
     );
+    expect(mayanNewYearItem).toEqual(
+      expect.objectContaining({
+        type: "custom",
+      }),
+    );
+    const rendered = mayanNewYearItem?.render?.({
+      value: "03-01",
+      onChange: vi.fn(),
+      onSave: vi.fn(async () => true),
+      onCommit: vi.fn(async () => true),
+      saving: false,
+      loading: false,
+      error: null,
+      disabled: false,
+      id: "mayan-new-year-start",
+    });
+    expect(rendered).toBeTruthy();
   });
 
   it("exposes a health group with weight unit and body height preferences", () => {
