@@ -3953,14 +3953,16 @@ export interface components {
             first_day_of_week: number | null;
             /** Id In */
             id_in: string | null;
+            /** Mayan New Year Start */
+            mayan_new_year_start: string | null;
             /** Planning Cycle Start Date */
             planning_cycle_start_date: string | null;
             /** Planning Cycle Type */
             planning_cycle_type: string | null;
             /** Query */
             query: string | null;
-            /** Seven Year Anchor Date */
-            seven_year_anchor_date: string | null;
+            /** Seven Year Anchor Year */
+            seven_year_anchor_year: number | null;
             /** Status Filter */
             status_filter: string | null;
             /** Status In */
