@@ -79,6 +79,15 @@ export const taskPlanningWindowOverlaps = (
   );
 };
 
+export const resolvePlanningCycleStart = (
+  cycleType: PlanningViewType,
+  storedStart: string,
+  adapter: CalendarAdapter,
+): string => {
+  const range = adapter.getPeriodRange(cycleType, parseDateKey(storedStart));
+  return range.start;
+};
+
 export interface PlanningGroup {
   id: string;
   label: string;
