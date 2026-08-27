@@ -9,6 +9,8 @@ export {
   DEFAULT_MAYAN_NEW_YEAR_START,
   normalizeMayanNewYearStart,
   parseMayanNewYearStart,
+  resolvePlanningCycleStart,
+  taskBelongsToPeriod,
 } from "./CalendarAdapter";
 export {
   createCalendarAdapter,

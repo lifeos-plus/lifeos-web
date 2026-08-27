@@ -177,7 +177,7 @@ describe("GregorianCalendarAdapter", () => {
     expect(mayGroup?.tasks.map((task) => task.id)).toEqual(["month-5"]);
   });
 
-  it("includes tasks whose physical windows overlap the displayed month", () => {
+  it("anchors month tasks to the month containing their start date", () => {
     const adapter = new GregorianCalendarAdapter();
     const overlappingTask = createTask({
       id: "overlapping-month",
@@ -192,6 +192,18 @@ describe("GregorianCalendarAdapter", () => {
       planning_cycle_days: 24,
     });
 
+    const [july] = adapter.buildPlanningGroups(
+      "month",
+      new Date(2026, 6, 1),
+      [overlappingTask, previousTask],
+      1,
+    );
+
+    expect(july.tasks.map((task) => task.id)).toEqual([
+      "overlapping-month",
+      "previous-month",
+    ]);
+
     const [august] = adapter.buildPlanningGroups(
       "month",
       new Date(2026, 7, 1),
@@ -199,9 +211,7 @@ describe("GregorianCalendarAdapter", () => {
       1,
     );
 
-    expect(august.tasks.map((task) => task.id)).toEqual([
-      "overlapping-month",
-    ]);
+    expect(august.tasks.map((task) => task.id)).toEqual([]);
   });
 
   it("builds 7-year groups for 7years tasks", () => {

@@ -37,6 +37,8 @@ import { formatDuration, formatDateTime, formatDate } from "@/utils/datetime";
 import PersonsList from "./PersonsList";
 import { tasksApi } from "@/services/api/tasks";
 import EnumSelect from "./selects/EnumSelect";
+import { type PlanningViewType, resolvePlanningCycleStart } from "@/utils/calendar";
+import { useCalendarAdapter } from "@/hooks/useCalendarAdapter";
 import {
   HABIT_ACTION_STATUS_CONFIG,
   TASK_STATUS_LABELS,
@@ -222,6 +224,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   isPlanningPage,
 }) => {
   const { t } = useTranslation();
+  const { adapter: calendarAdapter } = useCalendarAdapter();
   const {
     attributes,
     listeners,
@@ -312,12 +315,14 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
         cycleTypeMap[tooltipData.planningCycleType] ||
         tooltipData.planningCycleType;
       if (tooltipData.planningCycleStartDate) {
-        const formattedStart = formatDate(
+        const cycleStart = resolvePlanningCycleStart(
+          tooltipData.planningCycleType as PlanningViewType,
           tooltipData.planningCycleStartDate,
+          calendarAdapter,
         );
         return t("draggableTaskList.tooltip.planningCycleValueWithDate", {
           period: periodText,
-          date: formattedStart,
+          date: formatDate(cycleStart),
         });
       }
       return periodText;
@@ -364,6 +369,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
   }, [
     t,
     tooltipData,
+    calendarAdapter,
   ]);
 
   const handleTaskMouseEnter = useCallback(
@@ -498,7 +504,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
                       {formatDuration(task.actual_effort_total ?? 0)}
                     </span>
                     {/* Planning cycle information - hide in planning page to save space, and hide in small/medium screens */}
-                    {!isPlanningPage && task.planning_cycle_type && (
+                    {task.planning_cycle_type && (
                       <span
                         className="hidden lg:inline flex-shrink-0"
                         title={t("draggableTaskList.meta.plannedActions")}
@@ -522,7 +528,11 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
 
                           if (task.planning_cycle_start_date) {
                             const startDate = formatDate(
-                              task.planning_cycle_start_date,
+                              resolvePlanningCycleStart(
+                                task.planning_cycle_type as PlanningViewType,
+                                task.planning_cycle_start_date,
+                                calendarAdapter,
+                              ),
                             );
                             const cycleTypeText =
                               cycleTypeMap[task.planning_cycle_type] ||
