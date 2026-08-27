@@ -50,7 +50,10 @@ describe("useSettingsConfig", () => {
         }),
         expect.objectContaining({
           key: "sevenYearAnchorYear",
-          type: "number",
+          type: "select",
+          options: expect.arrayContaining([
+            expect.objectContaining({ value: "2025" }),
+          ]),
         }),
         expect.objectContaining({
           key: "firstDayOfWeek",
@@ -83,7 +86,10 @@ describe("useSettingsConfig", () => {
     expect(firstDayItem).toBeUndefined();
     expect(anchorYearItem).toEqual(
       expect.objectContaining({
-        type: "number",
+        type: "select",
+        options: expect.arrayContaining([
+          expect.objectContaining({ value: "2025" }),
+        ]),
       }),
     );
     expect(mayanNewYearItem).toEqual(

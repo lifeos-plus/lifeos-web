@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import TextInput from "@/components/forms/TextInput";
-import { normalizeMayanNewYearStart } from "@/utils/calendar";
+import { useMemo } from "react";
+import EnumSelect from "@/components/selects/EnumSelect";
+import type { SelectorValue } from "@/components/selects/selectorTypes";
+import {
+  DEFAULT_MAYAN_NEW_YEAR_START,
+  parseMayanNewYearStart,
+} from "@/utils/calendar";
 
 export interface MayanNewYearStartPreferenceProps {
   value: unknown;
@@ -15,8 +18,10 @@ export interface MayanNewYearStartPreferenceProps {
   "aria-describedby"?: string;
 }
 
-const MONTH_DAY_PATTERN = /^\d{2}-\d{2}$/;
-const DRAFT_PATTERN = /^\d{0,2}-?\d{0,2}$/;
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+const formatMonthDay = (month: number, day: number): string =>
+  `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
 const MayanNewYearStartPreference = ({
   value,
@@ -29,42 +34,70 @@ const MayanNewYearStartPreference = ({
   id,
   "aria-describedby": ariaDescribedBy,
 }: MayanNewYearStartPreferenceProps) => {
-  const { t } = useTranslation();
-  const [draft, setDraft] = useState<string>(() =>
-    normalizeMayanNewYearStart(value),
+  const current = parseMayanNewYearStart(
+    typeof value === "string" && /^\d{2}-\d{2}$/.test(value)
+      ? value
+      : DEFAULT_MAYAN_NEW_YEAR_START,
+  );
+  const [month, day] = current;
+
+  const monthOptions = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, index) => ({
+        value: String(index + 1),
+        label: String(index + 1),
+      })),
+    [],
   );
 
-  useEffect(() => {
-    setDraft(normalizeMayanNewYearStart(value));
-  }, [value]);
+  const dayOptions = useMemo(() => {
+    const maxDay = DAYS_IN_MONTH[month - 1];
+    return Array.from({ length: maxDay }, (_, index) => ({
+      value: String(index + 1),
+      label: String(index + 1),
+    }));
+  }, [month]);
 
-  const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = event.target.value;
-      if (!DRAFT_PATTERN.test(raw)) {
-        return;
-      }
-      const normalized = normalizeMayanNewYearStart(raw);
-      setDraft(normalized);
-      if (MONTH_DAY_PATTERN.test(raw)) {
-        void onCommit(normalized);
-      }
-    },
-    [onCommit],
-  );
+  const commit = (nextMonth: number, nextDay: number) => {
+    const maxDay = DAYS_IN_MONTH[nextMonth - 1];
+    void onCommit(formatMonthDay(nextMonth, Math.min(nextDay, maxDay)));
+  };
+
+  const isDisabled = loading || saving || disabled;
 
   return (
-    <TextInput
-      id={id}
-      type="text"
-      inputMode="numeric"
-      pattern="\d{2}-\d{2}"
-      placeholder={t("settings.calendar.mayanNewYearStart.placeholder")}
-      value={draft}
-      onChange={handleInputChange}
-      disabled={loading || saving || disabled}
-      aria-describedby={ariaDescribedBy}
-    />
+    <div className="flex items-center gap-2">
+      <EnumSelect
+        id={`${id}-month`}
+        value={String(month)}
+        options={monthOptions}
+        onChange={(next: SelectorValue) => {
+          const nextMonth = Number(next);
+          if (Number.isInteger(nextMonth) && nextMonth >= 1 && nextMonth <= 12) {
+            commit(nextMonth, day);
+          }
+        }}
+        disabled={isDisabled}
+        aria-describedby={ariaDescribedBy}
+        className="text-sm w-24"
+        autoWidth
+      />
+      <span aria-hidden>-</span>
+      <EnumSelect
+        id={`${id}-day`}
+        value={String(day)}
+        options={dayOptions}
+        onChange={(next: SelectorValue) => {
+          const nextDay = Number(next);
+          if (Number.isInteger(nextDay) && nextDay >= 1 && nextDay <= 31) {
+            commit(month, nextDay);
+          }
+        }}
+        disabled={isDisabled}
+        className="text-sm w-24"
+        autoWidth
+      />
+    </div>
   );
 };
 

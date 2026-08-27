@@ -1,5 +1,3 @@
-import { formatDuration } from "@/utils/datetime";
-
 export const HEALTH_TABS = ["menstrual", "body", "sleep"] as const;
 export type HealthTab = (typeof HEALTH_TABS)[number];
 export const DEFAULT_HEALTH_TAB: HealthTab = "menstrual";
@@ -42,14 +40,6 @@ export function formatWeight(weightKg: number, unit: string): string {
   const factor = KG_PER_UNIT[unit] ?? 1;
   const value = weightKg / factor;
   return `${value.toFixed(2)} ${unit}`;
-}
-
-export function formatMinutes(minutes: number): string {
-  return formatDuration(minutes);
-}
-
-export function formatHourMinutes(hours: number, minutes: number): string {
-  return `${hours}h ${minutes}m`;
 }
 
 export function totalMinutesToHoursMinutes(totalMinutes: number): {

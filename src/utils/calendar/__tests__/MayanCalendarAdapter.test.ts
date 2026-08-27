@@ -228,12 +228,41 @@ describe("MayanCalendarAdapter", () => {
       tasks,
     );
 
-    expect(monthGroup.tasks.map((task) => task.id)).toEqual([
-      "month-task",
-      "overlapping-month-task",
-    ]);
+    // Tasks are anchored to the period containing their declared start date:
+    // the month task starting on the Day Out of Time stays in the DOOT group,
+    // while the task starting the day before belongs to its own moon instead
+    // of leaking into the DOOT group through window overlap.
+    expect(monthGroup.tasks.map((task) => task.id)).toEqual(["month-task"]);
     expect(weekGroup.tasks.map((task) => task.id)).toEqual(["week-task"]);
     expect(dayGroup.tasks.map((task) => task.id)).toEqual(["day-task"]);
+  });
+
+  it("anchors tasks to the configured period containing their start date", () => {
+    const anchoredAdapter = new MayanCalendarAdapter(1, 1984, "10-05");
+    const yearTask = createTask({
+      id: "old-config-year-task",
+      planning_cycle_type: "year",
+      planning_cycle_days: 365,
+      planning_cycle_start_date: "2025-07-26",
+    });
+
+    const [adjacentYearGroup] = anchoredAdapter.buildPlanningGroups(
+      "year",
+      new Date(2025, 9, 20),
+      [yearTask],
+    );
+    expect(adjacentYearGroup.date).toEqual(new Date(2025, 9, 5));
+    expect(adjacentYearGroup.tasks.map((task) => task.id)).toEqual([]);
+
+    const [anchoredYearGroup] = anchoredAdapter.buildPlanningGroups(
+      "year",
+      new Date(2025, 8, 20),
+      [yearTask],
+    );
+    expect(anchoredYearGroup.date).toEqual(new Date(2024, 9, 5));
+    expect(anchoredYearGroup.tasks.map((task) => task.id)).toEqual([
+      "old-config-year-task",
+    ]);
   });
 
   it("uses calendar boundaries for planning period navigation", () => {

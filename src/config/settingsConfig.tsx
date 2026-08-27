@@ -42,6 +42,11 @@ interface SettingsConfigContext {
   calendarSystem?: CalendarSystem;
 }
 
+const YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => {
+  const year = 1900 + index;
+  return { value: String(year), label: String(year) };
+});
+
 export const useSettingsConfig = (
   context: SettingsConfigContext = {},
 ): SettingGroupConfig[] => {
@@ -152,11 +157,10 @@ export const useSettingsConfig = (
         },
         {
           key: "sevenYearAnchorYear",
-          type: "number",
+          type: "select",
           label: t("settings.calendar.sevenYearAnchorYear.label"),
           description: t("settings.calendar.sevenYearAnchorYear.description"),
-          min: 1,
-          max: 9999,
+          options: YEAR_OPTIONS,
         },
         ...(context.calendarSystem === "mayan_13_moon"
           ? [

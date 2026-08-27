@@ -11,6 +11,16 @@ const preferencesApiMock = vi.hoisted(() => ({
   set: vi.fn(),
 }));
 
+const enumSelectProps = vi.hoisted(() => ({} as Record<string, unknown>));
+
+vi.mock("@/components/selects/EnumSelect", () => ({
+  default: (props: unknown) => {
+    const typed = props as { id: string };
+    enumSelectProps[typed.id] = props;
+    return <div data-testid={`enum-${typed.id}`} />;
+  },
+}));
+
 vi.mock("@/services/api/preferences", () => ({
   preferencesApi: preferencesApiMock,
 }));
@@ -155,16 +165,25 @@ describe("SettingsPage calendar preferences", () => {
   });
 
   it("saves the Mayan anchor year and new year start preferences", async () => {
-    const { container } = renderWithProviders(<SettingsPage />);
+    renderWithProviders(<SettingsPage />);
 
     fireEvent.click(screen.getByText("settings.calendar.title"));
 
-    const anchorInput = (await waitFor(() =>
-      container.querySelector<HTMLInputElement>("#sevenYearAnchorYear-input"),
-    )) as HTMLInputElement;
-    expect(anchorInput).toHaveValue("2025");
+    const anchorSelect = (await waitFor(() => {
+      const key = Object.keys(enumSelectProps).find((id) =>
+        id.includes("sevenYearAnchorYear"),
+      );
+      return key ? (enumSelectProps[key] as { value: string }) : null;
+    })) as { value: string };
+    expect(anchorSelect.value).toBe("2025");
 
-    fireEvent.change(anchorInput, { target: { value: "2030" } });
+    (
+      enumSelectProps[
+        Object.keys(enumSelectProps).find((id) =>
+          id.includes("sevenYearAnchorYear"),
+        ) as string
+      ] as { onChange: (value: string) => void }
+    ).onChange("2030");
     await waitFor(() => {
       expect(preferencesApiMock.set).toHaveBeenCalledWith(
         "calendar.seven_year_anchor_year",
@@ -173,16 +192,28 @@ describe("SettingsPage calendar preferences", () => {
       );
     });
 
-    const mayanInput = container.querySelector<HTMLInputElement>(
-      "#mayanNewYearStart-custom",
-    ) as HTMLInputElement;
-    expect(mayanInput).toHaveValue("07-26");
+    const monthSelect = enumSelectProps[
+      "mayanNewYearStart-custom-month"
+    ] as { value: string; onChange: (value: string) => void };
+    expect(monthSelect.value).toBe("7");
 
-    fireEvent.change(mayanInput, { target: { value: "08-15" } });
+    monthSelect.onChange("8");
     await waitFor(() => {
       expect(preferencesApiMock.set).toHaveBeenCalledWith(
         "calendar.mayan_new_year_start",
-        "08-15",
+        "08-26",
+        "calendar",
+      );
+    });
+
+    const daySelect = enumSelectProps[
+      "mayanNewYearStart-custom-day"
+    ] as { value: string; onChange: (value: string) => void };
+    daySelect.onChange("15");
+    await waitFor(() => {
+      expect(preferencesApiMock.set).toHaveBeenCalledWith(
+        "calendar.mayan_new_year_start",
+        "07-15",
         "calendar",
       );
     });

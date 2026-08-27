@@ -2,6 +2,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate, formatDateTime, formatDuration } from "@/utils/datetime";
 import { PRIORITY, TASK_STATUS_LABELS } from "@/utils/constants";
+import { type PlanningViewType, resolvePlanningCycleStart } from "@/utils/calendar";
+import { useCalendarAdapter } from "@/hooks/useCalendarAdapter";
 import type { TaskTooltipData } from "./tooltipData";
 
 interface TaskTooltipContentProps {
@@ -12,6 +14,7 @@ const TaskTooltipContent: React.FC<TaskTooltipContentProps> = ({
   task,
 }) => {
   const { t } = useTranslation();
+  const { adapter: calendarAdapter } = useCalendarAdapter();
   const noneLabel = t("draggableTaskList.tooltip.none");
 
   if (!task) {
@@ -46,10 +49,14 @@ const TaskTooltipContent: React.FC<TaskTooltipContentProps> = ({
     const periodText =
       cycleTypeMap[task.planningCycleType] || task.planningCycleType;
     if (task.planningCycleStartDate) {
-      const formattedStart = formatDate(task.planningCycleStartDate);
+      const cycleStart = resolvePlanningCycleStart(
+        task.planningCycleType as PlanningViewType,
+        task.planningCycleStartDate,
+        calendarAdapter,
+      );
       return t("draggableTaskList.tooltip.planningCycleValueWithDate", {
         period: periodText,
-        date: formattedStart,
+        date: formatDate(cycleStart),
       });
     }
     return periodText;

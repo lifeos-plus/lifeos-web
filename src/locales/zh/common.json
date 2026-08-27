@@ -706,8 +706,7 @@
       },
       "mayanNewYearStart": {
         "label": "玛雅新年开始日",
-        "description": "玛雅新年开始的公历「月-日」（MM-DD），前一天为无时间日。默认 07-26；2 月 29 日按 2 月 28 日处理。",
-        "placeholder": "MM-DD"
+        "description": "玛雅新年开始的公历「月-日」（MM-DD），前一天为无时间日。默认 07-26；2 月 29 日按 2 月 28 日处理。"
       },
       "sevenYearAnchorYear": {
         "label": "七年锚点年份",

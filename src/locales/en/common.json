@@ -706,8 +706,7 @@
       },
       "mayanNewYearStart": {
         "label": "Mayan New Year Start",
-        "description": "Month-day (MM-DD) when the Mayan New Year starts; the day before is the Day Out of Time. Defaults to 07-26. February 29 is treated as February 28.",
-        "placeholder": "MM-DD"
+        "description": "Month-day (MM-DD) when the Mayan New Year starts; the day before is the Day Out of Time. Defaults to 07-26. February 29 is treated as February 28."
       },
       "sevenYearAnchorYear": {
         "label": "Seven-Year Anchor Year",

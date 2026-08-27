@@ -6,6 +6,7 @@ import {
   MayanCalendarAdapter,
   normalizeMayanNewYearStart,
   parseMayanNewYearStart,
+  resolvePlanningCycleStart,
 } from "@/utils/calendar";
 
 describe("createCalendarAdapter", () => {
@@ -31,5 +32,16 @@ describe("createCalendarAdapter", () => {
     expect(normalizeMayanNewYearStart("02-29")).toBe("02-28");
     expect(normalizeMayanNewYearStart("07-26")).toBe("07-26");
     expect(normalizeMayanNewYearStart("13-01")).toBe("07-26");
+  });
+
+  it("resolves the configured seven-year period start for a stored task date", () => {
+    const adapter = new MayanCalendarAdapter(1, 1984, "10-05");
+
+    expect(resolvePlanningCycleStart("7years", "2026-07-26", adapter)).toBe(
+      "2019-10-05",
+    );
+    expect(resolvePlanningCycleStart("day", "2026-07-26", adapter)).toBe(
+      "2026-07-26",
+    );
   });
 });
