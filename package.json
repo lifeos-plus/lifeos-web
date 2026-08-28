@@ -60,7 +60,7 @@
     "@types/node": "^25.9.5",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
+    "@vitejs/plugin-react": "^6.1.0",
     "@vitest/coverage-v8": "^4.1.10",
     "daisyui": "^5.7.16",
     "esbuild": "^0.28.1",
@@ -72,7 +72,7 @@
     "openapi-typescript": "^7.13.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.67.0",
+    "typescript-eslint": "^8.68.0",
     "vite": "^8.2.0",
     "vitest": "^4.1.8"
   },
