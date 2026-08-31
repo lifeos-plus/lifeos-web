@@ -1,10 +1,13 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { areasApi, type Area } from "@/services/api/areas";
 import { logger } from "@/utils/core";
 import type { UUID } from "@/types/primitive";
 import ActionButton from "./ActionButton";
 import { UNKNOWN_AREA_COLOR } from "@/utils/areaColors";
+
+/** Wait for rapid arrow clicks to settle before persisting the full order. */
+const ORDER_SAVE_DEBOUNCE_MS = 500;
 
 interface AreaSorterProps {
   areaOrder: UUID[];
@@ -29,6 +32,13 @@ export default function AreaSorter({
   const [areas, setAreas] = useState<Area[]>([]);
   const [areasLoading, setAreasLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pendingOrder, setPendingOrder] = useState<UUID[] | null>(null);
+  const saveTimerRef = useRef<number | null>(null);
+  const onOrderChangeRef = useRef(onOrderChange);
+
+  useEffect(() => {
+    onOrderChangeRef.current = onOrderChange;
+  }, [onOrderChange]);
 
   useEffect(() => {
     const loadAreas = async () => {
@@ -50,6 +60,15 @@ export default function AreaSorter({
     loadAreas();
   }, [refreshTrigger]); // Add refreshTrigger as dependency
 
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const { allAreaIds, completeOrder } = useMemo(() => {
     const ids = areas.map((d) => d.id);
     const filteredOrder = areaOrder.filter((id) => ids.includes(id));
@@ -61,8 +80,33 @@ export default function AreaSorter({
     };
   }, [areas, areaOrder]);
 
+  const commitOrder = useCallback(
+    (order: UUID[]) => {
+      setPendingOrder(null);
+      onOrderChangeRef.current(order);
+    },
+    [],
+  );
+
+  const scheduleOrderSave = useCallback(
+    (order: UUID[]) => {
+      setPendingOrder(order);
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+      saveTimerRef.current = window.setTimeout(() => {
+        saveTimerRef.current = null;
+        commitOrder(order);
+      }, ORDER_SAVE_DEBOUNCE_MS);
+    },
+    [commitOrder],
+  );
+
+  // Reflect pending clicks immediately while the debounce timer is running.
+  const displayOrder = pendingOrder ?? completeOrder;
+
   const moveArea = (areaId: UUID, direction: "up" | "down") => {
-    const workingOrder = [...completeOrder];
+    const workingOrder = [...displayOrder];
     const currentIndex = workingOrder.indexOf(areaId);
 
     if (currentIndex === -1) return;
@@ -76,10 +120,10 @@ export default function AreaSorter({
       workingOrder[currentIndex],
     ];
 
-    onOrderChange(workingOrder);
+    scheduleOrderSave(workingOrder);
   };
 
-  const allOrderedAreas = completeOrder
+  const allOrderedAreas = displayOrder
     .map((id) => areas.find((d) => d.id === id))
     .filter((d): d is Area => d !== undefined);
 
@@ -123,8 +167,8 @@ export default function AreaSorter({
             label={t("settings.areaSorter.clearAll")}
             size="xs"
             variant="ghost"
-            onClick={() => onOrderChange([...allAreaIds])}
-            disabled={disabled || loading || completeOrder.length === 0}
+            onClick={() => scheduleOrderSave([...allAreaIds])}
+            disabled={disabled || loading || displayOrder.length === 0}
             ariaLabel={t("settings.areaSorter.clearAllAria")}
             className="h-7"
           />
