@@ -13,8 +13,12 @@ interface VisionLike {
   area_id: string | null;
 }
 
-const { visionManagerPropsRef, enumSelectPropsRef, areaSelectPropsRef, allVisionsState } =
-  vi.hoisted(() => ({
+const {
+  visionManagerPropsRef,
+  enumSelectPropsRef,
+  areaSelectPropsRef,
+  allVisionsState,
+} = vi.hoisted(() => ({
     visionManagerPropsRef: { current: undefined as unknown },
     enumSelectPropsRef: { current: undefined as unknown },
     areaSelectPropsRef: { current: undefined as unknown },
@@ -72,16 +76,27 @@ import VisionsPage from "@/pages/VisionsPage";
 
 const renderPage = () => {
   renderWithProviders(<VisionsPage />);
-  const actions = setHeaderMock.mock.calls[0][0].actions as ReactNode;
-  // 渲染 header actions，触发 EnumSelect / AreaSelect mock 记录 props
+  const actions = setHeaderMock.mock.calls.at(-1)?.[0].actions as ReactNode;
   render(<div>{actions}</div>);
   return actions;
+};
+
+const renderLatestHeaderActions = () => {
+  const actions = setHeaderMock.mock.calls.at(-1)?.[0].actions as ReactNode;
+  render(<div>{actions}</div>);
 };
 
 interface EnumSelectPropsLike {
   value: string;
   options: Array<{ value: string; label: string }>;
   onChange: (value: string) => void;
+}
+
+interface AreaSelectPropsLike {
+  value?: string | null;
+  optionCounts: Record<string, number>;
+  sortByCount: boolean;
+  onChange: (value: string | undefined | null) => void;
 }
 
 describe("VisionsPage", () => {
@@ -91,7 +106,7 @@ describe("VisionsPage", () => {
     allVisionsState.value = [];
   });
 
-  it("builds counted status and area filter options from all visions", () => {
+  it("builds status counts across all areas and area counts for the active status", () => {
     allVisionsState.value = [
       { id: "v1", status: "active", area_id: "area-1" },
       { id: "v2", status: "active", area_id: "area-1" },
@@ -105,7 +120,6 @@ describe("VisionsPage", () => {
     };
     expect(managerProps.statusFilter).toBe("active");
 
-    // 状态选项：全部最前，其余按计数降序（不依赖具体翻译文本）
     const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
     expect(enumProps.value).toBe("active");
     expect(enumProps.options.map((o) => o.value)).toEqual([
@@ -122,16 +136,110 @@ describe("VisionsPage", () => {
       expect.stringMatching(/^.+ \(0\)$/),
     ]);
 
-    // 区域选项计数（含全部/无 特殊选项）
-    const areaProps = areaSelectPropsRef.current as {
-      optionCounts: Record<string, number>;
-      sortByCount: boolean;
-    };
+    const areaProps = areaSelectPropsRef.current as AreaSelectPropsLike;
     expect(areaProps.sortByCount).toBe(true);
     expect(areaProps.optionCounts).toEqual({
-      __all__: 3,
-      __none__: 1,
+      __all__: 2,
+      __none__: 0,
       "area-1": 2,
+    });
+  });
+
+  it("updates status counts when the area filter changes", () => {
+    allVisionsState.value = [
+      { id: "v1", status: "active", area_id: "area-1" },
+      { id: "v2", status: "active", area_id: "area-1" },
+      { id: "v3", status: "fruit", area_id: null },
+      { id: "v4", status: "archived", area_id: "area-2" },
+    ];
+
+    renderPage();
+
+    const areaProps = areaSelectPropsRef.current as AreaSelectPropsLike;
+    act(() => {
+      areaProps.onChange("area-2");
+    });
+    renderLatestHeaderActions();
+
+    const managerProps = visionManagerPropsRef.current as {
+      areaFilter?: string | null;
+    };
+    expect(managerProps.areaFilter).toBe("area-2");
+
+    const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
+    expect(enumProps.options.map((option) => option.value)).toEqual([
+      "__all__",
+      "archived",
+      "active",
+      "fruit",
+    ]);
+    expect(enumProps.options.map((option) => option.label)).toEqual([
+      "common.all (1)",
+      expect.stringMatching(/^.+ \(1\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+    ]);
+  });
+
+  it("updates status counts when visions without an area are selected", () => {
+    allVisionsState.value = [
+      { id: "v1", status: "active", area_id: "area-1" },
+      { id: "v2", status: "fruit", area_id: null },
+      { id: "v3", status: "fruit", area_id: null },
+    ];
+
+    renderPage();
+
+    const areaProps = areaSelectPropsRef.current as AreaSelectPropsLike;
+    act(() => {
+      areaProps.onChange(null);
+    });
+    renderLatestHeaderActions();
+
+    const managerProps = visionManagerPropsRef.current as {
+      areaFilter?: string | null;
+    };
+    expect(managerProps.areaFilter).toBeNull();
+
+    const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
+    expect(enumProps.options.map((option) => option.value)).toEqual([
+      "__all__",
+      "fruit",
+      "active",
+      "archived",
+    ]);
+    expect(enumProps.options.map((option) => option.label)).toEqual([
+      "common.all (2)",
+      expect.stringMatching(/^.+ \(2\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+    ]);
+  });
+
+  it("updates area counts when the status filter changes", () => {
+    allVisionsState.value = [
+      { id: "v1", status: "active", area_id: "area-1" },
+      { id: "v2", status: "active", area_id: "area-1" },
+      { id: "v3", status: "fruit", area_id: null },
+    ];
+
+    renderPage();
+
+    const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
+    act(() => {
+      enumProps.onChange("fruit");
+    });
+    renderLatestHeaderActions();
+
+    const managerProps = visionManagerPropsRef.current as {
+      statusFilter?: string;
+    };
+    expect(managerProps.statusFilter).toBe("fruit");
+
+    const areaProps = areaSelectPropsRef.current as AreaSelectPropsLike;
+    expect(areaProps.optionCounts).toEqual({
+      __all__: 1,
+      __none__: 1,
     });
   });
 
