@@ -96,7 +96,7 @@ interface AreaSelectPropsLike {
   value?: string | null;
   optionCounts: Record<string, number>;
   sortByCount: boolean;
-  onChange: (value?: string | null) => void;
+  onChange: (value: string | undefined | null) => void;
 }
 
 describe("VisionsPage", () => {
@@ -176,6 +176,41 @@ describe("VisionsPage", () => {
     expect(enumProps.options.map((option) => option.label)).toEqual([
       "common.all (1)",
       expect.stringMatching(/^.+ \(1\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+    ]);
+  });
+
+  it("updates status counts when visions without an area are selected", () => {
+    allVisionsState.value = [
+      { id: "v1", status: "active", area_id: "area-1" },
+      { id: "v2", status: "fruit", area_id: null },
+      { id: "v3", status: "fruit", area_id: null },
+    ];
+
+    renderPage();
+
+    const areaProps = areaSelectPropsRef.current as AreaSelectPropsLike;
+    act(() => {
+      areaProps.onChange(null);
+    });
+    renderLatestHeaderActions();
+
+    const managerProps = visionManagerPropsRef.current as {
+      areaFilter?: string | null;
+    };
+    expect(managerProps.areaFilter).toBeNull();
+
+    const enumProps = enumSelectPropsRef.current as EnumSelectPropsLike;
+    expect(enumProps.options.map((option) => option.value)).toEqual([
+      "__all__",
+      "fruit",
+      "active",
+      "archived",
+    ]);
+    expect(enumProps.options.map((option) => option.label)).toEqual([
+      "common.all (2)",
+      expect.stringMatching(/^.+ \(2\)$/),
       expect.stringMatching(/^.+ \(0\)$/),
       expect.stringMatching(/^.+ \(0\)$/),
     ]);
