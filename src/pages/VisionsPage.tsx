@@ -34,10 +34,27 @@ const VisionPage: React.FC = () => {
     UUID | null | undefined
   >(undefined);
 
-  // Status filter options: "(n)" counts, sorted by count, "All" first
+  const visionsMatchingArea = useMemo(() => {
+    if (areaFilter === undefined) {
+      return allVisions;
+    }
+    if (areaFilter === null) {
+      return allVisions.filter((vision) => !vision.area_id);
+    }
+    return allVisions.filter((vision) => vision.area_id === areaFilter);
+  }, [allVisions, areaFilter]);
+
+  const visionsMatchingStatus = useMemo(() => {
+    if (statusFilter === undefined) {
+      return allVisions;
+    }
+    return allVisions.filter((vision) => vision.status === statusFilter);
+  }, [allVisions, statusFilter]);
+
+  // Each facet applies the other facet before calculating its option counts.
   const statusOptions = useMemo(() => {
     const countsByStatus = new Map<string, number>();
-    for (const vision of allVisions) {
+    for (const vision of visionsMatchingArea) {
       countsByStatus.set(
         vision.status,
         (countsByStatus.get(vision.status) ?? 0) + 1,
@@ -46,17 +63,17 @@ const VisionPage: React.FC = () => {
     return buildCountedFilterOptions(
       VISION_STATUS_FILTER_OPTIONS,
       countsByStatus,
-      { allLabel: t("common.all"), totalCount: allVisions.length },
+      { allLabel: t("common.all"), totalCount: visionsMatchingArea.length },
     );
-  }, [allVisions, t]);
+  }, [t, visionsMatchingArea]);
 
-  // Area filter option counts keyed by option id (incl. __all__ / __none__)
+  // Area counts are keyed by option id, including __all__ and __none__.
   const areaCounts = useMemo(() => {
     const counts: Record<string, number> = {
-      [SelectorSpecialValue.All]: allVisions.length,
+      [SelectorSpecialValue.All]: visionsMatchingStatus.length,
     };
     let noneCount = 0;
-    for (const vision of allVisions) {
+    for (const vision of visionsMatchingStatus) {
       if (vision.area_id) {
         counts[vision.area_id] = (counts[vision.area_id] ?? 0) + 1;
       } else {
@@ -65,7 +82,7 @@ const VisionPage: React.FC = () => {
     }
     counts[SelectorSpecialValue.None] = noneCount;
     return counts;
-  }, [allVisions]);
+  }, [visionsMatchingStatus]);
 
   useEffect(() => {
     setHeader({
