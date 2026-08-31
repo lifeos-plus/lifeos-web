@@ -41,6 +41,16 @@ function moveUp(name: string): void {
   );
 }
 
+function renderedAreaNames(): string[] {
+  return screen.getAllByRole("listitem").map((item) => {
+    const area = AREAS.find(({ name }) => item.textContent?.includes(name));
+    if (!area) {
+      throw new Error("Rendered area item did not match the fixture");
+    }
+    return area.name;
+  });
+}
+
 describe("AreaSorter", () => {
   beforeEach(() => {
     vi.useRealTimers();
@@ -83,6 +93,7 @@ describe("AreaSorter", () => {
     moveUp("Area C");
 
     expect(onOrderChange).not.toHaveBeenCalled();
+    expect(renderedAreaNames()).toEqual(["Area B", "Area C", "Area A"]);
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(500);
@@ -140,5 +151,25 @@ describe("AreaSorter", () => {
       "area-c",
       "area-a",
     ]);
+  });
+
+  it("cancels a pending save when unmounted", async () => {
+    vi.useFakeTimers();
+    const onOrderChange = vi.fn();
+    const { unmount } = render(
+      <AreaSorter
+        areaOrder={["area-a", "area-b", "area-c"]}
+        onOrderChange={onOrderChange}
+      />,
+    );
+    await flushMicrotasks();
+
+    moveUp("Area B");
+    unmount();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(500);
+    });
+
+    expect(onOrderChange).not.toHaveBeenCalled();
   });
 });

@@ -34,6 +34,11 @@ export default function AreaSorter({
   const [error, setError] = useState<string | null>(null);
   const [pendingOrder, setPendingOrder] = useState<UUID[] | null>(null);
   const saveTimerRef = useRef<number | null>(null);
+  const onOrderChangeRef = useRef(onOrderChange);
+
+  useEffect(() => {
+    onOrderChangeRef.current = onOrderChange;
+  }, [onOrderChange]);
 
   useEffect(() => {
     const loadAreas = async () => {
@@ -59,6 +64,7 @@ export default function AreaSorter({
     return () => {
       if (saveTimerRef.current !== null) {
         window.clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
       }
     };
   }, []);
@@ -77,9 +83,9 @@ export default function AreaSorter({
   const commitOrder = useCallback(
     (order: UUID[]) => {
       setPendingOrder(null);
-      onOrderChange(order);
+      onOrderChangeRef.current(order);
     },
-    [onOrderChange],
+    [],
   );
 
   const scheduleOrderSave = useCallback(
