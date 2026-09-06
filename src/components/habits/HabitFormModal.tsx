@@ -10,6 +10,7 @@ import {
 import { useToast } from "@/contexts/ToastContext";
 import { logger } from "@/utils/core";
 import TaskSelector from "@/components/selects/TaskSelector";
+import AreaSelect from "@/components/selects/AreaSelect";
 import { DeleteButton, FormActions } from "@/components/ActionButton";
 import EnumSelect from "@/components/selects/EnumSelect";
 import {
@@ -46,6 +47,7 @@ interface HabitPrefill {
   description?: string | null;
   duration_days: number;
   task_id?: UUID | null;
+  area_id?: UUID | null;
 }
 
 type HabitCadenceFrequency = "daily" | "weekly" | "monthly" | "yearly";
@@ -103,6 +105,7 @@ export function HabitFormModal({
   const [repeatCount, setRepeatCount] = useState(100);
   const [endDate, setEndDate] = useState(getHabitEndDate(today, 100));
   const [selectedTaskId, setSelectedTaskId] = useState<UUID | null>(null);
+  const [selectedAreaId, setSelectedAreaId] = useState<UUID | null>(null);
   const [status, setStatus] = useState<string>("active");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -149,6 +152,7 @@ export function HabitFormModal({
       setEndDate(getHabitEndDate(habitToEdit.start_date, habitToEdit.duration_days));
       setEndMode(nextFrequency === "daily" ? "repeat_count" : "until_date");
       setSelectedTaskId(habitToEdit.task_id || null);
+      setSelectedAreaId(habitToEdit.area_id || null);
       setStatus(habitToEdit.status);
       return;
     }
@@ -166,6 +170,7 @@ export function HabitFormModal({
       setRepeatCount(prefillHabit.duration_days);
       setEndDate(getHabitEndDate(nextToday, prefillHabit.duration_days));
       setSelectedTaskId(prefillHabit.task_id || null);
+      setSelectedAreaId(prefillHabit.area_id || null);
       setStatus("active");
       return;
     }
@@ -182,6 +187,7 @@ export function HabitFormModal({
     setRepeatCount(100);
     setEndDate(getHabitEndDate(nextToday, 100));
     setSelectedTaskId(null);
+    setSelectedAreaId(null);
     setStatus("active");
   }, [habitToEdit, prefillHabit]);
 
@@ -252,6 +258,7 @@ export function HabitFormModal({
         if (shouldSendTaskId) {
           updateData.task_id = nextTaskId;
         }
+        updateData.area_id = selectedAreaId;
 
         await onUpdateHabit(habitToEdit.id, updateData);
         toast.showSuccess(t("habitForm.messages.updateSuccess"));
@@ -262,6 +269,7 @@ export function HabitFormModal({
           description: description.trim() || undefined,
           start_date: startDate,
           task_id: nextTaskId,
+          area_id: selectedAreaId,
           ...cadenceFields,
           ...endFields,
         };
@@ -299,6 +307,7 @@ export function HabitFormModal({
       setRepeatCount(100);
       setEndDate(getHabitEndDate(nextToday, 100));
       setSelectedTaskId(null);
+      setSelectedAreaId(null);
       setStatus("active");
       setError(null);
       setTaskSelectionTouched(false);
@@ -405,6 +414,19 @@ export function HabitFormModal({
             idPrefix="habit-form"
           />
         </div>
+
+        <AreaSelect
+          value={selectedAreaId}
+          onChange={(value) => setSelectedAreaId(value ?? null)}
+          showNoneOption
+          clearBehavior="none"
+          placeholder={t("common.none")}
+          disabled={loading}
+          id="habit-form-area"
+          label={t("habits.habit.area")}
+          showLabel
+          size="sm"
+        />
 
         <FormField
           label={t("taskForm.planning.startLabels.day")}
