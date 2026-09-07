@@ -1350,6 +1350,9 @@
   },
   "habits": {
     "createNew": "创建新习惯",
+    "filters": {
+      "areaNone": "无领域"
+    },
     "errors": {
       "loadFailed": "加载习惯失败",
       "deleteFailed": "删除习惯失败"
@@ -1375,7 +1378,8 @@
     "habit": {
       "startDate": "开始日期",
       "duration": "持续天数",
-      "status": "状态"
+      "status": "状态",
+      "area": "领域"
     },
     "actionList": {
       "monthView": "月视图",

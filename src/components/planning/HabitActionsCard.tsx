@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "@/layouts/Card";
 import EnumSelect from "@/components/selects/EnumSelect";
+import AreaSelect from "@/components/selects/AreaSelect";
 import ActionButton from "@/components/ActionButton";
 import {
   HABIT_ACTION_STATUS_OPTIONS,
@@ -52,10 +53,23 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
   onNotesChanged,
 }) => {
   const { t } = useTranslation();
+  const [areaFilter, setAreaFilter] = useState<UUID | null | undefined>(
+    undefined,
+  );
   const [creatingNoteForAction, setCreatingNoteForAction] =
     useState<HabitActionWithHabit | null>(null);
   const [viewingNotesForAction, setViewingNotesForAction] =
     useState<HabitActionWithHabit | null>(null);
+
+  const visibleActions = useMemo(() => {
+    if (areaFilter === undefined) {
+      return habitActions;
+    }
+    if (areaFilter === null) {
+      return habitActions.filter((action) => !action.habit.area_id);
+    }
+    return habitActions.filter((action) => action.habit.area_id === areaFilter);
+  }, [areaFilter, habitActions]);
 
   const buildHabitActionSummary = (
     action: HabitActionWithHabit,
@@ -95,8 +109,22 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
       elevation="moderate"
       className="mb-4"
     >
+      <div className="flex justify-end mb-3">
+        <AreaSelect
+          value={areaFilter}
+          onChange={(value) => setAreaFilter(value)}
+          placeholder={t("common.all")}
+          showAllOption
+          showNoneOption
+          noneLabel={t("habits.filters.areaNone")}
+          showLabel={false}
+          fullWidth={false}
+          className="min-w-[160px]"
+          id="planning-habit-action-area-filter"
+        />
+      </div>
       <div className="space-y-0">
-        {habitActions.map((action) => {
+        {visibleActions.map((action) => {
           const statusStyling = getHabitActionStatusStyling(action.status);
           const dayInfo = calculateDayInfo(action);
           const linkedNotesCount =

@@ -19,9 +19,13 @@ import PageLayout from "@/layouts/PageLayout";
 import ActionButton, { CreateNewButton } from "@/components/ActionButton";
 import StatusBadge from "@/components/StatusBadge";
 import EnumSelect from "@/components/selects/EnumSelect";
+import AreaSelect from "@/components/selects/AreaSelect";
+import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
+import AreaBadge from "@/components/AreaBadge";
 import ExpandableCard from "@/components/ExpandableCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useCalendarAdapter } from "@/hooks/useCalendarAdapter";
+import { useAreas } from "@/hooks/queries/useAreas";
 import { useHabitActions } from "@/hooks/queries/useHabitActions";
 import { useHabitStats } from "@/hooks/queries/useHabitStats";
 import { HABIT_STATUS_FILTER_OPTIONS } from "@/utils/constants";
@@ -29,6 +33,20 @@ import type { UUID } from "@/types/primitive";
 import type { CalendarAdapter, CalendarSystem } from "@/utils/calendar";
 import { Icon } from "@/components/icons";
 import { addDays, formatDate } from "@/utils/datetime";
+
+function habitMatchesAreaFilter(
+  habit: Habit,
+  areaFilter: UUID | null | undefined,
+): boolean {
+  if (areaFilter === undefined) {
+    return true;
+  }
+  if (areaFilter === null) {
+    return !habit.area_id;
+  }
+  return habit.area_id === areaFilter;
+}
+
 function HabitItem({
   habit,
   isExpanded,
@@ -38,6 +56,7 @@ function HabitItem({
   onStatusUpdate,
   calendarAdapter,
   calendarSystem,
+  areaMap,
   t,
 }: {
   habit: Habit;
@@ -52,6 +71,7 @@ function HabitItem({
   ) => void;
   calendarAdapter: CalendarAdapter;
   calendarSystem: CalendarSystem;
+  areaMap: Map<UUID, { name: string; color: string }>;
   t: TFunction;
 }) {
   const parseHabitDate = (value: string) => {
@@ -140,6 +160,13 @@ function HabitItem({
         </span>
         <span className="truncate">{habit.status}</span>
       </div>
+      {habit.area_id && (
+        <AreaBadge
+          areaId={habit.area_id as UUID}
+          areaMap={areaMap}
+          showLabel
+        />
+      )}
       {effectiveStats && (
         <>
           <div className="flex items-center gap-1 min-w-0">
@@ -275,6 +302,7 @@ function HabitsPage() {
   const { t } = useTranslation();
   const { setHeader } = usePageHeader();
   const { adapter: calendarAdapter, calendarSystem } = useCalendarAdapter();
+  const { areaMap } = useAreas();
 
   // All habits (no status filter) powering the filter-option counts
   const { habits: allHabits } = useAllHabits();
@@ -283,6 +311,9 @@ function HabitsPage() {
   const [statusFilter, setStatusFilter] = useState<string | undefined>(
     "active",
   );
+  const [areaFilter, setAreaFilter] = useState<UUID | null | undefined>(
+    undefined,
+  );
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [prefillHabit, setPrefillHabit] = useState<{
@@ -290,12 +321,25 @@ function HabitsPage() {
     description?: string | null;
     duration_days: number;
     task_id?: UUID | null;
+    area_id?: UUID | null;
   } | null>(null);
 
-  // Status filter options: "(n)" counts, sorted by count, "All" first
+  // Each facet applies the other facet before calculating its option counts.
+  const habitsMatchingArea = useMemo(() => {
+    return allHabits.filter((habit) => habitMatchesAreaFilter(habit, areaFilter));
+  }, [allHabits, areaFilter]);
+
+  const habitsMatchingStatus = useMemo(() => {
+    if (statusFilter === undefined) {
+      return allHabits;
+    }
+    return allHabits.filter((habit) => habit.status === statusFilter);
+  }, [allHabits, statusFilter]);
+
+  // Status filter options: "(n)" counts, sorted by count, "All" first.
   const statusOptions = useMemo(() => {
     const countsByStatus = new Map<string, number>();
-    for (const habit of allHabits) {
+    for (const habit of habitsMatchingArea) {
       countsByStatus.set(
         habit.status,
         (countsByStatus.get(habit.status) ?? 0) + 1,
@@ -304,9 +348,26 @@ function HabitsPage() {
     return buildCountedFilterOptions(
       HABIT_STATUS_FILTER_OPTIONS,
       countsByStatus,
-      { allLabel: t("common.all"), totalCount: allHabits.length },
+      { allLabel: t("common.all"), totalCount: habitsMatchingArea.length },
     );
-  }, [allHabits, t]);
+  }, [habitsMatchingArea, t]);
+
+  // Area counts are keyed by option id, including __all__ and __none__.
+  const areaCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      [SelectorSpecialValue.All]: habitsMatchingStatus.length,
+    };
+    let noneCount = 0;
+    for (const habit of habitsMatchingStatus) {
+      if (habit.area_id) {
+        counts[habit.area_id] = (counts[habit.area_id] ?? 0) + 1;
+      } else {
+        noneCount += 1;
+      }
+    }
+    counts[SelectorSpecialValue.None] = noneCount;
+    return counts;
+  }, [habitsMatchingStatus]);
 
   const {
     habits,
@@ -325,11 +386,29 @@ function HabitsPage() {
     statusFilter: statusFilter,
   });
 
+  const visibleHabits = useMemo(() => {
+    return habits.filter((habit) => habitMatchesAreaFilter(habit, areaFilter));
+  }, [areaFilter, habits]);
+
   useEffect(() => {
     setHeader({
       actions: (
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
+            <AreaSelect
+              value={areaFilter}
+              onChange={(value) => setAreaFilter(value)}
+              placeholder={t("common.all")}
+              showAllOption
+              showNoneOption
+              noneLabel={t("habits.filters.areaNone")}
+              showLabel={false}
+              fullWidth={false}
+              className="min-w-[180px]"
+              id="habit-area-filter"
+              optionCounts={areaCounts}
+              sortByCount
+            />
             <EnumSelect
               value={statusFilter ?? ALL_FILTER_VALUE}
               onChange={(value) =>
@@ -358,7 +437,14 @@ function HabitsPage() {
       ),
     });
     return () => setHeader({ actions: undefined });
-  }, [setHeader, t, statusFilter, statusOptions]);
+  }, [
+    setHeader,
+    t,
+    statusFilter,
+    areaFilter,
+    statusOptions,
+    areaCounts,
+  ]);
 
 
   const handleEditHabit = useCallback((habit: Habit) => {
@@ -374,6 +460,7 @@ function HabitsPage() {
       description: habit.description ?? null,
       duration_days: habit.duration_days,
       task_id: habit.task_id ?? null,
+      area_id: habit.area_id ?? null,
     });
     setShowFormModal(true);
   }, []);
@@ -399,7 +486,7 @@ function HabitsPage() {
         <ErrorDisplay error={t("habits.errors.loadFailed")} />
       ) : (
         <>
-          {habits.length === 0 ? (
+          {visibleHabits.length === 0 ? (
             <EmptyState
               icon={
                 <Icon
@@ -420,7 +507,7 @@ function HabitsPage() {
             />
           ) : (
             <div className="space-y-4">
-              {habits.map((habit) => (
+              {visibleHabits.map((habit) => (
                 <HabitItem
                   key={habit.id}
                   habit={habit}
@@ -431,6 +518,7 @@ function HabitsPage() {
                   onStatusUpdate={handleStatusUpdate}
                   calendarAdapter={calendarAdapter}
                   calendarSystem={calendarSystem}
+                  areaMap={areaMap}
                   t={t}
                 />
               ))}
