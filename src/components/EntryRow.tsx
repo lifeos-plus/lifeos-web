@@ -65,7 +65,9 @@ const EntryRowComponent: React.FC<EntryRowProps> = ({
   onBlurTooltip,
 }) => {
   const { t } = useTranslation();
-  const hasLinkedNotes = (entry.linked_notes?.length ?? 0) > 0;
+  const hasLinkedNotes =
+    (entry.linked_notes_count ?? 0) > 0 ||
+    (entry.linked_notes?.length ?? 0) > 0;
   const subduedViewNotesClass =
     "opacity-40 hover:opacity-60 transition-opacity";
   const isPlaceholder = Boolean(entry.isPlaceholder);
