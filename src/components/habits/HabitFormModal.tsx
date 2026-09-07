@@ -136,6 +136,8 @@ export function HabitFormModal({
   );
 
   useEffect(() => {
+    if (!open) return;
+
     setTaskSelectionTouched(false);
     if (habitToEdit) {
       const nextFrequency =
@@ -189,7 +191,7 @@ export function HabitFormModal({
     setSelectedTaskId(null);
     setSelectedAreaId(null);
     setStatus("active");
-  }, [habitToEdit, prefillHabit]);
+  }, [open, habitToEdit, prefillHabit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,25 +296,7 @@ export function HabitFormModal({
   };
 
   const handleClose = () => {
-    if (!loading) {
-      const nextToday = getTodayDateString();
-      setTitle("");
-      setDescription("");
-      setStartDate(nextToday);
-      setCadenceFrequency("daily");
-      setCadenceWeekdays([]);
-      setCadenceMonthdaysText("");
-      setTargetPerCycle(1);
-      setEndMode("repeat_count");
-      setRepeatCount(100);
-      setEndDate(getHabitEndDate(nextToday, 100));
-      setSelectedTaskId(null);
-      setSelectedAreaId(null);
-      setStatus("active");
-      setError(null);
-      setTaskSelectionTouched(false);
-      onClose();
-    }
+    if (!loading) onClose();
   };
 
   const handleErrorDismiss = () => {

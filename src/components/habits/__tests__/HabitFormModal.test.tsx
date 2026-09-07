@@ -58,7 +58,20 @@ vi.mock("@/components/ActionButton", () => ({
 
 vi.mock("@/layouts/ModalBase", () => ({
   __esModule: true,
-  default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  default: ({
+    children,
+    onClose,
+  }: {
+    children: ReactNode;
+    onClose: () => void;
+  }) => (
+    <div>
+      <button data-testid="modal-close" onClick={onClose}>
+        close
+      </button>
+      {children}
+    </div>
+  ),
 }));
 
 import { HabitFormModal } from "@/components/habits/HabitFormModal";
@@ -144,5 +157,51 @@ describe("HabitFormModal", () => {
     );
 
     expect(screen.getByTestId("area-select")).toBeInTheDocument();
+  });
+
+  it("clears the form when reopened after a successful create", async () => {
+    const onCreateHabit = vi.fn().mockResolvedValue(habitWithArea);
+    const onClose = vi.fn();
+    const { container, rerender } = renderWithProviders(
+      <HabitFormModal
+        open
+        onClose={onClose}
+        onCreateHabit={onCreateHabit}
+      />,
+    );
+
+    const titleInput = container.querySelector<HTMLInputElement>("#title");
+    fireEvent.change(titleInput as HTMLInputElement, {
+      target: { value: "Old habit" },
+    });
+    fireEvent.submit(container.querySelector("form") as HTMLFormElement);
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+    rerender(
+      <HabitFormModal
+        open={false}
+        onClose={onClose}
+        onCreateHabit={onCreateHabit}
+      />,
+    );
+    rerender(
+      <HabitFormModal
+        open
+        onClose={onClose}
+        onCreateHabit={onCreateHabit}
+      />,
+    );
+
+    expect(titleInput?.value).toBe("");
+  });
+
+  it("closes the modal when the close action is triggered", () => {
+    const onClose = vi.fn();
+    renderWithProviders(<HabitFormModal open onClose={onClose} />);
+
+    fireEvent.click(screen.getByTestId("modal-close"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
