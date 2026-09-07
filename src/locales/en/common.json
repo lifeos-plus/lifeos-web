@@ -1350,6 +1350,9 @@
   },
   "habits": {
     "createNew": "Create New Habit",
+    "filters": {
+      "areaNone": "No area"
+    },
     "errors": {
       "loadFailed": "Failed to load habits",
       "deleteFailed": "Failed to delete habit"
@@ -1375,7 +1378,8 @@
     "habit": {
       "startDate": "Start Date",
       "duration": "Duration (Days)",
-      "status": "Status"
+      "status": "Status",
+      "area": "Area"
     },
     "actionList": {
       "monthView": "Month View",

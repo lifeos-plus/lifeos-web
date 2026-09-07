@@ -2753,6 +2753,8 @@ export interface components {
          * @description Payload for creating a habit from the Web UI.
          */
         HabitCreate: {
+            /** Area Id */
+            area_id?: string | null;
             /** Cadence Frequency */
             cadence_frequency?: string | null;
             /** Cadence Monthdays */
@@ -2781,6 +2783,8 @@ export interface components {
         };
         /** HabitListMeta */
         HabitListMeta: {
+            /** Area Id */
+            area_id: string | null;
             /** Status Filter */
             status_filter: string | null;
         };
@@ -2791,6 +2795,8 @@ export interface components {
         };
         /** HabitResponse */
         HabitResponse: {
+            /** Area Id */
+            area_id: string | null;
             /** Cadence Frequency */
             cadence_frequency: string;
             /** Cadence Monthdays */
@@ -2835,6 +2841,8 @@ export interface components {
         };
         /** HabitSummaryResponse */
         HabitSummaryResponse: {
+            /** Area Id */
+            area_id: string | null;
             /** Cadence Frequency */
             cadence_frequency: string;
             /** Description */
@@ -2851,6 +2859,8 @@ export interface components {
          * @description Payload for updating a habit from the Web UI.
          */
         HabitUpdate: {
+            /** Area Id */
+            area_id?: string | null;
             /** Cadence Frequency */
             cadence_frequency?: string | null;
             /** Cadence Monthdays */
@@ -5930,6 +5940,7 @@ export interface operations {
                 page?: number;
                 size?: number;
                 status_filter?: string | null;
+                area_id?: string | null;
             };
             header?: never;
             path?: never;
@@ -6083,6 +6094,7 @@ export interface operations {
                 page?: number;
                 size?: number;
                 status_filter?: string | null;
+                area_id?: string | null;
             };
             header?: never;
             path?: never;

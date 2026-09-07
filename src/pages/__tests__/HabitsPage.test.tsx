@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { type ReactNode } from "react";
 
@@ -55,8 +55,13 @@ const habitsState: {
 
 const useHabitsMock = vi.fn(() => habitsState.value);
 
-const { useHabitManagerOptionsRef, allHabitsState } = vi.hoisted(() => ({
+const {
+  useHabitManagerOptionsRef,
+  areaSelectPropsRef,
+  allHabitsState,
+} = vi.hoisted(() => ({
   useHabitManagerOptionsRef: { current: undefined as unknown },
+  areaSelectPropsRef: { current: undefined as unknown },
   allHabitsState: { value: [] as Habit[] },
 }));
 
@@ -79,6 +84,23 @@ vi.mock("@/hooks/queries/useAllHabits", () => ({
     isLoading: false,
     error: null,
   }),
+}));
+
+vi.mock("@/hooks/queries/useAreas", () => ({
+  useAreas: () => ({
+    areas: [],
+    areaMap: new Map(),
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock("@/components/selects/AreaSelect", () => ({
+  __esModule: true,
+  default: (props: Record<string, unknown>) => {
+    areaSelectPropsRef.current = props;
+    return <div data-testid="area-select" />;
+  },
 }));
 
 vi.mock("@/components/selects/EnumSelect", () => ({
@@ -168,6 +190,7 @@ describe("HabitsPage", () => {
     setHeaderMock.mockClear();
     useHabitsMock.mockImplementation(() => habitsState.value);
     habitsState.value = createHabitsResult();
+    areaSelectPropsRef.current = undefined;
   });
 
   it("renders empty state when there are no habits", () => {
@@ -268,6 +291,167 @@ describe("HabitsPage", () => {
 
     expect(useHabitManagerOptionsRef.current).toEqual({
       statusFilter: undefined,
+    });
+  });
+
+  it("builds status counts across all areas and area counts for the active status", () => {
+    allHabitsState.value = [
+      {
+        id: "h1",
+        title: "A",
+        status: "active",
+        area_id: "area-1",
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+      {
+        id: "h2",
+        title: "B",
+        status: "active",
+        area_id: "area-1",
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+      {
+        id: "h3",
+        title: "C",
+        status: "completed",
+        area_id: null,
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+    ] as unknown as Habit[];
+
+    renderWithProviders(<HabitsPage />);
+
+    const actions = setHeaderMock.mock.calls[0][0]
+      .actions as ReactNode;
+    const { getByRole } = render(
+      <div>{actions}</div>,
+    );
+    const select = getByRole("combobox") as HTMLSelectElement;
+
+    const areaProps = areaSelectPropsRef.current as {
+      value?: string | null;
+      optionCounts: Record<string, number>;
+      sortByCount: boolean;
+      onChange: (value: string | undefined | null) => void;
+    };
+    expect(areaProps.optionCounts).toEqual({
+      __all__: 2,
+      __none__: 0,
+      "area-1": 2,
+    });
+    expect(areaProps.sortByCount).toBe(true);
+    expect(select.value).toBe("active");
+    expect(select.options[0].textContent).toBe("common.all (3)");
+  });
+
+  it("updates status counts when the area filter changes", () => {
+    allHabitsState.value = [
+      {
+        id: "h1",
+        title: "A",
+        status: "active",
+        area_id: "area-1",
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+      {
+        id: "h2",
+        title: "B",
+        status: "completed",
+        area_id: "area-2",
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+      {
+        id: "h3",
+        title: "C",
+        status: "completed",
+        area_id: null,
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+    ] as unknown as Habit[];
+
+    renderWithProviders(<HabitsPage />);
+
+    const actions = setHeaderMock.mock.calls[0][0]
+      .actions as ReactNode;
+    render(
+      <div>{actions}</div>,
+    );
+    const areaProps = areaSelectPropsRef.current as {
+      onChange: (value: string | undefined | null) => void;
+    };
+
+    act(() => {
+      areaProps.onChange("area-2");
+    });
+
+    const latestActions = setHeaderMock.mock.calls.at(-1)?.[0]
+      .actions as ReactNode;
+    const view = render(<div>{latestActions}</div>);
+    const select = view.getAllByRole("combobox").at(-1) as HTMLSelectElement;
+    expect(Array.from(select.options).map((option) => option.value)).toEqual([
+      "__all__",
+      "completed",
+      "active",
+      "paused",
+      "expired",
+    ]);
+    expect(Array.from(select.options).map((option) => option.textContent)).toEqual([
+      "common.all (1)",
+      expect.stringMatching(/^.+ \(1\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+      expect.stringMatching(/^.+ \(0\)$/),
+    ]);
+  });
+
+  it("updates area counts when the status filter changes", () => {
+    allHabitsState.value = [
+      {
+        id: "h1",
+        title: "A",
+        status: "active",
+        area_id: "area-1",
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+      {
+        id: "h2",
+        title: "B",
+        status: "completed",
+        area_id: null,
+        start_date: "2025-01-01",
+        duration_days: 30,
+      },
+    ] as unknown as Habit[];
+
+    renderWithProviders(<HabitsPage />);
+
+    const actions = setHeaderMock.mock.calls[0][0]
+      .actions as ReactNode;
+    const { getByRole } = render(
+      <div>{actions}</div>,
+    );
+    const select = getByRole("combobox") as HTMLSelectElement;
+    act(() => {
+      fireEvent.change(select, { target: { value: "completed" } });
+    });
+
+    const latestActions = setHeaderMock.mock.calls.at(-1)?.[0]
+      .actions as ReactNode;
+    render(<div>{latestActions}</div>);
+
+    const areaProps = areaSelectPropsRef.current as {
+      optionCounts: Record<string, number>;
+    };
+    expect(areaProps.optionCounts).toEqual({
+      __all__: 1,
+      __none__: 1,
     });
   });
 });
