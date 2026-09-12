@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@playwright/test": "1.62.1",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-vite-plugin": "^1.167.19",
@@ -61,7 +61,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.1.0",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.11",
     "daisyui": "^5.7.16",
     "esbuild": "^0.28.1",
     "eslint": "^9.39.4",
@@ -72,14 +72,14 @@
     "openapi-typescript": "^7.13.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.69.0",
+    "typescript-eslint": "^8.70.0",
     "vite": "^8.2.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   },
   "overrides": {
     "ajv": "^6.14.0",
     "browserslist": "^4.28.9",
-    "js-yaml": "4.3.1",
+    "js-yaml": "^4.3.2",
     "minimatch": "^10.2.6"
   }
 }
