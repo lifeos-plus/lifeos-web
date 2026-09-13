@@ -14,6 +14,11 @@ import EmptyState from "@/components/EmptyState";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import { usePlanningTasks } from "@/hooks/queries/usePlanningTasks";
+import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import {
+  planningHabitActionsPreference,
+  planningViewSupportsHabitActions,
+} from "@/hooks/planning/usePlanningTaskGroup";
 import { Icon } from "@/components/icons";
 
 const PlanningPage: React.FC = () => {
@@ -31,6 +36,10 @@ const PlanningPage: React.FC = () => {
     firstDayOfWeek,
     loading: calendarLoading,
   } = useCalendarAdapter();
+
+  const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>(
+    planningHabitActionsPreference,
+  );
 
   React.useEffect(() => {
     return () => setHeader({ actions: undefined });
@@ -89,12 +98,15 @@ const PlanningPage: React.FC = () => {
   }, [tasksQuery.isLoading, tasksQuery.error]);
 
   // Compute planning groups directly with useMemo to avoid callback dependency cycles
-  const planningGroups = useMemo(() => {
-    if (!calendarAdapter) {
-      return [];
-    }
+  // 顶层分组既承载任务列表也承载习惯打卡卡片。当日视图之外的视图在任务为空时
+  // 仍需保留分组，否则非空的习惯打卡不会显示。
+  const shouldMountPlanningGroups =
+    tasksForView.length > 0 ||
+    viewType === "day" ||
+    (showHabitActions && planningViewSupportsHabitActions(viewType));
 
-    if (tasksForView.length === 0 && viewType !== "day") {
+  const planningGroups = useMemo(() => {
+    if (!calendarAdapter || !shouldMountPlanningGroups) {
       return [];
     }
 
@@ -104,7 +116,14 @@ const PlanningPage: React.FC = () => {
       tasksForView,
       firstDayOfWeek,
     );
-  }, [calendarAdapter, viewType, selectedDate, tasksForView, firstDayOfWeek]);
+  }, [
+    calendarAdapter,
+    viewType,
+    selectedDate,
+    tasksForView,
+    firstDayOfWeek,
+    shouldMountPlanningGroups,
+  ]);
 
   const handleViewTypeChange = (newViewType: PlanningViewType) => {
     setViewType(newViewType);
