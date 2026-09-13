@@ -97,9 +97,12 @@ const PlanningPage: React.FC = () => {
     setError(tasksQuery.error ? tasksQuery.error.message : null);
   }, [tasksQuery.isLoading, tasksQuery.error]);
 
+  // 顶层分组既承载任务列表，也承载习惯打卡卡片，因此任务为空时不能一律清空分组：
+  // - 有任务：始终渲染分组；
+  // - 日视图：始终保留分组（历史行为，空任务时展示当日任务列表空态）；
+  // - 其它视图：仅当习惯打卡偏好开启且该视图支持打卡节奏（日/周/月）时保留，
+  //   否则回退到整页空状态。年/七年视图没有习惯节奏，永远走空状态。
   // Compute planning groups directly with useMemo to avoid callback dependency cycles
-  // 顶层分组既承载任务列表也承载习惯打卡卡片。当日视图之外的视图在任务为空时
-  // 仍需保留分组，否则非空的习惯打卡不会显示。
   const shouldMountPlanningGroups =
     tasksForView.length > 0 ||
     viewType === "day" ||
