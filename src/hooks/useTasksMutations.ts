@@ -339,14 +339,12 @@ export function useTasksMutations() {
   });
 
   return {
-    // Individual mutations
     createTask: createMutation,
     updateTask: updateMutation,
     deleteTask: deleteMutation,
     reorderTasks: reorderMutation,
     moveTask: moveMutation,
 
-    // Convenience methods for async operations
     createTaskAsync: createMutation.mutateAsync,
     updateTaskAsync: updateMutation.mutateAsync,
     deleteTaskAsync: deleteMutation.mutateAsync,

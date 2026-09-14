@@ -319,11 +319,6 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
     };
   }
 
-  /**
-   * Get month information for a given date (unified interface)
-   * @param date - The date to get month info for
-   * @returns Object containing month index and whether it's a valid month
-   */
   getMonthInfo(date: Date): {
     monthIndex: number | null;
     isValidMonth: boolean;

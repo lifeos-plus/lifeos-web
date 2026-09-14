@@ -138,7 +138,6 @@ const PersonTimelineModal: React.FC<PersonTimelineModalProps> = ({
     }
   }, [page, safeTotalPages, onPageChange]);
 
-  // Get activity status display
   const getStatusDisplay = (status: string | null) => {
     if (!status) return null;
 
@@ -157,7 +156,6 @@ const PersonTimelineModal: React.FC<PersonTimelineModalProps> = ({
     return statusMap[status as keyof typeof statusMap] || status;
   };
 
-  // Get status color
   const getStatusColor = (status: string | null) => {
     if (!status) return "bg-base-200 text-base-content/70";
 

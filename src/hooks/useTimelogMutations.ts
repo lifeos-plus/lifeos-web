@@ -270,17 +270,14 @@ export function useTimelogMutations() {
   });
 
   return {
-    // Individual mutations
     createTimelog: createMutation,
     updateTimelog: updateMutation,
     deleteTimelog: deleteMutation,
 
-    // Batch mutations
     batchCreateTimelogs: batchCreateMutation,
     batchUpdateTimelogs: batchUpdateMutation,
     batchDeleteTimelogs: batchDeleteMutation,
 
-    // Convenience methods for async operations
     createTimelogAsync: createMutation.mutateAsync,
     updateTimelogAsync: updateMutation.mutateAsync,
     deleteTimelogAsync: deleteMutation.mutateAsync,

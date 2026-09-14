@@ -48,7 +48,6 @@ export function useMultipleTaskTimelogs(
     })),
   });
 
-  // Combine results into a Map for easy lookup
   const taskTimelogs = new Map<UUID, Timelog[]>();
   const isLoading = queries.some((query) => query.isLoading);
   const isError = queries.some((query) => query.isError);

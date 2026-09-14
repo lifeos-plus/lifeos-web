@@ -42,7 +42,6 @@ const TimeLogPage = () => {
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Areas are provided via shared cache (areaMap and list)
   const {
     sortOrder,
     setSortOrder,
@@ -139,8 +138,6 @@ const TimeLogPage = () => {
   const latestTimelogEndTime =
     latestTimelogEndTimeQuery.data?.end_time ?? currentEntriesLatestEndTime;
 
-  // Request concurrency guards - removed as it's now handled in the hook
-
   const { showError, showInfo } = useToast();
   const { setHeader } = usePageHeader();
 
@@ -206,9 +203,6 @@ const TimeLogPage = () => {
       setShowEntryModal(false);
       setEditingEntry(null);
       setEntryModalSessionId(null);
-
-      // Data refresh is now handled automatically by TanStack Query
-      // when mutations invalidate the cache
     },
     [entryModalSessionId, saveScrollPosition],
   );
@@ -281,11 +275,6 @@ const TimeLogPage = () => {
   const advancedSearchMetadata =
     queryMode === "advanced" ? advancedSearch.metadata : null;
 
-  // areaMap from useAreas
-
-  // name/color lookup handled by AreaBadge via areaMap
-
-  // Unified loading flag for table rendering
   const isTableLoading = useMemo(
     () => (queryMode === "advanced" ? advancedSearch.isLoading : loading),
     [queryMode, advancedSearch.isLoading, loading],
@@ -294,7 +283,6 @@ const TimeLogPage = () => {
   const handleAreaFilterChange = (
     areaId: UUID | null | undefined,
   ) => {
-    // Area filter changes are disabled while advanced search is active.
     if (queryMode === "advanced") return;
 
     if (areaId === undefined) {
@@ -309,8 +297,6 @@ const TimeLogPage = () => {
 
     setSelectedAreaId(areaId);
   };
-
-  // no-op: filteredEntries derived by useMemo
 
   useEffect(() => {
     if (scrollPosition > 0 && !loading) {
@@ -604,12 +590,8 @@ const TimeLogPage = () => {
               onEdit={(entry) => handleEdit(entry as Timelog)}
               onDelete={requestDeleteEntry}
               onPlaceholderClick={(_placeholder) => {
-                // Handle placeholder click - the TimeEntriesTable will handle expansion internally
-                // This callback can be used for additional logic if needed in the future
               }}
               onEntrySaved={() => {
-                // Data refresh is now handled automatically by TanStack Query
-                // when mutations invalidate the cache
               }}
               sortOrder={sortOrder}
               onSortChange={setSortOrder}

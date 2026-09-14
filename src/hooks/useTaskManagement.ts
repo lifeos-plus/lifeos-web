@@ -67,36 +67,28 @@ export interface TaskManagementConfig {
 }
 
 interface TaskManagementState {
-  // 编辑相关状态
   editingTask: TaskWithSubtasks | null;
   isEditModalOpen: boolean;
   editModalSessionId: string | null;
 
-  // 删除相关状态
   deletingTask: TaskWithSubtasks | null;
   isDeleteConfirmOpen: boolean;
 
-  // 时间记录相关状态
   viewingTimeRecords: TaskWithSubtasks | null;
   isTimeRecordsModalOpen: boolean;
 
-  // 笔记相关状态
   viewingNotes: TaskWithSubtasks | null;
   isNotesModalOpen: boolean;
 
-  // 创建笔记相关状态
   creatingNoteForTask: TaskWithSubtasks | null;
   isCreateNoteModalOpen: boolean;
 
-  // Timelog creation state
   creatingTimelogForTask: TaskWithSubtasks | null;
   isCreateTimelogModalOpen: boolean;
 
-  // 创建子任务相关状态
   creatingSubtask: boolean;
   parentTaskId: UUID | null;
 
-  // 状态级联确认相关状态
   statusCascade: {
     task: TaskWithSubtasks;
     newStatus: string;
@@ -105,17 +97,14 @@ interface TaskManagementState {
 }
 
 interface TaskManagementActions {
-  // 任务编辑
   handleEditTask: (task: TaskWithSubtasks) => void;
   handleTaskSave: (result?: TaskSaveResult) => void;
   closeEditModal: (context?: { sessionId?: string }) => void;
 
-  // 任务删除
   handleDeleteTask: (task: TaskWithSubtasks) => void;
   confirmDeleteTask: () => void;
   closeDeleteConfirm: () => void;
 
-  // 状态更新
   handleStatusUpdate: (
     task: TaskWithSubtasks,
     newStatus: string,
@@ -123,28 +112,22 @@ interface TaskManagementActions {
   closeStatusCascade: () => void;
   confirmStatusCascade: () => void;
 
-  // 添加子任务
   handleAddSubtask: (parentId?: UUID | null) => void;
 
-  // 查看时间记录
   handleViewTimeRecords: (task: TaskWithSubtasks) => void;
   closeTimeRecordsModal: () => void;
 
-  // 查看笔记
   handleViewNotes: (task: TaskWithSubtasks) => void;
   closeNotesModal: () => void;
 
-  // 创建笔记
   handleOpenCreateNoteModal: (task: TaskWithSubtasks) => void;
   closeCreateNoteModal: () => void;
   handleNoteCreated: () => void;
 
-  // Timelog creation
   handleOpenCreateTimelogModal: (task: TaskWithSubtasks) => void;
   closeCreateTimelogModal: () => void;
   handleTimelogCreated: (result: Timelog) => void;
 
-  // 任务重排序
   handleTasksReorder: (reorderedTasks: TaskWithSubtasks[]) => Promise<void>;
 }
 
@@ -723,7 +706,6 @@ export const useTaskManagement = (config: TaskManagementConfig = {}) => {
   return {
     state,
     actions,
-    // 便捷的状态访问
     editingTask: state.editingTask,
     isEditModalOpen: state.isEditModalOpen,
     editModalSessionId: state.editModalSessionId,

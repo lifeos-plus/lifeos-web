@@ -396,11 +396,6 @@ function NotesPage() {
     [createNoteTag, refreshNoteTags, t],
   );
 
-
-  // const handleOpenPersonsPage = useCallback(() => {
-  //   window.open("/people", "_blank");
-  // }, []);
-
   const handleClosePersonDetail = useCallback(() => {
     setSelectedPersonForDetail(null);
   }, []);

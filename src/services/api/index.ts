@@ -1,9 +1,7 @@
-// Domain APIs
 export { visionsApi } from "./visions";
 export { tasksApi } from "./tasks";
 export { personsApi } from "./persons";
 
-// Types
 export type { PersonSummary } from "./types/common";
 export type { Tag } from "./tags";
 export type {
