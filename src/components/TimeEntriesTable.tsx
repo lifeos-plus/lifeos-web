@@ -300,7 +300,6 @@ const TimeEntriesTable: React.FC<TimeEntriesTableProps> = ({
       return;
     }
 
-    // Create stable time range identifier and set form state
     const rangeStartTimeStr = formatTime(placeholder.start_time, timezone);
     const endTimeStr = placeholder.end_time
       ? formatTime(placeholder.end_time, timezone)

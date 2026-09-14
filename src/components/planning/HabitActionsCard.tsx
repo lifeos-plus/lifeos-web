@@ -26,7 +26,6 @@ interface HabitActionsCardProps {
 const subduedNoteButtonClass = "opacity-40 hover:opacity-60 transition-opacity";
 
 const getHabitActionStatusStyling = (status: string) => {
-  // Map status to icon names
   const statusIconMap: Record<string, IconName> = {
     pending: "timer",
     done: "check",
@@ -81,7 +80,6 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
     status: action.status,
   });
 
-  // 计算天数信息
   const calculateDayInfo = (action: HabitActionWithHabit) => {
     const habitStartDate = startOfLocalDay(
       parseDateStringToLocalDate(action.habit.start_date),

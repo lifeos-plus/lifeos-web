@@ -466,7 +466,6 @@ export default function CreateNoteModal({
                   }
                 : undefined
             }
-            //disabled={!content.trim()}
             submitText={submitText}
             cancelText={t("common.cancel")}
           />

@@ -316,11 +316,6 @@ export function createDateBoundaries(
 
 // ---- Planning Page Date Helpers ----
 
-/**
- * Get all days in a week with customizable first day
- * @param weekStart - The first day of the week
- * @returns Array of Date objects for each day of the week
- */
 export function getDaysInWeek(weekStart: Date): Date[] {
   const days = [];
   for (let i = 0; i < 7; i++) {

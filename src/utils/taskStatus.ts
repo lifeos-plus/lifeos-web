@@ -4,7 +4,7 @@ import type { TaskWithSubtasks } from "@/services/api";
  * Subtask statuses that allow a parent task to be marked as done.
  * Mirrors the backend rule in lifeos-cli task_support.py.
  */
-export const PARENT_COMPLETION_ALLOWED_SUBTASK_STATUSES = new Set([
+const PARENT_COMPLETION_ALLOWED_SUBTASK_STATUSES = new Set([
   "done",
   "cancelled",
   "paused",
@@ -14,7 +14,7 @@ export const PARENT_COMPLETION_ALLOWED_SUBTASK_STATUSES = new Set([
 export const PARENT_COMPLETION_BLOCKED_ERROR =
   "Task cannot be completed until all direct subtasks are done, cancelled, or paused";
 
-export function isClosedSubtaskStatus(status: string): boolean {
+function isClosedSubtaskStatus(status: string): boolean {
   return PARENT_COMPLETION_ALLOWED_SUBTASK_STATUSES.has(status);
 }
 

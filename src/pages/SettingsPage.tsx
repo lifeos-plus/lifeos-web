@@ -405,7 +405,6 @@ function SettingsPage() {
     ],
   );
 
-  // Calculate loading and saving states
   const isLoading = useMemo(() => {
     return Object.values(preferences).some((pref) => pref.loading);
   }, [preferences]);
