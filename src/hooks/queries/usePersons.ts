@@ -29,27 +29,22 @@ interface UsePersonsFilters {
 }
 
 interface UsePersonsReturn {
-  // Data
   persons: PersonSummary[];
   total: number;
   activities: PersonActivitiesResponse | null;
 
-  // Loading states
   isLoading: boolean;
   isLoadingActivities: boolean;
 
-  // Error states
   error: Error | null;
   activitiesError: Error | null;
 
-  // Actions
   createPerson: (person: PersonCreate) => void;
   updatePerson: (id: UUID, person: PersonUpdate) => void;
   deletePerson: (id: UUID) => void;
   loadPersonActivities: (personId: UUID) => void;
   refreshData: () => void;
 
-  // Mutations
   createPersonMutation: ReturnType<
     typeof useMutation<Person, Error, PersonCreate>
   >;

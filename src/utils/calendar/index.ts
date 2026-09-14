@@ -10,7 +10,6 @@ export {
   normalizeMayanNewYearStart,
   parseMayanNewYearStart,
   resolvePlanningCycleStart,
-  taskBelongsToPeriod,
 } from "./CalendarAdapter";
 export {
   createCalendarAdapter,

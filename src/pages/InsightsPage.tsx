@@ -299,7 +299,6 @@ function InsightsPage() {
     [calendarAdapter, setEndDate, setSelectedDate, setStartDate, viewType],
   );
 
-  // Helpers
   const dayRange = useMemo(() => {
     if (!startDate || !endDate || granularity !== "day") return [] as string[];
     return calendarAdapter.enumerateDates(startDate, endDate);

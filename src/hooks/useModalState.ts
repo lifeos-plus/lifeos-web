@@ -47,17 +47,14 @@ export function useModalState() {
   );
 
   return {
-    // State
     loading,
     error,
 
-    // State setters
     setLoading: setLoadingState,
     setError: setErrorState,
     clearError,
     resetState,
 
-    // Utility
     withLoading,
   };
 }

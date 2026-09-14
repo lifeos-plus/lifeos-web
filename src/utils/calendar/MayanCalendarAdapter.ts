@@ -57,11 +57,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     return dayOutOfTime;
   }
 
-  /**
-   * Convert a date to Mayan calendar parts
-   * @param date - The date to convert
-   * @returns Object containing Mayan calendar components
-   */
   toMayanParts(date: Date): {
     mayanYearStart: Date;
     dayOfYear: number;
@@ -152,11 +147,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     return dayOfYear;
   }
 
-  /**
-   * Get Mayan moon information for a given date
-   * @param date - The date to get moon info for
-   * @returns Object containing moon index, start/end dates, and weeks
-   */
   getMayanMoonInfo(date: Date): {
     moonIndex?: number;
     start: Date;
@@ -213,11 +203,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     };
   }
 
-  /**
-   * Get Mayan week range for a given date
-   * @param date - The date to get week range for
-   * @returns Object containing week start/end dates and week index
-   */
   getMayanWeekRange(date: Date): {
     start: Date;
     end: Date;
@@ -261,11 +246,6 @@ export class MayanCalendarAdapter implements CalendarAdapter {
     return parts.isDayOutOfTime;
   }
 
-  /**
-   * Get month information for a given date (unified interface)
-   * @param date - The date to get month info for
-   * @returns Object containing month index and whether it's a valid month
-   */
   getMonthInfo(date: Date): {
     monthIndex: number | null;
     isValidMonth: boolean;

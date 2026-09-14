@@ -23,16 +23,12 @@ interface UseHabitsFilters {
 }
 
 interface UseHabitsReturn {
-  // Data
   habits: Habit[];
 
-  // Loading states
   isLoading: boolean;
 
-  // Error states
   error: Error | null;
 
-  // Actions
   createHabit: (habit: HabitCreate) => Promise<Habit>;
   updateHabit: (id: UUID, habit: HabitUpdate) => Promise<Habit>;
   deleteHabit: (id: UUID) => void;
@@ -47,7 +43,6 @@ interface UseHabitsReturn {
     notes: string,
   ) => void;
 
-  // Mutations
   createHabitMutation: ReturnType<
     typeof useMutation<Habit, Error, HabitCreate>
   >;

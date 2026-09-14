@@ -1,11 +1,6 @@
-export const HEALTH_TABS = ["menstrual", "body", "sleep"] as const;
-export type HealthTab = (typeof HEALTH_TABS)[number];
+export const HEALTH_TOOLBAR_ORDER = ["menstrual", "body", "sleep"] as const;
+export type HealthTab = (typeof HEALTH_TOOLBAR_ORDER)[number];
 export const DEFAULT_HEALTH_TAB: HealthTab = "menstrual";
-export const HEALTH_TOOLBAR_ORDER: readonly HealthTab[] = [
-  "menstrual",
-  "body",
-  "sleep",
-];
 
 export const MENSTRUAL_FLOW_OPTIONS = [
   { value: "low", labelKey: "health.menstrual.flow.low" },

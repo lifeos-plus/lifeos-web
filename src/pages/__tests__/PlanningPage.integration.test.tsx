@@ -64,14 +64,22 @@ vi.mock("@/hooks/queries/useVisions", () => ({
   useVisions: () => useVisionsMock(),
 }));
 
-const usePreferenceWithBootstrapMock = vi.fn(
-  (opts: { defaultValue: unknown }) => ({
-    value: opts.defaultValue,
-  }),
-);
+// Allows individual tests to flip `planning.show_habit_actions` on/off while
+// every other preference keeps returning its default value.
+const { preferenceState } = vi.hoisted(() => ({
+  preferenceState: { showHabitActions: false },
+}));
+
 vi.mock("@/hooks/queries/usePreferenceWithBootstrap", () => ({
-  usePreferenceWithBootstrap: (opts: never) =>
-    usePreferenceWithBootstrapMock(opts),
+  usePreferenceWithBootstrap: (opts: {
+    key: string;
+    defaultValue: unknown;
+  }) => ({
+    value:
+      opts.key === "planning.show_habit_actions"
+        ? preferenceState.showHabitActions
+        : opts.defaultValue,
+  }),
 }));
 
 const calendarAdapter = {
@@ -130,6 +138,7 @@ import PlanningPage from "@/pages/PlanningPage";
 describe("PlanningPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    preferenceState.showHabitActions = false;
     usePlanningTasksMock.mockReturnValue({
       tasks: [],
       query: { isLoading: true, error: null },
@@ -177,6 +186,93 @@ describe("PlanningPage", () => {
     expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
     expect(screen.getByTestId("planning-task-list")).toHaveTextContent(
       "tasks:0",
+    );
+  });
+
+  it("keeps non-day groups mounted when habit actions are enabled and tasks are empty", async () => {
+    const user = userEvent.setup();
+    preferenceState.showHabitActions = true;
+
+    usePlanningTasksMock.mockReturnValue({
+      tasks: [],
+      query: { isLoading: false, error: null },
+      prefetch: prefetchMock,
+    } satisfies UsePlanningTasksMockResult);
+
+    renderWithProviders(<PlanningPage />);
+
+    const weekOption = screen.getByRole("radio", { name: "target.week" });
+    await user.click(weekOption);
+
+    await waitFor(() =>
+      expect(calendarAdapter.buildPlanningGroups).toHaveBeenLastCalledWith(
+        "week",
+        expect.any(Date),
+        [],
+        expect.anything(),
+      ),
+    );
+
+    expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+    expect(screen.getByTestId("planning-task-list")).toHaveTextContent(
+      "tasks:0",
+    );
+  });
+
+  it("shows the empty state for non-day views when tasks are empty and habit actions are disabled", async () => {
+    const user = userEvent.setup();
+
+    usePlanningTasksMock.mockReturnValue({
+      tasks: [],
+      query: { isLoading: false, error: null },
+      prefetch: prefetchMock,
+    } satisfies UsePlanningTasksMockResult);
+
+    renderWithProviders(<PlanningPage />);
+
+    const weekOption = screen.getByRole("radio", { name: "target.week" });
+    await user.click(weekOption);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument(),
+    );
+    expect(
+      calendarAdapter.buildPlanningGroups,
+    ).not.toHaveBeenCalledWith(
+      "week",
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+    );
+  });
+
+  it("shows the empty state for views without habit cadence even when habit actions are enabled", async () => {
+    const user = userEvent.setup();
+    preferenceState.showHabitActions = true;
+
+    usePlanningTasksMock.mockReturnValue({
+      tasks: [],
+      query: { isLoading: false, error: null },
+      prefetch: prefetchMock,
+    } satisfies UsePlanningTasksMockResult);
+
+    renderWithProviders(<PlanningPage />);
+
+    const yearOption = screen.getByRole("radio", {
+      name: "planning.viewType.year",
+    });
+    await user.click(yearOption);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument(),
+    );
+    expect(
+      calendarAdapter.buildPlanningGroups,
+    ).not.toHaveBeenCalledWith(
+      "year",
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
     );
   });
 

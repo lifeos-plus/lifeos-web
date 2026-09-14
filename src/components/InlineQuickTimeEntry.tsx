@@ -345,7 +345,6 @@ export default function InlineQuickTimeEntry({
   };
   const [areas, setAreas] = useState<ApiArea[]>([]);
   // Removed internal tasks loading; TaskSelector will handle via shared cache
-  // const [selectedTask, setSelectedTask] = useState<TaskWithSubtasks | null>(null);
   const [loading, setLoading] = useState(false);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
   const [shouldInitializeFromProps, setShouldInitializeFromProps] =

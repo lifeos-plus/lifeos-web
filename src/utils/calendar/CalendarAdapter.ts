@@ -148,11 +148,6 @@ export interface CalendarAdapter {
     deltaWeeks: number,
   ): { start: string; end: string };
 
-  /**
-   * Get month information for a given date
-   * @param date - The date to get month info for
-   * @returns Object containing month index and whether it's a valid month
-   */
   getMonthInfo(date: Date): {
     monthIndex: number | null;
     isValidMonth: boolean;

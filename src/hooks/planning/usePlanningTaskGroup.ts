@@ -119,6 +119,33 @@ const habitCadenceByPlanningCycle: Partial<Record<PlanningViewType, string>> = {
   month: "monthly",
 };
 
+/**
+ * Only planning cycles with a habit cadence (day/week/month) render the habit
+ * actions card. Year and seven-year views never surface check-ins.
+ */
+export function planningViewSupportsHabitActions(
+  viewType: PlanningViewType,
+): boolean {
+  return Boolean(habitCadenceByPlanningCycle[viewType]);
+}
+
+/**
+ * Shared preference so the planning page and each group card agree on whether
+ * habit check-ins are enabled.
+ */
+export const planningHabitActionsPreference = {
+  key: "planning.show_habit_actions",
+  defaultValue: false,
+  module: "planning",
+  validator: (value: unknown): boolean => {
+    if (typeof value === "boolean") return true;
+    if (typeof value === "number") return value === 0 || value === 1;
+    if (typeof value === "string")
+      return value === "true" || value === "false";
+    return false;
+  },
+} as const;
+
 export function isTopLevelPlanningGroup(
   groupId: string,
   planningCycleType?: PlanningViewType,
@@ -170,18 +197,9 @@ export function usePlanningTaskGroup(
   const queryClient = useQueryClient();
   const { getDefaultCycleSettings, adapter } = usePlanningCycle();
   const { defaultInboxVision } = useDefaultInboxVision();
-  const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>({
-    key: "planning.show_habit_actions",
-    defaultValue: false,
-    module: "planning",
-    validator: (value) => {
-      if (typeof value === "boolean") return true;
-      if (typeof value === "number") return value === 0 || value === 1;
-      if (typeof value === "string")
-        return value === "true" || value === "false";
-      return false;
-    },
-  });
+  const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>(
+    planningHabitActionsPreference,
+  );
   const planningTaskFilterStatus = useMemo(() => ACTIVE_TASK_STATUSES, []);
 
   const [showTaskSelector, setShowTaskSelector] = useState(false);

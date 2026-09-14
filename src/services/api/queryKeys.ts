@@ -1,7 +1,6 @@
 import type { UUID } from "@/types/primitive";
 import type { NoteAdvancedSearchPayload } from "./notes";
 import type { AggregationGranularity } from "./stats";
-// Notes
 export const notesKeys = {
   all: ["notes"] as const,
   lists: () => [...notesKeys.all, "list"] as const,
@@ -26,7 +25,6 @@ export const notesKeys = {
   detail: (id: UUID) => [...notesKeys.details(), id] as const,
 };
 
-// Visions
 export const visionsKeys = {
   all: ["visions"] as const,
   lists: () => [...visionsKeys.all, "list"] as const,
@@ -40,7 +38,6 @@ export const visionsKeys = {
   stats: (id: UUID) => [...visionsKeys.detail(id), "stats"] as const,
 };
 
-// Tasks
 import type { TaskListFilters } from "./tasks";
 import type { TaskSelectorSourceFiltersNormalized } from "./taskFilters";
 
@@ -65,7 +62,6 @@ export const tasksKeys = {
   timelogs: (id: UUID) => [...tasksKeys.detail(id), "timelogs"] as const,
 };
 
-// Persons
 export const personsKeys = {
   all: ["persons"] as const,
   lists: () => [...personsKeys.all, "list"] as const,
@@ -90,7 +86,6 @@ export const personsKeys = {
     [...personsKeys.all, "search-by-tag", tagName] as const,
 };
 
-// Areas
 export const areasKeys = {
   all: ["areas"] as const,
   lists: () => [...areasKeys.all, "list"] as const,
@@ -104,7 +99,6 @@ export const areasKeys = {
   order: () => [...areasKeys.all, "order"] as const,
 };
 
-// Timelog Templates
 export const timelogTemplatesKeys = {
   all: ["timelog-templates"] as const,
   lists: () => [...timelogTemplatesKeys.all, "list"] as const,
@@ -114,7 +108,6 @@ export const timelogTemplatesKeys = {
   detail: (id: UUID) => [...timelogTemplatesKeys.details(), id] as const,
 };
 
-// Finance
 export const financeKeys = {
   all: ["finance"] as const,
   assets: () => [...financeKeys.all, "assets"] as const,
@@ -131,7 +124,6 @@ export const financeKeys = {
     [...financeKeys.all, "rate-snapshot", id ?? ""] as const,
 };
 
-// Health
 export const healthKeys = {
   all: ["health"] as const,
   menstrualDays: () => [...healthKeys.all, "menstrual-days"] as const,
@@ -154,7 +146,6 @@ export const healthKeys = {
     [...healthKeys.all, "sleep-summary", filters] as const,
 };
 
-// Tags
 export const tagsKeys = {
   all: ["tags"] as const,
   lists: () => [...tagsKeys.all, "list"] as const,
@@ -177,7 +168,6 @@ export const tagsKeys = {
     [...tagsKeys.all, "with-stats", tagIds] as const,
 };
 
-// Stats
 export const statsKeys = {
   all: ["stats"] as const,
   dailyAreas: (filters: {
@@ -199,7 +189,6 @@ export const statsKeys = {
     [...statsKeys.all, "day-breakdown", { day, timezone }] as const,
 };
 
-// Habits
 export const habitsKeys = {
   all: ["habits"] as const,
   lists: () => [...habitsKeys.all, "list"] as const,
@@ -238,7 +227,6 @@ export const habitsKeys = {
   stats: (id: UUID) => [...habitsKeys.detail(id), "stats"] as const,
 };
 
-// Planned Events
 export const plannedEventsKeys = {
   all: ["planned-events"] as const,
   lists: () => [...plannedEventsKeys.all, "list"] as const,
@@ -252,7 +240,6 @@ export const plannedEventsKeys = {
   detail: (id: UUID) => [...plannedEventsKeys.details(), id] as const,
 };
 
-// Timelogs
 export const timelogsKeys = {
   all: ["timelogs"] as const,
   lists: () => [...timelogsKeys.all, "list"] as const,
@@ -278,7 +265,6 @@ export const timelogsKeys = {
   }) => [...timelogsKeys.all, "advanced-search", filters] as const,
 };
 
-// Preferences
 export const preferencesKeys = {
   all: ["preferences"] as const,
   details: () => [...preferencesKeys.all, "detail"] as const,

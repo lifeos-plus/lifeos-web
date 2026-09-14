@@ -45,7 +45,6 @@ export const TASK_STATUS_LABELS = {
   paused: t("status.paused"),
 } as const;
 
-// Task status arrays for filtering
 export const ALL_TASK_STATUSES = [
   "todo",
   "in_progress",
@@ -94,11 +93,6 @@ export const PRIORITY = [
   },
 ];
 
-/**
- * Get task status styling configuration for task cards
- * @param status - Task status string
- * @returns Complete styling configuration object
- */
 export const getTaskStatusStyling = (status: string) => {
   const config =
     TASK_STATUS_CONFIG[status as keyof typeof TASK_STATUS_CONFIG] ||
@@ -111,7 +105,6 @@ export const getTaskStatusStyling = (status: string) => {
   };
 };
 
-// Habit status filter options for dropdowns
 export const HABIT_STATUS_FILTER_OPTIONS = [
   { value: "active", label: t("status.active") },
   { value: "completed", label: t("status.completed") },
@@ -119,14 +112,12 @@ export const HABIT_STATUS_FILTER_OPTIONS = [
   { value: "expired", label: t("status.expired") },
 ];
 
-// Vision status filter options for dropdowns
 export const VISION_STATUS_FILTER_OPTIONS = [
   { value: "active", label: t("status.active") },
   { value: "archived", label: t("status.archived") },
   { value: "fruit", label: t("status.fruit") },
 ];
 
-// All available vision statuses for filtering
 export const ALL_VISION_STATUSES = ["active", "archived", "fruit"];
 
 export const HABIT_EDITABLE_DAYS = 10000;
@@ -180,7 +171,6 @@ export const HABIT_ACTION_STATUS_CONFIG = {
   },
 } as const;
 
-// Habit action status options for dropdowns (derived from config)
 export const HABIT_ACTION_STATUS_OPTIONS = Object.values(
   HABIT_ACTION_STATUS_CONFIG,
 ).map((config) => ({
