@@ -1088,6 +1088,8 @@
       "keywordDescription": "Support multiple keywords separated by spaces, any keyword match is sufficient",
       "duration": "Duration (minutes)",
       "durationDescription": "Inclusive range; leave a side empty for a one-sided filter. A negative minimum surfaces records whose end time precedes their start time",
+      "durationMinLabel": "Minimum duration in minutes",
+      "durationMaxLabel": "Maximum duration in minutes",
       "durationMinPlaceholder": "Min",
       "durationMaxPlaceholder": "Max",
       "search": "Search",

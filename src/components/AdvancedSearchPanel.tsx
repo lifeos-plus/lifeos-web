@@ -393,6 +393,7 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                 name="min-duration-minutes"
                 type="text"
                 value={localMinDuration}
+                aria-label={t("timeLog.advancedSearch.durationMinLabel")}
                 onChange={(e) =>
                   handleDurationChange(
                     "min_duration_minutes",
@@ -411,6 +412,7 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                 name="max-duration-minutes"
                 type="text"
                 value={localMaxDuration}
+                aria-label={t("timeLog.advancedSearch.durationMaxLabel")}
                 onChange={(e) =>
                   handleDurationChange(
                     "max_duration_minutes",

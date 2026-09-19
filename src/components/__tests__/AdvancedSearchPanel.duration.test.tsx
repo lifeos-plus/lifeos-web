@@ -90,9 +90,11 @@ describe("AdvancedSearchPanel duration filters", () => {
       max_duration_minutes: 45,
     });
 
-    const minInput = screen.getByLabelText("timeLog.advancedSearch.duration");
-    const maxInput = screen.getByPlaceholderText(
-      "timeLog.advancedSearch.durationMaxPlaceholder",
+    const minInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMinLabel",
+    );
+    const maxInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMaxLabel",
     );
     expect(minInput).toHaveValue("-1");
     expect(maxInput).toHaveValue("45");
@@ -102,9 +104,11 @@ describe("AdvancedSearchPanel duration filters", () => {
     const user = userEvent.setup();
     const { onParamsChange } = renderPanel();
 
-    const minInput = screen.getByLabelText("timeLog.advancedSearch.duration");
-    const maxInput = screen.getByPlaceholderText(
-      "timeLog.advancedSearch.durationMaxPlaceholder",
+    const minInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMinLabel",
+    );
+    const maxInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMaxLabel",
     );
 
     await user.type(minInput, "-1");
@@ -126,7 +130,9 @@ describe("AdvancedSearchPanel duration filters", () => {
       max_duration_minutes: 45,
     });
 
-    const minInput = screen.getByLabelText("timeLog.advancedSearch.duration");
+    const minInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMinLabel",
+    );
     await user.clear(minInput);
 
     expect(onParamsChange).toHaveBeenLastCalledWith(
@@ -138,8 +144,8 @@ describe("AdvancedSearchPanel duration filters", () => {
     const user = userEvent.setup();
     const { onParamsChange } = renderPanel();
 
-    const maxInput = screen.getByPlaceholderText(
-      "timeLog.advancedSearch.durationMaxPlaceholder",
+    const maxInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMaxLabel",
     );
     await user.type(maxInput, "4a5");
 
