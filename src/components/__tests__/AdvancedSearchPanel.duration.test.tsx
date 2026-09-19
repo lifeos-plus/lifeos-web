@@ -133,4 +133,19 @@ describe("AdvancedSearchPanel duration filters", () => {
       expect.objectContaining({ min_duration_minutes: null }),
     );
   });
+
+  it("ignores non-numeric keystrokes instead of silently dropping the filter", async () => {
+    const user = userEvent.setup();
+    const { onParamsChange } = renderPanel();
+
+    const maxInput = screen.getByPlaceholderText(
+      "timeLog.advancedSearch.durationMaxPlaceholder",
+    );
+    await user.type(maxInput, "4a5");
+
+    expect(maxInput).toHaveValue("45");
+    expect(onParamsChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ max_duration_minutes: 45 }),
+    );
+  });
 });

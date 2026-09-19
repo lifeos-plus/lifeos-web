@@ -24,6 +24,8 @@ interface AdvancedSearchParams {
   max_duration_minutes: number | null;
 }
 
+const DURATION_INPUT_PATTERN = /^-?\d*$/;
+
 function formatDurationMinutesInput(value: number | null): string {
   return value === null ? "" : String(value);
 }
@@ -32,8 +34,7 @@ function parseDurationMinutesInput(value: string): number | null {
   const trimmed = value.trim();
   if (trimmed === "" || trimmed === "-") return null;
   const parsed = Number(trimmed);
-  if (!Number.isFinite(parsed)) return null;
-  return Math.trunc(parsed);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 interface AdvancedSearchPanelProps {
@@ -125,6 +126,7 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
       value: string,
       setLocalValue: React.Dispatch<React.SetStateAction<string>>,
     ) => {
+      if (!DURATION_INPUT_PATTERN.test(value)) return;
       setLocalValue(value);
       onParamsChange({
         ...paramsRef.current,
