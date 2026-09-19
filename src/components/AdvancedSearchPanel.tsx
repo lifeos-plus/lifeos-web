@@ -20,6 +20,20 @@ interface AdvancedSearchParams {
   description_keyword: string | null;
   task_id: UUID | null | undefined; // null means no linked task; undefined means all tasks.
   with_task: boolean;
+  min_duration_minutes: number | null;
+  max_duration_minutes: number | null;
+}
+
+function formatDurationMinutesInput(value: number | null): string {
+  return value === null ? "" : String(value);
+}
+
+function parseDurationMinutesInput(value: string): number | null {
+  const trimmed = value.trim();
+  if (trimmed === "" || trimmed === "-") return null;
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed)) return null;
+  return Math.trunc(parsed);
 }
 
 interface AdvancedSearchPanelProps {
@@ -65,6 +79,12 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   const [localKeyword, setLocalKeyword] = useState(
     params.description_keyword || "",
   );
+  const [localMinDuration, setLocalMinDuration] = useState(() =>
+    formatDurationMinutesInput(params.min_duration_minutes),
+  );
+  const [localMaxDuration, setLocalMaxDuration] = useState(() =>
+    formatDurationMinutesInput(params.max_duration_minutes),
+  );
 
   const [showBatchEditModal, setShowBatchEditModal] = useState(false);
 
@@ -97,6 +117,21 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
       debouncedUpdateParent(value);
     },
     [debouncedUpdateParent],
+  );
+
+  const handleDurationChange = useCallback(
+    (
+      key: "min_duration_minutes" | "max_duration_minutes",
+      value: string,
+      setLocalValue: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+      setLocalValue(value);
+      onParamsChange({
+        ...paramsRef.current,
+        [key]: parseDurationMinutesInput(value),
+      });
+    },
+    [onParamsChange],
   );
 
   // Ensure pending debounced keyword is flushed before triggering actions
@@ -192,6 +227,25 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [params.description_keyword],
+  );
+
+  // Keep duration inputs aligned when params change outside the panel.
+  React.useEffect(
+    () => {
+      setLocalMinDuration(
+        formatDurationMinutesInput(params.min_duration_minutes),
+      );
+    },
+    [params.min_duration_minutes],
+  );
+
+  React.useEffect(
+    () => {
+      setLocalMaxDuration(
+        formatDurationMinutesInput(params.max_duration_minutes),
+      );
+    },
+    [params.max_duration_minutes],
   );
 
   return (
@@ -324,6 +378,50 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               placeholder={t("timeLog.advancedSearch.keywordPlaceholder")}
               size="sm"
             />
+          </FormField>
+
+          <FormField
+            label={t("timeLog.advancedSearch.duration")}
+            htmlFor="min-duration-minutes"
+            description={t("timeLog.advancedSearch.durationDescription")}
+          >
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <TextInput
+                id="min-duration-minutes"
+                name="min-duration-minutes"
+                type="text"
+                value={localMinDuration}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "min_duration_minutes",
+                    e.target.value,
+                    setLocalMinDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMinPlaceholder",
+                )}
+                size="sm"
+              />
+              <span className="text-neutral-400">–</span>
+              <TextInput
+                id="max-duration-minutes"
+                name="max-duration-minutes"
+                type="text"
+                value={localMaxDuration}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "max_duration_minutes",
+                    e.target.value,
+                    setLocalMaxDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMaxPlaceholder",
+                )}
+                size="sm"
+              />
+            </div>
           </FormField>
         </div>
 
