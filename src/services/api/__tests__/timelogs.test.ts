@@ -245,4 +245,66 @@ describe("timelogsApi", () => {
     expect(parsedUrl.searchParams.get("task_id")).toBeNull();
     expect(parsedUrl.searchParams.get("without_task")).toBeNull();
   });
+
+  it("sends inclusive duration filters in advanced search", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          items: [],
+          pagination: { page: 1, size: 500, total: 0, pages: 0 },
+          meta: {},
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    const response = await timelogsApi.advancedSearch({
+      start_date: "2026-06-01T04:00:00.000Z",
+      end_date: "2026-06-02T03:59:59.999Z",
+      min_duration_minutes: -1,
+      max_duration_minutes: 0,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const parsedUrl = new URL(url);
+    expect(parsedUrl.searchParams.get("min_duration_minutes")).toBe("-1");
+    expect(parsedUrl.searchParams.get("max_duration_minutes")).toBe("0");
+    expect(response.meta.min_duration_minutes).toBe(-1);
+    expect(response.meta.max_duration_minutes).toBe(0);
+  });
+
+  it("omits duration filters when advanced search leaves them empty", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          items: [],
+          pagination: { page: 1, size: 500, total: 0, pages: 0 },
+          meta: {},
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    const response = await timelogsApi.advancedSearch({
+      start_date: "2026-06-01T04:00:00.000Z",
+      end_date: "2026-06-02T03:59:59.999Z",
+      min_duration_minutes: null,
+      max_duration_minutes: null,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const parsedUrl = new URL(url);
+    expect(parsedUrl.searchParams.get("min_duration_minutes")).toBeNull();
+    expect(parsedUrl.searchParams.get("max_duration_minutes")).toBeNull();
+    expect(response.meta.min_duration_minutes).toBeNull();
+    expect(response.meta.max_duration_minutes).toBeNull();
+  });
 });

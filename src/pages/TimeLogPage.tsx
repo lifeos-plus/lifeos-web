@@ -350,6 +350,10 @@ const TimeLogPage = () => {
                   description_keyword: advancedSearchParams.description_keyword,
                   task_id: advancedSearchParams.task_id,
                   with_task: advancedSearchParams.with_task,
+                  min_duration_minutes:
+                    advancedSearchParams.min_duration_minutes,
+                  max_duration_minutes:
+                    advancedSearchParams.max_duration_minutes,
                 }}
                 onParamsChange={(params) => {
                   setAdvancedSearchParams({
@@ -367,6 +371,8 @@ const TimeLogPage = () => {
                     description_keyword: params.description_keyword,
                     task_id: params.task_id,
                     with_task: params.with_task,
+                    min_duration_minutes: params.min_duration_minutes,
+                    max_duration_minutes: params.max_duration_minutes,
                   });
                 }}
                 onSearch={handleAdvancedSearch}

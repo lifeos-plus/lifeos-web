@@ -50,6 +50,8 @@ export interface TimelogAdvancedSearchRequest {
   task_id?: UUID | null;
   without_task?: boolean;
   with_task?: boolean;
+  min_duration_minutes?: number | null;
+  max_duration_minutes?: number | null;
 }
 
 export type TimelogListTransport = components["schemas"]["ListResponse_TimelogResponse_TimelogListMeta_"];
@@ -236,6 +238,8 @@ export const timelogsApi = {
         task_id: withoutTask ? undefined : (params.task_id ?? undefined),
         without_task: withoutTask || undefined,
         with_task: withTask || undefined,
+        min_duration_minutes: params.min_duration_minutes ?? undefined,
+        max_duration_minutes: params.max_duration_minutes ?? undefined,
         size: 500,
       },
     );
@@ -266,6 +270,14 @@ export const timelogsApi = {
         without_task:
           response.meta?.without_task ?? withoutTask,
         with_task: response.meta?.with_task ?? withTask,
+        min_duration_minutes:
+          response.meta?.min_duration_minutes ??
+          params.min_duration_minutes ??
+          null,
+        max_duration_minutes:
+          response.meta?.max_duration_minutes ??
+          params.max_duration_minutes ??
+          null,
         limit: response.meta?.limit ?? 500,
         returned_count: response.meta?.returned_count ?? returnedCount,
         total_count: response.meta?.total_count ?? totalCount,

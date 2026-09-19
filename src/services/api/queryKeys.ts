@@ -261,6 +261,8 @@ export const timelogsKeys = {
     area_name?: string | null;
     description_keyword?: string | null;
     task_id?: UUID | null;
+    min_duration_minutes?: number | null;
+    max_duration_minutes?: number | null;
     sort_order?: "asc" | "desc";
   }) => [...timelogsKeys.all, "advanced-search", filters] as const,
 };

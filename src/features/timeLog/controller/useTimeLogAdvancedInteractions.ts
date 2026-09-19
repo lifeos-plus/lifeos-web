@@ -84,6 +84,8 @@ export function useTimeLogAdvancedInteractions({
       description_keyword: null,
       task_id: undefined,
       with_task: false,
+      min_duration_minutes: null,
+      max_duration_minutes: null,
     };
 
     setAdvancedSearchParams(resetParams);
