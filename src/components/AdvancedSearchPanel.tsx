@@ -256,7 +256,7 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   return (
     <>
       <Card title={t("timeLog.advancedSearch.title")}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 min-w-0">
           <div>
             <label
               htmlFor="start-date"
@@ -304,6 +304,52 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               size="sm"
             />
           </div>
+
+          <FormField
+            label={t("timeLog.advancedSearch.duration")}
+            htmlFor="min-duration-minutes"
+            description={t("timeLog.advancedSearch.durationDescription")}
+          >
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <TextInput
+                id="min-duration-minutes"
+                name="min-duration-minutes"
+                type="text"
+                value={localMinDuration}
+                aria-label={t("timeLog.advancedSearch.durationMinLabel")}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "min_duration_minutes",
+                    e.target.value,
+                    setLocalMinDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMinPlaceholder",
+                )}
+                size="sm"
+              />
+              <span className="text-neutral-400">–</span>
+              <TextInput
+                id="max-duration-minutes"
+                name="max-duration-minutes"
+                type="text"
+                value={localMaxDuration}
+                aria-label={t("timeLog.advancedSearch.durationMaxLabel")}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "max_duration_minutes",
+                    e.target.value,
+                    setLocalMaxDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMaxPlaceholder",
+                )}
+                size="sm"
+              />
+            </div>
+          </FormField>
 
           <div>
             <AreaSelect
@@ -385,51 +431,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </FormField>
 
-          <FormField
-            label={t("timeLog.advancedSearch.duration")}
-            htmlFor="min-duration-minutes"
-            description={t("timeLog.advancedSearch.durationDescription")}
-          >
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-              <TextInput
-                id="min-duration-minutes"
-                name="min-duration-minutes"
-                type="text"
-                value={localMinDuration}
-                aria-label={t("timeLog.advancedSearch.durationMinLabel")}
-                onChange={(e) =>
-                  handleDurationChange(
-                    "min_duration_minutes",
-                    e.target.value,
-                    setLocalMinDuration,
-                  )
-                }
-                placeholder={t(
-                  "timeLog.advancedSearch.durationMinPlaceholder",
-                )}
-                size="sm"
-              />
-              <span className="text-neutral-400">–</span>
-              <TextInput
-                id="max-duration-minutes"
-                name="max-duration-minutes"
-                type="text"
-                value={localMaxDuration}
-                aria-label={t("timeLog.advancedSearch.durationMaxLabel")}
-                onChange={(e) =>
-                  handleDurationChange(
-                    "max_duration_minutes",
-                    e.target.value,
-                    setLocalMaxDuration,
-                  )
-                }
-                placeholder={t(
-                  "timeLog.advancedSearch.durationMaxPlaceholder",
-                )}
-                size="sm"
-              />
-            </div>
-          </FormField>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">

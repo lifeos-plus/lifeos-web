@@ -169,4 +169,28 @@ describe("AdvancedSearchPanel duration filters", () => {
       expect.objectContaining({ max_duration_minutes: 123456 }),
     );
   });
+
+  it("keeps the duration range next to the date filters", () => {
+    renderPanel();
+
+    const endDate = screen.getByLabelText("timeLog.advancedSearch.endDate");
+    const minInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMinLabel",
+    );
+    const areaSelect = screen.getByTestId("area-select");
+    const keyword = screen.getByLabelText("timeLog.advancedSearch.keyword");
+
+    expect(
+      endDate.compareDocumentPosition(minInput) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      minInput.compareDocumentPosition(areaSelect) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      areaSelect.compareDocumentPosition(keyword) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });
