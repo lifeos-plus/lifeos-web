@@ -9,8 +9,11 @@ import { ALL_TASK_STATUSES } from "@/utils/constants";
 import Card from "@/layouts/Card";
 import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
 import { dateStringToISO, formatDateInTimezone } from "@/utils/datetime";
-import { FormField, TextInput } from "./forms";
-import { FORM_LABEL_COMPACT_CLASS } from "./forms/styles";
+import { TextInput } from "./forms";
+import {
+  FORM_DESCRIPTION_CLASS,
+  FORM_LABEL_COMPACT_CLASS,
+} from "./forms/styles";
 import type { UUID } from "@/types/primitive";
 
 interface AdvancedSearchParams {
@@ -20,6 +23,24 @@ interface AdvancedSearchParams {
   description_keyword: string | null;
   task_id: UUID | null | undefined; // null means no linked task; undefined means all tasks.
   with_task: boolean;
+  min_duration_minutes: number | null;
+  max_duration_minutes: number | null;
+}
+
+// Six digits keep the outgoing value a plain integer: the API bounds are four
+// digits, and longer numbers serialize as exponent notation that the integer
+// query parameter rejects.
+const DURATION_INPUT_PATTERN = /^-?\d{0,6}$/;
+
+function formatDurationMinutesInput(value: number | null): string {
+  return value === null ? "" : String(value);
+}
+
+function parseDurationMinutesInput(value: string): number | null {
+  const trimmed = value.trim();
+  if (trimmed === "" || trimmed === "-") return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 interface AdvancedSearchPanelProps {
@@ -65,6 +86,12 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
   const [localKeyword, setLocalKeyword] = useState(
     params.description_keyword || "",
   );
+  const [localMinDuration, setLocalMinDuration] = useState(() =>
+    formatDurationMinutesInput(params.min_duration_minutes),
+  );
+  const [localMaxDuration, setLocalMaxDuration] = useState(() =>
+    formatDurationMinutesInput(params.max_duration_minutes),
+  );
 
   const [showBatchEditModal, setShowBatchEditModal] = useState(false);
 
@@ -97,6 +124,22 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
       debouncedUpdateParent(value);
     },
     [debouncedUpdateParent],
+  );
+
+  const handleDurationChange = useCallback(
+    (
+      key: "min_duration_minutes" | "max_duration_minutes",
+      value: string,
+      setLocalValue: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+      if (!DURATION_INPUT_PATTERN.test(value)) return;
+      setLocalValue(value);
+      onParamsChange({
+        ...paramsRef.current,
+        [key]: parseDurationMinutesInput(value),
+      });
+    },
+    [onParamsChange],
   );
 
   // Ensure pending debounced keyword is flushed before triggering actions
@@ -194,10 +237,29 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
     [params.description_keyword],
   );
 
+  // Keep duration inputs aligned when params change outside the panel.
+  React.useEffect(
+    () => {
+      setLocalMinDuration(
+        formatDurationMinutesInput(params.min_duration_minutes),
+      );
+    },
+    [params.min_duration_minutes],
+  );
+
+  React.useEffect(
+    () => {
+      setLocalMaxDuration(
+        formatDurationMinutesInput(params.max_duration_minutes),
+      );
+    },
+    [params.max_duration_minutes],
+  );
+
   return (
     <>
       <Card title={t("timeLog.advancedSearch.title")}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 min-w-0">
           <div>
             <label
               htmlFor="start-date"
@@ -244,6 +306,57 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               }}
               size="sm"
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="min-duration-minutes"
+              className={FORM_LABEL_COMPACT_CLASS}
+            >
+              {t("timeLog.advancedSearch.duration")}
+            </label>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <TextInput
+                id="min-duration-minutes"
+                name="min-duration-minutes"
+                type="text"
+                value={localMinDuration}
+                aria-label={t("timeLog.advancedSearch.durationMinLabel")}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "min_duration_minutes",
+                    e.target.value,
+                    setLocalMinDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMinPlaceholder",
+                )}
+                size="sm"
+              />
+              <span className="text-neutral-400">–</span>
+              <TextInput
+                id="max-duration-minutes"
+                name="max-duration-minutes"
+                type="text"
+                value={localMaxDuration}
+                aria-label={t("timeLog.advancedSearch.durationMaxLabel")}
+                onChange={(e) =>
+                  handleDurationChange(
+                    "max_duration_minutes",
+                    e.target.value,
+                    setLocalMaxDuration,
+                  )
+                }
+                placeholder={t(
+                  "timeLog.advancedSearch.durationMaxPlaceholder",
+                )}
+                size="sm"
+              />
+            </div>
+            <p className={`mt-1 ${FORM_DESCRIPTION_CLASS}`}>
+              {t("timeLog.advancedSearch.durationDescription")}
+            </p>
           </div>
 
           <div>
@@ -310,11 +423,13 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          <FormField
-            label={t("timeLog.advancedSearch.keyword")}
-            htmlFor="description-keyword"
-            description={t("timeLog.advancedSearch.keywordDescription")}
-          >
+          <div>
+            <label
+              htmlFor="description-keyword"
+              className={FORM_LABEL_COMPACT_CLASS}
+            >
+              {t("timeLog.advancedSearch.keyword")}
+            </label>
             <TextInput
               id="description-keyword"
               name="description-keyword"
@@ -324,7 +439,10 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               placeholder={t("timeLog.advancedSearch.keywordPlaceholder")}
               size="sm"
             />
-          </FormField>
+            <p className={`mt-1 ${FORM_DESCRIPTION_CLASS}`}>
+              {t("timeLog.advancedSearch.keywordDescription")}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
