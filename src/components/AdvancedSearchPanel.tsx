@@ -9,8 +9,11 @@ import { ALL_TASK_STATUSES } from "@/utils/constants";
 import Card from "@/layouts/Card";
 import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
 import { dateStringToISO, formatDateInTimezone } from "@/utils/datetime";
-import { FormField, TextInput } from "./forms";
-import { FORM_LABEL_COMPACT_CLASS } from "./forms/styles";
+import { TextInput } from "./forms";
+import {
+  FORM_DESCRIPTION_CLASS,
+  FORM_LABEL_COMPACT_CLASS,
+} from "./forms/styles";
 import type { UUID } from "@/types/primitive";
 
 interface AdvancedSearchParams {
@@ -305,11 +308,13 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          <FormField
-            label={t("timeLog.advancedSearch.duration")}
-            htmlFor="min-duration-minutes"
-            description={t("timeLog.advancedSearch.durationDescription")}
-          >
+          <div>
+            <label
+              htmlFor="min-duration-minutes"
+              className={FORM_LABEL_COMPACT_CLASS}
+            >
+              {t("timeLog.advancedSearch.duration")}
+            </label>
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
               <TextInput
                 id="min-duration-minutes"
@@ -349,7 +354,10 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
                 size="sm"
               />
             </div>
-          </FormField>
+            <p className={`mt-1 ${FORM_DESCRIPTION_CLASS}`}>
+              {t("timeLog.advancedSearch.durationDescription")}
+            </p>
+          </div>
 
           <div>
             <AreaSelect
@@ -415,11 +423,13 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
             />
           </div>
 
-          <FormField
-            label={t("timeLog.advancedSearch.keyword")}
-            htmlFor="description-keyword"
-            description={t("timeLog.advancedSearch.keywordDescription")}
-          >
+          <div>
+            <label
+              htmlFor="description-keyword"
+              className={FORM_LABEL_COMPACT_CLASS}
+            >
+              {t("timeLog.advancedSearch.keyword")}
+            </label>
             <TextInput
               id="description-keyword"
               name="description-keyword"
@@ -429,7 +439,10 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               placeholder={t("timeLog.advancedSearch.keywordPlaceholder")}
               size="sm"
             />
-          </FormField>
+            <p className={`mt-1 ${FORM_DESCRIPTION_CLASS}`}>
+              {t("timeLog.advancedSearch.keywordDescription")}
+            </p>
+          </div>
 
         </div>
 
