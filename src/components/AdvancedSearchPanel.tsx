@@ -443,7 +443,6 @@ const AdvancedSearchPanel: React.FC<AdvancedSearchPanelProps> = ({
               {t("timeLog.advancedSearch.keywordDescription")}
             </p>
           </div>
-
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
