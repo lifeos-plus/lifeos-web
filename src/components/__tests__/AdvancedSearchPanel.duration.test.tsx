@@ -154,4 +154,19 @@ describe("AdvancedSearchPanel duration filters", () => {
       expect.objectContaining({ max_duration_minutes: 45 }),
     );
   });
+
+  it("stops at six digits so the request stays a plain integer", async () => {
+    const user = userEvent.setup();
+    const { onParamsChange } = renderPanel();
+
+    const maxInput = screen.getByLabelText(
+      "timeLog.advancedSearch.durationMaxLabel",
+    );
+    await user.type(maxInput, "1234567890");
+
+    expect(maxInput).toHaveValue("123456");
+    expect(onParamsChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ max_duration_minutes: 123456 }),
+    );
+  });
 });

@@ -24,7 +24,10 @@ interface AdvancedSearchParams {
   max_duration_minutes: number | null;
 }
 
-const DURATION_INPUT_PATTERN = /^-?\d*$/;
+// Six digits keep the outgoing value a plain integer: the API bounds are four
+// digits, and longer numbers serialize as exponent notation that the integer
+// query parameter rejects.
+const DURATION_INPUT_PATTERN = /^-?\d{0,6}$/;
 
 function formatDurationMinutesInput(value: number | null): string {
   return value === null ? "" : String(value);
