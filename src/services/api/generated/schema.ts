@@ -4338,6 +4338,10 @@ export interface components {
             end_date: string | null;
             /** Limit */
             limit: number;
+            /** Max Duration Minutes */
+            max_duration_minutes: number | null;
+            /** Min Duration Minutes */
+            min_duration_minutes: number | null;
             /** Query */
             query: string | null;
             /** Returned Count */
@@ -8396,6 +8400,8 @@ export interface operations {
                 task_id?: string | null;
                 without_task?: boolean;
                 with_task?: boolean;
+                min_duration_minutes?: number | null;
+                max_duration_minutes?: number | null;
             };
             header?: never;
             path?: never;
