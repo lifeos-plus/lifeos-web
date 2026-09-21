@@ -1276,7 +1276,7 @@
         "endInvalid": "结束时间格式无效。",
         "timeParseFailure": "无法解析提供的时间。",
         "crossDayLimit": "最多跨越 {{maxDays}} 天，请拆分后再试。",
-        "durationInvalid": "结束时间必须晚于开始时间。",
+        "durationInvalid": "结束时间不能早于开始时间。",
         "tooManyLines": "仅处理前 {{limit}} 行，其余 {{dropped}} 行已忽略。"
       },
       "editorTitle": "编辑第 {{line}} 行",

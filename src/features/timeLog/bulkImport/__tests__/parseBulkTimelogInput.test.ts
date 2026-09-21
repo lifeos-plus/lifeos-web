@@ -68,6 +68,34 @@ describe("parseBulkTimelogInput", () => {
     expect(row.taskId).toBeNull();
   });
 
+  it("keeps a zero-length end-only entry as a zero-minute record", () => {
+    const result = parseBulkTimelogInput("0800 冥想", {
+      startDate: baseDate,
+      defaultFirstStartTime: "08:00",
+    });
+
+    expect(result.rows).toHaveLength(1);
+    const row = toRow(result.rows, 0);
+    expect(row.date).toBe("2025-01-01");
+    expect(row.startTime).toBe("08:00");
+    expect(row.endDate).toBe("2025-01-01");
+    expect(row.endTime).toBe("08:00");
+    expect(row.warnings).toHaveLength(0);
+  });
+
+  it("keeps a zero-length range entry on the same day", () => {
+    const result = parseBulkTimelogInput("10:00-10:00 冥想", {
+      startDate: baseDate,
+    });
+
+    expect(result.rows).toHaveLength(1);
+    const row = toRow(result.rows, 0);
+    expect(row.startTime).toBe("10:00");
+    expect(row.endTime).toBe("10:00");
+    expect(row.endDate).toBe("2025-01-01");
+    expect(row.warnings).toHaveLength(0);
+  });
+
   it("stops parsing when exceeding the day limit", () => {
     const result = parseBulkTimelogInput(
       "0700 任务\n0800 任务\n0030 次日任务",

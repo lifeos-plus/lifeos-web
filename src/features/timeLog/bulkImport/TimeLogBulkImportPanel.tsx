@@ -139,7 +139,8 @@ const validateRowFields = (
   const startIso = convertToUtcIso(row.date, row.startTime, timezone);
   const endIso = convertToUtcIso(row.endDate, row.endTime, timezone);
 
-  if (new Date(endIso).getTime() <= new Date(startIso).getTime()) {
+  // Zero-length entries are valid marker records; only a negative span is rejected.
+  if (new Date(endIso).getTime() < new Date(startIso).getTime()) {
     errors.push({ code: "duration_invalid" });
   }
 
