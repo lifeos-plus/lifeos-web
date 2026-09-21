@@ -15,6 +15,7 @@ import {
   formatTime,
   getNearestFiveMinuteTime,
   hhmmOnDateToISO,
+  localDateTimeLocalToUtcIso,
 } from "@/utils/datetime";
 import { logger } from "@/utils/core";
 import ModalBase from "@/layouts/ModalBase";
@@ -229,9 +230,19 @@ const TimeEntryModal = ({
         return;
       }
 
+      const startValue = formData.start_time || formData.end_time;
+      if (
+        startValue &&
+        new Date(formData.end_time).getTime() <
+          new Date(startValue).getTime()
+      ) {
+        setError(t("timeLog.modal.endBeforeStart"));
+        return;
+      }
+
       const prepared: TimelogCreate = {
         ...formData,
-        start_time: formData.start_time || formData.end_time || "",
+        start_time: startValue || "",
       };
 
       if (mode === "draft" && onDraftSubmit) {
@@ -334,39 +345,68 @@ const TimeEntryModal = ({
     if (!loading) attemptClose();
   }, [loading, attemptClose]);
 
+  const combineDateAndTime = useCallback(
+    (datePart: string, timePart: string): string => {
+      if (!datePart || !timePart) return "";
+      return localDateTimeLocalToUtcIso(
+        `${datePart}T${timePart}`,
+        activeTimezone,
+      );
+    },
+    [activeTimezone],
+  );
+
+  const handleStartDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const nextDate = e.target.value;
+      setFormData((prev) => {
+        const timePart =
+          formatTime(prev.start_time || "", activeTimezone) || "00:00";
+        const iso = combineDateAndTime(nextDate, timePart);
+        return iso ? { ...prev, start_time: iso } : prev;
+      });
+    },
+    [activeTimezone, combineDateAndTime],
+  );
+
   const handleStartTimeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        start_time: hhmmOnDateToISO(
-          selectedDate,
-          e.target.value,
-          activeTimezone,
-        ),
-      }));
+      const nextTime = e.target.value;
+      setFormData((prev) => {
+        const datePart = formatDate(prev.start_time || "", activeTimezone);
+        const iso = combineDateAndTime(datePart, nextTime);
+        return iso ? { ...prev, start_time: iso } : prev;
+      });
     },
-    [activeTimezone, selectedDate],
+    [activeTimezone, combineDateAndTime],
+  );
+
+  const handleEndDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const nextDate = e.target.value;
+      setFormData((prev) => {
+        const timePart =
+          formatTime(prev.end_time || "", activeTimezone) || "00:00";
+        const iso = combineDateAndTime(nextDate, timePart);
+        return iso ? { ...prev, end_time: iso } : prev;
+      });
+    },
+    [activeTimezone, combineDateAndTime],
   );
 
   const handleEndTimeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newEndIso = hhmmOnDateToISO(
-        selectedDate,
-        e.target.value,
-        activeTimezone,
-      );
-      // handle cross-day if needed
-      const start = new Date(formData.start_time);
-      const end = new Date(newEndIso);
-      if (end < start) {
-        end.setDate(end.getDate() + 1);
-      }
-      setFormData((prev) => ({
-        ...prev,
-        end_time: end.toISOString(),
-      }));
+      const nextTime = e.target.value;
+      setFormData((prev) => {
+        const datePart = formatDate(
+          prev.end_time || prev.start_time || "",
+          activeTimezone,
+        );
+        const iso = combineDateAndTime(datePart, nextTime);
+        return iso ? { ...prev, end_time: iso } : prev;
+      });
     },
-    [activeTimezone, selectedDate, formData.start_time],
+    [activeTimezone, combineDateAndTime],
   );
 
   const handleAreaChange = useCallback((v: UUID | null | undefined) => {
@@ -464,39 +504,75 @@ const TimeEntryModal = ({
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="start_time"
-              className={FORM_LABEL_SPACED_CLASS}
-            >
-              {t("eventModal.fields.startTime")}
-            </label>
-            <TextInput
-              id="start_time"
-              name="start_time"
-              type="time"
-              step="300"
-              value={formatTime(formData.start_time || "", activeTimezone)}
-              onChange={handleStartTimeChange}
-              disabled={loading}
-            />
+          <div className="space-y-3">
+            <div>
+              <label
+                htmlFor="start_date"
+                className={FORM_LABEL_SPACED_CLASS}
+              >
+                {t("timeLog.modal.startDate")}
+              </label>
+              <TextInput
+                id="start_date"
+                name="start_date"
+                type="date"
+                value={formatDate(formData.start_time || "", activeTimezone)}
+                onChange={handleStartDateChange}
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="start_time"
+                className={FORM_LABEL_SPACED_CLASS}
+              >
+                {t("eventModal.fields.startTime")}
+              </label>
+              <TextInput
+                id="start_time"
+                name="start_time"
+                type="time"
+                step="300"
+                value={formatTime(formData.start_time || "", activeTimezone)}
+                onChange={handleStartTimeChange}
+                disabled={loading}
+              />
+            </div>
           </div>
-          <div>
-            <label
-              htmlFor="end_time"
-              className={FORM_LABEL_SPACED_CLASS}
-            >
-              {t("timeLog.modal.endTimeRequired")}
-            </label>
-            <TextInput
-              id="end_time"
-              name="end_time"
-              type="time"
-              step="300"
-              value={formatTime(formData.end_time || "", activeTimezone)}
-              onChange={handleEndTimeChange}
-              disabled={loading}
-            />
+          <div className="space-y-3">
+            <div>
+              <label
+                htmlFor="end_date"
+                className={FORM_LABEL_SPACED_CLASS}
+              >
+                {t("timeLog.modal.endDate")}
+              </label>
+              <TextInput
+                id="end_date"
+                name="end_date"
+                type="date"
+                value={formatDate(formData.end_time || "", activeTimezone)}
+                onChange={handleEndDateChange}
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="end_time"
+                className={FORM_LABEL_SPACED_CLASS}
+              >
+                {t("timeLog.modal.endTimeRequired")}
+              </label>
+              <TextInput
+                id="end_time"
+                name="end_time"
+                type="time"
+                step="300"
+                value={formatTime(formData.end_time || "", activeTimezone)}
+                onChange={handleEndTimeChange}
+                disabled={loading}
+              />
+            </div>
           </div>
         </div>
 

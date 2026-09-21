@@ -1124,9 +1124,12 @@
       "editTimeLog": "编辑时间日志",
       "activity": "活动",
       "activityPlaceholder": "记录你的足迹：这段时间投入在何处？",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
       "endTimeRequired": "结束时间 *",
       "notes": "备注",
-      "activityRequired": "请输入活动标题"
+      "activityRequired": "请输入活动标题",
+      "endBeforeStart": "结束时间不能早于开始时间"
     },
     "pagination": {
       "showing": "显示第 {{start}} - {{end}} 条， 共 {{total}} 条记录",

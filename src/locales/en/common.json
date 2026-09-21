@@ -1124,9 +1124,12 @@
       "editTimeLog": "Edit Time Log",
       "activity": "Activity",
       "activityPlaceholder": "Log your footprint: Where was this time invested?",
+      "startDate": "Start Date",
+      "endDate": "End Date",
       "endTimeRequired": "End Time *",
       "notes": "Notes",
-      "activityRequired": "Please enter activity title"
+      "activityRequired": "Please enter activity title",
+      "endBeforeStart": "End time can't be earlier than the start time"
     },
     "pagination": {
       "showing": "Showing {{start}} - {{end}} of {{total}} records",
