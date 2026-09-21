@@ -337,7 +337,7 @@ export const parseBulkTimelogInput = (
         startMinutes = alignedStart;
         const { value: alignedEnd, rolledDays: endRoll } = alignForward(
           endMinutesRaw,
-          startMinutes + 1,
+          startMinutes,
         );
         if (endRoll > 0) {
           warnings.push({ code: "auto_cross_midnight_range" });
@@ -350,7 +350,7 @@ export const parseBulkTimelogInput = (
         autoInferredStart = true;
         const { value: alignedEnd, rolledDays } = alignForward(
           endMinutesRaw,
-          startMinutes + 1,
+          startMinutes,
         );
         if (rolledDays > 0) {
           warnings.push({ code: "auto_cross_midnight_end" });

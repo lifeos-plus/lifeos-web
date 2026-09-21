@@ -1276,7 +1276,7 @@
         "endInvalid": "End time format is invalid.",
         "timeParseFailure": "Unable to parse the provided time.",
         "crossDayLimit": "Entries can span at most {{maxDays}} consecutive day(s).",
-        "durationInvalid": "End time must be later than start time.",
+        "durationInvalid": "End time must not be earlier than start time.",
         "tooManyLines": "Only {{limit}} lines are processed. {{dropped}} extra line(s) were ignored."
       },
       "editorTitle": "Edit line {{line}}",
