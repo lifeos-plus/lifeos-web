@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import Card from "@/layouts/Card";
 import EnumSelect from "@/components/selects/EnumSelect";
 import AreaSelect from "@/components/selects/AreaSelect";
-import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
+import { buildAreaOptionCounts } from "@/utils/filterOptionCounts";
 import ActionButton from "@/components/ActionButton";
 import {
   HABIT_ACTION_STATUS_OPTIONS,
@@ -71,24 +71,11 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
     return habitActions.filter((action) => action.habit.area_id === areaFilter);
   }, [areaFilter, habitActions]);
 
-  // Area counts keyed by option id (including __all__ / __none__) so the area
-  // filter mirrors the "(n)" distribution used by the Habits/Visions filters.
-  const areaCounts = useMemo(() => {
-    const counts: Record<string, number> = {
-      [SelectorSpecialValue.All]: habitActions.length,
-    };
-    let noneCount = 0;
-    for (const action of habitActions) {
-      const areaId = action.habit.area_id;
-      if (areaId) {
-        counts[areaId] = (counts[areaId] ?? 0) + 1;
-      } else {
-        noneCount += 1;
-      }
-    }
-    counts[SelectorSpecialValue.None] = noneCount;
-    return counts;
-  }, [habitActions]);
+  // Mirrors the "(n)" distribution used by the Habits/Visions area filters.
+  const areaCounts = useMemo(
+    () => buildAreaOptionCounts(habitActions, (action) => action.habit.area_id),
+    [habitActions],
+  );
 
   const buildHabitActionSummary = (
     action: HabitActionWithHabit,
