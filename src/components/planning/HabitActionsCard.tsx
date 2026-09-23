@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Card from "@/layouts/Card";
 import EnumSelect from "@/components/selects/EnumSelect";
 import AreaSelect from "@/components/selects/AreaSelect";
+import { buildAreaOptionCounts } from "@/utils/filterOptionCounts";
 import ActionButton from "@/components/ActionButton";
 import {
   HABIT_ACTION_STATUS_OPTIONS,
@@ -70,6 +71,12 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
     return habitActions.filter((action) => action.habit.area_id === areaFilter);
   }, [areaFilter, habitActions]);
 
+  // Mirrors the "(n)" distribution used by the Habits/Visions area filters.
+  const areaCounts = useMemo(
+    () => buildAreaOptionCounts(habitActions, (action) => action.habit.area_id),
+    [habitActions],
+  );
+
   const buildHabitActionSummary = (
     action: HabitActionWithHabit,
   ): NoteHabitActionSummary => ({
@@ -119,6 +126,8 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
           fullWidth={false}
           className="min-w-[160px]"
           id="planning-habit-action-area-filter"
+          optionCounts={areaCounts}
+          sortByCount
         />
       </div>
       <div className="space-y-0">

@@ -56,3 +56,35 @@ export function buildCountedFilterOptions(
     ...counted,
   ];
 }
+
+/**
+ * Build area option counts keyed by option id.
+ *
+ * The result always carries the `__all__` (total) and `__none__` (items without
+ * an area) ids, matching the ids emitted by `AreaSelect`, so callers can pass it
+ * straight to the `optionCounts` prop.
+ *
+ * @param items Items carrying an optional area, e.g. habits, visions or habit actions
+ * @param getAreaId Reads the area id from an item; falsy values count as "no area"
+ */
+export function buildAreaOptionCounts<T>(
+  items: readonly T[],
+  getAreaId: (item: T) => string | null | undefined,
+): Record<string, number> {
+  const counts: Record<string, number> = {
+    [SelectorSpecialValue.All]: items.length,
+  };
+
+  let noneCount = 0;
+  for (const item of items) {
+    const areaId = getAreaId(item);
+    if (areaId) {
+      counts[areaId] = (counts[areaId] ?? 0) + 1;
+    } else {
+      noneCount += 1;
+    }
+  }
+
+  counts[SelectorSpecialValue.None] = noneCount;
+  return counts;
+}

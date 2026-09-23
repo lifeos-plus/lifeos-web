@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "@test/utils";
 import type { HabitActionWithHabit } from "@/services/api/habits";
 import type { UUID } from "@/types/primitive";
+import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import { HabitActionsCard } from "@/components/planning/HabitActionsCard";
 
 const { areaSelectPropsRef } = vi.hoisted(() => ({
@@ -20,6 +21,7 @@ vi.mock("@/components/selects/AreaSelect", () => ({
 const createAction = (
   id: string,
   linkedNotesCount: number,
+  areaId: string | null = id.startsWith("action-empty") ? "area-1" : null,
 ): HabitActionWithHabit => ({
   id: id as UUID,
   habit_id: "habit-1" as UUID,
@@ -33,7 +35,7 @@ const createAction = (
     start_date: "2026-07-01",
     duration_days: 30,
     cadence_frequency: "weekly",
-    area_id: id.startsWith("action-empty") ? "area-1" : null,
+    area_id: areaId,
   },
 });
 
@@ -91,5 +93,31 @@ describe("HabitActionsCard", () => {
     });
     expect(screen.getAllByTestId("planning-habit-action-row")).toHaveLength(1);
     expect(screen.getByText("Habit action-linked")).toBeInTheDocument();
+  });
+
+  it("exposes per-area counts on the area filter options", () => {
+    renderWithProviders(
+      <HabitActionsCard
+        habitActions={[
+          createAction("action-a1", 0, "area-1"),
+          createAction("action-a2", 0, "area-1"),
+          createAction("action-b1", 0, "area-2"),
+          createAction("action-no-area", 0, null),
+        ]}
+        onStatusChange={vi.fn()}
+      />,
+    );
+
+    const areaProps = areaSelectPropsRef.current as {
+      optionCounts: Record<string, number>;
+      sortByCount: boolean;
+    };
+    expect(areaProps.optionCounts).toEqual({
+      [SelectorSpecialValue.All]: 4,
+      "area-1": 2,
+      "area-2": 1,
+      [SelectorSpecialValue.None]: 1,
+    });
+    expect(areaProps.sortByCount).toBe(true);
   });
 });
