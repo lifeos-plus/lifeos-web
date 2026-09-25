@@ -39,7 +39,10 @@ jobs:
         run: |
           CLI_VERSION="$(node scripts/pinned-cli-version.mjs)"
           echo "Pinned lifeos-cli version: ${CLI_VERSION}"
-          uv tool install "lifeos-cli[web,postgres]==${CLI_VERSION}"
+          # SQLAlchemy 2.1 made greenlet an optional dependency; the CLI's asyncio
+          # database layer breaks at runtime. Pin below 2.1 until the CLI adopts
+          # the sqlalchemy[asyncio] extra explicitly.
+          uv tool install "lifeos-cli[web,postgres]==${CLI_VERSION}" --with "sqlalchemy<2.1"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v6
