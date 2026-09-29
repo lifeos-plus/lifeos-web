@@ -12,9 +12,9 @@ import AreaSelect from "@/components/selects/AreaSelect";
 import { VISION_STATUS_FILTER_OPTIONS } from "@/utils/constants";
 import {
   ALL_FILTER_VALUE,
+  buildAreaOptionCounts,
   buildCountedFilterOptions,
 } from "@/utils/filterOptionCounts";
-import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import { useAllVisions } from "@/hooks/queries/useAllVisions";
 import type { UUID } from "@/types/primitive";
 
@@ -68,21 +68,11 @@ const VisionPage: React.FC = () => {
   }, [t, visionsMatchingArea]);
 
   // Area counts are keyed by option id, including __all__ and __none__.
-  const areaCounts = useMemo(() => {
-    const counts: Record<string, number> = {
-      [SelectorSpecialValue.All]: visionsMatchingStatus.length,
-    };
-    let noneCount = 0;
-    for (const vision of visionsMatchingStatus) {
-      if (vision.area_id) {
-        counts[vision.area_id] = (counts[vision.area_id] ?? 0) + 1;
-      } else {
-        noneCount += 1;
-      }
-    }
-    counts[SelectorSpecialValue.None] = noneCount;
-    return counts;
-  }, [visionsMatchingStatus]);
+  const areaCounts = useMemo(
+    () =>
+      buildAreaOptionCounts(visionsMatchingStatus, (vision) => vision.area_id),
+    [visionsMatchingStatus],
+  );
 
   useEffect(() => {
     setHeader({

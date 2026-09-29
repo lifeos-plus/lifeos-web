@@ -7,6 +7,7 @@ import type { Habit, HabitAction } from "@/services/api/habits";
 import { useAllHabits } from "@/hooks/queries/useAllHabits";
 import {
   ALL_FILTER_VALUE,
+  buildAreaOptionCounts,
   buildCountedFilterOptions,
 } from "@/utils/filterOptionCounts";
 import EmptyState from "@/components/EmptyState";
@@ -20,7 +21,6 @@ import ActionButton, { CreateNewButton } from "@/components/ActionButton";
 import StatusBadge from "@/components/StatusBadge";
 import EnumSelect from "@/components/selects/EnumSelect";
 import AreaSelect from "@/components/selects/AreaSelect";
-import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import AreaBadge from "@/components/AreaBadge";
 import ExpandableCard from "@/components/ExpandableCard";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -353,21 +353,10 @@ function HabitsPage() {
   }, [habitsMatchingArea, t]);
 
   // Area counts are keyed by option id, including __all__ and __none__.
-  const areaCounts = useMemo(() => {
-    const counts: Record<string, number> = {
-      [SelectorSpecialValue.All]: habitsMatchingStatus.length,
-    };
-    let noneCount = 0;
-    for (const habit of habitsMatchingStatus) {
-      if (habit.area_id) {
-        counts[habit.area_id] = (counts[habit.area_id] ?? 0) + 1;
-      } else {
-        noneCount += 1;
-      }
-    }
-    counts[SelectorSpecialValue.None] = noneCount;
-    return counts;
-  }, [habitsMatchingStatus]);
+  const areaCounts = useMemo(
+    () => buildAreaOptionCounts(habitsMatchingStatus, (habit) => habit.area_id),
+    [habitsMatchingStatus],
+  );
 
   const {
     habits,

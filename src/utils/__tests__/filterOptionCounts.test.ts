@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   ALL_FILTER_VALUE,
+  buildAreaOptionCounts,
   buildCountedFilterOptions,
 } from "@/utils/filterOptionCounts";
+import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 
 describe("buildCountedFilterOptions", () => {
   const baseOptions = [
@@ -67,5 +69,33 @@ describe("buildCountedFilterOptions", () => {
     const result = buildCountedFilterOptions(baseOptions, counts);
 
     expect(result[0]).toEqual({ value: "active", label: "Active (4)" });
+  });
+});
+
+describe("buildAreaOptionCounts", () => {
+  it("counts items per area and keys the all/none ids with the shared special values", () => {
+    const items: Array<{ area_id?: string | null }> = [
+      { area_id: "area-1" },
+      { area_id: "area-1" },
+      { area_id: "area-2" },
+      { area_id: null },
+      {},
+    ];
+
+    expect(buildAreaOptionCounts(items, (item) => item.area_id)).toEqual({
+      [SelectorSpecialValue.All]: 5,
+      "area-1": 2,
+      "area-2": 1,
+      [SelectorSpecialValue.None]: 2,
+    });
+  });
+
+  it("returns only the all/none ids for an empty list", () => {
+    expect(
+      buildAreaOptionCounts<{ area_id: string | null }>([], () => "area-1"),
+    ).toEqual({
+      [SelectorSpecialValue.All]: 0,
+      [SelectorSpecialValue.None]: 0,
+    });
   });
 });
