@@ -21,7 +21,7 @@ vi.mock("@/components/selects/AreaSelect", () => ({
 const createAction = (
   id: string,
   linkedNotesCount: number,
-  areaId: string | null = id.startsWith("action-empty") ? "area-1" : null,
+  areaId: string | null = null,
 ): HabitActionWithHabit => ({
   id: id as UUID,
   habit_id: "habit-1" as UUID,
@@ -70,8 +70,8 @@ describe("HabitActionsCard", () => {
     renderWithProviders(
       <HabitActionsCard
         habitActions={[
-          createAction("action-empty", 0),
-          createAction("action-linked", 2),
+          createAction("action-empty", 0, "area-1"),
+          createAction("action-linked", 2, null),
         ]}
         onStatusChange={vi.fn()}
       />,
