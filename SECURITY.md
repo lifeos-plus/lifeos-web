@@ -27,6 +27,8 @@ Routine dependency updates are intentionally limited to weekly minor updates; pa
 
 PR and `main` validation rejects high- and critical-severity `npm audit` findings. The weekly frontend audit may prepare a non-force lockfile fix, but it still fails when high- or critical-severity findings remain after that attempt. The audit workflow never uses `npm audit fix --force`.
 
+The E2E harness and both the validation and release workflows install the pinned `lifeos-cli` with `--with "sqlalchemy<2.1"`, which keeps SQLAlchemy on 2.0 and pulls in `greenlet`, so the CLI's asyncio database layer stays importable. Remove the constraint once `lifeos-cli` declares the `sqlalchemy[asyncio]` extra.
+
 ## Supported Branches
 
 Security fixes should land on the active `main` branch first.

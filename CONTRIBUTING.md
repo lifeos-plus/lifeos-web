@@ -49,8 +49,10 @@ E2E tests live in `e2e/` and cover the core user loop (create a vision, add a ta
 
 Requirements:
 
-- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==$(node scripts/pinned-cli-version.mjs)"` (the pinned version is printed by the same command)
+- `lifeos` CLI with Web extras: `uv tool install "lifeos-cli[web,postgres]==$(node scripts/pinned-cli-version.mjs)" --with "sqlalchemy<2.1"` (the pinned version is printed by the same command)
 - Playwright Chromium browser: `npx playwright install chromium`
+
+The `--with "sqlalchemy<2.1"` constraint is a temporary workaround: SQLAlchemy 2.1 made `greenlet` an optional dependency, so `lifeos web serve` fails to import its asyncio database layer unless the CLI declares the `sqlalchemy[asyncio]` extra itself. CI installs the CLI the same way. Drop the constraint from the workflows, this guide, and `scripts/e2e/start-api.sh` once `lifeos-cli` declares that extra.
 
 Run the suite on demand:
 

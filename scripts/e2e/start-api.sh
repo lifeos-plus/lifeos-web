@@ -10,6 +10,11 @@ cd "${repo_root}"
 
 pinned_cli_version="$(node "${repo_root}/scripts/pinned-cli-version.mjs")"
 
+# SQLAlchemy 2.1 made greenlet an optional dependency, and the CLI's asyncio
+# database layer then fails to import. Every install hint below has to carry the
+# same constraint as the CI workflows, or contributors land on a broken CLI.
+cli_install_hint="uv tool install \"lifeos-cli[web,postgres]==${pinned_cli_version}\" --with \"sqlalchemy<2.1\""
+
 port="${E2E_API_PORT:-8765}"
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -41,14 +46,14 @@ export HOME="${home_dir}"
 export LIFEOS_DATABASE_URL="${db_url}"
 
 if ! command -v lifeos >/dev/null 2>&1; then
-  echo "[e2e] lifeos CLI not found; install it with: uv tool install \"lifeos-cli[web,postgres]==${pinned_cli_version}\"" >&2
+  echo "[e2e] lifeos CLI not found; install it with: ${cli_install_hint}" >&2
   exit 1
 fi
 
 installed_cli_version="$(lifeos --version 2>/dev/null | awk '{print $2}')"
 if [ -n "${installed_cli_version}" ] && [ "${installed_cli_version}" != "${pinned_cli_version}" ]; then
   echo "[e2e] lifeos CLI ${installed_cli_version} does not match the pinned contract version ${pinned_cli_version}." >&2
-  echo "[e2e] Upgrade it with: uv tool install \"lifeos-cli[web,postgres]==${pinned_cli_version}\"" >&2
+  echo "[e2e] Upgrade it with: ${cli_install_hint}" >&2
   exit 1
 fi
 
@@ -76,4 +81,5 @@ for _ in $(seq 1 90); do
 done
 
 echo "[e2e] LifeOS Web API failed to become ready within 90s" >&2
+echo "[e2e] If the server exited immediately, the CLI is probably installed without the SQLAlchemy constraint; reinstall with: ${cli_install_hint}" >&2
 exit 1
