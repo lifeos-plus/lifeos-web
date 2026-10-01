@@ -906,8 +906,13 @@ function AssetSummaryPanel({
           }
         : rateInfoByCurrency[row.currency];
     const rate = rateInfo ? Number(rateInfo.rate) : Number.NaN;
+    // A zero amount converts to zero regardless of the rate, so a missing rate
+    // for an empty currency must not block the converted total.
+    const zeroAmount = row.numericAmount === 0;
     const convertedValue =
-      showConversions && Number.isFinite(rate) ? row.numericAmount * rate : null;
+      showConversions && (Number.isFinite(rate) || zeroAmount)
+        ? row.numericAmount * (Number.isFinite(rate) ? rate : 1)
+        : null;
     return {
       ...row,
       rateInfo,
@@ -1324,21 +1329,24 @@ function buildSnapshotDisplayTree(
         }
         rollupEntries.forEach((entry) => usedEntryIds.add(entry.id));
         const inlineEntry = inlineSingleHolding ? manualEntries[0] : null;
-        const amountConverted = useConvertedRollups
-          ? (rollupEntries[0]?.amount_converted ??
-            inlineEntry?.amount_converted ??
-            sumSnapshotNodeAmounts(children, primaryCurrency, assets))
-          : "";
-        const amount = useConvertedRollups
-          ? formatAmountForAsset(amountConverted, primaryCurrency, assets)
-          : (sortedRollupEntries.length ? sortedRollupEntries : inlineEntry ? [inlineEntry] : [])
-              .map((entry) => `${entry.amount} ${entry.currency_code}`)
-              .join(", ");
-        const currencyCode = useConvertedRollups
-          ? primaryCurrency
-          : rollupEntries.length === 1 || inlineEntry
+        // "原始金额" must always reflect the original currency and amount; the
+        // exchange-rate snapshot only feeds the converted column and totals.
+        const amount = (sortedRollupEntries.length ? sortedRollupEntries : inlineEntry ? [inlineEntry] : [])
+          .map((entry) => `${entry.amount} ${entry.currency_code}`)
+          .join(", ");
+        const currencyCode =
+          rollupEntries.length === 1 || inlineEntry
             ? (rollupEntries[0] ?? inlineEntry)?.currency_code ?? ""
             : "";
+        const amountConverted = useConvertedRollups
+          ? sumAmountStrings(
+              rollupEntries.map((entry) => entry.amount_converted),
+              primaryCurrency,
+              assets,
+            ) ||
+            inlineEntry?.amount_converted ||
+            sumSnapshotNodeAmounts(children, primaryCurrency, assets)
+          : "";
         return {
           id: node.id,
           name: node.name,
