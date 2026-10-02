@@ -286,8 +286,6 @@ describe("SnapshotDetail", () => {
 
     const assetsRow = screen.getByText("Assets").closest("tr");
     expect(assetsRow).not.toBeNull();
-    // A group row no longer repeats the descendant native currencies; the
-    // rollup is only surfaced through the converted column and summary table.
     expect(within(assetsRow as HTMLElement).queryByText("ETH")).not.toBeInTheDocument();
     expect(within(assetsRow as HTMLElement).queryByText("CNY")).not.toBeInTheDocument();
     expect(assetsRow).toHaveTextContent("1723.88");
@@ -298,8 +296,6 @@ describe("SnapshotDetail", () => {
     const cnyCells = within(screen.getByText("CNY wallet").closest("tr") as HTMLElement).getAllByRole(
       "cell",
     );
-    // The symbol stays in the asset column; the original amount column is a
-    // bare number so the two columns never disagree about currency display.
     expect(ethCells[1]).toHaveTextContent("ETH");
     expect(ethCells[2]).toHaveTextContent(/^1$/);
     expect(cnyCells[1]).toHaveTextContent("CNY");

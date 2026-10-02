@@ -1330,16 +1330,11 @@ function buildSnapshotDisplayTree(
         }
         rollupEntries.forEach((entry) => usedEntryIds.add(entry.id));
         const inlineEntry = inlineSingleHolding ? manualEntries[0] : null;
-        // A node with visible child rows is a group header: its descendants are
-        // already listed below and per-currency totals live in the summary
-        // table, so the rollup is not repeated in the "原始金额" column.
         const nativeEntry =
           children.length > 0
             ? null
             : (inlineEntry ??
               (sortedRollupEntries.length === 1 ? sortedRollupEntries[0] : null));
-        // "原始金额" carries the bare amount; the original currency is shown in
-        // the asset column so the symbol is never duplicated inside the number.
         const amount = nativeEntry?.amount ?? "";
         const currencyCode = nativeEntry?.currency_code ?? "";
         const amountConverted = useConvertedRollups
@@ -1388,8 +1383,6 @@ function buildSnapshotDisplayTree(
 function pruneZeroAmountNodes(nodes: SnapshotDisplayNode[]): SnapshotDisplayNode[] {
   return nodes.flatMap((node) => {
     const children = pruneZeroAmountNodes(node.children);
-    // A group header with remaining children is always kept; a row without
-    // children is dropped when its native amount is empty or zero.
     if (children.length || !isZeroOrEmptyAmount(node.amount)) {
       return [{ ...node, children }];
     }
