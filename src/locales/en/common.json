@@ -1609,6 +1609,7 @@
       "deleteMessage": "Delete {{name}}?",
       "deleteConfirm": "Delete snapshot",
       "noEntryNodes": "Add at least one finance node before saving a snapshot.",
+      "noVisibleAmounts": "No non-zero amounts to display.",
       "auto": "Auto",
       "manual": "Manual",
       "source": "Source"

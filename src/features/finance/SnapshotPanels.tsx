@@ -1244,7 +1244,7 @@ export function SnapshotDetail({
               {!visibleNodes.length ? (
                 <tr>
                   <td colSpan={5} className={`text-center py-6 ${financeTextClass.helperText}`}>
-                    {t("finance.history.noSelection")}
+                    {t("finance.snapshot.noVisibleAmounts")}
                   </td>
                 </tr>
               ) : null}

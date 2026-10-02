@@ -1609,6 +1609,7 @@
       "deleteMessage": "删除 {{name}}？",
       "deleteConfirm": "删除快照",
       "noEntryNodes": "保存快照前，请先添加至少一个财务节点。",
+      "noVisibleAmounts": "暂无可显示的非零金额。",
       "auto": "自动",
       "manual": "手动",
       "source": "来源"

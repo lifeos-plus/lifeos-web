@@ -412,6 +412,40 @@ describe("SnapshotDetail", () => {
     expect(screen.queryByText("CNY")).not.toBeInTheDocument();
   });
 
+  it("shows the empty-state hint when every detail row is zero", () => {
+    setupTranslationMock();
+
+    const zeroOnlySnapshot: FinanceSnapshot = {
+      ...sourceSnapshot,
+      id: "snapshot-zero-only",
+      entries: [
+        {
+          id: "entry-wallet",
+          node_id: node.id,
+          node_name: node.name,
+          amount: "0.00000000",
+          currency_code: "ETH",
+          amount_converted: "0.00000000",
+          note: null,
+          is_auto_generated: false,
+        },
+      ],
+      summary: { aggregation_mode: "converted" },
+    };
+
+    renderWithProviders(
+      <SnapshotDetail
+        snapshot={zeroOnlySnapshot}
+        assets={assets}
+        treeNodes={[{ ...node, children: [] }]}
+        rateSnapshots={[]}
+      />,
+    );
+
+    expect(screen.getByText("finance.snapshot.noVisibleAmounts")).toBeInTheDocument();
+    expect(screen.queryByText("Wallet")).not.toBeInTheDocument();
+  });
+
   it("keeps the converted total when a zero-amount currency has no rate", () => {
     setupTranslationMock();
 
