@@ -1,23 +1,17 @@
 {
   "common": {
     "save": "保存",
-    "saveChanges": "保存修改",
     "cancel": "取消",
     "confirm": "确认",
     "delete": "删除",
     "edit": "编辑",
     "copy": "复制",
     "add": "添加",
-    "rename": "重命名",
     "replace": "替换",
-    "refresh": "刷新",
     "clear": "清空",
     "findReplace": "查找替换",
     "error": "错误",
-    "success": "成功",
     "info": "信息",
-    "warning": "提醒",
-    "logout": "退出登录",
     "user": "用户",
     "openNavigationMenu": "打开导航菜单",
     "requestFailed": "请求失败",
@@ -31,7 +25,6 @@
     "saving": "保存中...",
     "creating": "新建中...",
     "submitting": "提交中...",
-    "testing": "检测中...",
     "deleting": "删除中...",
     "actions": "操作",
     "all": "全部",
@@ -41,8 +34,6 @@
     "no_options": "暂无选项",
     "no_match": "没有匹配的选项",
     "create_new": "新建",
-    "reset": "重置",
-    "preview": "预览",
     "placeholder": "占位",
     "default": "默认",
     "no_data": "暂无数据",
@@ -52,9 +43,7 @@
     "create_with_name": "创建 {{name}}",
     "selected": "已选择",
     "date": "日期",
-    "time": "时间",
-    "notice": "提示",
-    "required": "为必填项"
+    "time": "时间"
   },
   "target": {
     "area": "领域",
@@ -175,8 +164,6 @@
       "deleteFailedDetail": "删除任务时遇到问题，请稍后重试",
       "statusUpdateSuccess": "任务状态更新成功",
       "statusUpdateSuccessDetail": "任务状态已成功更新",
-      "statusUpdateSucceeded": "任务状态更新成功！",
-      "statusUpdateSucceededDetail": "\"{{content}}\" 状态已更新为 {{status}}",
       "statusUpdateFailed": "更新任务状态失败",
       "statusUpdateFailedDetail": "更新任务状态时遇到问题，请稍后重试",
       "orderUpdateSuccess": "任务顺序更新成功",
@@ -349,10 +336,6 @@
       "description": "描述（可选）",
       "descriptionPlaceholder": "标签的用途说明..."
     },
-    "filters": {
-      "category": "分类",
-      "allCategories": "全部分类"
-    },
     "categoryManager": {
       "title": "分类管理",
       "description": "新增分类并在不同分类之间切换查看标签。",
@@ -430,10 +413,7 @@
     "keywordFilter": "关键词 \"{{keyword}}\"",
     "notesCount": "{{count}} 条笔记",
     "readyToSearch": "准备搜索",
-    "exportText": "导出文本",
-    "clearFilters": "清除过滤",
-    "exportError": "导出失败",
-    "exportErrorMessage": "导出过程中发生错误"
+    "clearFilters": "清除过滤"
   },
   "notes": {
     "loadMore": "加载更多笔记",
@@ -476,13 +456,11 @@
         "unknown": "未知"
       }
     },
-    "tagManager": "标签管理",
     "noteTagManager": "笔记标签管理",
     "loadingNotes": "加载笔记中...",
     "loadingAdvanced": "执行高级搜索...",
     "collapseDisplayHint": "预览 {{count}} 行",
     "queryMode": {
-      "standard": "快速笔记",
       "advanced": "高级搜索",
       "import": "批量导入"
     },
@@ -573,35 +551,13 @@
       "nextPage": "下一页",
       "pageIndicator": "第 {{page}} / {{total}} 页",
       "errorTitle": "高级搜索出错",
-      "taskRequired": "请选择具体任务后再执行搜索",
-      "copyNoResultsTitle": "暂无可复制内容",
-      "copyNoResultsMessage": "请先执行搜索以生成可复制的内容",
-      "summary": {
-        "dateRange": "时间范围：{{start}} 至 {{end}}",
-        "dateFrom": "起始日期：{{start}}",
-        "dateTo": "结束日期：{{end}}",
-        "tagAny": "标签（任意匹配）：{{names}}",
-        "tagAnyEmpty": "标签：任意（未选择具体标签）",
-        "tagAll": "标签（必须同时包含）：{{names}}",
-        "tagNone": "标签：仅限无标签笔记",
-        "personAny": "人物（任意匹配）：{{names}}",
-        "personAnyEmpty": "人物：任意（未选择具体人物）",
-        "personAll": "人物（必须同时包含）：{{names}}",
-        "personNone": "人物：无关联人物",
-        "taskAny": "任务筛选：不限任务",
-        "taskNone": "任务筛选：仅限无任务笔记",
-        "taskHas": "任务筛选：必须有关联任务",
-        "taskSpecific": "任务筛选：{{task}}",
-        "taskUnknown": "未知任务",
-        "keyword": "关键词：{{keyword}}"
-      }
+      "taskRequired": "请选择具体任务后再执行搜索"
     },
     "batchEdit": {
       "title": "批量编辑笔记",
       "modalTitle": "批量编辑（{{count}} 条笔记）",
       "description": "选择操作模式以更新所选笔记",
       "noSelection": "请先选择需要操作的笔记",
-      "invalidMode": "不支持的批量模式",
       "tagsRequired": "请选择要应用的标签",
       "personsRequired": "请选择要应用的人物",
       "taskRequired": "请选择任务",
@@ -713,20 +669,6 @@
         "description": "锚定七年周期的公历年份。公历七年从该年 1 月 1 日开始；玛雅历七年从该年的玛雅新年开始日算起。"
       }
     },
-    "planningSettings": {
-      "taskPlanning": {
-        "label": "默认规划",
-        "description": "选择默认规划后，任何地方创建任务时都会自动套用（可在表单中修改）。"
-      },
-      "timeLogTaskPlanning": {
-        "label": "自动设置任务规划",
-        "description": "连接你的行动与计划。当时间日志关联任务时，自动将其规划到今天。"
-      },
-      "habitActionsInPlanning": {
-        "label": "显示习惯动作",
-        "description": "让日常仪式成为你每日计划的一部分，选择是否在此显示习惯动作。"
-      }
-    },
     "areaOrder": {
       "title": "领域排序",
       "description": "自定义领域的呈现顺序，让你能优先关注最重要的生命领域。"
@@ -741,7 +683,6 @@
       "description": "选择应用界面语言。",
       "label": "选择语言",
       "placeholder": "请选择语言...",
-      "updated": "语言已更新",
       "system": "跟随系统",
       "timezone": {
         "label": "首选时区",
@@ -749,17 +690,12 @@
       }
     },
     "noGroupSelected": "未选择设置分组",
-    "planning": {
-      "title": "规划设置",
-      "description": "管理任务规划相关设置"
-    },
     "visions": {
       "title": "愿景经验",
       "description": "配置实际投入时间如何转换为愿景经验值。",
       "experienceRate": {
         "label": "每小时经验值",
-        "description": "设置每小时投入可获得的经验值（1-3600）。可在愿景编辑中为单个愿景设置独立倍率。",
-        "applyAll": "保存并应用到所有愿景"
+        "description": "设置每小时投入可获得的经验值（1-3600）。可在愿景编辑中为单个愿景设置独立倍率。"
       },
       "experienceTable": {
         "label": "愿景倍率列表",
@@ -770,12 +706,10 @@
         "statusColumn": "状态",
         "rateColumn": "经验倍率",
         "rateUnit": "点/小时",
-        "save": "保存修改",
         "saving": "保存中…",
         "footerHint": "当前默认偏好：{{defaultRate}} 点/小时",
         "invalidRate": "经验倍率必须是介于 {{min}} 与 {{max}} 的整数。",
         "rateInputLabel": "{{name}} 的经验倍率",
-        "toastSuccess": "愿景经验倍率已更新。",
         "toastError": "愿景经验倍率更新失败。"
       }
     },
@@ -822,24 +756,7 @@
       "moveUp": "将 {{name}} 上移",
       "moveDown": "将 {{name}} 下移"
     },
-    "saveSuccess": "所有设置已保存",
-    "partialSuccess": "已保存 {{successful}} 项设置，{{failed}} 项失败",
     "saveFailed": "设置保存失败",
-    "theme": {
-      "updated": "主题已更新"
-    },
-    "visibleModules": {
-      "updated": "导航模块已更新"
-    },
-    "export": {
-      "preparing": "正在准备导出...",
-      "success": "已导出文件",
-      "full": {
-        "title": "全量导出",
-        "description": "导出当前账户所有金融相关数据（账户、现金流、交易）。",
-        "button": "导出全部数据"
-      }
-    },
     "autoSavePending": "有待保存的修改",
     "autoSaveIdle": "所有更改已保存"
   },
@@ -852,7 +769,6 @@
       "description": "描述",
       "stage": "阶段",
       "experience": "经验",
-      "totalEffort": "总投入",
       "createdAt": "创建于",
       "noTasks": "还没有任务",
       "actions": {
@@ -870,15 +786,11 @@
       "createVision": "创建愿景",
       "editVision": "编辑愿景",
       "deleteVision": "删除愿景",
-      "harvestVision": "收获愿景",
-      "deleteTask": "删除任务"
+      "harvestVision": "收获愿景"
     },
     "messages": {
       "visionCreated": "愿景创建成功！",
       "visionUpdated": "愿景更新成功！",
-      "copySuccess": "复制成功",
-      "copySuccessDetail": "愿景任务树详情已复制到剪贴板",
-      "copyFailed": "复制失败",
       "recomputeSuccess": "时间投入重新计算完成",
       "recomputeFailed": "时间投入重新计算失败",
       "saveFailed": "保存愿景失败",
@@ -903,8 +815,7 @@
     },
     "confirm": {
       "deleteVision": "确定要删除愿景 \"{{name}}\" 吗？这将同时删除所有相关数据。",
-      "harvestVision": "确定要收获愿景 \"{{name}}\" 吗？收获后将转化为成就果实。",
-      "deleteTask": "确定要删除任务 \"{{content}}\" 吗？"
+      "harvestVision": "确定要收获愿景 \"{{name}}\" 吗？收获后将转化为成就果实。"
     }
   },
   "planning": {
@@ -964,9 +875,7 @@
     "taskActions": {
       "createTask": "创建新任务到 {{period}}",
       "addTask": "关联任务到 {{period}}",
-      "export": "导出当前周期规划数据",
-      "carryForward": "顺延 ({{count}})",
-      "carryForwardTooltip": "将未完成任务顺延到下个周期"
+      "carryForward": "顺延 ({{count}})"
     },
     "createTask": {
       "visionPlaceholder": "选择愿景...",
@@ -1003,9 +912,6 @@
       "carryForwardPartialFailedMessage": "{{count}} 个任务顺延失败，请稍后重试",
       "carryForwardFailed": "顺延失败",
       "carryForwardFailedMessage": "顺延任务时遇到问题，请稍后重试",
-      "exportSuccess": "导出成功",
-      "exportSuccessMessage": "规划数据已复制到剪贴板",
-      "exportFailedMessage": "导出规划数据时遇到问题，请稍后重试",
       "habitActionUpdateFailed": "更新失败",
       "habitActionUpdateFailedMessage": "更新习惯状态时遇到问题，请稍后重试"
     }
@@ -1075,8 +981,6 @@
     "toolbar": {
       "returnToSingle": "返回单日",
       "advancedFeatures": "高级功能",
-      "exportDaily": "导出当日",
-      "exportDailyTooltip": "一键导出当天所有时间日志",
       "bulkImport": "批量导入"
     },
     "advancedSearch": {
@@ -1094,7 +998,6 @@
       "durationMaxPlaceholder": "最大",
       "search": "查询",
       "reset": "重置",
-      "export": "导出",
       "enableBatchOperations": "启用批量操作",
       "selectAll": "全选",
       "selectInverse": "反选",
@@ -1115,7 +1018,6 @@
       "clearFilter": "清除筛选"
     },
     "progressBar": {
-      "title": "时间开销分布",
       "unknownUnfilled": "未知/未填写",
       "unknownArea": "未知领域"
     },
@@ -1127,7 +1029,6 @@
       "startDate": "开始日期",
       "endDate": "结束日期",
       "endTimeRequired": "结束时间 *",
-      "notes": "备注",
       "activityRequired": "请输入活动标题",
       "endBeforeStart": "结束时间不能早于开始时间"
     },
@@ -1161,9 +1062,7 @@
     "messages": {
       "loadingTimeLogs": "加载时间日志中...",
       "queryConditionsReset": "查询条件已重置",
-      "queryCompleted": "查询完成",
       "foundRecords": "找到 {{count}} 条记录",
-      "noMatchingRecords": "未找到匹配的记录",
       "queryFailed": "查询失败",
       "deleteSuccess": "时间日志删除成功！",
       "deleteFailed": "删除时间日志失败",
@@ -1173,23 +1072,11 @@
       "bulkDeleteFailed": "批量删除时间日志失败",
       "unrecorded": "未记录",
       "loadingAdvancedQueryFailed": "加载高级查询结果失败",
-      "exporting": "正在导出数据...",
-      "exportCompleted": "导出完成",
-      "exportedRecords": "成功导出 {{count}} 条记录",
-      "exportFailed": "导出失败",
-      "exportError": "导出数据时发生错误",
-      "noDataToExport": "暂无数据可导出",
-      "searchTruncatedTitle": "仅展示前 {{limit}} 条记录",
       "searchTruncatedDescription": "当前查询命中数据量超过上限，仅返回前 {{limit}} 条。请继续增加筛选条件，或改用导出功能获取完整数据。",
-      "exportTruncatedTitle": "导出达到 {{limit}} 条上限",
-      "exportTruncatedDescription": "该查询共匹配 {{total}} 条记录，但导出上限为 {{limit}} 条，本次仅导出前 {{limit}} 条。请增加筛选条件后再次导出以获取剩余数据。",
       "timeLogCreated": "时间日志创建成功！",
       "timeLogUpdated": "时间日志更新成功！",
       "timeLogCreatedWithTask": "\"{{title}}\" 已创建，已自动将关联任务设置为今日规划",
       "timeLogUpdatedWithTask": "\"{{title}}\" 已更新，已自动将关联任务设置为今日规划",
-      "timeLogCreatedWithoutTask": "\"{{title}}\" 已创建",
-      "timeLogUpdatedWithoutTask": "\"{{title}}\" 已更新",
-      "saveTimeLogFailed": "保存时间日志失败",
       "deleteConfirmation": "确定要删除这条时间日志吗？",
       "batchDeleteConfirmation": "确定要删除选中的 {{count}} 条时间日志吗？",
       "timeLogCreateSuccess": "时间日志创建成功！",
@@ -1204,7 +1091,6 @@
       "timeLogDeleteFailed": "时间日志删除失败",
       "timeLogDeleteFailedMessage": "请稍后重试",
       "timeLogRefreshFailed": "时间日志数据刷新失败",
-      "timeLogRefreshFailedMessage": "请检查网络后重试",
       "timeLogBatchDeletePartialFailed": "批量删除部分失败",
       "timeLogBatchDeletePartialFailedMessage": "成功删除 {{deletedCount}} 条记录，{{failedCount}} 条删除失败：{{errors}}",
       "timeLogBatchDeleteSuccess": "批量删除成功！",
@@ -1237,32 +1123,12 @@
       "reparseButton": "重新解析",
       "parseEmptyTitle": "没有可解析的内容",
       "parseEmptyMessage": "请先粘贴至少一行文本，再点击解析。",
-      "manualEdited": "已手动修改",
       "manualEditsReset": "存在手动修改的行，重新解析会覆盖这些修改，是否继续？",
       "summary": "有效 {{valid}} 条 / 共 {{total}} 条",
       "submit": "开始导入",
       "previewTitle": "预览（{{count}} 条）",
       "emptyPreview": "粘贴文本并点击解析即可看到预览。",
       "tip": "单次最多导入 {{max}} 行，超过部分会被忽略。",
-      "examples": {
-        "title": "支持的格式",
-        "endOnly": "仅结束时间 + 描述：\"0730 深度工作\"（开始时间自动延续上一条）",
-        "range": "时间段 + 描述：\"20：00-20：30 阅读\"（支持全角符号）"
-      },
-      "table": {
-        "line": "行号",
-        "startDate": "开始日期",
-        "startTime": "开始时间",
-        "endDate": "结束日期",
-        "endTime": "结束时间",
-        "description": "任务描述",
-        "status": "状态",
-        "actions": "操作"
-      },
-      "status": {
-        "valid": "可导入",
-        "error": "{{count}} 个错误"
-      },
       "warnings": {
         "autoShiftStart": "开始时间早于上一条，已自动顺延一天。",
         "autoCrossMidnightEnd": "结束时间早于上一条，已自动跨日。",
@@ -1279,12 +1145,8 @@
         "durationInvalid": "结束时间不能早于开始时间。",
         "tooManyLines": "仅处理前 {{limit}} 行，其余 {{dropped}} 行已忽略。"
       },
-      "editorTitle": "编辑第 {{line}} 行",
-      "editorSubtitle": "可在导入前微调开始/结束时间与描述。",
       "errorListTitle": "待修正的问题",
-      "warningListTitle": "自动调整提醒",
-      "errorListItem": "第 {{line}} 行 · {{message}}",
-      "warningListItem": "第 {{line}} 行 · {{message}}"
+      "errorListItem": "第 {{line}} 行 · {{message}}"
     }
   },
   "insights": {
@@ -1339,22 +1201,6 @@
     "messages": {
       "saveSuccessWithTask": "时间日志保存成功！",
       "saveSuccessWithTaskMessage": "\"{{title}}\" 已保存，已自动将关联任务设置为今日规划"
-    }
-  },
-  "treeCanvas": {
-    "instructions": {
-      "dragRotate": "拖拽旋转视角",
-      "scrollZoom": "滚轮缩放",
-      "rightClickPan": "右键平移"
-    },
-    "tooltip": {
-      "vision": "愿景：{{name}}",
-      "growthStage": "成长阶段: {{stage}}/10",
-      "experience": "经验: {{experience}}",
-      "experienceRate": "经验倍率: {{rate}} 点/小时",
-      "actualTime": "实际投入: {{time}}h",
-      "createdAt": "创建: {{date}}",
-      "tasks": "任务: {{count}}"
     }
   },
   "habits": {
@@ -1453,11 +1299,9 @@
     "relatedPersons": "关联人员",
     "noRelatedPersons": "暂无关联人员",
     "filterPerson": "点击过滤人员 @{{name}}",
-    "filterUntagged": "点击筛选无标签笔记",
     "untagged": "无标签",
     "pinned": "置顶",
-    "noTags": "暂无标签",
-    "filterTag": "点击过滤标签 #{{name}}"
+    "noTags": "暂无标签"
   },
   "persons": {
     "addContact": "新增联系人",
@@ -1789,7 +1633,6 @@
     }
   },
   "calendar": {
-    "saveFailed": "保存失败，请稍后重试",
     "noTimeDay": "无时间日",
     "mayanMoon": "第{{index}}月",
     "mayanWeek": "第{{index}}周",
@@ -1815,8 +1658,6 @@
     "addContact": "添加联系人",
     "namePlaceholder": "请输入姓名",
     "nicknamePlaceholder": "添加昵称",
-    "nicknameHelper": "添加昵称以更好地记住这个人",
-    "locationPlaceholder": "请输入地址",
     "locationTagsLabel": "地点标签",
     "updateSuccess": "联系人更新成功！",
     "updateSuccessMessage": "联系人\"{{name}}\"已成功更新",
@@ -1831,7 +1672,6 @@
     "searchPlaceholder": "搜索姓名或昵称...",
     "noContacts": "暂无联系人记录",
     "timeline": "时间线",
-    "viewTimeline": "查看时间线",
     "deleteConfirmMessage": "确定要删除联系人 \"{{name}}\" 吗？"
   },
   "habitForm": {
@@ -1841,7 +1681,6 @@
       "titlePlaceholder": "例如：每日运动30分钟",
       "descriptionPlaceholder": "描述这个习惯的意义和目标...",
       "startDateHint": "请选择习惯的开始日期",
-      "duration": "持续天数",
       "cadenceFrequency": "循环方式",
       "targetPerCycle": "每周期需完成",
       "weekdays": "每周日期",
@@ -1886,15 +1725,7 @@
     }
   },
   "apiErrors": {
-    "400": "请求参数错误",
-    "409": "资源冲突，请检查输入信息",
-    "notLoggedIn": "用户未登录，请求已取消",
-    "networkServiceError": "网络或服务错误",
-    "proxyResponseTitle": "代理或网关异常",
-    "proxyHtmlResponse": "安全代理或网关返回了 HTML 错误页，请稍后重试；如频繁出现请联系管理员。",
-    "invalidResponseFormat": "服务返回了无法识别的响应格式，请稍后重试。",
-    "emptyResponse": "服务返回了空响应，请稍后重试。",
-    "Email already registered": "该邮箱已注册"
+    "networkServiceError": "网络或服务错误"
   },
   "taskNotes": {
     "title": "笔记",
@@ -1989,21 +1820,6 @@
     "selectAll": "全选",
     "clearAll": "清空"
   },
-  "tree": {
-    "stage": {
-      "0": "种子",
-      "1": "萌芽",
-      "2": "幼苗",
-      "3": "树苗",
-      "4": "幼树",
-      "5": "成长",
-      "6": "花期",
-      "7": "结果",
-      "8": "丰收",
-      "9": "繁盛",
-      "10": "传承"
-    }
-  },
   "draggableTaskList": {
     "expandButton": {
       "expand": "展开任务",
@@ -2025,9 +1841,6 @@
       "7years": "七年",
       "from": "{{date}}起",
       "within": "内"
-    },
-    "actions": {
-      "more": "更多操作"
     },
     "tooltip": {
       "title": "{{name}}",

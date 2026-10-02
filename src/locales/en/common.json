@@ -1,23 +1,17 @@
 {
   "common": {
     "save": "Save",
-    "saveChanges": "Save changes",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "delete": "Delete",
     "edit": "Edit",
     "copy": "Copy",
     "add": "Add",
-    "rename": "Rename",
     "replace": "Replace",
-    "refresh": "Refresh",
     "clear": "Clear",
     "findReplace": "Find & Replace",
     "error": "Error",
-    "success": "Success",
     "info": "Info",
-    "warning": "Warning",
-    "logout": "Logout",
     "user": "User",
     "openNavigationMenu": "Open Navigation Menu",
     "requestFailed": "Request failed",
@@ -31,7 +25,6 @@
     "saving": "Saving...",
     "creating": "Creating...",
     "submitting": "Submitting...",
-    "testing": "Testing...",
     "deleting": "Deleting...",
     "actions": "Actions",
     "all": "All",
@@ -41,8 +34,6 @@
     "no_options": "No options",
     "no_match": "No matching options",
     "create_new": "Create New",
-    "reset": "Reset",
-    "preview": "Preview",
     "placeholder": "Placeholder",
     "default": "Default",
     "no_data": "No data",
@@ -52,9 +43,7 @@
     "create_with_name": "Create {{name}}",
     "selected": "Selected",
     "date": "Date",
-    "time": "Time",
-    "notice": "Notice",
-    "required": " is required"
+    "time": "Time"
   },
   "target": {
     "area": "Area",
@@ -175,8 +164,6 @@
       "deleteFailedDetail": "There was a problem deleting the task. Please try again later.",
       "statusUpdateSuccess": "Task status updated",
       "statusUpdateSuccessDetail": "The task status has been updated",
-      "statusUpdateSucceeded": "Task status updated successfully",
-      "statusUpdateSucceededDetail": "\"{{content}}\" status updated to {{status}}",
       "statusUpdateFailed": "Update task status failed",
       "statusUpdateFailedDetail": "There was a problem updating the task status. Please try again later.",
       "orderUpdateSuccess": "Task order updated",
@@ -349,10 +336,6 @@
       "description": "Description (Optional)",
       "descriptionPlaceholder": "Description of the tag's purpose..."
     },
-    "filters": {
-      "category": "Category",
-      "allCategories": "All categories"
-    },
     "categoryManager": {
       "title": "Categories",
       "description": "Create and switch between tag categories.",
@@ -430,10 +413,7 @@
     "keywordFilter": "Keyword \"{{keyword}}\"",
     "notesCount": "{{count}} notes",
     "readyToSearch": "Ready to search",
-    "exportText": "Export Text",
-    "clearFilters": "Clear Filters",
-    "exportError": "Export Failed",
-    "exportErrorMessage": "An error occurred during export"
+    "clearFilters": "Clear Filters"
   },
   "notes": {
     "loadMore": "Load More Notes",
@@ -476,13 +456,11 @@
         "unknown": "Unknown"
       }
     },
-    "tagManager": "Tag Manager",
     "noteTagManager": "Note Tags",
     "loadingNotes": "Loading notes...",
     "loadingAdvanced": "Running advanced search...",
     "collapseDisplayHint": "Showing {{count}} lines",
     "queryMode": {
-      "standard": "Quick Notes",
       "advanced": "Advanced Search",
       "import": "Bulk Import"
     },
@@ -573,35 +551,13 @@
       "nextPage": "Next",
       "pageIndicator": "Page {{page}} / {{total}}",
       "errorTitle": "Advanced search error",
-      "taskRequired": "Please choose a task before running the search.",
-      "copyNoResultsTitle": "Nothing to copy",
-      "copyNoResultsMessage": "Run a search first to generate results for copying.",
-      "summary": {
-        "dateRange": "Date range: {{start}} – {{end}}",
-        "dateFrom": "Start date: {{start}}",
-        "dateTo": "End date: {{end}}",
-        "tagAny": "Tags (any match): {{names}}",
-        "tagAnyEmpty": "Tags: any (no specific tag selected)",
-        "tagAll": "Tags (must include all): {{names}}",
-        "tagNone": "Tags: notes without tags",
-        "personAny": "Persons (any match): {{names}}",
-        "personAnyEmpty": "Persons: any (no specific person selected)",
-        "personAll": "Persons (must include all): {{names}}",
-        "personNone": "Persons: no persons attached",
-        "taskAny": "Task filter: any task",
-        "taskNone": "Task filter: without task",
-        "taskHas": "Task filter: has task",
-        "taskSpecific": "Task filter: task {{task}}",
-        "taskUnknown": "unknown task",
-        "keyword": "Keyword: {{keyword}}"
-      }
+      "taskRequired": "Please choose a task before running the search."
     },
     "batchEdit": {
       "title": "Batch Edit Notes",
       "modalTitle": "Batch edit ({{count}} notes)",
       "description": "Choose operation mode to update selected notes",
       "noSelection": "Please select notes first",
-      "invalidMode": "Unsupported batch mode",
       "tagsRequired": "Please select tags to apply",
       "personsRequired": "Please select persons to apply",
       "taskRequired": "Please select a task",
@@ -713,20 +669,6 @@
         "description": "Calendar year that anchors seven-year periods. Gregorian periods start January 1 of the anchor year; Mayan periods start on the configured Mayan New Year day of that year."
       }
     },
-    "planningSettings": {
-      "taskPlanning": {
-        "label": "Default Planning",
-        "description": "After selecting default planning, it will be automatically applied when creating tasks anywhere (can be modified in forms)."
-      },
-      "timeLogTaskPlanning": {
-        "label": "Auto-set Task Planning",
-        "description": "Connect your actions with your plans. When a time log is linked to a task, it will be automatically scheduled for today."
-      },
-      "habitActionsInPlanning": {
-        "label": "Show Habit Actions",
-        "description": "Make daily rituals a part of your daily plan. Choose whether to display habit actions here."
-      }
-    },
     "areaOrder": {
       "title": "Area Order",
       "description": "Customize the display order of your areas, allowing you to prioritize the most important areas of your life."
@@ -741,7 +683,6 @@
       "description": "Choose application interface language.",
       "label": "Select Language",
       "placeholder": "Please select a language...",
-      "updated": "Language updated",
       "system": "Follow system",
       "timezone": {
         "label": "Preferred Timezone",
@@ -749,17 +690,12 @@
       }
     },
     "noGroupSelected": "No settings group selected",
-    "planning": {
-      "title": "Planning Settings",
-      "description": "Manage task planning related settings"
-    },
     "visions": {
       "title": "Vision Experience",
       "description": "Configure how invested time converts into vision experience points.",
       "experienceRate": {
         "label": "Experience per Hour",
-        "description": "Set experience points gained for every hour of effort (1-3600). Per-vision overrides can be set when editing a vision.",
-        "applyAll": "Save and apply to all visions"
+        "description": "Set experience points gained for every hour of effort (1-3600). Per-vision overrides can be set when editing a vision."
       },
       "experienceTable": {
         "label": "Vision Overrides",
@@ -770,12 +706,10 @@
         "statusColumn": "Status",
         "rateColumn": "Experience Rate",
         "rateUnit": "XP/h",
-        "save": "Save changes",
         "saving": "Saving…",
         "footerHint": "Default preference: {{defaultRate}} XP/h",
         "invalidRate": "Experience rate must be an integer between {{min}} and {{max}}.",
         "rateInputLabel": "{{name}} experience rate",
-        "toastSuccess": "Vision experience rates updated.",
         "toastError": "Failed to update vision experience rates."
       }
     },
@@ -822,24 +756,7 @@
       "moveUp": "Move {{name}} up",
       "moveDown": "Move {{name}} down"
     },
-    "saveSuccess": "All settings saved successfully",
-    "partialSuccess": "Saved {{successful}} settings, {{failed}} failed",
     "saveFailed": "Settings save failed",
-    "theme": {
-      "updated": "Theme updated"
-    },
-    "visibleModules": {
-      "updated": "Navigation modules updated"
-    },
-    "export": {
-      "preparing": "Preparing export...",
-      "success": "File exported",
-      "full": {
-        "title": "Full Export",
-        "description": "Export all financial data for the current account (accounts, cashflow, transactions).",
-        "button": "Export All Data"
-      }
-    },
     "autoSavePending": "Changes pending save",
     "autoSaveIdle": "All changes saved"
   },
@@ -852,7 +769,6 @@
       "description": "Description",
       "stage": "Stage",
       "experience": "Experience",
-      "totalEffort": "Total Effort",
       "createdAt": "Created",
       "noTasks": "No tasks yet",
       "actions": {
@@ -870,15 +786,11 @@
       "createVision": "Create Vision",
       "editVision": "Edit Vision",
       "deleteVision": "Delete Vision",
-      "harvestVision": "Harvest Vision",
-      "deleteTask": "Delete Task"
+      "harvestVision": "Harvest Vision"
     },
     "messages": {
       "visionCreated": "Vision created successfully!",
       "visionUpdated": "Vision updated successfully!",
-      "copySuccess": "Copy successful",
-      "copySuccessDetail": "Vision task tree details have been copied to clipboard",
-      "copyFailed": "Copy failed",
       "recomputeSuccess": "Time effort recomputation completed",
       "recomputeFailed": "Time effort recomputation failed",
       "saveFailed": "Failed to save vision",
@@ -903,8 +815,7 @@
     },
     "confirm": {
       "deleteVision": "Are you sure you want to delete vision \"{{name}}\"? This will also delete all related data.",
-      "harvestVision": "Are you sure you want to harvest vision \"{{name}}\"? It will be converted to achievement fruit.",
-      "deleteTask": "Are you sure you want to delete task \"{{content}}\"?"
+      "harvestVision": "Are you sure you want to harvest vision \"{{name}}\"? It will be converted to achievement fruit."
     }
   },
   "planning": {
@@ -964,9 +875,7 @@
     "taskActions": {
       "createTask": "Create New Task to {{period}}",
       "addTask": "Add Task to {{period}}",
-      "export": "Export Current Period Planning Data",
-      "carryForward": "Carry Forward ({{count}})",
-      "carryForwardTooltip": "Carry forward unfinished tasks to next period"
+      "carryForward": "Carry Forward ({{count}})"
     },
     "createTask": {
       "visionPlaceholder": "Select vision...",
@@ -1003,9 +912,6 @@
       "carryForwardPartialFailedMessage": "{{count}} tasks failed to carry forward, please try again later",
       "carryForwardFailed": "Carry Forward Failed",
       "carryForwardFailedMessage": "Failed to carry forward tasks, please try again later",
-      "exportSuccess": "Export Success",
-      "exportSuccessMessage": "Planning data has been copied to clipboard",
-      "exportFailedMessage": "Failed to export planning data, please try again later",
       "habitActionUpdateFailed": "Update Failed",
       "habitActionUpdateFailedMessage": "Failed to update habit status, please try again later"
     }
@@ -1075,8 +981,6 @@
     "toolbar": {
       "returnToSingle": "Return to Single Day",
       "advancedFeatures": "Advanced Features",
-      "exportDaily": "Export Daily",
-      "exportDailyTooltip": "One-click export all timelogs for the day",
       "bulkImport": "Batch Import"
     },
     "advancedSearch": {
@@ -1094,7 +998,6 @@
       "durationMaxPlaceholder": "Max",
       "search": "Search",
       "reset": "Reset",
-      "export": "Export",
       "enableBatchOperations": "Enable Batch Operations",
       "selectAll": "Select All",
       "selectInverse": "Select Inverse",
@@ -1115,7 +1018,6 @@
       "clearFilter": "Clear Filter"
     },
     "progressBar": {
-      "title": "Time Allocation Distribution",
       "unknownUnfilled": "Unknown/Unfilled",
       "unknownArea": "Unknown Area"
     },
@@ -1127,7 +1029,6 @@
       "startDate": "Start Date",
       "endDate": "End Date",
       "endTimeRequired": "End Time *",
-      "notes": "Notes",
       "activityRequired": "Please enter activity title",
       "endBeforeStart": "End time can't be earlier than the start time"
     },
@@ -1161,9 +1062,7 @@
     "messages": {
       "loadingTimeLogs": "Loading time logs...",
       "queryConditionsReset": "Query conditions have been reset",
-      "queryCompleted": "Query completed",
       "foundRecords": "Found {{count}} records",
-      "noMatchingRecords": "No matching records found",
       "queryFailed": "Query failed",
       "deleteSuccess": "Timelog deleted",
       "deleteFailed": "Delete timelog failed",
@@ -1173,23 +1072,11 @@
       "bulkDeleteFailed": "Batch delete timelogs failed",
       "unrecorded": "Unrecorded",
       "loadingAdvancedQueryFailed": "Failed to load advanced query results",
-      "exporting": "Exporting data...",
-      "exportCompleted": "Export completed",
-      "exportedRecords": "Successfully exported {{count}} records",
-      "exportFailed": "Export failed",
-      "exportError": "Error occurred while exporting data",
-      "noDataToExport": "No data available to export",
-      "searchTruncatedTitle": "Showing first {{limit}} records",
       "searchTruncatedDescription": "This query matches more data than the limit, so only the first {{limit}} rows are returned. Please add more filters or export the data if you need everything.",
-      "exportTruncatedTitle": "Export truncated at {{limit}} records",
-      "exportTruncatedDescription": "This export hit the {{limit}} record cap and only includes the first {{limit}} results (about {{total}} matches). Refine your filters and export again to retrieve the rest.",
       "timeLogCreated": "Time log created successfully!",
       "timeLogUpdated": "Time log updated successfully!",
       "timeLogCreatedWithTask": "\"{{title}}\" has been created, automatically set related task to today's planning",
       "timeLogUpdatedWithTask": "\"{{title}}\" has been updated, automatically set related task to today's planning",
-      "timeLogCreatedWithoutTask": "\"{{title}}\" has been created",
-      "timeLogUpdatedWithoutTask": "\"{{title}}\" has been updated",
-      "saveTimeLogFailed": "Failed to save time log",
       "deleteConfirmation": "Are you sure you want to delete this time log?",
       "batchDeleteConfirmation": "Are you sure you want to delete the selected {{count}} time logs?",
       "timeLogCreateSuccess": "Time log created successfully!",
@@ -1204,7 +1091,6 @@
       "timeLogDeleteFailed": "Time log deletion failed",
       "timeLogDeleteFailedMessage": "Please try again later",
       "timeLogRefreshFailed": "Failed to refresh time log data",
-      "timeLogRefreshFailedMessage": "Please check your connection and try again",
       "timeLogBatchDeletePartialFailed": "Batch deletion partially failed",
       "timeLogBatchDeletePartialFailedMessage": "Successfully deleted {{deletedCount}} records, {{failedCount}} deletions failed: {{errors}}",
       "timeLogBatchDeleteSuccess": "Batch deletion successful!",
@@ -1237,32 +1123,12 @@
       "reparseButton": "Re-parse",
       "parseEmptyTitle": "Nothing to parse",
       "parseEmptyMessage": "Please paste at least one line of text before parsing.",
-      "manualEdited": "Edited manually",
       "manualEditsReset": "You have manually edited rows. Re-parsing will discard those edits. Continue?",
       "summary": "{{valid}} valid / {{total}} total",
       "submit": "Import",
       "previewTitle": "Preview ({{count}})",
       "emptyPreview": "Paste data and click Parse to see the preview.",
       "tip": "Supports up to {{max}} rows per import. Extra lines will be ignored.",
-      "examples": {
-        "title": "Supported formats",
-        "endOnly": "End time + description (start inferred): \"0730 Deep work\"",
-        "range": "Time range + description: \"20:00-20:30 Reading\" (full-width punctuation supported)"
-      },
-      "table": {
-        "line": "Line",
-        "startDate": "Start date",
-        "startTime": "Start time",
-        "endDate": "End date",
-        "endTime": "End time",
-        "description": "Description",
-        "status": "Status",
-        "actions": "Actions"
-      },
-      "status": {
-        "valid": "Ready",
-        "error": "{{count}} error(s)"
-      },
       "warnings": {
         "autoShiftStart": "Start time earlier than previous entry, auto-shifted to next day.",
         "autoCrossMidnightEnd": "End time earlier than current entry, auto-crossed midnight.",
@@ -1279,12 +1145,8 @@
         "durationInvalid": "End time must not be earlier than start time.",
         "tooManyLines": "Only {{limit}} lines are processed. {{dropped}} extra line(s) were ignored."
       },
-      "editorTitle": "Edit line {{line}}",
-      "editorSubtitle": "Adjust start/end time and description before importing.",
       "errorListTitle": "Issues detected",
-      "warningListTitle": "Auto adjustments",
-      "errorListItem": "Line {{line}} · {{message}}",
-      "warningListItem": "Line {{line}} · {{message}}"
+      "errorListItem": "Line {{line}} · {{message}}"
     }
   },
   "insights": {
@@ -1339,22 +1201,6 @@
     "messages": {
       "saveSuccessWithTask": "Time log saved successfully!",
       "saveSuccessWithTaskMessage": "\"{{title}}\" has been saved, automatically set related task to today's planning"
-    }
-  },
-  "treeCanvas": {
-    "instructions": {
-      "dragRotate": "Drag to rotate view",
-      "scrollZoom": "Scroll to zoom",
-      "rightClickPan": "Right-click to pan"
-    },
-    "tooltip": {
-      "vision": "Vision: {{name}}",
-      "growthStage": "Growth Stage: {{stage}}/10",
-      "experience": "Experience: {{experience}}",
-      "experienceRate": "Experience Rate: {{rate}} XP/h",
-      "actualTime": "Actual Time: {{time}}h",
-      "createdAt": "Created: {{date}}",
-      "tasks": "Tasks: {{count}}"
     }
   },
   "habits": {
@@ -1453,11 +1299,9 @@
     "relatedPersons": "Related Persons",
     "noRelatedPersons": "No related persons",
     "filterPerson": "Click to filter person @{{name}}",
-    "filterUntagged": "Click to filter untagged notes",
     "untagged": "Untagged",
     "pinned": "Pinned",
-    "noTags": "No tags",
-    "filterTag": "Click to filter tag #{{name}}"
+    "noTags": "No tags"
   },
   "persons": {
     "addContact": "Add Contact",
@@ -1789,7 +1633,6 @@
     }
   },
   "calendar": {
-    "saveFailed": "Save failed, please try again later",
     "noTimeDay": "No time day",
     "mayanMoon": "Moon {{index}}",
     "mayanWeek": "Week {{index}}",
@@ -1815,8 +1658,6 @@
     "addContact": "Add Contact",
     "namePlaceholder": "Enter name",
     "nicknamePlaceholder": "Add nickname",
-    "nicknameHelper": "Add nicknames to better remember this person",
-    "locationPlaceholder": "Enter location",
     "locationTagsLabel": "Location Tags",
     "updateSuccess": "Contact updated successfully!",
     "updateSuccessMessage": "Contact \"{{name}}\" has been updated",
@@ -1831,7 +1672,6 @@
     "searchPlaceholder": "Search name or nickname...",
     "noContacts": "No contacts found",
     "timeline": "Timeline",
-    "viewTimeline": "View Timeline",
     "deleteConfirmMessage": "Are you sure you want to delete contact \"{{name}}\"?"
   },
   "habitForm": {
@@ -1841,7 +1681,6 @@
       "titlePlaceholder": "e.g., Exercise 30 minutes daily",
       "descriptionPlaceholder": "Describe the purpose and goals of this habit...",
       "startDateHint": "Please select the start date for this habit",
-      "duration": "Duration (Days)",
       "cadenceFrequency": "Repeats",
       "targetPerCycle": "Required per cycle",
       "weekdays": "Weekdays",
@@ -1886,15 +1725,7 @@
     }
   },
   "apiErrors": {
-    "400": "Bad request",
-    "409": "Resource conflict, please check your input",
-    "notLoggedIn": "User not logged in, request cancelled",
-    "networkServiceError": "Network or service error",
-    "proxyResponseTitle": "Proxy or gateway error",
-    "proxyHtmlResponse": "A security proxy or gateway returned an HTML error page. Please try again later or contact an administrator if this keeps happening.",
-    "invalidResponseFormat": "The service returned a response format that could not be parsed. Please try again later.",
-    "emptyResponse": "The service returned an empty response. Please try again later.",
-    "Email already registered": "Email already registered"
+    "networkServiceError": "Network or service error"
   },
   "taskNotes": {
     "title": "Notes",
@@ -1989,21 +1820,6 @@
     "selectAll": "Select All",
     "clearAll": "Clear All"
   },
-  "tree": {
-    "stage": {
-      "0": "Seed",
-      "1": "Sprout",
-      "2": "Seedling",
-      "3": "Sapling",
-      "4": "Young Tree",
-      "5": "Growing Tree",
-      "6": "Blooming Tree",
-      "7": "Fruit-Bearing",
-      "8": "Harvest",
-      "9": "Prosperity",
-      "10": "Legacy"
-    }
-  },
   "draggableTaskList": {
     "expandButton": {
       "expand": "Expand Task",
@@ -2025,9 +1841,6 @@
       "7years": "7 Years",
       "from": "From {{date}}",
       "within": " within"
-    },
-    "actions": {
-      "more": "More Actions"
     },
     "tooltip": {
       "title": "{{name}}",
