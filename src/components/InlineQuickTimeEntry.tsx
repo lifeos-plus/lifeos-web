@@ -613,8 +613,6 @@ export default function InlineQuickTimeEntry({
     lastAutoTitleRef.current = "";
   }, [selectedTaskId]);
 
-  // Helpers kept for potential future preview UI; not used now after preview removal
-
   const autoSetTaskPlanningToday = async (taskId: UUID, entryTime: string) => {
     try {
       const dateString = formatDate(entryTime, timezone);
