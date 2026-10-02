@@ -1202,15 +1202,11 @@ export function SnapshotDetail({
                       )}
                     </td>
                     <td className="align-top">
-                      {node.currencyCode ? (
-                        <FinanceAmountText
-                          amount={node.amount}
-                          currencyCode={node.currencyCode}
-                          showCurrency={false}
-                        />
-                      ) : (
-                        <FinanceAmountListText value={node.amount} />
-                      )}
+                      <FinanceAmountText
+                        amount={node.amount}
+                        currencyCode={node.currencyCode}
+                        showCurrency={false}
+                      />
                     </td>
                     <td className="align-top">
                       {usesConvertedAggregation && node.amountConverted ? (
@@ -1329,15 +1325,18 @@ function buildSnapshotDisplayTree(
         }
         rollupEntries.forEach((entry) => usedEntryIds.add(entry.id));
         const inlineEntry = inlineSingleHolding ? manualEntries[0] : null;
-        // "原始金额" must always reflect the original currency and amount; the
-        // exchange-rate snapshot only feeds the converted column and totals.
-        const amount = (sortedRollupEntries.length ? sortedRollupEntries : inlineEntry ? [inlineEntry] : [])
-          .map((entry) => `${entry.amount} ${entry.currency_code}`)
-          .join(", ");
-        const currencyCode =
-          rollupEntries.length === 1 || inlineEntry
-            ? (rollupEntries[0] ?? inlineEntry)?.currency_code ?? ""
-            : "";
+        // A node with visible child rows is a group header: its descendants are
+        // already listed below and per-currency totals live in the summary
+        // table, so the rollup is not repeated in the "原始金额" column.
+        const nativeEntry =
+          children.length > 0
+            ? null
+            : (inlineEntry ??
+              (sortedRollupEntries.length === 1 ? sortedRollupEntries[0] : null));
+        // "原始金额" carries the bare amount; the original currency is shown in
+        // the asset column so the symbol is never duplicated inside the number.
+        const amount = nativeEntry?.amount ?? "";
+        const currencyCode = nativeEntry?.currency_code ?? "";
         const amountConverted = useConvertedRollups
           ? sumAmountStrings(
               rollupEntries.map((entry) => entry.amount_converted),
@@ -1378,7 +1377,28 @@ function buildSnapshotDisplayTree(
           children: [],
         }) satisfies SnapshotDisplayNode,
     );
-  return roots.concat(orphanEntries);
+  return pruneZeroAmountNodes(roots.concat(orphanEntries));
+}
+
+function pruneZeroAmountNodes(nodes: SnapshotDisplayNode[]): SnapshotDisplayNode[] {
+  return nodes.flatMap((node) => {
+    const children = pruneZeroAmountNodes(node.children);
+    // A group header with remaining children is always kept; a row without
+    // children is dropped when its native amount is empty or zero.
+    if (children.length || !isZeroOrEmptyAmount(node.amount)) {
+      return [{ ...node, children }];
+    }
+    return [];
+  });
+}
+
+function isZeroOrEmptyAmount(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return true;
+  }
+  const numeric = parseDisplayAmount(trimmed);
+  return Number.isFinite(numeric) && numeric === 0;
 }
 
 function getSummaryAmountsByCurrency(
