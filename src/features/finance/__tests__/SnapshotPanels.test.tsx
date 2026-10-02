@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -186,5 +186,146 @@ describe("SnapshotDetail", () => {
     expect(row).toHaveClass("focus-within:bg-primary/10");
     expect(assetSummaryRow).toHaveClass("hover:bg-primary/10");
     expect(assetSummaryRow).toHaveClass("focus-within:bg-primary/10");
+  });
+
+  it("keeps native currencies in the original column when aggregation is converted", () => {
+    setupTranslationMock();
+
+    const assetsNode: FinanceTreeNode = {
+      id: "node-assets",
+      parent_id: null,
+      name: "Assets",
+      currency_code: null,
+      path: "Assets",
+      depth: 0,
+      display_order: 1,
+    };
+    const ethNode: FinanceTreeNode = {
+      id: "node-eth",
+      parent_id: assetsNode.id,
+      name: "ETH wallet",
+      currency_code: "ETH",
+      path: "Assets/ETH wallet",
+      depth: 1,
+      display_order: 1,
+    };
+    const cnyNode: FinanceTreeNode = {
+      id: "node-cny",
+      parent_id: assetsNode.id,
+      name: "CNY wallet",
+      currency_code: "CNY",
+      path: "Assets/CNY wallet",
+      depth: 1,
+      display_order: 2,
+    };
+
+    const convertedSnapshot: FinanceSnapshot = {
+      ...sourceSnapshot,
+      id: "snapshot-converted",
+      entries: [
+        {
+          id: "entry-eth",
+          node_id: ethNode.id,
+          node_name: ethNode.name,
+          amount: "1.00000000",
+          currency_code: "ETH",
+          amount_converted: "1573.8800",
+          note: null,
+          is_auto_generated: false,
+        },
+        {
+          id: "entry-cny",
+          node_id: cnyNode.id,
+          node_name: cnyNode.name,
+          amount: "100.00000000",
+          currency_code: "CNY",
+          amount_converted: "150.0000",
+          note: null,
+          is_auto_generated: false,
+        },
+        {
+          id: "rollup-eth",
+          node_id: assetsNode.id,
+          node_name: assetsNode.name,
+          amount: "1.00000000",
+          currency_code: "ETH",
+          amount_converted: "1573.8800",
+          note: null,
+          is_auto_generated: true,
+        },
+        {
+          id: "rollup-cny",
+          node_id: assetsNode.id,
+          node_name: assetsNode.name,
+          amount: "100.00000000",
+          currency_code: "CNY",
+          amount_converted: "150.0000",
+          note: null,
+          is_auto_generated: true,
+        },
+      ],
+      summary: { aggregation_mode: "converted" },
+    };
+
+    renderWithProviders(
+      <SnapshotDetail
+        snapshot={convertedSnapshot}
+        assets={assets}
+        treeNodes={[
+          {
+            ...assetsNode,
+            children: [
+              { ...ethNode, children: [] },
+              { ...cnyNode, children: [] },
+            ],
+          },
+        ]}
+        rateSnapshots={[]}
+      />,
+    );
+
+    const assetsRow = screen.getByText("Assets").closest("tr");
+    expect(assetsRow).not.toBeNull();
+    // The original column keeps the native currencies instead of the converted
+    // primary-currency value, and the converted column shows the summed total.
+    expect(within(assetsRow as HTMLElement).getByText("ETH")).toBeInTheDocument();
+    expect(within(assetsRow as HTMLElement).getByText("CNY")).toBeInTheDocument();
+    expect(within(assetsRow as HTMLElement).queryByText("USD")).not.toBeInTheDocument();
+    expect(assetsRow).toHaveTextContent("1723.88");
+  });
+
+  it("keeps the converted total when a zero-amount currency has no rate", () => {
+    setupTranslationMock();
+
+    const zeroRateSnapshot: FinanceSnapshot = {
+      ...sourceSnapshot,
+      id: "snapshot-zero-rate",
+      entries: [],
+      summary: {
+        aggregation_mode: "converted",
+        amounts_by_currency: {
+          USD: { total_positive: "500", total_negative: "0", net_amount: "500" },
+          EUR: { total_positive: "0", total_negative: "0", net_amount: "0" },
+        },
+      },
+      exchange_rates: {
+        primary_currency: "USD",
+        rate_snapshot_id: sourceSnapshot.rate_snapshot_id,
+        captured_at: "2026-06-30T20:00:00.000Z",
+        rates: {},
+      },
+    };
+
+    renderWithProviders(
+      <SnapshotDetail
+        snapshot={zeroRateSnapshot}
+        assets={assets}
+        treeNodes={[]}
+        rateSnapshots={[]}
+      />,
+    );
+
+    const totalLabel = screen.getByText("finance.metrics.totalValue");
+    expect(totalLabel.parentElement).toHaveTextContent("500");
   });
 });

@@ -289,8 +289,6 @@ export default function PlannedEventModal({
     [formData.start_time],
   );
 
-  // Tags UI removed; keeping data field for compatibility.
-
   const handleRecurrenceChange = useCallback((rrule: string) => {
     setFormData((prev) => ({
       ...prev,
