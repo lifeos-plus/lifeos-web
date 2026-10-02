@@ -16,7 +16,12 @@ import type {
 } from "@/services/api/finance";
 import type { UUID } from "@/types/primitive";
 
-import { FinanceAmountListText, FinanceAmountText, FinanceAssetSymbol } from "./AmountText";
+import {
+  FinanceAmountListText,
+  FinanceAmountText,
+  FinanceAssetSymbol,
+  type FinanceAmountListItem,
+} from "./AmountText";
 import { financeTextClass } from "./styles";
 import {
   dateToEndIso,
@@ -499,7 +504,7 @@ function SnapshotEntryTreeTable({
   treeNodes: TreeNodeWithChildren[];
   amounts: SnapshotAmountState;
   aggregatedAmounts: Record<UUID, string>;
-  nativeAggregatedAmounts: Record<UUID, string>;
+  nativeAggregatedAmounts: Record<UUID, FinanceAmountListItem[]>;
   primaryCurrency: string;
   conversionRates: Record<string, number>;
   assets: FinanceAsset[];
@@ -545,7 +550,7 @@ function SnapshotEntryTreeTable({
         (holding) => normalizeHoldingCurrency(holding.currencyCode) === defaultCurrency,
       );
       const extraHoldings = holdings.filter((holding) => holding.id !== defaultHolding?.id);
-      const nativeAggregatedAmount = nativeAggregatedAmounts[node.id] ?? "";
+      const nativeAggregatedAmount = nativeAggregatedAmounts[node.id] ?? [];
       const aggregatedAmount = aggregatedAmounts[node.id] ?? "";
       const defaultAmount = defaultHolding?.amount ?? "";
       const defaultConvertedAmount = hasRateSnapshot
@@ -614,7 +619,7 @@ function SnapshotEntryTreeTable({
                 <div
                   className={`min-h-[2.25rem] flex-1 rounded-md border border-dashed border-base-200 px-3 py-2 ${financeTextClass.helperText}`}
                 >
-                  <FinanceAmountListText value={nativeAggregatedAmount} />
+                  <FinanceAmountListText items={nativeAggregatedAmount} />
                 </div>
                 <ActionButton
                   label=""
@@ -1723,8 +1728,8 @@ function buildNativeSnapshotAmounts(
   amounts: SnapshotAmountState,
   primaryCurrency: string,
   assets: FinanceAsset[],
-): Record<UUID, string> {
-  const result: Record<UUID, string> = {};
+): Record<UUID, FinanceAmountListItem[]> {
+  const result: Record<UUID, FinanceAmountListItem[]> = {};
 
   const visit = (node: TreeNodeWithChildren): Map<string, number> => {
     const totals = new Map<string, number>();
@@ -1749,8 +1754,10 @@ function buildNativeSnapshotAmounts(
     if (totals.size) {
       result[node.id] = Array.from(totals.entries())
         .sort(([left], [right]) => left.localeCompare(right))
-        .map(([currency, value]) => `${formatNumberForAsset(value, currency, assets)} ${currency}`)
-        .join(", ");
+        .map(([currency, value]) => ({
+          amount: formatNumberForAsset(value, currency, assets),
+          currencyCode: currency,
+        }));
     }
     return totals;
   };

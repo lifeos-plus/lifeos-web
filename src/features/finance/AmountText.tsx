@@ -9,7 +9,7 @@ type FinanceAmountTextProps = {
 };
 
 type FinanceAmountListTextProps = {
-  value: string;
+  items: FinanceAmountListItem[];
   className?: string;
 };
 
@@ -17,6 +17,11 @@ type FinanceAssetSymbolProps = {
   symbol: string;
   className?: string;
   inheritTone?: boolean;
+};
+
+export type FinanceAmountListItem = {
+  amount: string;
+  currencyCode: string;
 };
 
 const subduedTextClass = "font-normal opacity-65";
@@ -59,8 +64,7 @@ export function FinanceAmountText({
   );
 }
 
-export function FinanceAmountListText({ value, className = "" }: FinanceAmountListTextProps) {
-  const items = parseAmountList(value);
+export function FinanceAmountListText({ items, className = "" }: FinanceAmountListTextProps) {
   if (!items.length) {
     return (
       <span className={[financeTextClass.placeholder, className].filter(Boolean).join(" ")}>
@@ -128,22 +132,4 @@ function trimInsignificantFractionZeroes(value: string): string {
   }
   const trimmedFraction = fractionPart.replace(/0+$/, "");
   return trimmedFraction ? `${integerPart}${separator}${trimmedFraction}` : integerPart;
-}
-
-function parseAmountList(value: string): Array<{ amount: string; currencyCode: string }> {
-  return value
-    .split(/,\s+/)
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((item) => {
-      const match = item.match(/^(.+?)\s+([A-Za-z][A-Za-z0-9._-]*)$/);
-      if (!match) {
-        return null;
-      }
-      return {
-        amount: match[1].trim(),
-        currencyCode: match[2].trim().toUpperCase(),
-      };
-    })
-    .filter((item): item is { amount: string; currencyCode: string } => Boolean(item));
 }
