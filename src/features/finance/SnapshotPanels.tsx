@@ -16,7 +16,12 @@ import type {
 } from "@/services/api/finance";
 import type { UUID } from "@/types/primitive";
 
-import { FinanceAmountListText, FinanceAmountText, FinanceAssetSymbol } from "./AmountText";
+import {
+  FinanceAmountListText,
+  FinanceAmountText,
+  FinanceAssetSymbol,
+  type FinanceAmountListItem,
+} from "./AmountText";
 import { financeTextClass } from "./styles";
 import {
   dateToEndIso,
@@ -499,7 +504,7 @@ function SnapshotEntryTreeTable({
   treeNodes: TreeNodeWithChildren[];
   amounts: SnapshotAmountState;
   aggregatedAmounts: Record<UUID, string>;
-  nativeAggregatedAmounts: Record<UUID, string>;
+  nativeAggregatedAmounts: Record<UUID, FinanceAmountListItem[]>;
   primaryCurrency: string;
   conversionRates: Record<string, number>;
   assets: FinanceAsset[];
@@ -545,7 +550,7 @@ function SnapshotEntryTreeTable({
         (holding) => normalizeHoldingCurrency(holding.currencyCode) === defaultCurrency,
       );
       const extraHoldings = holdings.filter((holding) => holding.id !== defaultHolding?.id);
-      const nativeAggregatedAmount = nativeAggregatedAmounts[node.id] ?? "";
+      const nativeAggregatedAmount = nativeAggregatedAmounts[node.id] ?? [];
       const aggregatedAmount = aggregatedAmounts[node.id] ?? "";
       const defaultAmount = defaultHolding?.amount ?? "";
       const defaultConvertedAmount = hasRateSnapshot
@@ -614,7 +619,7 @@ function SnapshotEntryTreeTable({
                 <div
                   className={`min-h-[2.25rem] flex-1 rounded-md border border-dashed border-base-200 px-3 py-2 ${financeTextClass.helperText}`}
                 >
-                  <FinanceAmountListText value={nativeAggregatedAmount} />
+                  <FinanceAmountListText items={nativeAggregatedAmount} />
                 </div>
                 <ActionButton
                   label=""
@@ -1202,15 +1207,11 @@ export function SnapshotDetail({
                       )}
                     </td>
                     <td className="align-top">
-                      {node.currencyCode ? (
-                        <FinanceAmountText
-                          amount={node.amount}
-                          currencyCode={node.currencyCode}
-                          showCurrency={false}
-                        />
-                      ) : (
-                        <FinanceAmountListText value={node.amount} />
-                      )}
+                      <FinanceAmountText
+                        amount={node.amount}
+                        currencyCode={node.currencyCode}
+                        showCurrency={false}
+                      />
                     </td>
                     <td className="align-top">
                       {usesConvertedAggregation && node.amountConverted ? (
@@ -1243,7 +1244,7 @@ export function SnapshotDetail({
               {!visibleNodes.length ? (
                 <tr>
                   <td colSpan={5} className={`text-center py-6 ${financeTextClass.helperText}`}>
-                    {t("finance.history.noSelection")}
+                    {t("finance.snapshot.noVisibleAmounts")}
                   </td>
                 </tr>
               ) : null}
@@ -1329,15 +1330,13 @@ function buildSnapshotDisplayTree(
         }
         rollupEntries.forEach((entry) => usedEntryIds.add(entry.id));
         const inlineEntry = inlineSingleHolding ? manualEntries[0] : null;
-        // "原始金额" must always reflect the original currency and amount; the
-        // exchange-rate snapshot only feeds the converted column and totals.
-        const amount = (sortedRollupEntries.length ? sortedRollupEntries : inlineEntry ? [inlineEntry] : [])
-          .map((entry) => `${entry.amount} ${entry.currency_code}`)
-          .join(", ");
-        const currencyCode =
-          rollupEntries.length === 1 || inlineEntry
-            ? (rollupEntries[0] ?? inlineEntry)?.currency_code ?? ""
-            : "";
+        const nativeEntry =
+          children.length > 0
+            ? null
+            : (inlineEntry ??
+              (sortedRollupEntries.length === 1 ? sortedRollupEntries[0] : null));
+        const amount = nativeEntry?.amount ?? "";
+        const currencyCode = nativeEntry?.currency_code ?? "";
         const amountConverted = useConvertedRollups
           ? sumAmountStrings(
               rollupEntries.map((entry) => entry.amount_converted),
@@ -1378,7 +1377,26 @@ function buildSnapshotDisplayTree(
           children: [],
         }) satisfies SnapshotDisplayNode,
     );
-  return roots.concat(orphanEntries);
+  return pruneZeroAmountNodes(roots.concat(orphanEntries));
+}
+
+function pruneZeroAmountNodes(nodes: SnapshotDisplayNode[]): SnapshotDisplayNode[] {
+  return nodes.flatMap((node) => {
+    const children = pruneZeroAmountNodes(node.children);
+    if (children.length || !isZeroOrEmptyAmount(node.amount)) {
+      return [{ ...node, children }];
+    }
+    return [];
+  });
+}
+
+function isZeroOrEmptyAmount(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return true;
+  }
+  const numeric = parseDisplayAmount(trimmed);
+  return Number.isFinite(numeric) && numeric === 0;
 }
 
 function getSummaryAmountsByCurrency(
@@ -1703,8 +1721,8 @@ function buildNativeSnapshotAmounts(
   amounts: SnapshotAmountState,
   primaryCurrency: string,
   assets: FinanceAsset[],
-): Record<UUID, string> {
-  const result: Record<UUID, string> = {};
+): Record<UUID, FinanceAmountListItem[]> {
+  const result: Record<UUID, FinanceAmountListItem[]> = {};
 
   const visit = (node: TreeNodeWithChildren): Map<string, number> => {
     const totals = new Map<string, number>();
@@ -1729,8 +1747,10 @@ function buildNativeSnapshotAmounts(
     if (totals.size) {
       result[node.id] = Array.from(totals.entries())
         .sort(([left], [right]) => left.localeCompare(right))
-        .map(([currency, value]) => `${formatNumberForAsset(value, currency, assets)} ${currency}`)
-        .join(", ");
+        .map(([currency, value]) => ({
+          amount: formatNumberForAsset(value, currency, assets),
+          currencyCode: currency,
+        }));
     }
     return totals;
   };

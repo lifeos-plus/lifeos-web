@@ -188,7 +188,7 @@ describe("SnapshotDetail", () => {
     expect(assetSummaryRow).toHaveClass("focus-within:bg-primary/10");
   });
 
-  it("keeps native currencies in the original column when aggregation is converted", () => {
+  it("keeps group rows free of descendant currencies and shows leaf native amounts", () => {
     setupTranslationMock();
 
     const assetsNode: FinanceTreeNode = {
@@ -286,12 +286,160 @@ describe("SnapshotDetail", () => {
 
     const assetsRow = screen.getByText("Assets").closest("tr");
     expect(assetsRow).not.toBeNull();
-    // The original column keeps the native currencies instead of the converted
-    // primary-currency value, and the converted column shows the summed total.
-    expect(within(assetsRow as HTMLElement).getByText("ETH")).toBeInTheDocument();
-    expect(within(assetsRow as HTMLElement).getByText("CNY")).toBeInTheDocument();
-    expect(within(assetsRow as HTMLElement).queryByText("USD")).not.toBeInTheDocument();
+    expect(within(assetsRow as HTMLElement).queryByText("ETH")).not.toBeInTheDocument();
+    expect(within(assetsRow as HTMLElement).queryByText("CNY")).not.toBeInTheDocument();
     expect(assetsRow).toHaveTextContent("1723.88");
+
+    const ethCells = within(screen.getByText("ETH wallet").closest("tr") as HTMLElement).getAllByRole(
+      "cell",
+    );
+    const cnyCells = within(screen.getByText("CNY wallet").closest("tr") as HTMLElement).getAllByRole(
+      "cell",
+    );
+    expect(ethCells[1]).toHaveTextContent("ETH");
+    expect(ethCells[2]).toHaveTextContent(/^1$/);
+    expect(cnyCells[1]).toHaveTextContent("CNY");
+    expect(cnyCells[2]).toHaveTextContent(/^100$/);
+  });
+
+  it("hides zero-amount nodes and assets from the detail tree", () => {
+    setupTranslationMock();
+
+    const assetsNode: FinanceTreeNode = {
+      id: "node-assets",
+      parent_id: null,
+      name: "Assets",
+      currency_code: null,
+      path: "Assets",
+      depth: 0,
+      display_order: 1,
+    };
+    const ethNode: FinanceTreeNode = {
+      id: "node-eth",
+      parent_id: assetsNode.id,
+      name: "ETH wallet",
+      currency_code: "ETH",
+      path: "Assets/ETH wallet",
+      depth: 1,
+      display_order: 1,
+    };
+    const emptyNode: FinanceTreeNode = {
+      id: "node-empty",
+      parent_id: assetsNode.id,
+      name: "Empty wallet",
+      currency_code: "CNY",
+      path: "Assets/Empty wallet",
+      depth: 1,
+      display_order: 2,
+    };
+
+    const zeroSnapshot: FinanceSnapshot = {
+      ...sourceSnapshot,
+      id: "snapshot-zero-rows",
+      entries: [
+        {
+          id: "entry-eth",
+          node_id: ethNode.id,
+          node_name: ethNode.name,
+          amount: "1.00000000",
+          currency_code: "ETH",
+          amount_converted: "1573.8800",
+          note: null,
+          is_auto_generated: false,
+        },
+        {
+          id: "entry-empty",
+          node_id: emptyNode.id,
+          node_name: emptyNode.name,
+          amount: "0.00000000",
+          currency_code: "CNY",
+          amount_converted: "0.00000000",
+          note: null,
+          is_auto_generated: false,
+        },
+        {
+          id: "rollup-eth",
+          node_id: assetsNode.id,
+          node_name: assetsNode.name,
+          amount: "1.00000000",
+          currency_code: "ETH",
+          amount_converted: "1573.8800",
+          note: null,
+          is_auto_generated: true,
+        },
+        {
+          id: "rollup-cny",
+          node_id: assetsNode.id,
+          node_name: assetsNode.name,
+          amount: "0.00000000",
+          currency_code: "CNY",
+          amount_converted: "0.00000000",
+          note: null,
+          is_auto_generated: true,
+        },
+      ],
+      summary: {
+        aggregation_mode: "converted",
+        amounts_by_currency: {
+          USD: { total_positive: "1573.88", total_negative: "0", net_amount: "1573.88" },
+        },
+      },
+    };
+
+    renderWithProviders(
+      <SnapshotDetail
+        snapshot={zeroSnapshot}
+        assets={assets}
+        treeNodes={[
+          {
+            ...assetsNode,
+            children: [
+              { ...ethNode, children: [] },
+              { ...emptyNode, children: [] },
+            ],
+          },
+        ]}
+        rateSnapshots={[]}
+      />,
+    );
+
+    expect(screen.getByText("ETH wallet")).toBeInTheDocument();
+    expect(screen.queryByText("Empty wallet")).not.toBeInTheDocument();
+    expect(screen.queryByText("CNY")).not.toBeInTheDocument();
+  });
+
+  it("shows the empty-state hint when every detail row is zero", () => {
+    setupTranslationMock();
+
+    const zeroOnlySnapshot: FinanceSnapshot = {
+      ...sourceSnapshot,
+      id: "snapshot-zero-only",
+      entries: [
+        {
+          id: "entry-wallet",
+          node_id: node.id,
+          node_name: node.name,
+          amount: "0.00000000",
+          currency_code: "ETH",
+          amount_converted: "0.00000000",
+          note: null,
+          is_auto_generated: false,
+        },
+      ],
+      summary: { aggregation_mode: "converted" },
+    };
+
+    renderWithProviders(
+      <SnapshotDetail
+        snapshot={zeroOnlySnapshot}
+        assets={assets}
+        treeNodes={[{ ...node, children: [] }]}
+        rateSnapshots={[]}
+      />,
+    );
+
+    expect(screen.getByText("finance.snapshot.noVisibleAmounts")).toBeInTheDocument();
+    expect(screen.queryByText("Wallet")).not.toBeInTheDocument();
   });
 
   it("keeps the converted total when a zero-amount currency has no rate", () => {

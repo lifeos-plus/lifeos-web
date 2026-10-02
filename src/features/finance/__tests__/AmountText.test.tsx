@@ -25,8 +25,15 @@ describe("FinanceAmountText", () => {
 });
 
 describe("FinanceAmountListText", () => {
-  it("renders comma-separated finance amount pairs with the shared amount style", () => {
-    render(<FinanceAmountListText value="10.00 USD, -2.50 BTC" />);
+  it("renders structured amount items with the shared amount style", () => {
+    render(
+      <FinanceAmountListText
+        items={[
+          { amount: "10.00", currencyCode: "USD" },
+          { amount: "-2.50", currencyCode: "BTC" },
+        ]}
+      />,
+    );
 
     const usd = screen.getByText("USD");
     const btc = screen.getByText("BTC");
