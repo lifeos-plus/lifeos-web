@@ -133,6 +133,8 @@ jobs:
             package-lock.json
             package.json
 
-      - name: Verify no high-severity vulnerabilities remain
+      - name: Verify runtime and high-severity audit gates
         if: always()
-        run: npm audit --audit-level=high
+        run: |
+          npm audit --omit=dev --audit-level=moderate
+          npm audit --audit-level=high

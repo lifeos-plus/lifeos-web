@@ -10,7 +10,10 @@ npm ci
 echo "[validate] fetch pinned OpenAPI contract"
 npm run api:fetch
 
-echo "[validate] audit high-severity vulnerabilities"
+echo "[validate] audit runtime vulnerabilities at moderate or higher"
+npm audit --omit=dev --audit-level=moderate
+
+echo "[validate] audit all dependencies at high or higher"
 npm audit --audit-level=high
 
 echo "[validate] verify generated API types"
