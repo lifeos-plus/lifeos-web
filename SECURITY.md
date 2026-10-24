@@ -25,7 +25,9 @@ Preferred disclosure order:
 
 Routine dependency updates are intentionally limited to weekly minor updates; patch updates are excluded from routine PRs. Security updates remain eligible independently.
 
-PR and `main` validation rejects high- and critical-severity `npm audit` findings. The weekly frontend audit may prepare a non-force lockfile fix, but it still fails when high- or critical-severity findings remain after that attempt. The audit workflow never uses `npm audit fix --force`.
+PR and `main` validation rejects moderate-or-higher runtime `npm audit` findings and high/critical findings in the full dependency tree. The weekly frontend audit may prepare a non-force lockfile fix, but it still fails those gates when findings remain after that attempt. The audit workflow never uses `npm audit fix --force`.
+
+`@tailwindcss/typography` temporarily overrides its pinned `postcss-selector-parser` with `7.1.6` to address GHSA-rj75-hqrm-r3gf. The override is scoped to that parent package and should be removed once a release of `@tailwindcss/typography` depends on a patched parser version directly.
 
 ## Supported Branches
 

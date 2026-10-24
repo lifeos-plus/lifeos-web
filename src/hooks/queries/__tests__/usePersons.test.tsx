@@ -1,9 +1,12 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { usePersons } from "@/hooks/queries/usePersons";
+import {
+  usePersonActivitiesPage,
+  usePersons,
+} from "@/hooks/queries/usePersons";
 import { ToastContext } from "@/contexts/ToastContext";
 
 const getAllMock = vi.fn();
@@ -101,5 +104,27 @@ describe("usePersons", () => {
       result.current.deletePerson("p1");
     });
     expect(showError).toHaveBeenCalledWith("persons.messages.deleteFailed", "delete boom");
+  });
+
+  it("does not synthesize timelog statistics for unavailable metadata", async () => {
+    getActivitiesMock.mockResolvedValue({
+      items: [],
+      pagination: { page: 1, size: 50, total: 0, pages: 0 },
+      meta: {
+        person_id: "p1",
+        person_name: "Person",
+        activity_type: null,
+        timelog_count: null,
+        timelog_total_minutes: null,
+      },
+    });
+
+    const { result } = renderHook(
+      () => usePersonActivitiesPage("p1", 1, 50),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.timelogStats).toBeNull();
   });
 });

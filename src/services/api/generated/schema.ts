@@ -3350,9 +3350,9 @@ export interface components {
             /** Person Name */
             person_name: string;
             /** Timelog Count */
-            timelog_count: number;
+            timelog_count?: number | null;
             /** Timelog Total Minutes */
-            timelog_total_minutes: number;
+            timelog_total_minutes?: number | null;
         };
         /** PersonActivityResponse */
         PersonActivityResponse: {
@@ -9174,7 +9174,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["VisionResponse"];
+                    "application/json": components["schemas"]["VisionWithTasksResponse"];
                 };
             };
             /** @description Validation Error */

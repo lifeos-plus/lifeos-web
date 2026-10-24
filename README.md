@@ -69,7 +69,7 @@ For repository changes, run the primary validation entrypoint:
 bash ./scripts/validate.sh
 ```
 
-The baseline installs locked dependencies, rejects high- and critical-severity `npm audit` findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite.
+The baseline installs locked dependencies, rejects moderate-or-higher runtime `npm audit` findings and high/critical full-tree findings, verifies generated API types, validates translation catalogs, builds the app, lints, and runs the test suite.
 
 ## Project Policies
 
