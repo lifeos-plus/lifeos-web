@@ -264,16 +264,19 @@ export function usePersonActivitiesPage(
       : undefined,
   });
 
+  const timelogCount = data?.meta.timelog_count;
+  const timelogTotalMinutes = data?.meta.timelog_total_minutes;
+
   return {
     activities: data?.items ?? [],
     total: data?.pagination.total ?? 0,
     totalPages: data?.pagination.pages ?? 0,
     timelogStats:
-      data?.meta.timelog_count !== undefined &&
-      data?.meta.timelog_total_minutes !== undefined
+      typeof timelogCount === "number" &&
+      typeof timelogTotalMinutes === "number"
         ? {
-            count: data.meta.timelog_count ?? 0,
-            totalMinutes: data.meta.timelog_total_minutes ?? 0,
+            count: timelogCount,
+            totalMinutes: timelogTotalMinutes,
           }
         : null,
     isLoading,

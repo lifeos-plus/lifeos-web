@@ -44,4 +44,35 @@ describe("visionsApi", () => {
     expect(url).toBe(localUrl(ENDPOINTS.VISIONS.SYNC_EXPERIENCE("vision-1")));
     expect(init.method).toBe("POST");
   });
+
+  it("returns tasks from the with-tasks endpoint", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: "vision-1",
+          name: "Build focus",
+          description: null,
+          area_id: null,
+          status: "active",
+          stage: 1,
+          experience_points: 120,
+          experience_rate_per_hour: null,
+          person: [],
+          created_at: "2026-07-07T12:00:00Z",
+          tasks: [],
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    const response = await visionsApi.getWithTasks("vision-1");
+
+    expect(response.tasks).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(localUrl(ENDPOINTS.VISIONS.WITH_TASKS("vision-1")));
+  });
 });

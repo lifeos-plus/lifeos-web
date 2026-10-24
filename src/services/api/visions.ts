@@ -33,8 +33,8 @@ export const visionsApi = {
     return http.get<Vision>(ENDPOINTS.VISIONS.BY_ID(id));
   },
 
-  async getWithTasks(id: UUID): Promise<Vision> {
-    return http.get<Vision>(ENDPOINTS.VISIONS.WITH_TASKS(id));
+  async getWithTasks(id: UUID): Promise<VisionWithTasks> {
+    return http.get<VisionWithTasks>(ENDPOINTS.VISIONS.WITH_TASKS(id));
   },
 
   async create(vision: VisionCreate): Promise<VisionWithTasks> {
