@@ -2,7 +2,7 @@ import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
 import type { UUID } from "@/types/primitive";
-import type { NoteListResponse } from "./notes";
+import type { Note } from "./notes";
 
 type HabitTransport = components["schemas"]["HabitResponse"];
 export type HabitStats = components["schemas"]["HabitStatsResponse"];
@@ -20,6 +20,11 @@ export type HabitActionListResponse = components["schemas"]["ListResponse_HabitA
 export type HabitActionWithHabit = components["schemas"]["HabitActionWithHabitResponse"];
 export type HabitActionRangeListResponse = components["schemas"]["ListResponse_HabitActionWithHabitResponse_HabitActionRangeMeta_"];
 export type HabitTaskAssociationsResponse = components["schemas"]["HabitAssociationsResponse"];
+type HabitNoteListTransport =
+  components["schemas"]["ListResponse_NoteResponse_HabitNoteListMeta_"];
+export type HabitNoteListResponse = Omit<HabitNoteListTransport, "items"> & {
+  items: Note[];
+};
 
 export interface HabitActionsQueryParams {
   page?: number;
@@ -122,8 +127,8 @@ export const habitsApi = {
     habitId: UUID,
     params: { page?: number; size?: number } = {},
     options?: { signal?: AbortSignal },
-  ): Promise<NoteListResponse> {
-    return http.get<NoteListResponse>(
+  ): Promise<HabitNoteListResponse> {
+    return http.get<HabitNoteListResponse>(
       ENDPOINTS.HABITS.NOTES(habitId),
       {
         page: params.page,

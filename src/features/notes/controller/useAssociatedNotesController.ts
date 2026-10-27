@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { habitsApi } from "@/services/api/habits";
-import { notesApi } from "@/services/api/notes";
+import { habitsApi, type HabitNoteListResponse } from "@/services/api/habits";
+import { notesApi, type NoteListResponse } from "@/services/api/notes";
 import { notesKeys } from "@/services/api/queryKeys";
 import type { UUID } from "@/types/primitive";
 
@@ -35,6 +35,8 @@ export type AssociatedNotesSource =
   | { kind: "filters"; filters: AssociatedNotesFilter }
   | { kind: "habit"; habitId: UUID | null };
 
+type AssociatedNotesPage = NoteListResponse | HabitNoteListResponse;
+
 interface UseAssociatedNotesControllerParams {
   isOpen: boolean;
   enabledId: UUID | null;
@@ -58,7 +60,10 @@ export function useAssociatedNotesController({
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: notesKeys.associatedList(queryFilters as Record<string, unknown>),
-    queryFn: ({ pageParam, signal }) => {
+    queryFn: async ({
+      pageParam,
+      signal,
+    }): Promise<AssociatedNotesPage> => {
       if (source.kind === "habit") {
         if (!source.habitId) {
           throw new Error("Habit ID is required to load habit notes.");
