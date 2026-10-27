@@ -1,4 +1,4 @@
-import { waitFor, screen } from "@testing-library/react";
+import { fireEvent, waitFor, screen } from "@testing-library/react";
 import type { PropsWithChildren } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -9,13 +9,27 @@ import type { NoteHabitActionSummary } from "@/services/api/notes";
 import { renderWithProviders } from "@test/utils";
 import type { UUID } from "@/types/primitive";
 
-vi.mock("@/hooks/notes/useNoteCollapsePreference", () => ({
-  useNoteCollapsePreference: () => ({ value: 3 }),
-}));
+vi.mock("@/hooks/notes/useNoteCollapsePreference", async (importOriginal) => {
+  const actual =
+    await importOriginal<
+      typeof import("@/hooks/notes/useNoteCollapsePreference")
+    >();
+  return {
+    ...actual,
+    useNoteCollapsePreference: () => ({ value: 3 }),
+  };
+});
 
 const WithModalProvider = ({ children }: PropsWithChildren) => (
   <ModalProvider>{children}</ModalProvider>
 );
+
+const makeNote = (id: string, content: string) => ({
+  id: id as UUID,
+  content,
+  created_at: "2026-07-06T01:00:00Z",
+  updated_at: "2026-07-06T01:00:00Z",
+});
 
 describe("TaskNotesModal habit aggregation", () => {
   afterEach(() => {
@@ -105,5 +119,50 @@ describe("TaskNotesModal habit aggregation", () => {
     expect(
       screen.getByRole("button", { name: "createNoteModal.submitText" }),
     ).toBeEnabled();
+  });
+
+  it("loads subsequent habit note pages on demand", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((input) => {
+        const page = Number(new URL(String(input)).searchParams.get("page"));
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              items: [
+                page === 1
+                  ? makeNote("note-1", "First habit note")
+                  : makeNote("note-2", "Second habit note"),
+              ],
+              pagination: { page, size: 50, total: 2, pages: 2 },
+              meta: { habit_id: "habit-1" },
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
+        );
+      });
+
+    renderWithProviders(
+      <TaskNotesModal
+        isOpen
+        onClose={vi.fn()}
+        entityType="habit"
+        habit={{ id: "habit-1" as UUID, title: "Morning Walk" }}
+      />,
+      { wrapper: WithModalProvider },
+    );
+
+    expect(await screen.findByText("First habit note")).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "notes.loadMore" }),
+    );
+    expect(await screen.findByText("Second habit note")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      expect.stringContaining("page=2"),
+      expect.anything(),
+    );
   });
 });

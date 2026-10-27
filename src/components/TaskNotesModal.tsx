@@ -78,7 +78,9 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       ? ((props as HabitActionContextProps).habitAction ?? null)
       : null;
   const habit =
-    entityType === "habit" ? ((props as HabitContextProps).habit ?? null) : null;
+    entityType === "habit"
+      ? ((props as HabitContextProps).habit ?? null)
+      : null;
   const entityId: UUID | null =
     entityType === "task"
       ? task
@@ -91,7 +93,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
         : habitAction
           ? habitAction.id
           : entityType === "habit"
-            ? habit?.id ?? null
+            ? (habit?.id ?? null)
             : null;
 
   const { t } = useTranslation();
@@ -129,7 +131,16 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     return { kind: "filters", filters: { habit_action_id: habitAction?.id } };
   }, [entityType, habit?.id, habitAction?.id, task?.id, timelog?.id]);
 
-  const { notes, isLoading, error, refetch } = useAssociatedNotesController({
+  const {
+    notes,
+    total,
+    isLoading,
+    error,
+    refetch,
+    hasMore,
+    isLoadingMore,
+    loadMoreNotes,
+  } = useAssociatedNotesController({
     isOpen,
     enabledId: entityId,
     source: notesSource,
@@ -297,7 +308,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
         )}
         {notes.length > 0 && (
           <Badge tone="primary" variant="outline">
-            {t("filterStatus.notesCount", { count: notes.length })}
+            {t("filterStatus.notesCount", { count: total })}
           </Badge>
         )}
       </div>
@@ -322,143 +333,160 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       )}
 
       {!isLoading && !error && notes.length > 0 && (
-        <div className="space-y-4">
-          {notes.map((note) => {
-            const associations: NoteCardAssociation[] = [];
+        <>
+          <div className="space-y-4">
+            {notes.map((note) => {
+              const associations: NoteCardAssociation[] = [];
 
-            if (note.person && note.person.length > 0) {
-              associations.push(
-                ...note.person.map((person) => ({
-                  id: `person-${person.id}`,
-                  type: "person" as const,
-                  label: `@${person.display_name ?? person.name}`,
+              if (note.person && note.person.length > 0) {
+                associations.push(
+                  ...note.person.map((person) => ({
+                    id: `person-${person.id}`,
+                    type: "person" as const,
+                    label: `@${person.display_name ?? person.name}`,
+                    icon: (
+                      <Icon
+                        name="people"
+                        size={16}
+                        className="text-success"
+                        aria-hidden
+                      />
+                    ),
+                    title: person.display_name
+                      ? t("notesSidebar.filterPerson", {
+                          name: person.display_name,
+                        })
+                      : undefined,
+                    disabled: true,
+                  })),
+                );
+              }
+
+              if (note.tags && note.tags.length > 0) {
+                associations.push(
+                  ...note.tags.map((tag) => ({
+                    id: `tag-${tag.id}`,
+                    type: "tag" as const,
+                    label: `#${tag.name}`,
+                    icon: (
+                      <Icon
+                        name="tag"
+                        size={16}
+                        className="text-primary"
+                        aria-hidden
+                      />
+                    ),
+                    title: undefined,
+                    disabled: true,
+                  })),
+                );
+              }
+
+              if (note.task) {
+                associations.push({
+                  id: `task-${note.task.id}`,
+                  type: "task",
+                  label: `${note.task.content} (${note.task.status})`,
                   icon: (
                     <Icon
-                      name="people"
+                      name="clipboard"
                       size={16}
-                      className="text-success"
-                      aria-hidden
-                    />
-                  ),
-                  title: person.display_name
-                    ? t("notesSidebar.filterPerson", {
-                        name: person.display_name,
-                      })
-                    : undefined,
-                  disabled: true,
-                })),
-              );
-            }
-
-            if (note.tags && note.tags.length > 0) {
-              associations.push(
-                ...note.tags.map((tag) => ({
-                  id: `tag-${tag.id}`,
-                  type: "tag" as const,
-                  label: `#${tag.name}`,
-                  icon: (
-                    <Icon
-                      name="tag"
-                      size={16}
-                      className="text-primary"
+                      className="text-secondary"
                       aria-hidden
                     />
                   ),
                   title: undefined,
                   disabled: true,
-                })),
-              );
-            }
+                });
+              }
 
-            if (note.task) {
-              associations.push({
-                id: `task-${note.task.id}`,
-                type: "task",
-                label: `${note.task.content} (${note.task.status})`,
-                icon: (
-                  <Icon
-                    name="clipboard"
-                    size={16}
-                    className="text-secondary"
-                    aria-hidden
-                  />
-                ),
-                title: undefined,
-                disabled: true,
-              });
-            }
+              const firstTimelog = note.timelogs?.[0] ?? null;
+              const timelogLabel = formatFirstTimelogLabel(firstTimelog);
+              if (timelogLabel) {
+                associations.push({
+                  id: `timelog-${firstTimelog?.id ?? `${note.id}-timelog`}`,
+                  type: "timelog",
+                  label: timelogLabel,
+                  icon: (
+                    <Icon
+                      name="timer"
+                      size={16}
+                      className="text-info"
+                      aria-hidden
+                    />
+                  ),
+                  title: t("notes.timelogChipTooltip", { label: timelogLabel }),
+                  disabled: true,
+                });
+              }
 
-            const firstTimelog = note.timelogs?.[0] ?? null;
-            const timelogLabel = formatFirstTimelogLabel(firstTimelog);
-            if (timelogLabel) {
-              associations.push({
-                id: `timelog-${firstTimelog?.id ?? `${note.id}-timelog`}`,
-                type: "timelog",
-                label: timelogLabel,
-                icon: (
-                  <Icon
-                    name="timer"
-                    size={16}
-                    className="text-info"
-                    aria-hidden
-                  />
-                ),
-                title: t("notes.timelogChipTooltip", { label: timelogLabel }),
-                disabled: true,
-              });
-            }
+              const firstHabitAction = note.habit_actions?.[0] ?? null;
+              const habitActionNoteLabel =
+                formatHabitActionLabel(firstHabitAction);
+              if (habitActionNoteLabel) {
+                associations.push({
+                  id: `habit-action-${firstHabitAction?.id ?? `${note.id}-habit-action`}`,
+                  type: "habit_action",
+                  label: habitActionNoteLabel,
+                  icon: (
+                    <Icon
+                      name="repeat"
+                      size={16}
+                      className="text-accent"
+                      aria-hidden
+                    />
+                  ),
+                  title: habitActionNoteLabel,
+                  disabled: true,
+                });
+              }
 
-            const firstHabitAction = note.habit_actions?.[0] ?? null;
-            const habitActionNoteLabel = formatHabitActionLabel(firstHabitAction);
-            if (habitActionNoteLabel) {
-              associations.push({
-                id: `habit-action-${firstHabitAction?.id ?? `${note.id}-habit-action`}`,
-                type: "habit_action",
-                label: habitActionNoteLabel,
-                icon: (
-                  <Icon
-                    name="repeat"
-                    size={16}
-                    className="text-accent"
-                    aria-hidden
-                  />
-                ),
-                title: habitActionNoteLabel,
-                disabled: true,
-              });
-            }
-
-            const actions = (
-              <ActionButton
-                label={t("common.edit")}
-                iconName="edit"
-                iconOnly
-                color="primary"
-                onClick={() => handleEditNote(note)}
-                ariaLabel={t("common.edit")}
-              />
-            );
-
-            return (
-              <Surface
-                key={note.id}
-                padding="responsive"
-                border="subtle"
-                elevation="subtle"
-                interactive
-              >
-                <NoteCardLayout
-                  content={note.content}
-                  associations={associations}
-                  createdAt={note.created_at}
-                  actions={actions}
-                  actionsVisibility="hover"
-                  minCollapsedLines={noteCollapsePreference.value}
+              const actions = (
+                <ActionButton
+                  label={t("common.edit")}
+                  iconName="edit"
+                  iconOnly
+                  color="primary"
+                  onClick={() => handleEditNote(note)}
+                  ariaLabel={t("common.edit")}
                 />
-              </Surface>
-            );
-          })}
-        </div>
+              );
+
+              return (
+                <Surface
+                  key={note.id}
+                  padding="responsive"
+                  border="subtle"
+                  elevation="subtle"
+                  interactive
+                >
+                  <NoteCardLayout
+                    content={note.content}
+                    associations={associations}
+                    createdAt={note.created_at}
+                    actions={actions}
+                    actionsVisibility="hover"
+                    minCollapsedLines={noteCollapsePreference.value}
+                  />
+                </Surface>
+              );
+            })}
+          </div>
+          {hasMore && (
+            <div className="mt-6 flex justify-center">
+              <ActionButton
+                label={
+                  isLoadingMore ? t("common.loading") : t("notes.loadMore")
+                }
+                onClick={() => void loadMoreNotes()}
+                disabled={isLoadingMore}
+                color="neutral"
+                variant="outline"
+                iconName="chevron-down"
+              />
+            </div>
+          )}
+        </>
       )}
 
       {showCreateModal && entityType !== "habit" && (
