@@ -1,10 +1,16 @@
-import { act, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { act, fireEvent, screen } from "@testing-library/react";
+import type { PropsWithChildren } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "@test/utils";
 import type { HabitActionWithHabit } from "@/services/api/habits";
 import type { UUID } from "@/types/primitive";
 import { SelectorSpecialValue } from "@/components/selects/selectorTypes";
 import { HabitActionsCard } from "@/components/planning/HabitActionsCard";
+import { ModalProvider } from "@/contexts/ModalProvider";
+
+const WithModalProvider = ({ children }: PropsWithChildren) => (
+  <ModalProvider>{children}</ModalProvider>
+);
 
 const { areaSelectPropsRef } = vi.hoisted(() => ({
   areaSelectPropsRef: { current: undefined as unknown },
@@ -40,12 +46,32 @@ const createAction = (
 });
 
 describe("HabitActionsCard", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("always renders related note buttons and subdues empty note collections", () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            items: [],
+            pagination: { page: 1, size: 50, total: 0, pages: 0 },
+            meta: { habit_id: "habit-1" },
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
     renderWithProviders(
       <HabitActionsCard
         habitActions={[createAction("action-empty", 0), createAction("action-linked", 2)]}
         onStatusChange={vi.fn()}
       />,
+      { wrapper: WithModalProvider },
     );
 
     const viewButtons = screen.getAllByRole("button", {
@@ -57,6 +83,17 @@ describe("HabitActionsCard", () => {
     expect(viewButtons[0].className).toContain("opacity-40");
     expect(viewButtons[1]).toBeEnabled();
     expect(viewButtons[1].className).not.toContain("opacity-40");
+    expect(
+      screen.getAllByRole("button", {
+        name: "notes.actions.viewHabitNotes",
+      }),
+    ).toHaveLength(2);
+    fireEvent.click(
+      screen.getAllByRole("button", {
+        name: "notes.actions.viewHabitNotes",
+      })[0],
+    );
+    expect(screen.getByText("habitNotes.title")).toBeInTheDocument();
     expect(screen.getAllByTestId("planning-habit-action-row")[0]).not.toHaveTextContent(
       "common.expand",
     );

@@ -1,10 +1,16 @@
 import { fireEvent, screen } from "@testing-library/react";
+import type { PropsWithChildren } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "@test/utils";
 import type { HabitAction } from "@/services/api/habits";
 import type { UUID } from "@/types/primitive";
 import { HabitActionList } from "@/components/habits/HabitActionList";
+import { ModalProvider } from "@/contexts/ModalProvider";
 import { GregorianCalendarAdapter, MayanCalendarAdapter } from "@/utils/calendar";
+
+const WithModalProvider = ({ children }: PropsWithChildren) => (
+  <ModalProvider>{children}</ModalProvider>
+);
 
 const action: HabitAction = {
   id: "action-1" as UUID,
@@ -27,10 +33,26 @@ describe("HabitActionList", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-07-06T12:00:00"));
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            items: [],
+            pagination: { page: 1, size: 50, total: 0, pages: 0 },
+            meta: { habit_id: "habit-1" },
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("does not render note details in the five day view", () => {
@@ -48,6 +70,7 @@ describe("HabitActionList", () => {
         onCenterDateChange={vi.fn()}
         onStatusUpdate={vi.fn()}
       />,
+      { wrapper: WithModalProvider },
     );
 
     expect(screen.queryByText("Completed after lunch")).not.toBeInTheDocument();
@@ -59,6 +82,17 @@ describe("HabitActionList", () => {
     expect(viewButtons[0].className).toContain("opacity-40");
     expect(viewButtons[1]).toBeEnabled();
     expect(viewButtons[1].className).not.toContain("opacity-40");
+    expect(
+      screen.getAllByRole("button", {
+        name: "notes.actions.viewHabitNotes",
+      }),
+    ).toHaveLength(2);
+    fireEvent.click(
+      screen.getAllByRole("button", {
+        name: "notes.actions.viewHabitNotes",
+      })[0],
+    );
+    expect(screen.getByText("habitNotes.title")).toBeInTheDocument();
     expect(container.querySelector(".space-y-2 > div")).toHaveClass(
       "flex-col",
       "sm:flex-row",

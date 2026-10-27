@@ -447,7 +447,8 @@
     "editTooltip": "编辑笔记",
     "actions": {
       "addNote": "添加笔记",
-      "viewNotes": "查看笔记"
+      "viewNotes": "查看笔记",
+      "viewHabitNotes": "查看该习惯的全部笔记"
     },
     "timelogChipDefault": "时间记录",
     "timelogChipTooltip": "关联的时间记录 {{label}}",
@@ -1763,6 +1764,14 @@
     "emptyState": {
       "title": "暂无笔记",
       "description": "关联到这次习惯打卡的笔记会显示在这里，可用于记录打卡背景、感受或后续事项。"
+    }
+  },
+  "habitNotes": {
+    "title": "习惯笔记",
+    "habitLabel": "习惯：",
+    "emptyState": {
+      "title": "暂无笔记",
+      "description": "关联到该习惯任意一次打卡的笔记都会汇总在这里，便于集中回顾完整记录。"
     }
   },
   "taskTimelogs": {

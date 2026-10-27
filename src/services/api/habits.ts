@@ -2,6 +2,7 @@ import { http } from "./client";
 import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
 import type { UUID } from "@/types/primitive";
+import type { NoteListResponse } from "./notes";
 
 type HabitTransport = components["schemas"]["HabitResponse"];
 export type HabitStats = components["schemas"]["HabitStatsResponse"];
@@ -114,6 +115,21 @@ export const habitsApi = {
         days_before: daysBefore,
         days_after: daysAfter,
       },
+    );
+  },
+
+  async getNotes(
+    habitId: UUID,
+    params: { page?: number; size?: number } = {},
+    options?: { signal?: AbortSignal },
+  ): Promise<NoteListResponse> {
+    return http.get<NoteListResponse>(
+      ENDPOINTS.HABITS.NOTES(habitId),
+      {
+        page: params.page,
+        size: params.size,
+      },
+      { signal: options?.signal },
     );
   },
 

@@ -60,6 +60,8 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
     useState<HabitActionWithHabit | null>(null);
   const [viewingNotesForAction, setViewingNotesForAction] =
     useState<HabitActionWithHabit | null>(null);
+  const [viewingHabitNotesForAction, setViewingHabitNotesForAction] =
+    useState<HabitActionWithHabit | null>(null);
 
   const visibleActions = useMemo(() => {
     if (areaFilter === undefined) {
@@ -204,6 +206,15 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
                         ariaLabel={t("notes.actions.viewNotes")}
                       />
 
+                      <ActionButton
+                        label={t("notes.actions.viewHabitNotes")}
+                        iconName="document-text"
+                        color="neutral"
+                        onClick={() => setViewingHabitNotesForAction(action)}
+                        iconOnly
+                        ariaLabel={t("notes.actions.viewHabitNotes")}
+                      />
+
                       <div className="w-32 min-w-0 md:w-28">
                         <EnumSelect
                           value={action.status}
@@ -247,6 +258,19 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
           onClose={() => setViewingNotesForAction(null)}
           entityType="habit_action"
           habitAction={buildHabitActionSummary(viewingNotesForAction)}
+          onNotesChanged={onNotesChanged}
+        />
+      )}
+
+      {viewingHabitNotesForAction && (
+        <TaskNotesModal
+          isOpen={!!viewingHabitNotesForAction}
+          onClose={() => setViewingHabitNotesForAction(null)}
+          entityType="habit"
+          habit={{
+            id: viewingHabitNotesForAction.habit_id,
+            title: viewingHabitNotesForAction.habit.title,
+          }}
           onNotesChanged={onNotesChanged}
         />
       )}

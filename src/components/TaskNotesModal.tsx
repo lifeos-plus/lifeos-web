@@ -20,7 +20,10 @@ import NoteCardLayout, {
 } from "./notes/NoteCardLayout";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
 import { Icon } from "./icons";
-import { useAssociatedNotesController } from "@/features/notes/controller/useAssociatedNotesController";
+import {
+  useAssociatedNotesController,
+  type AssociatedNotesSource,
+} from "@/features/notes/controller/useAssociatedNotesController";
 import ConfirmDialog from "./ConfirmDialog";
 import { notesApi } from "@/services/api/notes";
 import { useToast } from "@/contexts/ToastContext";
@@ -48,10 +51,16 @@ type HabitActionContextProps = SharedProps & {
   habitAction: NoteHabitActionSummary | null;
 };
 
+type HabitContextProps = SharedProps & {
+  entityType: "habit";
+  habit: { id: UUID; title: string } | null;
+};
+
 type TaskNotesModalProps =
   | TaskContextProps
   | TimelogContextProps
-  | HabitActionContextProps;
+  | HabitActionContextProps
+  | HabitContextProps;
 
 export default function TaskNotesModal(props: TaskNotesModalProps) {
   const { isOpen, onClose } = props;
@@ -68,6 +77,8 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     entityType === "habit_action"
       ? ((props as HabitActionContextProps).habitAction ?? null)
       : null;
+  const habit =
+    entityType === "habit" ? ((props as HabitContextProps).habit ?? null) : null;
   const entityId: UUID | null =
     entityType === "task"
       ? task
@@ -79,7 +90,9 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
           : null
         : habitAction
           ? habitAction.id
-          : null;
+          : entityType === "habit"
+            ? habit?.id ?? null
+            : null;
 
   const { t } = useTranslation();
   const toast = useToast();
@@ -103,20 +116,23 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     return null;
   }, [entityType, task, timelog]);
 
-  const listFilters = useMemo(() => {
+  const notesSource = useMemo<AssociatedNotesSource>(() => {
+    if (entityType === "habit") {
+      return { kind: "habit", habitId: habit?.id ?? null };
+    }
     if (entityType === "task") {
-      return { task_id: task?.id } as const;
+      return { kind: "filters", filters: { task_id: task?.id } };
     }
     if (entityType === "timelog") {
-      return { timelog_id: timelog?.id } as const;
+      return { kind: "filters", filters: { timelog_id: timelog?.id } };
     }
-    return { habit_action_id: habitAction?.id } as const;
-  }, [entityType, habitAction?.id, task?.id, timelog?.id]);
+    return { kind: "filters", filters: { habit_action_id: habitAction?.id } };
+  }, [entityType, habit?.id, habitAction?.id, task?.id, timelog?.id]);
 
   const { notes, isLoading, error, refetch } = useAssociatedNotesController({
     isOpen,
     enabledId: entityId,
-    listFilters,
+    source: notesSource,
   });
 
   useEffect(() => {
@@ -128,10 +144,10 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && defaultCreateOpen) {
+    if (isOpen && defaultCreateOpen && entityType !== "habit") {
       setShowCreateModal(true);
     }
-  }, [isOpen, defaultCreateOpen]);
+  }, [entityType, isOpen, defaultCreateOpen]);
 
   const handleEditNote = (note: Note) => {
     setEditingNote(note);
@@ -202,7 +218,8 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
   if (
     (entityType === "task" && !task) ||
     (entityType === "timelog" && !timelog) ||
-    (entityType === "habit_action" && !habitAction)
+    (entityType === "habit_action" && !habitAction) ||
+    (entityType === "habit" && !habit)
   ) {
     return null;
   }
@@ -212,20 +229,26 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       ? t("taskNotes.title")
       : entityType === "timelog"
         ? t("timelogNotes.title")
-        : t("habitActionNotes.title");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.title")
+          : t("habitNotes.title");
 
   const emptyStateTitle =
     entityType === "task"
       ? t("taskNotes.emptyState.title")
       : entityType === "timelog"
         ? t("timelogNotes.emptyState.title")
-        : t("habitActionNotes.emptyState.title");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.emptyState.title")
+          : t("habitNotes.emptyState.title");
   const emptyStateDescription =
     entityType === "task"
       ? t("taskNotes.emptyState.description")
       : entityType === "timelog"
         ? t("timelogNotes.emptyState.description")
-        : t("habitActionNotes.emptyState.description");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.emptyState.description")
+          : t("habitNotes.emptyState.description");
   const habitActionLabel = formatHabitActionLabel(habitAction);
 
   return (
@@ -254,16 +277,24 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
           {habitActionLabel}
         </p>
       )}
+      {entityType === "habit" && habit && (
+        <p className="text-sm text-base-content mb-4">
+          {t("habitNotes.habitLabel")}
+          {habit.title}
+        </p>
+      )}
 
       <div className="flex justify-center items-center gap-4 mb-8">
-        <ActionButton
-          label={t("createNoteModal.submitText")}
-          onClick={() => setShowCreateModal(true)}
-          color="primary"
-          variant="solid"
-          iconName="plus"
-          disabled={!entityId}
-        />
+        {entityType !== "habit" && (
+          <ActionButton
+            label={t("createNoteModal.submitText")}
+            onClick={() => setShowCreateModal(true)}
+            color="primary"
+            variant="solid"
+            iconName="plus"
+            disabled={!entityId}
+          />
+        )}
         {notes.length > 0 && (
           <Badge tone="primary" variant="outline">
             {t("filterStatus.notesCount", { count: notes.length })}
@@ -430,7 +461,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
         </div>
       )}
 
-      {showCreateModal && (
+      {showCreateModal && entityType !== "habit" && (
         <CreateNoteModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
