@@ -20,7 +20,10 @@ import NoteCardLayout, {
 } from "./notes/NoteCardLayout";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
 import { Icon } from "./icons";
-import { useAssociatedNotesController } from "@/features/notes/controller/useAssociatedNotesController";
+import {
+  useAssociatedNotesController,
+  type AssociatedNotesSource,
+} from "@/features/notes/controller/useAssociatedNotesController";
 import ConfirmDialog from "./ConfirmDialog";
 import { notesApi } from "@/services/api/notes";
 import { useToast } from "@/contexts/ToastContext";
@@ -48,10 +51,16 @@ type HabitActionContextProps = SharedProps & {
   habitAction: NoteHabitActionSummary | null;
 };
 
+type HabitContextProps = SharedProps & {
+  entityType: "habit";
+  habit: { id: UUID; title: string } | null;
+};
+
 type TaskNotesModalProps =
   | TaskContextProps
   | TimelogContextProps
-  | HabitActionContextProps;
+  | HabitActionContextProps
+  | HabitContextProps;
 
 export default function TaskNotesModal(props: TaskNotesModalProps) {
   const { isOpen, onClose } = props;
@@ -68,6 +77,10 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     entityType === "habit_action"
       ? ((props as HabitActionContextProps).habitAction ?? null)
       : null;
+  const habit =
+    entityType === "habit"
+      ? ((props as HabitContextProps).habit ?? null)
+      : null;
   const entityId: UUID | null =
     entityType === "task"
       ? task
@@ -79,7 +92,9 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
           : null
         : habitAction
           ? habitAction.id
-          : null;
+          : entityType === "habit"
+            ? (habit?.id ?? null)
+            : null;
 
   const { t } = useTranslation();
   const toast = useToast();
@@ -103,20 +118,32 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
     return null;
   }, [entityType, task, timelog]);
 
-  const listFilters = useMemo(() => {
+  const notesSource = useMemo<AssociatedNotesSource>(() => {
+    if (entityType === "habit") {
+      return { kind: "habit", habitId: habit?.id ?? null };
+    }
     if (entityType === "task") {
-      return { task_id: task?.id } as const;
+      return { kind: "filters", filters: { task_id: task?.id } };
     }
     if (entityType === "timelog") {
-      return { timelog_id: timelog?.id } as const;
+      return { kind: "filters", filters: { timelog_id: timelog?.id } };
     }
-    return { habit_action_id: habitAction?.id } as const;
-  }, [entityType, habitAction?.id, task?.id, timelog?.id]);
+    return { kind: "filters", filters: { habit_action_id: habitAction?.id } };
+  }, [entityType, habit?.id, habitAction?.id, task?.id, timelog?.id]);
 
-  const { notes, isLoading, error, refetch } = useAssociatedNotesController({
+  const {
+    notes,
+    total,
+    isLoading,
+    error,
+    refetch,
+    hasMore,
+    isLoadingMore,
+    loadMoreNotes,
+  } = useAssociatedNotesController({
     isOpen,
     enabledId: entityId,
-    listFilters,
+    source: notesSource,
   });
 
   useEffect(() => {
@@ -128,10 +155,10 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && defaultCreateOpen) {
+    if (isOpen && defaultCreateOpen && entityType !== "habit") {
       setShowCreateModal(true);
     }
-  }, [isOpen, defaultCreateOpen]);
+  }, [entityType, isOpen, defaultCreateOpen]);
 
   const handleEditNote = (note: Note) => {
     setEditingNote(note);
@@ -202,7 +229,8 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
   if (
     (entityType === "task" && !task) ||
     (entityType === "timelog" && !timelog) ||
-    (entityType === "habit_action" && !habitAction)
+    (entityType === "habit_action" && !habitAction) ||
+    (entityType === "habit" && !habit)
   ) {
     return null;
   }
@@ -212,20 +240,26 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       ? t("taskNotes.title")
       : entityType === "timelog"
         ? t("timelogNotes.title")
-        : t("habitActionNotes.title");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.title")
+          : t("habitNotes.title");
 
   const emptyStateTitle =
     entityType === "task"
       ? t("taskNotes.emptyState.title")
       : entityType === "timelog"
         ? t("timelogNotes.emptyState.title")
-        : t("habitActionNotes.emptyState.title");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.emptyState.title")
+          : t("habitNotes.emptyState.title");
   const emptyStateDescription =
     entityType === "task"
       ? t("taskNotes.emptyState.description")
       : entityType === "timelog"
         ? t("timelogNotes.emptyState.description")
-        : t("habitActionNotes.emptyState.description");
+        : entityType === "habit_action"
+          ? t("habitActionNotes.emptyState.description")
+          : t("habitNotes.emptyState.description");
   const habitActionLabel = formatHabitActionLabel(habitAction);
 
   return (
@@ -254,19 +288,27 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
           {habitActionLabel}
         </p>
       )}
+      {entityType === "habit" && habit && (
+        <p className="text-sm text-base-content mb-4">
+          {t("habitNotes.habitLabel")}
+          {habit.title}
+        </p>
+      )}
 
       <div className="flex justify-center items-center gap-4 mb-8">
-        <ActionButton
-          label={t("createNoteModal.submitText")}
-          onClick={() => setShowCreateModal(true)}
-          color="primary"
-          variant="solid"
-          iconName="plus"
-          disabled={!entityId}
-        />
+        {entityType !== "habit" && (
+          <ActionButton
+            label={t("createNoteModal.submitText")}
+            onClick={() => setShowCreateModal(true)}
+            color="primary"
+            variant="solid"
+            iconName="plus"
+            disabled={!entityId}
+          />
+        )}
         {notes.length > 0 && (
           <Badge tone="primary" variant="outline">
-            {t("filterStatus.notesCount", { count: notes.length })}
+            {t("filterStatus.notesCount", { count: total })}
           </Badge>
         )}
       </div>
@@ -291,146 +333,163 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       )}
 
       {!isLoading && !error && notes.length > 0 && (
-        <div className="space-y-4">
-          {notes.map((note) => {
-            const associations: NoteCardAssociation[] = [];
+        <>
+          <div className="space-y-4">
+            {notes.map((note) => {
+              const associations: NoteCardAssociation[] = [];
 
-            if (note.person && note.person.length > 0) {
-              associations.push(
-                ...note.person.map((person) => ({
-                  id: `person-${person.id}`,
-                  type: "person" as const,
-                  label: `@${person.display_name ?? person.name}`,
+              if (note.person && note.person.length > 0) {
+                associations.push(
+                  ...note.person.map((person) => ({
+                    id: `person-${person.id}`,
+                    type: "person" as const,
+                    label: `@${person.display_name ?? person.name}`,
+                    icon: (
+                      <Icon
+                        name="people"
+                        size={16}
+                        className="text-success"
+                        aria-hidden
+                      />
+                    ),
+                    title: person.display_name
+                      ? t("notesSidebar.filterPerson", {
+                          name: person.display_name,
+                        })
+                      : undefined,
+                    disabled: true,
+                  })),
+                );
+              }
+
+              if (note.tags && note.tags.length > 0) {
+                associations.push(
+                  ...note.tags.map((tag) => ({
+                    id: `tag-${tag.id}`,
+                    type: "tag" as const,
+                    label: `#${tag.name}`,
+                    icon: (
+                      <Icon
+                        name="tag"
+                        size={16}
+                        className="text-primary"
+                        aria-hidden
+                      />
+                    ),
+                    title: undefined,
+                    disabled: true,
+                  })),
+                );
+              }
+
+              if (note.task) {
+                associations.push({
+                  id: `task-${note.task.id}`,
+                  type: "task",
+                  label: `${note.task.content} (${note.task.status})`,
                   icon: (
                     <Icon
-                      name="people"
+                      name="clipboard"
                       size={16}
-                      className="text-success"
-                      aria-hidden
-                    />
-                  ),
-                  title: person.display_name
-                    ? t("notesSidebar.filterPerson", {
-                        name: person.display_name,
-                      })
-                    : undefined,
-                  disabled: true,
-                })),
-              );
-            }
-
-            if (note.tags && note.tags.length > 0) {
-              associations.push(
-                ...note.tags.map((tag) => ({
-                  id: `tag-${tag.id}`,
-                  type: "tag" as const,
-                  label: `#${tag.name}`,
-                  icon: (
-                    <Icon
-                      name="tag"
-                      size={16}
-                      className="text-primary"
+                      className="text-secondary"
                       aria-hidden
                     />
                   ),
                   title: undefined,
                   disabled: true,
-                })),
-              );
-            }
+                });
+              }
 
-            if (note.task) {
-              associations.push({
-                id: `task-${note.task.id}`,
-                type: "task",
-                label: `${note.task.content} (${note.task.status})`,
-                icon: (
-                  <Icon
-                    name="clipboard"
-                    size={16}
-                    className="text-secondary"
-                    aria-hidden
-                  />
-                ),
-                title: undefined,
-                disabled: true,
-              });
-            }
+              const firstTimelog = note.timelogs?.[0] ?? null;
+              const timelogLabel = formatFirstTimelogLabel(firstTimelog);
+              if (timelogLabel) {
+                associations.push({
+                  id: `timelog-${firstTimelog?.id ?? `${note.id}-timelog`}`,
+                  type: "timelog",
+                  label: timelogLabel,
+                  icon: (
+                    <Icon
+                      name="timer"
+                      size={16}
+                      className="text-info"
+                      aria-hidden
+                    />
+                  ),
+                  title: t("notes.timelogChipTooltip", { label: timelogLabel }),
+                  disabled: true,
+                });
+              }
 
-            const firstTimelog = note.timelogs?.[0] ?? null;
-            const timelogLabel = formatFirstTimelogLabel(firstTimelog);
-            if (timelogLabel) {
-              associations.push({
-                id: `timelog-${firstTimelog?.id ?? `${note.id}-timelog`}`,
-                type: "timelog",
-                label: timelogLabel,
-                icon: (
-                  <Icon
-                    name="timer"
-                    size={16}
-                    className="text-info"
-                    aria-hidden
-                  />
-                ),
-                title: t("notes.timelogChipTooltip", { label: timelogLabel }),
-                disabled: true,
-              });
-            }
+              const firstHabitAction = note.habit_actions?.[0] ?? null;
+              const habitActionNoteLabel =
+                formatHabitActionLabel(firstHabitAction);
+              if (habitActionNoteLabel) {
+                associations.push({
+                  id: `habit-action-${firstHabitAction?.id ?? `${note.id}-habit-action`}`,
+                  type: "habit_action",
+                  label: habitActionNoteLabel,
+                  icon: (
+                    <Icon
+                      name="repeat"
+                      size={16}
+                      className="text-accent"
+                      aria-hidden
+                    />
+                  ),
+                  title: habitActionNoteLabel,
+                  disabled: true,
+                });
+              }
 
-            const firstHabitAction = note.habit_actions?.[0] ?? null;
-            const habitActionNoteLabel = formatHabitActionLabel(firstHabitAction);
-            if (habitActionNoteLabel) {
-              associations.push({
-                id: `habit-action-${firstHabitAction?.id ?? `${note.id}-habit-action`}`,
-                type: "habit_action",
-                label: habitActionNoteLabel,
-                icon: (
-                  <Icon
-                    name="repeat"
-                    size={16}
-                    className="text-accent"
-                    aria-hidden
-                  />
-                ),
-                title: habitActionNoteLabel,
-                disabled: true,
-              });
-            }
-
-            const actions = (
-              <ActionButton
-                label={t("common.edit")}
-                iconName="edit"
-                iconOnly
-                color="primary"
-                onClick={() => handleEditNote(note)}
-                ariaLabel={t("common.edit")}
-              />
-            );
-
-            return (
-              <Surface
-                key={note.id}
-                padding="responsive"
-                border="subtle"
-                elevation="subtle"
-                interactive
-              >
-                <NoteCardLayout
-                  content={note.content}
-                  associations={associations}
-                  createdAt={note.created_at}
-                  actions={actions}
-                  actionsVisibility="hover"
-                  minCollapsedLines={noteCollapsePreference.value}
+              const actions = (
+                <ActionButton
+                  label={t("common.edit")}
+                  iconName="edit"
+                  iconOnly
+                  color="primary"
+                  onClick={() => handleEditNote(note)}
+                  ariaLabel={t("common.edit")}
                 />
-              </Surface>
-            );
-          })}
-        </div>
+              );
+
+              return (
+                <Surface
+                  key={note.id}
+                  padding="responsive"
+                  border="subtle"
+                  elevation="subtle"
+                  interactive
+                >
+                  <NoteCardLayout
+                    content={note.content}
+                    associations={associations}
+                    createdAt={note.created_at}
+                    actions={actions}
+                    actionsVisibility="hover"
+                    minCollapsedLines={noteCollapsePreference.value}
+                  />
+                </Surface>
+              );
+            })}
+          </div>
+          {hasMore && (
+            <div className="mt-6 flex justify-center">
+              <ActionButton
+                label={
+                  isLoadingMore ? t("common.loading") : t("notes.loadMore")
+                }
+                onClick={() => void loadMoreNotes()}
+                disabled={isLoadingMore}
+                color="neutral"
+                variant="outline"
+                iconName="chevron-down"
+              />
+            </div>
+          )}
+        </>
       )}
 
-      {showCreateModal && (
+      {showCreateModal && entityType !== "habit" && (
         <CreateNoteModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}

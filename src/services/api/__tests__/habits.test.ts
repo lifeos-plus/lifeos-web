@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ENDPOINTS } from "@/services/api/endpoints";
 import { habitsApi } from "@/services/api/habits";
+import type { UUID } from "@/types/primitive";
 
 const localUrl = (path: string) => new URL(path, "http://localhost").toString();
 
@@ -51,6 +52,34 @@ describe("habitsApi", () => {
     expect(parsedUrl.searchParams.get("cadence_frequency")).toBe("monthly");
     expect(parsedUrl.searchParams.get("page")).toBe("1");
     expect(parsedUrl.searchParams.get("size")).toBe("1000");
+    expect(init.method).toBe("GET");
+  });
+
+  it("queries the aggregated notes endpoint for a habit", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          items: [],
+          pagination: { page: 2, size: 20, total: 21, pages: 2 },
+          meta: { habit_id: "habit-1" },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    await habitsApi.getNotes("habit-1" as UUID, { page: 2, size: 20 });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const parsedUrl = new URL(url);
+    expect(url.startsWith(localUrl(ENDPOINTS.HABITS.NOTES("habit-1")))).toBe(
+      true,
+    );
+    expect(parsedUrl.searchParams.get("page")).toBe("2");
+    expect(parsedUrl.searchParams.get("size")).toBe("20");
     expect(init.method).toBe("GET");
   });
 });

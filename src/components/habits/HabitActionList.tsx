@@ -85,6 +85,7 @@ export function HabitActionList({
     useState<HabitAction | null>(null);
   const [viewingNotesForAction, setViewingNotesForAction] =
     useState<HabitAction | null>(null);
+  const [viewingHabitNotes, setViewingHabitNotes] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(
     () => new Date(centerDate),
   );
@@ -576,6 +577,14 @@ export function HabitActionList({
                           iconOnly
                           ariaLabel={t("notes.actions.viewNotes")}
                         />
+                        <ActionButton
+                          label={t("notes.actions.viewHabitNotes")}
+                          iconName="document-text"
+                          color="neutral"
+                          onClick={() => setViewingHabitNotes(true)}
+                          iconOnly
+                          ariaLabel={t("notes.actions.viewHabitNotes")}
+                        />
                         {canModifyAction && (
                           <EnumSelect
                             id={`status-select-${action.id}`}
@@ -627,6 +636,16 @@ export function HabitActionList({
           onClose={() => setViewingNotesForAction(null)}
           entityType="habit_action"
           habitAction={buildHabitActionSummary(viewingNotesForAction)}
+          onNotesChanged={onNotesChanged}
+        />
+      )}
+
+      {viewingHabitNotes && (
+        <TaskNotesModal
+          isOpen={viewingHabitNotes}
+          onClose={() => setViewingHabitNotes(false)}
+          entityType="habit"
+          habit={{ id: habitId, title: habitTitle }}
           onNotesChanged={onNotesChanged}
         />
       )}

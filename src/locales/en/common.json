@@ -447,7 +447,8 @@
     "editTooltip": "Edit note",
     "actions": {
       "addNote": "Add note",
-      "viewNotes": "View notes"
+      "viewNotes": "View notes",
+      "viewHabitNotes": "View all habit notes"
     },
     "timelogChipDefault": "Timelog",
     "timelogChipTooltip": "Linked timelog {{label}}",
@@ -1763,6 +1764,14 @@
     "emptyState": {
       "title": "No Notes",
       "description": "Notes linked from this habit action will appear here. Capture check-in context or follow-up reflections."
+    }
+  },
+  "habitNotes": {
+    "title": "Habit Notes",
+    "habitLabel": "Habit: ",
+    "emptyState": {
+      "title": "No Notes",
+      "description": "Notes linked to any action of this habit will appear here, giving you one place to review its full history."
     }
   },
   "taskTimelogs": {

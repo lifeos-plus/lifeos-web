@@ -655,6 +655,26 @@ export interface paths {
         patch: operations["update_action_api_v1_habits__habit_id__actions__action_id__patch"];
         trace?: never;
     };
+    "/api/v1/habits/{habit_id}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Notes For Habit
+         * @description List all active notes linked to an active habit through its actions.
+         */
+        get: operations["list_notes_for_habit_api_v1_habits__habit_id__notes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/habits/{habit_id}/overview": {
         parameters: {
             query?: never;
@@ -2788,6 +2808,11 @@ export interface components {
             /** Status Filter */
             status_filter: string | null;
         };
+        /** HabitNoteListMeta */
+        HabitNoteListMeta: {
+            /** Habit Id */
+            habit_id: string;
+        };
         /** HabitOverviewResponse */
         HabitOverviewResponse: {
             habit: components["schemas"]["HabitResponse"];
@@ -3022,6 +3047,13 @@ export interface components {
             /** Items */
             items: components["schemas"]["MenstrualFactorResponse"][];
             meta: components["schemas"]["EmptyMeta"];
+            pagination: components["schemas"]["Pagination"];
+        };
+        /** ListResponse[NoteResponse, HabitNoteListMeta] */
+        ListResponse_NoteResponse_HabitNoteListMeta_: {
+            /** Items */
+            items: components["schemas"]["NoteResponse"][];
+            meta: components["schemas"]["HabitNoteListMeta"];
             pagination: components["schemas"]["Pagination"];
         };
         /** ListResponse[NoteResponse, NoteListMeta] */
@@ -6288,6 +6320,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HabitActionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_notes_for_habit_api_v1_habits__habit_id__notes_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                habit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListResponse_NoteResponse_HabitNoteListMeta_"];
                 };
             };
             /** @description Validation Error */
