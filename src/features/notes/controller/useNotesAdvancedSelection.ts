@@ -14,7 +14,6 @@ import {
   type NoteBatchDeletePayload,
   type NoteBatchDeleteResult,
 } from "@/services/api/notes";
-import { arraysEqual } from "@/utils/core";
 
 interface NotesAdvancedSelectionOptions {
   queryMode: QueryMode;
@@ -76,78 +75,36 @@ export function useNotesAdvancedSelection({
   const convertAdvancedSearchParams =
     useCallback((): NotesAdvancedSearchParams => {
       return {
-        start_date: advancedSearchParams.start_date,
-        end_date: advancedSearchParams.end_date,
-        tag_mode: advancedSearchParams.tag_mode,
-        tag_ids:
-          advancedSearchParams.tag_mode === "none"
-            ? null
-            : advancedSearchParams.tag_ids,
-        person_mode: advancedSearchParams.person_mode,
-        person_ids:
-          advancedSearchParams.person_mode === "none"
-            ? null
-            : advancedSearchParams.person_ids,
-        task_filter: advancedSearchParams.task_filter,
-        task_id:
-          advancedSearchParams.task_filter === "specific"
-            ? advancedSearchParams.task_id
-            : null,
+        tag_id: advancedSearchParams.tag_id,
+        person_id: advancedSearchParams.person_id,
+        task_id: advancedSearchParams.task_id,
         keyword: advancedSearchParams.keyword,
-        sort_order: advancedSearchParams.sort_order,
       };
     }, [advancedSearchParams]);
 
   const loadAdvancedSearchResults = useCallback(() => {
-    if (
-      advancedSearchParams.task_filter === "specific" &&
-      !advancedSearchParams.task_id
-    ) {
-      showError(
-        t("notes.advancedSearch.errorTitle"),
-        t("notes.advancedSearch.taskRequired"),
-      );
-      return;
-    }
-
     const payload = convertAdvancedSearchParams();
     notesAdvancedSearchRef.current.search(payload);
   }, [
-    advancedSearchParams.task_filter,
-    advancedSearchParams.task_id,
     convertAdvancedSearchParams,
     notesAdvancedSearchRef,
-    showError,
-    t,
   ]);
 
   const handleAdvancedReset = useCallback(() => {
     setAdvancedSearchParams((prev) => {
       if (
-        prev.start_date === null &&
-        prev.end_date === null &&
-        prev.tag_mode === "any" &&
-        arraysEqual(prev.tag_ids, []) &&
-        prev.person_mode === "any" &&
-        arraysEqual(prev.person_ids, []) &&
-        prev.task_filter === "any" &&
+        prev.tag_id === null &&
+        prev.person_id === null &&
         prev.task_id === null &&
-        prev.keyword === null &&
-        prev.sort_order === "desc"
+        prev.keyword === null
       ) {
         return prev;
       }
       return {
-        start_date: null,
-        end_date: null,
-        tag_mode: "any",
-        tag_ids: [],
-        person_mode: "any",
-        person_ids: [],
-        task_filter: "any",
+        tag_id: null,
+        person_id: null,
         task_id: null,
         keyword: null,
-        sort_order: "desc",
       };
     });
     setSelectedNoteIds(new Set());

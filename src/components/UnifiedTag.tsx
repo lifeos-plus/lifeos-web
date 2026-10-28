@@ -5,7 +5,6 @@ type TagType =
   | "nickname"
   | "location"
   | "relationship"
-  | "anniversary"
   | "status";
 
 interface UnifiedTagProps {
@@ -24,7 +23,6 @@ interface UnifiedTagProps {
  * - nickname: 昵称标签 (紫色)
  * - location: 地址标签 (绿色)
  * - relationship: 关系标签 (蓝色)
- * - anniversary: 纪念日标签 (粉色)
  * - status: 状态标签 (灰色)
  */
 const UnifiedTag: React.FC<UnifiedTagProps> = ({
@@ -39,7 +37,6 @@ const UnifiedTag: React.FC<UnifiedTagProps> = ({
     nickname: "secondary",
     location: "success",
     relationship: "primary",
-    anniversary: "accent",
     status: "neutral",
   };
 

@@ -26,7 +26,5 @@ export type {
   TaskWithSubtasks,
 } from "./tasks";
 export type {
-  Anniversary,
-  AnniversaryCreate,
   Person,
 } from "./persons";

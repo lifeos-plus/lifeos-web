@@ -6,17 +6,14 @@
  * across different pages (PersonsPage, NotesPage, etc.)
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import ModalBase from "@/layouts/ModalBase";
-import type { Person, Anniversary, PersonSummary } from "@/services/api";
+import type { Person, PersonSummary } from "@/services/api";
 import UnifiedTag from "./UnifiedTag";
 import ActionButton from "./ActionButton";
 import { ActionButtonGroup } from "./ActionButton";
-import { TextInput } from "./forms";
 import { FORM_LABEL_MUTED_CLASS } from "./forms/styles";
-import { usePersonAnniversaries } from "@/hooks/queries/usePersonAnniversaries";
-import { useToast } from "@/contexts/ToastContext";
 
 // Union type to support both PersonSummary and Person
 type PersonDetail = PersonSummary | Person;
@@ -35,9 +32,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
   onEdit,
 }) => {
   const { t } = useTranslation();
-  const toast = useToast();
-  const [annivName, setAnnivName] = useState("");
-  const [annivDate, setAnnivDate] = useState("");
   const locationTags = useMemo(
     () => person?.tags?.filter((tag) => tag.category === "location") ?? [],
     [person],
@@ -46,19 +40,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
     () => person?.tags?.filter((tag) => tag.category !== "location") ?? [],
     [person],
   );
-
-  const personId = useMemo(() => (person ? person.id : null), [person]);
-  const {
-    anniversaries,
-    isLoading: isAnnivLoading,
-    createAnniversary,
-    updateAnniversary,
-    deleteAnniversary,
-    creating,
-    updatingId,
-    deletingId,
-  } = usePersonAnniversaries(personId);
-  const [editingAnnivId, setEditingAnnivId] = useState<string | null>(null);
 
   if (!isOpen || !person) return null;
 
@@ -182,108 +163,6 @@ const PersonDetailModal: React.FC<PersonDetailModalProps> = ({
           </div>
         )}
 
-        {/* Show anniversaries only for Person type */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className={FORM_LABEL_MUTED_CLASS}>
-              {t("personDetail.anniversaries")}
-            </label>
-            <ActionButton
-              label={
-                editingAnnivId
-                  ? t("common.save")
-                  : t("personDetail.addAnniversary")
-              }
-              iconName={editingAnnivId ? "check" : "plus"}
-              size="sm"
-              color="primary"
-              disabled={creating || Boolean(updatingId)}
-              onClick={() => {
-                if (!annivName.trim() || !annivDate.trim()) {
-                  toast.showError(t("personDetail.anniversaryValidation"));
-                  return;
-                }
-                if (editingAnnivId) {
-                  updateAnniversary(editingAnnivId as string, {
-                    name: annivName.trim(),
-                    date: annivDate.trim(),
-                  });
-                  setEditingAnnivId(null);
-                } else {
-                  createAnniversary({
-                    name: annivName.trim(),
-                    date: annivDate.trim(),
-                  });
-                }
-                setAnnivName("");
-                setAnnivDate("");
-              }}
-            />
-          </div>
-
-          <div className="grid gap-2 md:grid-cols-2">
-            <TextInput
-              name="anniversary-name"
-              placeholder={t("personDetail.anniversaryNamePlaceholder")}
-              value={annivName}
-              onChange={(e) => setAnnivName(e.target.value)}
-              disabled={creating}
-            />
-            <TextInput
-              name="anniversary-date"
-              type="date"
-              placeholder="YYYY-MM-DD"
-              value={annivDate}
-              onChange={(e) => setAnnivDate(e.target.value)}
-              disabled={creating}
-            />
-          </div>
-
-          <div className="space-y-2 mt-1">
-            {isAnnivLoading && (
-              <p className="text-sm text-base-content/70">
-                {t("common.loading")}
-              </p>
-            )}
-            {!isAnnivLoading && anniversaries.length === 0 && (
-              <p className="text-sm text-base-content/60">
-                {t("personDetail.noAnniversary")}
-              </p>
-            )}
-            {anniversaries.map((anniversary: Anniversary) => (
-              <div
-                key={anniversary.id}
-                className="flex justify-between items-center p-2 bg-base-200 rounded-md"
-              >
-                <div>
-                  <span>{anniversary.name}</span>
-                  <span className="text-sm ml-2">{anniversary.date}</span>
-                </div>
-                <ActionButton
-                  label={t("common.edit")}
-                  iconName="edit"
-                  size="sm"
-                  color="primary"
-                  variant="ghost"
-                  onClick={() => {
-                    setAnnivName(anniversary.name);
-                    setAnnivDate(anniversary.date);
-                    setEditingAnnivId(anniversary.id);
-                  }}
-                />
-                <ActionButton
-                  label={t("common.delete")}
-                  iconName="trash"
-                  size="sm"
-                  color="error"
-                  variant="ghost"
-                  disabled={deletingId === anniversary.id}
-                  onClick={() => deleteAnniversary(anniversary.id)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </ModalBase>
   );

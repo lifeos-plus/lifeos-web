@@ -27,6 +27,7 @@ interface TagSelectorProps {
   className?: string;
   selectedPlacement?: "inline" | "below";
   showCreateButton?: boolean;
+  multiple?: boolean;
 }
 
 const sanitizeIds = (ids: UUID[]): UUID[] =>
@@ -49,6 +50,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   className = "",
   selectedPlacement = "inline",
   showCreateButton = false,
+  multiple = true,
 }) => {
   const { t } = useTranslation();
   const [createdTags, setCreatedTags] = useState<Tag[]>([]);
@@ -99,14 +101,15 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   const handleSelectionChange = useCallback(
     (ids: string[]) => {
       const normalized = sanitizeIds(ids as UUID[]);
+      const nextIds = multiple ? normalized : normalized.slice(-1);
       if (!sanitizedLocked.length) {
-        onTagsChange(normalized);
+        onTagsChange(nextIds);
         return;
       }
-      const merged = new Set<UUID>([...sanitizedLocked, ...normalized]);
+      const merged = new Set<UUID>([...sanitizedLocked, ...nextIds]);
       onTagsChange(Array.from(merged));
     },
-    [onTagsChange, sanitizedLocked],
+    [multiple, onTagsChange, sanitizedLocked],
   );
 
   const handleCreateOption = useCallback(
@@ -135,19 +138,28 @@ const TagSelector: React.FC<TagSelectorProps> = ({
       (option) => option.label.trim().toLowerCase() === trimmed.toLowerCase(),
     );
     if (existing) {
-      handleSelectionChange([...sanitizedSelected, existing.id as UUID]);
+      handleSelectionChange(
+        multiple
+          ? [...sanitizedSelected, existing.id as UUID]
+          : [existing.id as UUID],
+      );
       setInputValue("");
       return;
     }
     const created = await handleCreateOption(trimmed);
     if (created) {
-      handleSelectionChange([...sanitizedSelected, created.id as UUID]);
+      handleSelectionChange(
+        multiple
+          ? [...sanitizedSelected, created.id as UUID]
+          : [created.id as UUID],
+      );
       setInputValue("");
     }
   }, [
     handleCreateOption,
     handleSelectionChange,
     inputValue,
+    multiple,
     options,
     sanitizedSelected,
   ]);
@@ -219,7 +231,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
       options={options}
       placeholder={t("common.please_select")}
       size={size}
-      multiple
+      multiple={multiple}
       disabled={disabled}
       usePortal={usePortal}
       isLoading={false}

@@ -27,14 +27,12 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import type { UUID } from "@/types/primitive";
 import CreateNoteModal from "@/components/CreateNoteModal";
 import { type Note as ApiNote } from "@/services/api/notes";
-import { createDateBoundaries } from "@/utils/datetime";
 import {
   useNotesPageData,
   NOTES_ADVANCED_PAGE_SIZE,
 } from "@/features/notes/controller/useNotesPageData";
 import { useNotesAdvancedSelection } from "@/features/notes/controller/useNotesAdvancedSelection";
 import { useQueryMode } from "@/hooks/useQueryMode";
-import { arraysEqual } from "@/utils/core";
 import { NotesBulkImportPanel } from "@/components/notes/NotesBulkImportPanel";
 import { NotesModeBanner } from "@/components/notes/NotesModeBanner";
 
@@ -115,65 +113,33 @@ function NotesPage() {
   } = noteFilters;
   const selectedFilterTag = selectedFilterTags[0] ?? null;
   const selectedFilterPerson = selectedFilterPersons[0] ?? null;
+  const selectedNotesForBatch = advancedNotes.filter((note) =>
+    selectedNoteIds.has(note.id),
+  );
 
   const handleAdvancedParamsChange = useCallback(
     (next: NotesAdvancedSearchFormState) => {
-      let nextStartIso: string | null = null;
-      if (next.start_date) {
-        const { startOfDay } = createDateBoundaries(
-          next.start_date,
-          activeTimezone,
-        );
-        nextStartIso = startOfDay.toISOString();
-      }
-
-      let nextEndIso: string | null = null;
-      if (next.end_date) {
-        const { endOfDay } = createDateBoundaries(
-          next.end_date,
-          activeTimezone,
-        );
-        nextEndIso = endOfDay.toISOString();
-      }
-
-      const nextTagIds = next.tag_mode === "none" ? [] : next.tag_ids;
-      const nextPersonIds = next.person_mode === "none" ? [] : next.person_ids;
       const nextKeyword = next.keyword ? next.keyword.trim() || null : null;
-      const nextTaskId =
-        next.task_filter === "specific" ? (next.task_id ?? null) : null;
 
       setAdvancedSearchParams((prev) => {
         if (
-          prev.start_date === nextStartIso &&
-          prev.end_date === nextEndIso &&
-          prev.tag_mode === next.tag_mode &&
-          arraysEqual(prev.tag_ids, nextTagIds) &&
-          prev.person_mode === next.person_mode &&
-          arraysEqual(prev.person_ids, nextPersonIds) &&
-          prev.task_filter === next.task_filter &&
-          prev.task_id === nextTaskId &&
-          prev.keyword === nextKeyword &&
-          prev.sort_order === next.sort_order
+          prev.tag_id === next.tag_id &&
+          prev.person_id === next.person_id &&
+          prev.task_id === next.task_id &&
+          prev.keyword === nextKeyword
         ) {
           return prev;
         }
 
         return {
-          ...prev,
-          start_date: nextStartIso,
-          end_date: nextEndIso,
-          tag_mode: next.tag_mode,
-          tag_ids: nextTagIds,
-          person_mode: next.person_mode,
-          person_ids: nextPersonIds,
-          task_filter: next.task_filter,
-          task_id: nextTaskId,
+          tag_id: next.tag_id,
+          person_id: next.person_id,
+          task_id: next.task_id,
           keyword: nextKeyword,
-          sort_order: next.sort_order,
         };
       });
     },
-    [activeTimezone, setAdvancedSearchParams],
+    [setAdvancedSearchParams],
   );
 
   const isAdvancedMode = queryMode === "advanced";
@@ -470,7 +436,6 @@ function NotesPage() {
             onOpenBatchEdit={() => setShowBatchEditModal(true)}
             onBatchDelete={openBatchDeleteConfirm}
             totalResults={advancedTotalCount}
-            timezone={activeTimezone}
             isLoading={advancedLoading}
             canCopyResults={canCopyAdvancedResults}
           />
@@ -666,11 +631,8 @@ function NotesPage() {
       <NotesBatchEditModal
         isOpen={showBatchEditModal}
         onClose={() => setShowBatchEditModal(false)}
-        selectedNoteIds={selectedNoteIds}
+        selectedNotes={selectedNotesForBatch}
         onSuccess={handleBatchEditSuccess}
-        availableTags={availableNoteTags}
-        onCreateTag={handleCreateNoteTag}
-        availableTasks={tasksForAdvancedSearch}
       />
 
       {isBatchDeleteConfirmOpen && (

@@ -27,15 +27,6 @@ export const invalidatePersonActivities = (
     queryKey: personsKeys.activities(id),
   });
 
-export const invalidatePersonAnniversaries = (
-  queryClient: QueryClient,
-  id: UUID,
-) =>
-  queryClient.invalidateQueries({
-    queryKey: personsKeys.anniversaries(id),
-    exact: true,
-  });
-
 export const setPersonDetailCache = (
   queryClient: QueryClient,
   person: Person,

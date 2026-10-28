@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+
 import { useToast } from "@/contexts/ToastContext";
 import {
   notesApi,
@@ -9,20 +10,8 @@ import {
 } from "@/services/api/notes";
 import type { UUID } from "@/types/primitive";
 
-type BatchMode = "tags" | "people" | "task" | "content";
-type TagMode = "add" | "replace";
-type PersonMode = "add" | "replace";
-type TaskMode = "replace" | "clear";
-
 interface SubmitBatchEditOptions {
-  noteIds: UUID[];
-  mode: BatchMode;
-  tagMode: TagMode;
-  selectedTagIds: UUID[];
-  personMode: PersonMode;
-  selectedPersonIds: UUID[];
-  taskMode: TaskMode;
-  selectedTaskId: UUID | null;
+  notes: Array<{ id: UUID; content: string }>;
   findText: string;
   replaceText: string;
   caseSensitive: boolean;
@@ -52,81 +41,33 @@ export function useNotesBatchEditController({
 
   const submitBatchEdit = useCallback(
     async ({
-      noteIds,
-      mode,
-      tagMode,
-      selectedTagIds,
-      personMode,
-      selectedPersonIds,
-      taskMode,
-      selectedTaskId,
+      notes,
       findText,
       replaceText,
       caseSensitive,
     }: SubmitBatchEditOptions) => {
-      if (noteIds.length === 0) {
+      if (notes.length === 0) {
         showError(t("notes.batchEdit.title"), t("notes.batchEdit.noSelection"));
         return;
       }
-
-      const payload: NoteBatchUpdatePayload = {
-        note_ids: noteIds,
-        operation: mode,
-      };
-
-      if (mode === "tags") {
-        if (tagMode === "add" && selectedTagIds.length === 0) {
-          showError(
-            t("notes.batchEdit.title"),
-            t("notes.batchEdit.tagsRequired"),
-          );
-          return;
-        }
-        payload.tags = {
-          mode: tagMode,
-          tag_ids: selectedTagIds,
-        };
-      } else if (mode === "people") {
-        if (personMode === "add" && selectedPersonIds.length === 0) {
-          showError(
-            t("notes.batchEdit.title"),
-            t("notes.batchEdit.personsRequired"),
-          );
-          return;
-        }
-        payload.people = {
-          mode: personMode,
-          person_ids: selectedPersonIds,
-        };
-      } else if (mode === "task") {
-        if (taskMode === "replace" && !selectedTaskId) {
-          showError(
-            t("notes.batchEdit.title"),
-            t("notes.batchEdit.taskRequired"),
-          );
-          return;
-        }
-        payload.task = {
-          mode: taskMode,
-          task_id: selectedTaskId ?? undefined,
-        };
-      } else if (mode === "content") {
-        if (!findText.trim()) {
-          showError(
-            t("notes.batchEdit.title"),
-            t("notes.batchEdit.findTextRequired"),
-          );
-          return;
-        }
-        payload.content = {
-          find_text: findText,
-          replace_text: replaceText,
-          case_sensitive: caseSensitive,
-        };
+      if (!findText.trim()) {
+        showError(
+          t("notes.batchEdit.title"),
+          t("notes.batchEdit.findTextRequired"),
+        );
+        return;
       }
 
       try {
-        const result = await mutation.mutateAsync(payload);
+        const result = await mutation.mutateAsync({
+          note_ids: notes.map((note) => note.id),
+          notes,
+          content: {
+            find_text: findText,
+            replace_text: replaceText,
+            case_sensitive: caseSensitive,
+          },
+        });
 
         if (result.updated_count > 0) {
           showSuccess(
@@ -137,7 +78,6 @@ export function useNotesBatchEditController({
             }),
           );
         }
-
         if (result.failed_ids.length > 0) {
           showInfo(
             t("notes.batchEdit.partialTitle"),

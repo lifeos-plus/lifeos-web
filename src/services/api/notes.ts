@@ -32,7 +32,6 @@ export type NoteCreate = components["schemas"]["NoteCreate"];
 export type NoteUpdate = components["schemas"]["NoteUpdate"];
 
 export interface NoteStats {
-  total_notes: number;
   tag_stats: Array<{
     id: UUID;
     name: string;
@@ -48,36 +47,11 @@ export interface NoteStats {
 
 type NotePersonStatsResponse = components["schemas"]["NotePersonStatsResponse"];
 
-export type NoteTagFilterMode = "any" | "all" | "none";
-export type NotePersonFilterMode = "any" | "all" | "none";
-export type NoteTaskFilterMode = "any" | "none" | "specific" | "has";
-
 export interface NoteAdvancedSearchPayload {
-  start_date?: string | null;
-  end_date?: string | null;
-  tag_ids?: UUID[] | null;
-  tag_mode: NoteTagFilterMode;
-  person_ids?: UUID[] | null;
-  person_mode: NotePersonFilterMode;
-  task_filter: NoteTaskFilterMode;
+  tag_id?: UUID | null;
+  person_id?: UUID | null;
   task_id?: UUID | null;
   keyword?: string | null;
-  sort_order?: "asc" | "desc";
-}
-
-interface NoteBatchTagUpdatePayload {
-  mode: "add" | "replace";
-  tag_ids: UUID[];
-}
-
-interface NoteBatchPersonUpdatePayload {
-  mode: "add" | "replace";
-  person_ids: UUID[];
-}
-
-interface NoteBatchTaskUpdatePayload {
-  mode: "replace" | "clear";
-  task_id?: UUID | null;
 }
 
 interface NoteBatchContentUpdatePayload {
@@ -88,11 +62,8 @@ interface NoteBatchContentUpdatePayload {
 
 export interface NoteBatchUpdatePayload {
   note_ids: UUID[];
-  operation: "tags" | "people" | "task" | "content";
-  tags?: NoteBatchTagUpdatePayload;
-  people?: NoteBatchPersonUpdatePayload;
-  task?: NoteBatchTaskUpdatePayload;
-  content?: NoteBatchContentUpdatePayload;
+  notes: Array<{ id: UUID; content: string }>;
+  content: NoteBatchContentUpdatePayload;
 }
 
 export interface NoteBatchUpdateResult {
@@ -189,13 +160,11 @@ export const notesApi = {
   },
 
   getStats: async (): Promise<NoteStats> => {
-    const [notes, tagUsage, personUsage] = await Promise.all([
-      notesApi.fetchPaged({ page: 1, size: 1 }),
+    const [tagUsage, personUsage] = await Promise.all([
       tagsApi.getStatsBatch("note"),
       http.get<NotePersonStatsResponse>(ENDPOINTS.NOTES.STATS_PERSON),
     ]);
     return {
-      total_notes: notes.pagination.total,
       tag_stats: tagUsage.tag_stats.map((tagStat) => ({
         id: tagStat.id,
         name: "",
@@ -228,19 +197,86 @@ export const notesApi = {
     }
   },
 
-  advancedSearch: (payload: NoteAdvancedSearchPayload) =>
-    notesApi.fetchPaged({
-      page: 1,
+  advancedSearch: async (payload: NoteAdvancedSearchPayload) => {
+    let page = 1;
+    let response = await notesApi.fetchPaged({
+      page,
       size: 500,
+      tag_id: payload.tag_id ?? undefined,
+      person_id: payload.person_id ?? undefined,
+      task_id: payload.task_id ?? undefined,
       keyword: payload.keyword ?? undefined,
-    }),
+    });
+    const items = [...response.items];
+    while (page < response.pagination.pages) {
+      page += 1;
+      response = await notesApi.fetchPaged({
+        page,
+        size: 500,
+        tag_id: payload.tag_id ?? undefined,
+        person_id: payload.person_id ?? undefined,
+        task_id: payload.task_id ?? undefined,
+        keyword: payload.keyword ?? undefined,
+      });
+      items.push(...response.items);
+    }
+    return {
+      ...response,
+      items,
+      pagination: {
+        page: 1,
+        size: items.length,
+        total: items.length,
+        pages: items.length > 0 ? 1 : 0,
+      },
+    };
+  },
 
-  batchUpdate: (payload: NoteBatchUpdatePayload) =>
-    Promise.resolve({
-      updated_count: 0,
-      failed_ids: payload.note_ids,
-      errors: ["Batch note update is not supported by LifeOS Web UI yet."],
-    } satisfies NoteBatchUpdateResult),
+  batchUpdate: async (payload: NoteBatchUpdatePayload) => {
+    const notesById = new Map(payload.notes.map((note) => [note.id, note]));
+    const failedIds: UUID[] = [];
+    const errors: string[] = [];
+    let updatedCount = 0;
+
+    const results = await Promise.allSettled(
+      payload.note_ids.map(async (noteId) => {
+        const note = notesById.get(noteId);
+        if (!note) {
+          throw new Error(`Note ${noteId} is not available in the current result set.`);
+        }
+        const pattern = payload.content.case_sensitive
+          ? new RegExp(payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")
+          : new RegExp(
+              payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              "gi",
+            );
+        let replacements = 0;
+        const content = note.content.replace(pattern, () => {
+          replacements += 1;
+          return payload.content.replace_text;
+        });
+        if (replacements === 0) {
+          return;
+        }
+        await notesApi.update(noteId, { content });
+        updatedCount += 1;
+      }),
+    );
+
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        failedIds.push(payload.note_ids[index]);
+        errors.push(
+          result.reason instanceof Error ? result.reason.message : String(result.reason),
+        );
+      }
+    });
+    return {
+      updated_count: updatedCount,
+      failed_ids: failedIds,
+      errors,
+    } satisfies NoteBatchUpdateResult;
+  },
 
   batchDelete: (payload: NoteBatchDeletePayload) =>
     Promise.allSettled(payload.note_ids.map((noteId) => notesApi.delete(noteId))).then(
