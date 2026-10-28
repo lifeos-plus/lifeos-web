@@ -235,6 +235,7 @@ describe("HabitsPage", () => {
     expect(
       screen.getByRole("heading", { name: /Morning Planning/ }),
     ).toBeInTheDocument();
+    expect(screen.getAllByText("50.0%")).toHaveLength(2);
   });
 
   it("renders status filter with an all option and per-status counts", () => {
