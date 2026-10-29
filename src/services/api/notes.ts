@@ -233,6 +233,9 @@ export const notesApi = {
   },
 
   batchUpdate: async (payload: NoteBatchUpdatePayload) => {
+    if (!payload.content.find_text.trim()) {
+      throw new Error("Find text must not be empty.");
+    }
     const notesById = new Map(payload.notes.map((note) => [note.id, note]));
     const failedIds: UUID[] = [];
     const errors: string[] = [];

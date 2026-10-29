@@ -254,7 +254,11 @@ const NotesAdvancedSearchPanel = ({
               color="primary"
               variant="outline"
               onClick={onExport}
-              disabled={isLoading || totalResults === 0}
+              disabled={
+                isLoading ||
+                totalResults === 0 ||
+                keywordDraft !== (params.keyword || "")
+              }
             />
           )}
         </div>

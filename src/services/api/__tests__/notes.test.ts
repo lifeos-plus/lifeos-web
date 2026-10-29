@@ -225,4 +225,21 @@ describe("notesApi", () => {
       expect((init as RequestInit).method).toBe("PATCH");
     });
   });
+
+  it("rejects empty batch replacement text before sending requests", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    await expect(
+      notesApi.batchUpdate({
+        note_ids: ["note-1"],
+        notes: [{ id: "note-1", content: "draft" }],
+        content: {
+          find_text: "   ",
+          replace_text: "final",
+        },
+      }),
+    ).rejects.toThrow("Find text must not be empty.");
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });
