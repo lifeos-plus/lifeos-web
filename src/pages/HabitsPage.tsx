@@ -116,11 +116,7 @@ function HabitItem({
   const { stats } = useHabitStats(habit.id, { enabled: isExpanded });
 
   const effectiveStats = isExpanded ? (stats ?? habit.stats) : habit.stats;
-  const completionRate = effectiveStats
-    ? effectiveStats.total_actions > 0
-      ? (effectiveStats.completed_actions / effectiveStats.total_actions) * 100
-      : 0
-    : 0;
+  const completionRate = effectiveStats?.progress_percentage ?? 0;
 
   const titleDescriptionContainer = (
     <div className="space-y-3">

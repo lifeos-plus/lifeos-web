@@ -69,7 +69,6 @@ export const personsKeys = {
     page?: number;
     size?: number;
     search?: string;
-    tag_filter?: string;
     tag_id?: UUID;
   }) => [...personsKeys.lists(), filters] as const,
   details: () => [...personsKeys.all, "detail"] as const,
@@ -80,10 +79,6 @@ export const personsKeys = {
     id: UUID | null,
     params: { page: number; size: number; type?: string | null },
   ) => [...personsKeys.activities(id), params] as const,
-  anniversaries: (id: UUID) =>
-    [...personsKeys.detail(id), "anniversaries"] as const,
-  searchByTag: (tagName: string) =>
-    [...personsKeys.all, "search-by-tag", tagName] as const,
 };
 
 export const areasKeys = {

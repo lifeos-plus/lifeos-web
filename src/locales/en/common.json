@@ -528,24 +528,9 @@
         "hint": "Adjust filters below and use Exit to return to quick notes"
       },
       "exit": "Exit Advanced Search",
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "sortOrder": "Sort Order",
-      "sortNewest": "Newest first",
-      "sortOldest": "Oldest first",
       "tagFilter": "Tag Filter",
-      "tagModeAny": "Contains any selected tags",
-      "tagModeAll": "Contains all selected tags",
-      "tagModeNone": "Without tags",
       "personFilter": "Person Filter",
-      "personModeAny": "Contains any selected persons",
-      "personModeAll": "Contains all selected persons",
-      "personModeNone": "Without persons",
       "taskFilter": "Task Filter",
-      "taskModeAny": "Any task",
-      "taskModeNone": "Without task",
-      "taskModeHas": "Has task",
-      "taskModeSpecific": "Specific task",
       "selectTaskPlaceholder": "Select a task...",
       "keyword": "Keyword",
       "keywordDescription": "Search note content, supports multiple keywords separated by spaces",
@@ -564,37 +549,14 @@
       "paginationSummary": "Showing {{start}}-{{end}} of {{total}} results",
       "previousPage": "Previous",
       "nextPage": "Next",
-      "pageIndicator": "Page {{page}} / {{total}}",
-      "errorTitle": "Advanced search error",
-      "taskRequired": "Please choose a task before running the search."
+      "pageIndicator": "Page {{page}} / {{total}}"
     },
     "batchEdit": {
       "title": "Batch Edit Notes",
       "modalTitle": "Batch edit ({{count}} notes)",
-      "description": "Choose operation mode to update selected notes",
+      "description": "Replace matching text across the selected notes",
       "noSelection": "Please select notes first",
-      "tagsRequired": "Please select tags to apply",
-      "personsRequired": "Please select persons to apply",
-      "taskRequired": "Please select a task",
       "findTextRequired": "Please enter text to find",
-      "mode": {
-        "tags": "Tags",
-        "persons": "Persons",
-        "task": "Task",
-        "content": "Content"
-      },
-      "tagMode": {
-        "add": "Add tags",
-        "replace": "Replace tags"
-      },
-      "personMode": {
-        "add": "Add persons",
-        "replace": "Replace persons"
-      },
-      "taskMode": {
-        "replace": "Replace task",
-        "clear": "Clear task"
-      },
       "findText": "Find Text",
       "replaceText": "Replace With",
       "caseSensitiveOn": "Case sensitive",
@@ -1320,18 +1282,6 @@
   },
   "persons": {
     "addContact": "Add Contact",
-    "anniversaries": {
-      "created": "Anniversary created",
-      "createFailed": "Create anniversary failed",
-      "deleted": "Anniversary deleted",
-      "deleteFailed": "Delete anniversary failed",
-      "updated": "Anniversary updated",
-      "updateFailed": "Update anniversary failed",
-      "cannotCreate": "Unable to create anniversary",
-      "cannotUpdate": "Unable to update anniversary",
-      "cannotDelete": "Unable to delete anniversary",
-      "missingContact": "Missing contact information"
-    },
     "messages": {
       "createSuccess": "Contact created",
       "createFailed": "Create contact failed",
@@ -1661,12 +1611,7 @@
     "primaryNickname": "Primary Nickname",
     "birthDate": "Birth Date",
     "location": "Location",
-    "relationshipTags": "Relationship Tags",
-    "anniversaries": "Anniversaries",
-    "addAnniversary": "Add Anniversary",
-    "noAnniversary": "No anniversaries yet",
-    "anniversaryNamePlaceholder": "Anniversary name e.g. First Met",
-    "anniversaryValidation": "Please enter anniversary name and date"
+    "relationshipTags": "Relationship Tags"
   },
   "personForm": {
     "editContact": "Edit Contact",

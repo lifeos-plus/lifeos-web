@@ -208,16 +208,6 @@ export const timelogsApi = {
       };
     }),
 
-  restore: (_id: UUID) =>
-    Promise.reject(new Error("Restore is not supported by LifeOS timelogs yet.")),
-
-  batchRestore: (eventIds: UUID[]) =>
-    Promise.resolve({
-      deleted_count: 0,
-      failed_ids: eventIds,
-      errors: ["Restore is not supported by LifeOS timelogs yet."],
-    }),
-
   advancedSearch: async (params: TimelogAdvancedSearchRequest) => {
     const withoutArea =
       params.without_area ?? params.area_id === null;

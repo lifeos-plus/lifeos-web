@@ -33,7 +33,6 @@ export const ENDPOINTS = {
     WITH_SUBTASKS: (id: string) => `${API_V1}/tasks/${id}/with-subtasks`,
     REORDER: `${API_V1}/tasks/reorder`,
     MOVE: (id: string) => `${API_V1}/tasks/${id}/move`,
-    STATS: (id: string) => `${API_V1}/tasks/${id}/stats`,
   },
   TIMELOGS: {
     BASE: `${API_V1}/timelogs/`,
@@ -53,13 +52,6 @@ export const ENDPOINTS = {
     BASE: `${API_V1}/notes/`,
     BY_ID: (id: string) => `${API_V1}/notes/${id}`,
     STATS_PERSON: `${API_V1}/notes/stats/person`,
-    TAG_BY_ID: (noteId: string, tagId: string) =>
-      `${API_V1}/notes/${noteId}/tags/${tagId}`,
-    ADVANCED_SEARCH: `${API_V1}/notes/advanced-search`,
-    BATCH_UPDATE: `${API_V1}/notes/batch-update`,
-    BATCH_DELETE: `${API_V1}/notes/batch-delete`,
-    BATCH_CREATE: `${API_V1}/notes/batch-create`,
-    INGEST_JOB: (jobId: string) => `${API_V1}/notes/ingest-jobs/${jobId}`,
   },
   HABITS: {
     BASE: `${API_V1}/habits/`,
@@ -77,8 +69,6 @@ export const ENDPOINTS = {
     BASE: `${API_V1}/person/`,
     BY_ID: (id: string) => `${API_V1}/person/${id}`,
     ACTIVITIES: (id: string) => `${API_V1}/person/${id}/activities/`,
-    ANNIVERSARIES: (id: string) => `${API_V1}/person/${id}/anniversaries/`,
-    SEARCH_BY_TAG: `${API_V1}/person/search-by-tag`,
   },
   AREAS: {
     BASE: `${API_V1}/areas/`,

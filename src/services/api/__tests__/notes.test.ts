@@ -73,7 +73,6 @@ describe("notesApi", () => {
 
     const stats = await notesApi.getStats();
 
-    expect(stats.total_notes).toBe(3);
     expect(stats.tag_stats).toEqual([
       {
         id: "11111111-1111-1111-1111-111111111111",
@@ -89,9 +88,8 @@ describe("notesApi", () => {
         usage_count: 1,
       },
     ]);
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     const requestedUrls = fetchMock.mock.calls.map(([url]) => String(url));
-    expect(requestedUrls.some((url) => url.startsWith(localUrl(ENDPOINTS.NOTES.BASE)))).toBe(true);
     expect(requestedUrls).toContain(localUrl(ENDPOINTS.STATS.TAGS_USAGE("note")));
     expect(requestedUrls).toContain(localUrl(ENDPOINTS.NOTES.STATS_PERSON));
   });
@@ -125,5 +123,123 @@ describe("notesApi", () => {
     expect(parsedUrl.searchParams.get("page")).toBe("1");
     expect(parsedUrl.searchParams.get("size")).toBe("50");
     expect(init.method).toBe("GET");
+  });
+
+  it("loads every page while preserving advanced filters", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((input) => {
+        const url = new URL(String(input));
+        const page = Number(url.searchParams.get("page"));
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              items: [{ id: `note-${page}`, content: `page ${page}` }],
+              pagination: { page, size: 500, total: 2, pages: 2 },
+              meta: {},
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
+        );
+      });
+
+    const response = await notesApi.advancedSearch({
+      tag_id: "11111111-1111-1111-1111-111111111111",
+      person_id: "22222222-2222-2222-2222-222222222222",
+      task_id: "33333333-3333-3333-3333-333333333333",
+      keyword: "review",
+    });
+
+    expect(response.items.map((item) => item.id)).toEqual([
+      "note-1",
+      "note-2",
+    ]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    fetchMock.mock.calls.forEach(([input]) => {
+      const url = new URL(String(input));
+      expect(url.searchParams.get("tag_id")).toBe(
+        "11111111-1111-1111-1111-111111111111",
+      );
+      expect(url.searchParams.get("person_id")).toBe(
+        "22222222-2222-2222-2222-222222222222",
+      );
+      expect(url.searchParams.get("task_id")).toBe(
+        "33333333-3333-3333-3333-333333333333",
+      );
+      expect(url.searchParams.get("keyword")).toBe("review");
+    });
+  });
+
+  it("applies batch content replacement through per-note updates", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((input) => {
+        const url = String(input);
+        const id = url.split("/").at(-1);
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              id,
+              content: "final draft",
+              created_at: "2026-01-01T00:00:00Z",
+              updated_at: "2026-01-01T00:00:00Z",
+              deleted_at: null,
+              tags: [],
+              person: [],
+              tasks: [],
+              task: null,
+              visions: [],
+              events: [],
+              timelogs: [],
+              habit_actions: [],
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
+        );
+      });
+
+    const result = await notesApi.batchUpdate({
+      note_ids: ["note-1", "note-2", "note-3"],
+      notes: [
+        { id: "note-1", content: "draft one" },
+        { id: "note-2", content: "draft two" },
+        { id: "note-3", content: "unchanged" },
+      ],
+      content: {
+        find_text: "draft",
+        replace_text: "final",
+        case_sensitive: false,
+      },
+    });
+
+    expect(result.updated_count).toBe(2);
+    expect(result.failed_ids).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    fetchMock.mock.calls.forEach(([, init]) => {
+      expect((init as RequestInit).method).toBe("PATCH");
+    });
+  });
+
+  it("rejects empty batch replacement text before sending requests", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    await expect(
+      notesApi.batchUpdate({
+        note_ids: ["note-1"],
+        notes: [{ id: "note-1", content: "draft" }],
+        content: {
+          find_text: "   ",
+          replace_text: "final",
+        },
+      }),
+    ).rejects.toThrow("Find text must not be empty.");
+
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

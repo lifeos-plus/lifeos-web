@@ -528,24 +528,9 @@
         "hint": "你可以在下方调整过滤条件，点击退出按钮返回快速笔记"
       },
       "exit": "退出高级搜索",
-      "startDate": "开始日期",
-      "endDate": "结束日期",
-      "sortOrder": "排序方式",
-      "sortNewest": "按创建时间降序",
-      "sortOldest": "按创建时间升序",
       "tagFilter": "标签筛选",
-      "tagModeAny": "包含任意所选标签",
-      "tagModeAll": "同时包含所有所选标签",
-      "tagModeNone": "无标签",
       "personFilter": "人物筛选",
-      "personModeAny": "包含任意所选人物",
-      "personModeAll": "同时包含所有所选人物",
-      "personModeNone": "无人关联",
       "taskFilter": "任务筛选",
-      "taskModeAny": "任意任务",
-      "taskModeNone": "无任务",
-      "taskModeHas": "有任务",
-      "taskModeSpecific": "指定任务",
       "selectTaskPlaceholder": "请选择任务...",
       "keyword": "关键词",
       "keywordDescription": "在笔记内容中搜索，支持空格分隔多个关键词",
@@ -564,37 +549,14 @@
       "paginationSummary": "当前显示第 {{start}}-{{end}} 条，共 {{total}} 条",
       "previousPage": "上一页",
       "nextPage": "下一页",
-      "pageIndicator": "第 {{page}} / {{total}} 页",
-      "errorTitle": "高级搜索出错",
-      "taskRequired": "请选择具体任务后再执行搜索"
+      "pageIndicator": "第 {{page}} / {{total}} 页"
     },
     "batchEdit": {
       "title": "批量编辑笔记",
       "modalTitle": "批量编辑（{{count}} 条笔记）",
-      "description": "选择操作模式以更新所选笔记",
+      "description": "在所选笔记中批量替换匹配文本",
       "noSelection": "请先选择需要操作的笔记",
-      "tagsRequired": "请选择要应用的标签",
-      "personsRequired": "请选择要应用的人物",
-      "taskRequired": "请选择任务",
       "findTextRequired": "请输入要查找的文本",
-      "mode": {
-        "tags": "标签",
-        "persons": "人物",
-        "task": "任务",
-        "content": "文本"
-      },
-      "tagMode": {
-        "add": "追加标签",
-        "replace": "替换标签"
-      },
-      "personMode": {
-        "add": "追加人物",
-        "replace": "替换人物"
-      },
-      "taskMode": {
-        "replace": "关联任务",
-        "clear": "清除任务"
-      },
       "findText": "查找文本",
       "replaceText": "替换为",
       "caseSensitiveOn": "区分大小写",
@@ -1320,18 +1282,6 @@
   },
   "persons": {
     "addContact": "新增联系人",
-    "anniversaries": {
-      "created": "纪念日已创建",
-      "createFailed": "纪念日创建失败",
-      "deleted": "纪念日已删除",
-      "deleteFailed": "纪念日删除失败",
-      "updated": "纪念日已更新",
-      "updateFailed": "纪念日更新失败",
-      "cannotCreate": "无法创建纪念日",
-      "cannotUpdate": "无法更新纪念日",
-      "cannotDelete": "无法删除纪念日",
-      "missingContact": "缺少联系人信息"
-    },
     "messages": {
       "createSuccess": "联系人创建成功！",
       "createFailed": "联系人创建失败",
@@ -1661,12 +1611,7 @@
     "primaryNickname": "主要昵称",
     "birthDate": "生日",
     "location": "地址",
-    "relationshipTags": "关系标签",
-    "anniversaries": "纪念日",
-    "addAnniversary": "新增纪念日",
-    "noAnniversary": "暂无纪念日",
-    "anniversaryNamePlaceholder": "纪念日名称，例如“第一次见面”",
-    "anniversaryValidation": "请填写纪念日名称与日期"
+    "relationshipTags": "关系标签"
   },
   "personForm": {
     "editContact": "编辑联系人",

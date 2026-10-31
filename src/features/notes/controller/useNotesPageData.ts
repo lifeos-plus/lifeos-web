@@ -1,11 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import type { UUID } from "@/types/primitive";
-import {
-  type Note as ApiNote,
-  type NoteTagFilterMode,
-  type NotePersonFilterMode,
-  type NoteTaskFilterMode,
-} from "@/services/api/notes";
+import { type Note as ApiNote } from "@/services/api/notes";
 import { useNotes } from "@/hooks/queries/useNotes";
 import { useNoteFilters } from "@/features/notes/controller/useNoteFilters";
 import {
@@ -17,7 +12,6 @@ import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import { useNoteCollapsePreference } from "@/hooks/notes/useNoteCollapsePreference";
 import type { QueryMode } from "@/hooks/useQueryMode";
 import type { PersonSummary, Task as ApiTask } from "@/services/api";
-import { createDateBoundaries } from "@/utils/datetime";
 import type { Note } from "@/types/newNotes";
 
 export const NOTES_ADVANCED_PAGE_SIZE = 100;
@@ -61,42 +55,24 @@ export interface NotesPageData {
     refetch: () => void;
   }>;
   advancedSearchParams: {
-    start_date: string | null;
-    end_date: string | null;
-    tag_mode: NoteTagFilterMode;
-    tag_ids: UUID[];
-    person_mode: NotePersonFilterMode;
-    person_ids: UUID[];
-    task_filter: NoteTaskFilterMode;
+    tag_id: UUID | null;
+    person_id: UUID | null;
     task_id: UUID | null;
     keyword: string | null;
-    sort_order: "asc" | "desc";
   };
   setAdvancedSearchParams: React.Dispatch<
     React.SetStateAction<{
-      start_date: string | null;
-      end_date: string | null;
-      tag_mode: NoteTagFilterMode;
-      tag_ids: UUID[];
-      person_mode: NotePersonFilterMode;
-      person_ids: UUID[];
-      task_filter: NoteTaskFilterMode;
+      tag_id: UUID | null;
+      person_id: UUID | null;
       task_id: UUID | null;
       keyword: string | null;
-      sort_order: "asc" | "desc";
     }>
   >;
   advancedFormState: {
-    start_date: Date | null;
-    end_date: Date | null;
-    tag_mode: NoteTagFilterMode;
-    tag_ids: UUID[];
-    person_mode: NotePersonFilterMode;
-    person_ids: UUID[];
-    task_filter: NoteTaskFilterMode;
+    tag_id: UUID | null;
+    person_id: UUID | null;
     task_id: UUID | null;
     keyword: string;
-    sort_order: "asc" | "desc";
   };
   mapApiNoteToLocal: (apiNote: ApiNote) => Note;
   advancedNotes: Note[];
@@ -134,16 +110,10 @@ export function useNotesPageData(
 
   const [advancedSearchParams, setAdvancedSearchParams] = useState(() => {
     return {
-      start_date: null as string | null,
-      end_date: null as string | null,
-      tag_mode: "any" as NoteTagFilterMode,
-      tag_ids: [] as UUID[],
-      person_mode: "any" as NotePersonFilterMode,
-      person_ids: [] as UUID[],
-      task_filter: "any" as NoteTaskFilterMode,
+      tag_id: null as UUID | null,
+      person_id: null as UUID | null,
       task_id: null as UUID | null,
       keyword: null as string | null,
-      sort_order: "desc" as "asc" | "desc",
     };
   });
 
@@ -238,57 +208,12 @@ export function useNotesPageData(
 
   const canCopyAdvancedResults = advancedNotes.length > 0;
 
-  useEffect(() => {
-    setAdvancedSearchParams((prev) => {
-      let nextStart = prev.start_date;
-      let nextEnd = prev.end_date;
-
-      if (prev.start_date) {
-        const startDate = new Date(prev.start_date);
-        if (!Number.isNaN(startDate.getTime())) {
-          const { startOfDay } = createDateBoundaries(
-            startDate,
-            activeTimezone,
-          );
-          nextStart = startOfDay.toISOString();
-        }
-      }
-
-      if (prev.end_date) {
-        const endDate = new Date(prev.end_date);
-        if (!Number.isNaN(endDate.getTime())) {
-          const { endOfDay } = createDateBoundaries(endDate, activeTimezone);
-          nextEnd = endOfDay.toISOString();
-        }
-      }
-
-      if (prev.start_date === nextStart && prev.end_date === nextEnd) {
-        return prev;
-      }
-      return {
-        ...prev,
-        start_date: nextStart,
-        end_date: nextEnd,
-      };
-    });
-  }, [activeTimezone]);
-
   const advancedFormState = useMemo(
     () => ({
-      start_date: advancedSearchParams.start_date
-        ? new Date(advancedSearchParams.start_date)
-        : null,
-      end_date: advancedSearchParams.end_date
-        ? new Date(advancedSearchParams.end_date)
-        : null,
-      tag_mode: advancedSearchParams.tag_mode,
-      tag_ids: advancedSearchParams.tag_ids,
-      person_mode: advancedSearchParams.person_mode,
-      person_ids: advancedSearchParams.person_ids,
-      task_filter: advancedSearchParams.task_filter,
+      tag_id: advancedSearchParams.tag_id,
+      person_id: advancedSearchParams.person_id,
       task_id: advancedSearchParams.task_id,
       keyword: advancedSearchParams.keyword ?? "",
-      sort_order: advancedSearchParams.sort_order,
     }),
     [advancedSearchParams],
   );

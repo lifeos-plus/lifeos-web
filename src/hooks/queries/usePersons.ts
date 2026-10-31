@@ -24,7 +24,6 @@ interface UsePersonsFilters {
   page?: number;
   size?: number;
   search?: string;
-  tagFilter?: string;
   tagId?: UUID;
 }
 
@@ -80,8 +79,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
     page: filters.page ?? 1,
     size: filters.size ?? 100,
     search: filters.search,
-    // queryKeys expects tag_filter; keep stable mapping
-    tag_filter: filters.tagFilter,
     tag_id: filters.tagId,
   } as const;
 
@@ -96,7 +93,6 @@ export function usePersons(filters: UsePersonsFilters = {}): UsePersonsReturn {
         keyFilters.page,
         keyFilters.size,
         keyFilters.search,
-        keyFilters.tag_filter,
         keyFilters.tag_id,
       ),
     staleTime: 5 * 60 * 1000,

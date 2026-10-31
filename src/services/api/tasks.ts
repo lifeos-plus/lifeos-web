@@ -32,7 +32,6 @@ export type TaskHierarchy = Omit<
   components["schemas"]["TaskHierarchyResponse"],
   "root_tasks"
 > & { root_tasks: TaskWithSubtasks[] };
-export type TaskStatsResponse = components["schemas"]["TaskStatsResponse"];
 type TaskListTransport = components["schemas"]["ListResponse_TaskResponse_TaskListMeta_"];
 export type TaskListResponse = Omit<TaskListTransport, "items" | "meta"> & {
   items: Task[];
@@ -303,20 +302,6 @@ export const tasksApi = {
       new_display_order: newDisplayOrder,
     };
     return http.post<TaskMoveResponse>(ENDPOINTS.TASKS.MOVE(id), moveData);
-  },
-
-  async getStats(id: UUID): Promise<TaskStatsResponse> {
-    try {
-      return await http.get<TaskStatsResponse>(ENDPOINTS.TASKS.STATS(id));
-    } catch {
-      return {
-        total_subtasks: 0,
-        completed_subtasks: 0,
-        completion_percentage: 0,
-        total_estimated_effort: null,
-        total_actual_effort: null,
-      };
-    }
   },
 
   async getTimelogs(
