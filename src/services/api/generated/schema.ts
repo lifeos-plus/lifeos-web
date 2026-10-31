@@ -560,7 +560,7 @@ export interface paths {
         };
         /**
          * List Habit Overviews
-         * @description List habits with frontend-compatible zeroed stats.
+         * @description List habits with derived statistics.
          */
         get: operations["list_habit_overviews_api_v1_habits_overviews_get"];
         put?: never;
@@ -684,7 +684,7 @@ export interface paths {
         };
         /**
          * Get Habit Overview
-         * @description Load one habit overview with frontend-compatible stats.
+         * @description Load one habit overview with derived statistics.
          */
         get: operations["get_habit_overview_api_v1_habits__habit_id__overview_get"];
         put?: never;
@@ -883,26 +883,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/person/search-by-tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Search Person By Tag
-         * @description Return an empty tag-name search result until LifeOS supports tag-name lookup.
-         */
-        get: operations["search_person_by_tag_api_v1_person_search_by_tag_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/person/{person_id}": {
         parameters: {
             query?: never;
@@ -943,26 +923,6 @@ export interface paths {
          * @description Return person-linked activity timeline data.
          */
         get: operations["list_person_activities_api_v1_person__person_id__activities__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/person/{person_id}/anniversaries/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Person Anniversaries
-         * @description Return empty anniversaries until LifeOS has an anniversary model.
-         */
-        get: operations["list_person_anniversaries_api_v1_person__person_id__anniversaries__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2043,26 +2003,6 @@ export interface components {
             /** Periods */
             periods: components["schemas"]["AggregatedAreaPeriodResponse"][];
         };
-        /** AnniversaryListMeta */
-        AnniversaryListMeta: {
-            /** Person Id */
-            person_id: string;
-        };
-        /** AnniversaryResponse */
-        AnniversaryResponse: {
-            /** Created At */
-            created_at: string;
-            /** Date */
-            date: string;
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Person Id */
-            person_id: string;
-            /** Updated At */
-            updated_at: string;
-        };
         /**
          * AreaCreate
          * @description Payload for creating an area from the Web UI.
@@ -2930,13 +2870,6 @@ export interface components {
             /** End Time */
             end_time: string | null;
         };
-        /** ListResponse[AnniversaryResponse, AnniversaryListMeta] */
-        ListResponse_AnniversaryResponse_AnniversaryListMeta_: {
-            /** Items */
-            items: components["schemas"]["AnniversaryResponse"][];
-            meta: components["schemas"]["AnniversaryListMeta"];
-            pagination: components["schemas"]["Pagination"];
-        };
         /** ListResponse[AreaResponse, AreaListMeta] */
         ListResponse_AreaResponse_AreaListMeta_: {
             /** Items */
@@ -3287,6 +3220,8 @@ export interface components {
             task_id: string | null;
             /** Timelog Id */
             timelog_id: string | null;
+            /** Untagged */
+            untagged: boolean;
         };
         /** NotePersonStat */
         NotePersonStat: {
@@ -3432,8 +3367,6 @@ export interface components {
         PersonListMeta: {
             /** Search */
             search: string | null;
-            /** Tag Filter */
-            tag_filter: string | null;
             /** Tag Id */
             tag_id: string | null;
         };
@@ -3446,8 +3379,6 @@ export interface components {
         };
         /** PersonResponse */
         PersonResponse: {
-            /** Anniversaries */
-            anniversaries: components["schemas"]["AnniversaryResponse"][];
             /** Birth Date */
             birth_date: string | null;
             /** Description */
@@ -6075,7 +6006,9 @@ export interface operations {
     };
     list_actions_by_date_api_v1_habits_actions_by_date__action_date__get: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+            };
             header?: never;
             path: {
                 action_date: string;
@@ -6231,6 +6164,7 @@ export interface operations {
                 center_date?: string | null;
                 days_before?: number | null;
                 days_after?: number | null;
+                page?: number;
                 size?: number;
             };
             header?: never;
@@ -6661,6 +6595,7 @@ export interface operations {
                 size?: number;
                 keyword?: string | null;
                 tag_id?: string | null;
+                untagged?: boolean;
                 person_id?: string | null;
                 task_id?: string | null;
                 timelog_id?: string | null;
@@ -6816,7 +6751,6 @@ export interface operations {
                 size?: number;
                 search?: string | null;
                 tag_id?: string | null;
-                tag_filter?: string | null;
             };
             header?: never;
             path?: never;
@@ -6864,38 +6798,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PersonResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    search_person_by_tag_api_v1_person_search_by_tag_get: {
-        parameters: {
-            query?: {
-                page?: number;
-                size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListResponse_PersonResponse_PersonListMeta_"];
                 };
             };
             /** @description Validation Error */
@@ -7027,37 +6929,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ListResponse_PersonActivityResponse_PersonActivityMeta_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    list_person_anniversaries_api_v1_person__person_id__anniversaries__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                person_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListResponse_AnniversaryResponse_AnniversaryListMeta_"];
                 };
             };
             /** @description Validation Error */
@@ -7240,7 +7111,7 @@ export interface operations {
     delete_planned_event_api_v1_planned_events__planned_event_id__delete: {
         parameters: {
             query?: {
-                deleteType?: string | null;
+                deleteType?: ("single" | "all_future" | "all") | null;
                 instanceStart?: string | null;
             };
             header?: never;
@@ -7272,7 +7143,7 @@ export interface operations {
     update_planned_event_api_v1_planned_events__planned_event_id__patch: {
         parameters: {
             query?: {
-                updateType?: string | null;
+                updateType?: ("single" | "all_future" | "all") | null;
                 instanceStart?: string | null;
             };
             header?: never;
