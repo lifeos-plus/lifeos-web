@@ -55,7 +55,7 @@ describe("HabitActionList", () => {
     vi.restoreAllMocks();
   });
 
-  it("does not render note details in the five day view", () => {
+  it("does not render note details in the five day view", async () => {
     const { container } = renderWithProviders(
       <HabitActionList
         actions={[actionWithoutNotes, action]}
@@ -101,6 +101,9 @@ describe("HabitActionList", () => {
       "sm:flex-row",
       "min-w-0",
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "common.close" }));
+    expect(screen.queryByText("habitNotes.title")).not.toBeInTheDocument();
   });
 
   it("opens the shared notes modal with note creation for a single action", async () => {
