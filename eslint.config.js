@@ -12,14 +12,21 @@ export default tseslint.config([
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
-      reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
     ],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
     },
     rules: {
+      // Keep the classic Rules of Hooks baseline from eslint-plugin-react-hooks
+      // v7. The newer React Compiler rules (e.g. set-state-in-effect, purity)
+      // are a separate refactor: enabling them today reports ~120 violations.
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
       // Align ESLint with TS compiler unused checks and allow underscore-prefixed ignores
       '@typescript-eslint/no-unused-vars': [
         'error',

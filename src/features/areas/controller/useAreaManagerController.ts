@@ -112,7 +112,7 @@ export function useAreaManagerController({
 
       try {
         await withLoading(async () => {
-          let persisted: Area | null = null;
+          let persisted: Area;
 
           if (editingArea) {
             const updated = await areasApi.updateArea(

@@ -27,7 +27,9 @@ Routine dependency updates are intentionally limited to weekly minor updates; pa
 
 PR and `main` validation rejects moderate-or-higher runtime `npm audit` findings and high/critical findings in the full dependency tree. The weekly frontend audit may prepare a non-force lockfile fix, but it still fails those gates when findings remain after that attempt. The audit workflow never uses `npm audit fix --force`.
 
-`@tailwindcss/typography` temporarily overrides its pinned `postcss-selector-parser` with `7.1.6` to address GHSA-rj75-hqrm-r3gf. The override is scoped to that parent package and should be removed once a release of `@tailwindcss/typography` depends on a patched parser version directly.
+`@tailwindcss/typography` temporarily overrides its pinned `postcss-selector-parser` with the patched 7.x line (`^7.2.1`) to address GHSA-rj75-hqrm-r3gf and the additional CPU-exhaustion fixes published through 7.1.8. The range keeps future parser security patches reachable while the lockfile remains the deterministic resolution. The override is scoped to that parent package and should be removed once a release of `@tailwindcss/typography` depends on a patched parser version directly.
+
+`scripts/check-overrides.mjs` guards this arrangement as part of `scripts/validate.sh`: validation fails if the locked parser drops below the patched line, if the override disappears while the parent still pins a vulnerable parser, or if the override lingers after the parent starts depending on a patched parser directly.
 
 ## Supported Branches
 

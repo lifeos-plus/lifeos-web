@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import AsyncEntitySelect, {
   type EntityOption,
   type SelectSize,
@@ -375,7 +376,7 @@ interface UseTaskSelectorOptionsArgs {
   showSpecialOptions: boolean;
   showNoTaskOption: boolean;
   visionId?: UUID | null;
-  translator: (key: string, options?: Record<string, unknown>) => string;
+  translator: TFunction;
 }
 
 interface UseTaskSelectorOptionsResult {

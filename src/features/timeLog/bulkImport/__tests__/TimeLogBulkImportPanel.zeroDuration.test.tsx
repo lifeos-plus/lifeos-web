@@ -1,9 +1,9 @@
-import { act, fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders, setupTranslationMock } from "@test/utils";
 
-setupTranslationMock();
+const translation = setupTranslationMock();
 
 vi.mock("@/hooks/useTimelogMutations", () => ({
   useTimelogMutations: () => ({ batchCreateTimelogsAsync: vi.fn() }),
@@ -64,6 +64,31 @@ const renderPanel = () =>
   );
 
 describe("TimeLogBulkImportPanel zero-length rows", () => {
+  it("formats row errors that carry no interpolation metadata", async () => {
+    renderPanel();
+
+    fireEvent.change(
+      screen.getByPlaceholderText("timeLog.bulkImport.inputPlaceholder"),
+      { target: { value: "meeting notes" } },
+    );
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "timeLog.bulkImport.parseButton",
+      }),
+    );
+
+    await waitFor(() => {
+      const rowErrorCall = translation.t.mock.calls.find(
+        ([key, options]) =>
+          typeof key === "string" &&
+          key.startsWith("timeLog.bulkImport.errors.") &&
+          typeof options === "object" &&
+          options !== null,
+      );
+      expect(rowErrorCall).toBeDefined();
+    });
+  });
+
   it("keeps a zero-length row valid after it is edited in the draft modal", async () => {
     renderPanel();
 

@@ -16,6 +16,9 @@ npm audit --omit=dev --audit-level=moderate
 echo "[validate] audit all dependencies at high or higher"
 npm audit --audit-level=high
 
+echo "[validate] check security overrides"
+node scripts/check-overrides.mjs
+
 echo "[validate] verify generated API types"
 npm run api:check
 

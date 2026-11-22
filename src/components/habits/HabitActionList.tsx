@@ -334,7 +334,7 @@ export function HabitActionList({
 
   const navigatePeriod = (direction: "prev" | "next") => {
     const step = direction === "prev" ? -5 : 5;
-    let newDate: Date | null = null;
+    let newDate: Date;
 
     if (actionDates.length > 0) {
       const currentIndex = findAnchorActionIndex(selectedDate);
@@ -411,10 +411,10 @@ export function HabitActionList({
                 dateKey >= selectedMonthRange.start &&
                 dateKey <= selectedMonthRange.end;
 
-              let cellStatus = "";
-              let cellBgColor = "";
-              let cellBorderColor = "";
-              let statusText = "";
+              let cellStatus: string;
+              let cellBgColor: string;
+              let cellBorderColor: string;
+              let statusText: string;
 
               if (action) {
                 const statusConfig =

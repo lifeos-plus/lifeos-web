@@ -356,7 +356,9 @@ function NotesPage() {
         await refreshNoteTags();
         return newTag;
       } catch (error) {
-        throw new Error(t("notes.messages.createTagFailed", { error }));
+        throw new Error(t("notes.messages.createTagFailed", { error }), {
+          cause: error,
+        });
       }
     },
     [createNoteTag, refreshNoteTags, t],
