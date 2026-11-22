@@ -40,7 +40,6 @@ export function splitBulkNoteInput(rawInput: string): string[] {
 
   if (pendingBlankLines.length >= SEPARATOR_LENGTH) {
     pushCurrent();
-    pendingBlankLines = [];
   } else if (pendingBlankLines.length > 0) {
     currentLines.push(...pendingBlankLines);
   }

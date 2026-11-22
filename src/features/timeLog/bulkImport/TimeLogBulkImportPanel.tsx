@@ -96,7 +96,7 @@ const mapMessage = (
         ? globalErrorKeys[message.code as BulkImportGlobalErrorCode]
         : rowErrorKeys[message.code as BulkImportRowErrorCode];
   if (!key) return message.code;
-  return t(key, message.meta);
+  return t(key, message.meta ?? {});
 };
 
 const convertToUtcIso = (

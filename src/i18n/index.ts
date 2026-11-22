@@ -49,6 +49,9 @@ i18n
  * Get translation for service layer
  * This utility allows services to access translations without React hooks
  */
-export const t = (key: string, options?: Record<string, unknown>): string => {
+export const t = (
+  key: string,
+  options: Record<string, unknown> = {},
+): string => {
   return i18n.t(key, options);
 };

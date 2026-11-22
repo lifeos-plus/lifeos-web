@@ -202,7 +202,7 @@ const PersonFormModal: React.FC<PersonFormModalProps> = ({
               : undefined,
         };
 
-        let saved: Person | null = null;
+        let saved: Person;
         if (editingPerson) {
           saved = await personsApi.update(editingPerson.id, cleanedData);
           onSuccess({ updatedPerson: saved, created: false });

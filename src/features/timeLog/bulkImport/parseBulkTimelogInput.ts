@@ -324,7 +324,7 @@ export const parseBulkTimelogInput = (
     if (!errors.length && endMinutesRaw !== null) {
       let startMinutes: number;
       let endMinutes: number;
-      let autoInferredStart = false;
+      let autoInferredStart: boolean;
 
       if (parsed.type === "range" && startMinutesRaw !== null) {
         const { value: alignedStart, rolledDays } = alignForward(
