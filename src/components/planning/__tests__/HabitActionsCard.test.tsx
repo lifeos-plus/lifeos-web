@@ -94,6 +94,9 @@ describe("HabitActionsCard", () => {
       })[0],
     );
     expect(screen.getByText("habitNotes.title")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "createNoteModal.submitText" }),
+    ).toBeEnabled();
     expect(screen.getAllByTestId("planning-habit-action-row")[0]).not.toHaveTextContent(
       "common.expand",
     );

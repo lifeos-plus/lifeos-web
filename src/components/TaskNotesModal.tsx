@@ -54,6 +54,11 @@ type HabitActionContextProps = SharedProps & {
 type HabitContextProps = SharedProps & {
   entityType: "habit";
   habit: { id: UUID; title: string } | null;
+  /**
+   * Check-in that opened the aggregate habit view. Supplying it keeps note
+   * creation available, since new notes must attach to a specific check-in.
+   */
+  habitAction?: NoteHabitActionSummary | null;
 };
 
 type TaskNotesModalProps =
@@ -76,22 +81,20 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
   const habitAction =
     entityType === "habit_action"
       ? ((props as HabitActionContextProps).habitAction ?? null)
-      : null;
+      : entityType === "habit"
+        ? ((props as HabitContextProps).habitAction ?? null)
+        : null;
   const habit =
     entityType === "habit"
       ? ((props as HabitContextProps).habit ?? null)
       : null;
   const entityId: UUID | null =
     entityType === "task"
-      ? task
-        ? task.id
-        : null
+      ? (task?.id ?? null)
       : entityType === "timelog"
-        ? timelog
-          ? timelog.id
-          : null
-        : habitAction
-          ? habitAction.id
+        ? (timelog?.id ?? null)
+        : entityType === "habit_action"
+          ? (habitAction?.id ?? null)
           : entityType === "habit"
             ? (habit?.id ?? null)
             : null;
@@ -296,7 +299,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
       )}
 
       <div className="flex justify-center items-center gap-4 mb-8">
-        {entityType !== "habit" && (
+        {(entityType !== "habit" || habitAction) && (
           <ActionButton
             label={t("createNoteModal.submitText")}
             onClick={() => setShowCreateModal(true)}
@@ -489,7 +492,7 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
         </>
       )}
 
-      {showCreateModal && entityType !== "habit" && (
+      {showCreateModal && (entityType !== "habit" || habitAction) && (
         <CreateNoteModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
@@ -515,10 +518,13 @@ export default function TaskNotesModal(props: TaskNotesModalProps) {
               : undefined
           }
           preSelectedHabitActionId={
-            entityType === "habit_action" ? habitAction?.id : undefined
+            entityType === "habit_action" || entityType === "habit"
+              ? (habitAction?.id ?? undefined)
+              : undefined
           }
           preSelectedHabitAction={
-            entityType === "habit_action" && habitAction
+            (entityType === "habit_action" || entityType === "habit") &&
+            habitAction
               ? habitAction
               : undefined
           }

@@ -93,6 +93,9 @@ describe("HabitActionList", () => {
       })[0],
     );
     expect(screen.getByText("habitNotes.title")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "createNoteModal.submitText" }),
+    ).toBeEnabled();
     expect(container.querySelector(".space-y-2 > div")).toHaveClass(
       "flex-col",
       "sm:flex-row",

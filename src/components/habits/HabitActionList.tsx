@@ -85,7 +85,8 @@ export function HabitActionList({
     useState<HabitAction | null>(null);
   const [viewingNotesForAction, setViewingNotesForAction] =
     useState<HabitAction | null>(null);
-  const [viewingHabitNotes, setViewingHabitNotes] = useState(false);
+  const [viewingHabitNotesForAction, setViewingHabitNotesForAction] =
+    useState<HabitAction | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(
     () => new Date(centerDate),
   );
@@ -581,7 +582,7 @@ export function HabitActionList({
                           label={t("notes.actions.viewHabitNotes")}
                           iconName="document-text"
                           color="neutral"
-                          onClick={() => setViewingHabitNotes(true)}
+                          onClick={() => setViewingHabitNotesForAction(action)}
                           iconOnly
                           ariaLabel={t("notes.actions.viewHabitNotes")}
                         />
@@ -640,12 +641,13 @@ export function HabitActionList({
         />
       )}
 
-      {viewingHabitNotes && (
+      {viewingHabitNotesForAction && (
         <TaskNotesModal
-          isOpen={viewingHabitNotes}
-          onClose={() => setViewingHabitNotes(false)}
+          isOpen={!!viewingHabitNotesForAction}
+          onClose={() => setViewingHabitNotesForAction(null)}
           entityType="habit"
           habit={{ id: habitId, title: habitTitle }}
+          habitAction={buildHabitActionSummary(viewingHabitNotesForAction)}
           onNotesChanged={onNotesChanged}
         />
       )}
