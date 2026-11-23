@@ -88,7 +88,7 @@ describe("useVisibleModules", () => {
     await waitFor(() => expect(result.current.visibleKeys).toEqual(["visions"]));
   });
 
-  it("keeps stored keys that the contract no longer lists", async () => {
+  it("filters stored keys that the contract no longer lists", async () => {
     getWithMetaMock.mockResolvedValue({
       key: "navigation.visible_modules",
       value: ["visions", "retired_module"],
@@ -97,9 +97,7 @@ describe("useVisibleModules", () => {
 
     const { result } = renderHook(() => useVisibleModules(), { wrapper });
 
-    await waitFor(() =>
-      expect(result.current.visibleKeys).toEqual(["visions", "retired_module"]),
-    );
+    await waitFor(() => expect(result.current.visibleKeys).toEqual(["visions"]));
     expect(
       result.current.allConfigurableModules.map((module) => module.key),
     ).toEqual(["visions", "notes"]);

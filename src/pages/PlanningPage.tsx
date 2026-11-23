@@ -7,7 +7,7 @@ import {
   createPlanningCycleHelpers,
   useCalendarAdapter,
 } from "@/hooks/useCalendarAdapter";
-import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
+import { useDefaultInboxVisionPreference } from "@/hooks/queries/useDefaultInboxVision";
 import type { PlanningViewType } from "@/utils/calendar";
 import { parseDateKey } from "@/utils/datetime";
 import PlanningTaskList from "@/components/PlanningTaskList";
@@ -44,7 +44,7 @@ const PlanningPage: React.FC = () => {
   const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>(
     planningHabitActionsPreference,
   );
-  const { defaultInboxVision } = useDefaultInboxVision();
+  const { defaultInboxVision } = useDefaultInboxVisionPreference();
 
   // One shared planning-cycle context for every group card.
   const planningCycle = useMemo(
@@ -226,7 +226,6 @@ const PlanningPage: React.FC = () => {
                     await tasksQuery.refetch();
                   }}
                   planningCycleType={viewType}
-                  calendarAdapter={calendarAdapter}
                   planningCycle={planningCycle}
                   defaultInboxVision={defaultInboxVision}
                   showHabitActions={showHabitActions}

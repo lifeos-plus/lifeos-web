@@ -563,10 +563,13 @@
       "caseSensitiveOff": "Case insensitive",
       "apply": "Apply",
       "successTitle": "Batch edit completed",
-      "successMessage": "Updated {{updated}} notes ({{failed}} failed)",
+      "successMessage": "Updated {{updated}} notes ({{failed}} failed, {{unchanged}} unchanged)",
       "partialTitle": "Some notes could not be updated",
       "partialMessage": "Please review the failed note IDs",
-      "errorTitle": "Batch edit failed"
+      "errorTitle": "Batch edit failed",
+      "noMatchesTitle": "No matching text",
+      "noMatchesMessage": "None of the {{unchanged}} selected notes contained the text to find",
+      "allFailedMessage": "None of the {{failed}} selected notes could be updated"
     },
     "batchDelete": {
       "confirmTitle": "Delete notes",

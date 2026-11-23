@@ -8,6 +8,13 @@ import { usePreferenceWithBootstrap } from "./usePreferenceWithBootstrap";
 const VISIBLE_MODULES_KEY = "navigation.visible_modules";
 const VISIBLE_MODULES_SYNC_KEY = "navigation.visible_modules.sync";
 
+function sanitizeVisibleKeys(
+  keys: string[],
+  allowed: Set<string>,
+): string[] {
+  return Array.from(new Set(keys.filter((key) => allowed.has(key))));
+}
+
 function resolveAllowedModuleKeys(meta?: {
   allowed_values?: unknown[];
 }): string[] {
@@ -28,7 +35,7 @@ export function useVisibleModules() {
   );
 
   const {
-    value: visibleKeys,
+    value,
     loading,
     saving,
     error,
@@ -54,36 +61,33 @@ export function useVisibleModules() {
     [meta],
   );
 
+  // Values saved before a module was removed (or keys this contract no longer
+  // allows) stay out of the UI even though they remain stored.
+  const visibleKeys = useMemo(
+    () => sanitizeVisibleKeys(value, allowedKeys),
+    [value, allowedKeys],
+  );
+
   const updateVisibleKeys = (keys: string[]) => {
-    const sanitized = Array.from(
-      new Set(keys.filter((k) => allowedKeys.has(k))),
-    );
-    updateValue(sanitized);
+    updateValue(sanitizeVisibleKeys(keys, allowedKeys));
   };
 
-  const broadcastVisibleModules = useCallback((keys: string[]) => {
+  const broadcastVisibleModules = useCallback(() => {
     if (typeof window === "undefined" || !window.localStorage) return;
     try {
-      window.localStorage.setItem(
-        VISIBLE_MODULES_SYNC_KEY,
-        JSON.stringify({
-          visibleKeys: keys,
-          timestamp: Date.now(),
-        }),
-      );
+      // Only a signal: the other tab refetches the preference itself.
+      window.localStorage.setItem(VISIBLE_MODULES_SYNC_KEY, String(Date.now()));
     } catch {
       // ignore storage failures (e.g., private mode)
     }
   }, []);
 
   const saveVisibleKeys = async (keys: string[] = visibleKeys) => {
-    const sanitized = Array.from(
-      new Set(keys.filter((k) => allowedKeys.has(k))),
-    );
+    const sanitized = sanitizeVisibleKeys(keys, allowedKeys);
     const success = await saveValue(sanitized);
 
     if (success) {
-      broadcastVisibleModules(sanitized);
+      broadcastVisibleModules();
     }
 
     return success;

@@ -116,4 +116,62 @@ describe("usePreferenceWithBootstrap", () => {
     expect(invalidateSpy).toHaveBeenCalled();
     invalidateSpy.mockRestore();
   });
+
+  it("stays loading until the real response replaces the placeholder", async () => {
+    let resolveFetch: ((value: unknown) => void) | undefined;
+    getWithMetaMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "sample.pref",
+          defaultValue: "default",
+        }),
+      { wrapper },
+    );
+
+    expect(result.current.loading).toBe(true);
+    expect(result.current.bootstrapped).toBe(false);
+
+    await act(async () => {
+      resolveFetch?.({ value: "backend", meta: {} });
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.value).toBe("backend");
+  });
+
+  it("keeps a save error after the failed write rolls back", async () => {
+    getWithMetaMock.mockResolvedValue({ value: "backend", meta: {} });
+    setPreferenceMock.mockRejectedValue(new Error("save failed"));
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "sample.pref",
+          defaultValue: "default",
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.bootstrapped).toBe(true));
+
+    act(() => {
+      result.current.updateValue("local-change");
+    });
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.saveValue("local-change");
+    });
+
+    expect(success).toBe(false);
+    await waitFor(() => expect(result.current.error).toBe("save failed"));
+    await waitFor(() => expect(result.current.value).toBe("backend"));
+  });
 });

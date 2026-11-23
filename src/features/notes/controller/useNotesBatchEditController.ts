@@ -68,21 +68,38 @@ export function useNotesBatchEditController({
           },
         });
 
-        if (result.updated_count > 0) {
+        const failed = result.failed_ids.length;
+        const unchanged = result.unchanged_ids.length;
+
+        if (result.updated_count === 0 && failed > 0) {
+          // Keep the selection so the user can retry.
+          showError(
+            t("notes.batchEdit.errorTitle"),
+            t("notes.batchEdit.allFailedMessage", { failed }),
+          );
+          return;
+        }
+
+        if (result.updated_count === 0) {
+          showInfo(
+            t("notes.batchEdit.noMatchesTitle"),
+            t("notes.batchEdit.noMatchesMessage", { unchanged }),
+          );
+        } else {
           showSuccess(
             t("notes.batchEdit.successTitle"),
             t("notes.batchEdit.successMessage", {
               updated: result.updated_count,
-              failed: result.failed_ids.length,
+              failed,
+              unchanged,
             }),
           );
         }
-        if (result.failed_ids.length > 0) {
+
+        if (failed > 0) {
           showInfo(
             t("notes.batchEdit.partialTitle"),
-            t("notes.batchEdit.partialMessage", {
-              failed: result.failed_ids.length,
-            }),
+            t("notes.batchEdit.partialMessage", { failed }),
           );
         }
 

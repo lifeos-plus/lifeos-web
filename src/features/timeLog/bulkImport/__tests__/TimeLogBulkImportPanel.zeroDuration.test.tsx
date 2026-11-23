@@ -5,8 +5,10 @@ import { renderWithProviders, setupTranslationMock } from "@test/utils";
 
 const translation = setupTranslationMock();
 
+const batchCreateMock = vi.hoisted(() => vi.fn());
+
 vi.mock("@/hooks/useTimelogMutations", () => ({
-  useTimelogMutations: () => ({ batchCreateTimelogsAsync: vi.fn() }),
+  useTimelogMutations: () => ({ batchCreateTimelogsAsync: batchCreateMock }),
 }));
 
 vi.mock("@/hooks/queries/usePersonsList", () => ({
@@ -50,7 +52,7 @@ vi.mock("@/components/TimeEntryModal", () => ({
 
 import TimeLogBulkImportPanel from "@/features/timeLog/bulkImport/TimeLogBulkImportPanel";
 
-const renderPanel = () =>
+const renderPanel = (onImported: () => void = vi.fn()) =>
   renderWithProviders(
     <TimeLogBulkImportPanel
       selectedDate={new Date("2026-08-15T00:00:00Z")}
@@ -59,7 +61,7 @@ const renderPanel = () =>
       areaMap={new Map()}
       preloadedTasks={[]}
       onCancel={vi.fn()}
-      onImported={vi.fn()}
+      onImported={onImported}
     />,
   );
 
@@ -120,5 +122,44 @@ describe("TimeLogBulkImportPanel zero-length rows", () => {
     expect(
       screen.queryByText("timeLog.bulkImport.errorListTitle"),
     ).toBeNull();
+  });
+
+  it("keeps only failed rows when a batch import partially succeeds", async () => {
+    const onImported = vi.fn();
+    batchCreateMock.mockResolvedValue({
+      created_count: 1,
+      failed_count: 1,
+      failed_indexes: [1],
+      created_timelogs: [{}],
+      errors: ["boom"],
+    });
+
+    renderPanel(onImported);
+
+    fireEvent.change(
+      screen.getByPlaceholderText("timeLog.bulkImport.inputPlaceholder"),
+      { target: { value: "10:00-11:00 冥想\n11:00-12:00 阅读" } },
+    );
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "timeLog.bulkImport.parseButton",
+      }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getAllByRole("button", { name: "edit-draft-row" })).toHaveLength(2),
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "timeLog.bulkImport.submit" }),
+    );
+
+    await waitFor(() => expect(batchCreateMock).toHaveBeenCalledTimes(1));
+    expect(batchCreateMock.mock.calls[0][0]).toHaveLength(2);
+
+    await waitFor(() =>
+      expect(screen.getAllByRole("button", { name: "edit-draft-row" })).toHaveLength(1),
+    );
+    expect(onImported).not.toHaveBeenCalled();
   });
 });

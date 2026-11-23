@@ -29,7 +29,7 @@ interface PreferenceWithBootstrapOptions<T> {
   key: string;
   defaultValue: T;
   module?: string;
-  validator?: (value: T, meta?: PreferenceCacheEntry<T>["meta"]) => boolean;
+  validator?: (value: T) => boolean;
 }
 
 export interface PreferenceWithBootstrapReturn<T> {
@@ -63,10 +63,8 @@ export function usePreferenceWithBootstrap<T>({
   const [error, setError] = useState<string | null>(null);
   const [bootstrapped, setBootstrapped] = useState(false);
   const [hasLocalOverride, setHasLocalOverride] = useState(false);
-  const isValidValue = (
-    candidate: T,
-    meta?: PreferenceCacheEntry<T>["meta"],
-  ) => !validator || validator(candidate, meta);
+  const saveFailedRef = useRef(false);
+  const isValidValue = (candidate: T) => !validator || validator(candidate);
 
   // 当切换到新的偏好键时，重置本地状态
   useEffect(() => {
@@ -74,6 +72,7 @@ export function usePreferenceWithBootstrap<T>({
     setHasLocalOverride(false);
     setError(null);
     setBootstrapped(false);
+    saveFailedRef.current = false;
   }, [key]);
 
   const preferenceQuery = useQuery<PreferenceCacheEntry<T>>({
@@ -98,7 +97,7 @@ export function usePreferenceWithBootstrap<T>({
 
         const nextValue = (backendValue as T) ?? defaultValueRef.current;
 
-        if (!isValidValue(nextValue, res.meta)) {
+        if (!isValidValue(nextValue)) {
           logger.warn(`Invalid value for preference ${key}:`, nextValue);
           return { value: defaultValueRef.current, meta: res.meta };
         }
@@ -122,9 +121,6 @@ export function usePreferenceWithBootstrap<T>({
     }),
   });
 
-  const latestMetaRef = useRef<PreferenceCacheEntry<T>["meta"]>(undefined);
-  latestMetaRef.current = preferenceQuery.data?.meta;
-
   // `placeholderData` reports `isSuccess` immediately, so only treat the query
   // as loaded once the real response has replaced the placeholder.
   const hasResolvedRemote =
@@ -134,7 +130,9 @@ export function usePreferenceWithBootstrap<T>({
     if (hasResolvedRemote) {
       const remoteValue = preferenceQuery.data.value;
       setBootstrapped(true);
-      setError(null);
+      if (!saveFailedRef.current) {
+        setError(null);
+      }
 
       if (!hasLocalOverride) {
         setValue(remoteValue);
@@ -172,6 +170,7 @@ export function usePreferenceWithBootstrap<T>({
       return nextValue;
     },
     onSuccess: (nextValue) => {
+      saveFailedRef.current = false;
       setHasLocalOverride(false);
       setValue(nextValue);
       setError(null);
@@ -197,6 +196,7 @@ export function usePreferenceWithBootstrap<T>({
       }
     },
     onError: (mutationError: unknown) => {
+      saveFailedRef.current = true;
       const message =
         mutationError instanceof Error
           ? mutationError.message
@@ -206,12 +206,13 @@ export function usePreferenceWithBootstrap<T>({
   });
 
   const saveValue = async (nextValue: T): Promise<boolean> => {
-    if (!isValidValue(nextValue, latestMetaRef.current)) {
+    if (!isValidValue(nextValue)) {
       setError("Invalid value");
       return false;
     }
 
     setSaving(true);
+    saveFailedRef.current = false;
     setError(null);
     // Protect the optimistic value only while the write is in flight. A failed
     // save must not block later backend refreshes forever.

@@ -50,7 +50,6 @@ interface PlanningTaskGroupHookParams {
   visions: Vision[];
   onTaskUpdate?: () => void;
   planningCycleType?: PlanningViewType;
-  calendarAdapter?: CalendarAdapter;
   /** Shared at page level so every group does not re-read the same preferences. */
   planningCycle: PlanningCycleContext;
   defaultInboxVision: UUID | null;
@@ -196,7 +195,6 @@ export function usePlanningTaskGroup(
     visions,
     onTaskUpdate,
     planningCycleType,
-    calendarAdapter,
     planningCycle,
     defaultInboxVision,
     showHabitActions,
@@ -234,14 +232,13 @@ export function usePlanningTaskGroup(
   });
 
   const habitActionRange = useMemo(() => {
-    const localAdapter = calendarAdapter ?? adapter;
     return buildHabitActionRange(
       planningCycleType,
       group.date,
-      localAdapter,
+      adapter,
       new Date(),
     );
-  }, [adapter, calendarAdapter, group.date, planningCycleType]);
+  }, [adapter, group.date, planningCycleType]);
   const canShowHabitActionsForGroup = isTopLevelPlanningGroup(
     group.id,
     planningCycleType,
@@ -477,7 +474,7 @@ export function usePlanningTaskGroup(
   const periodRangeLabel = useMemo(() => {
     if (!planningCycleType) return undefined;
 
-    const localAdapter = calendarAdapter ?? adapter;
+    const localAdapter = adapter;
     const periodRange = localAdapter.getPeriodRange(
       planningCycleType,
       group.date,
@@ -491,7 +488,7 @@ export function usePlanningTaskGroup(
     const endLabel = formatDate(periodRange.end);
 
     return `${startLabel} - ${endLabel}`;
-  }, [adapter, calendarAdapter, group.date, planningCycleType]);
+  }, [adapter, group.date, planningCycleType]);
 
   const statusFilterOptions = useMemo<StatusFilterOption[]>(
     () => [
@@ -785,9 +782,10 @@ export function usePlanningTaskGroup(
         return;
       }
 
-      const nextPeriodStart =
-        calendarAdapter?.getNextPeriod(group.date, planningCycleType) ??
-        adapter.getNextPeriod(group.date, planningCycleType);
+      const nextPeriodStart = adapter.getNextPeriod(
+        group.date,
+        planningCycleType,
+      );
 
       const cycleSettings = getDefaultCycleSettings(
         planningCycleType,
@@ -875,7 +873,6 @@ export function usePlanningTaskGroup(
     group.date,
     onTaskUpdate,
     toast,
-    calendarAdapter,
     adapter,
     getDefaultCycleSettings,
     t,
