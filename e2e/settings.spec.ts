@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 
 import { resolveSchemaVersion } from "../scripts/pinned-cli-version.mjs";
 
-const HEALTH_PERSISTENCE_MIN_VERSION = [1, 4, 10] as const;
+const PREFERENCE_PERSISTENCE_MIN_VERSION = [1, 4, 10] as const;
 
-function supportsHealthPreferencePersistence(version: string): boolean {
+function supportsPreferencePersistence(version: string): boolean {
   const [major = 0, minor = 0, patch = 0] = version
     .replace(/^v/, "")
     .split(".")
@@ -12,7 +12,7 @@ function supportsHealthPreferencePersistence(version: string): boolean {
   if (![major, minor, patch].every(Number.isFinite)) {
     return true;
   }
-  const [minMajor, minMinor, minPatch] = HEALTH_PERSISTENCE_MIN_VERSION;
+  const [minMajor, minMinor, minPatch] = PREFERENCE_PERSISTENCE_MIN_VERSION;
   return (
     major > minMajor ||
     (major === minMajor &&
@@ -74,7 +74,7 @@ test("settings persists body height when the pinned API supports it", async ({
 }) => {
   const pinnedVersion = resolveSchemaVersion();
   test.skip(
-    !supportsHealthPreferencePersistence(pinnedVersion),
+    !supportsPreferencePersistence(pinnedVersion),
     `Pinned lifeos-cli ${pinnedVersion} cannot persist health preferences yet (lifeos-plus/lifeos-cli#372)`,
   );
 
@@ -105,7 +105,7 @@ test("settings persists the interface font when the pinned API supports it", asy
 }) => {
   const pinnedVersion = resolveSchemaVersion();
   test.skip(
-    !supportsHealthPreferencePersistence(pinnedVersion),
+    !supportsPreferencePersistence(pinnedVersion),
     `Pinned lifeos-cli ${pinnedVersion} cannot persist appearance.font yet (lifeos-plus/lifeos-cli#372)`,
   );
 
