@@ -179,20 +179,23 @@ export const timelogsApi = {
             result.status === "fulfilled",
         )
         .map((result) => result.value);
-      const errors = results
-        .filter(
-          (result): result is PromiseRejectedResult =>
-            result.status === "rejected",
-        )
-        .map((result) =>
-          result.reason instanceof Error
-            ? result.reason.message
-            : String(result.reason),
-        );
+      const failedIndexes: number[] = [];
+      const errors: string[] = [];
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          failedIndexes.push(index);
+          errors.push(
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason),
+          );
+        }
+      });
 
       return {
         created_count: createdTimelogs.length,
-        failed_count: errors.length,
+        failed_count: failedIndexes.length,
+        failed_indexes: failedIndexes,
         created_timelogs: createdTimelogs,
         errors,
       };

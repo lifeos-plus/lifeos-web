@@ -59,9 +59,15 @@ vi.mock("@/components/ActionButton", () => ({
 
 vi.mock("@/hooks/queries/useVisibleModules", () => ({
   useVisibleModules: () => ({
-    visibleModules: [],
+    visibleKeys: [],
     allConfigurableModules: [],
-    setVisibleModules: vi.fn(),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    updateVisibleKeys: vi.fn(),
+    saveVisibleKeys: vi.fn(async () => true),
+    resetToDefault: vi.fn(),
   }),
 }));
 
@@ -69,15 +75,26 @@ vi.mock("@/hooks/queries/useDefaultInboxVision", () => ({
   useDefaultInboxVision: () => ({
     availableVisions: [],
     defaultInboxVision: null,
-    setDefaultInboxVision: vi.fn(),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    saveDefaultInboxVision: vi.fn(async () => true),
+    updateDefaultInboxVision: vi.fn(),
   }),
 }));
 
 vi.mock("@/hooks/useLanguage", () => ({
   useLanguage: () => ({
-    language: "en",
-    setLanguage: vi.fn(),
+    currentLanguage: "en",
     languageOptions: [{ value: "en", label: "English" }],
+    changeLanguage: vi.fn(async () => true),
+    saveLanguage: vi.fn(async () => true),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    supportedLanguages: [],
   }),
 }));
 

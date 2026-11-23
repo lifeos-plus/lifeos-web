@@ -143,10 +143,12 @@ const AsyncEntitySelect = forwardRef<HTMLInputElement, AsyncEntitySelectProps>(
     const normalizedValue = asSelectorString(value);
     const previousValueRef = useRef(normalizedValue);
 
-    const selectedOption = useMemo(() => {
-      if (!normalizedValue) return undefined;
-      return options.find((option) => option.id === normalizedValue);
-    }, [options, normalizedValue]);
+    const selectedOption = useMemo(
+      // Keep resolving the explicit empty option so "no default" shows its
+      // label instead of falling back to the placeholder.
+      () => options.find((option) => option.id === normalizedValue),
+      [options, normalizedValue],
+    );
 
     const filteredOptions = useMemo(() => {
       const q = query.trim().toLowerCase();

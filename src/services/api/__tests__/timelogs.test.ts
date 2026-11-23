@@ -348,6 +348,7 @@ describe("timelogsApi", () => {
     expect(result.created_count).toBe(1);
     expect(result.failed_count).toBe(1);
     expect(result.created_timelogs).toEqual([{ id: "tl-ok", title: "ok" }]);
+    expect(result.failed_indexes).toEqual([1]);
     expect(result.errors).toEqual(["boom"]);
   });
 

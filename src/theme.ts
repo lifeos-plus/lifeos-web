@@ -2,10 +2,11 @@
  * Theme list and theme application helpers.
  *
  * `RENDERABLE_THEMES` mirrors the daisyUI `themes:` list declared in
- * `src/index.css`; `src/__tests__/theme.test.ts` fails when the two drift apart.
+ * `src/index.css`; `scripts/check-theme-catalog.mjs` fails when the two drift
+ * apart.
  *
  * Which themes the user may actually pick is owned by the Web API:
- * `GET /api/v1/preferences/{key}?meta=true` returns `meta.allowed_values` for
+ * `GET /api/v1/preferences/{key}` returns `meta.allowed_values` for
  * `appearance.theme`. The local list only describes what this bundle can style,
  * so `resolveAvailableThemes` intersects the contract with it instead of
  * duplicating the backend enum.

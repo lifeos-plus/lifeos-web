@@ -152,6 +152,20 @@ export function useTimeLogAdvancedInteractions({
     void loadAdvancedSearchResults();
   }, [loadAdvancedSearchResults]);
 
+  // The day view re-sorts immediately when the header toggles the order; match
+  // that in advanced mode by re-running the last search with the new order.
+  const lastSortOrderRef = useRef(sortOrder);
+
+  useEffect(() => {
+    if (lastSortOrderRef.current === sortOrder) return;
+    lastSortOrderRef.current = sortOrder;
+
+    if (queryMode !== "advanced" || !advancedSearch.hasSearched) return;
+    const params = advancedSearch.searchParams;
+    if (!params) return;
+    advancedSearch.search({ ...params, sort_order: sortOrder });
+  }, [sortOrder, queryMode, advancedSearch]);
+
   const processedAdvancedSearchData = useMemo(() => {
     if (queryMode === "advanced" && advancedSearch.data.length > 0) {
       return advancedSearch.data.map((event) => ({

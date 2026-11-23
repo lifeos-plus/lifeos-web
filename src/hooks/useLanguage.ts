@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { supportedLanguages, defaultLanguage } from "@/i18n";
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import { logger } from "@/utils/core";
 
 export type Language = "zh" | "en" | "auto";
 
@@ -53,7 +54,9 @@ export function useLanguage() {
   // The stored preference is the single source of truth, including "auto".
   useEffect(() => {
     if (!preference.bootstrapped) return;
-    void applyLanguage(preference.value);
+    void applyLanguage(preference.value).catch((error: unknown) => {
+      logger.error("Failed to apply language preference:", error);
+    });
   }, [preference.bootstrapped, preference.value, applyLanguage]);
 
   // The effect above applies every value change, including local edits and

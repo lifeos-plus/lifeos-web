@@ -37,11 +37,11 @@ export function useVisibleModules() {
     key: VISIBLE_MODULES_KEY,
     defaultValue: defaultVisible,
     module: "navigation",
-    validator: (value, preferenceMeta) => {
-      if (!Array.isArray(value)) return false;
-      const allowed = new Set(resolveAllowedModuleKeys(preferenceMeta));
-      return value.every((key) => allowed.has(key));
-    },
+    // Accept any string list here: an unknown key (a module that was removed,
+    // or a key the contract no longer lists) must not reset the whole
+    // preference. Rendering and saving still filter against the allowlist.
+    validator: (value) =>
+      Array.isArray(value) && value.every((key) => typeof key === "string"),
   });
 
   // Allowed keys come from the same response that carries the value, so no

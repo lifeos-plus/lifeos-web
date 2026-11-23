@@ -7,7 +7,7 @@
  * theme picker offers themes without styles (or hides themes that exist).
  *
  * The API contract owns which themes a user may select
- * (`preferences/appearance.theme?meta=true` → `meta.allowed_values`), so this
+ * (`GET /api/v1/preferences/appearance.theme` → `meta.allowed_values`), so this
  * script only guards the local presentation boundary.
  */
 
