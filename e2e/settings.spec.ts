@@ -99,3 +99,31 @@ test("settings persists body height when the pinned API supports it", async ({
   await page.getByRole("button", { name: "Health", exact: true }).click();
   await expect(page.getByLabel("Body height")).toHaveValue("175");
 });
+
+test("settings persists the interface font when the pinned API supports it", async ({
+  page,
+}) => {
+  const pinnedVersion = resolveSchemaVersion();
+  test.skip(
+    !supportsHealthPreferencePersistence(pinnedVersion),
+    `Pinned lifeos-cli ${pinnedVersion} cannot persist appearance.font yet (lifeos-plus/lifeos-cli#372)`,
+  );
+
+  await page.goto("/settings");
+  const font = page.getByLabel("Interface Font");
+  await expect(font).toBeVisible();
+  await font.click();
+
+  const saved = page.waitForResponse(
+    (response) =>
+      response.request().method() === "PUT" &&
+      response.url().includes("/preferences/appearance.font"),
+  );
+  await page.getByRole("button", { name: "Serif", exact: true }).click();
+
+  const response = await saved;
+  expect(await response.json()).toMatchObject({ value: "serif" });
+
+  await page.reload();
+  await expect(page.getByLabel("Interface Font")).toHaveValue("Serif");
+});
