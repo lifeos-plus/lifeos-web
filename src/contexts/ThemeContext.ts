@@ -4,6 +4,7 @@ import type { AppTheme } from "@/theme";
 
 interface ThemeContextValue extends PreferenceWithBootstrapReturn<AppTheme> {
   theme: AppTheme;
+  availableThemes: AppTheme[];
   effectiveTheme: Exclude<AppTheme, "system">;
   setTheme: (nextTheme: AppTheme) => Promise<void>;
   isSystem: boolean;

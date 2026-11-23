@@ -9,6 +9,7 @@ import {
   timelogsApi,
   type TimelogAdvancedSearchMetadata,
 } from "@/services/api/timelogs";
+import { sortTimeEntriesByTime } from "@/utils/datetime";
 import { timelogsKeys } from "@/services/api/queryKeys";
 import type {
   TimelogAdvancedSearchRequest,
@@ -52,7 +53,14 @@ export function useAdvancedSearchWithPagination(
       const response = await timelogsApi.advancedSearch(params);
       const signature = buildSignature(params);
       metadataMapRef.current[signature] = response.meta;
-      return response.items;
+
+      // The API has no ordering parameter, so mirror the day view: sort by
+      // start/end time and reverse for descending.
+      if (!params.sort_order) {
+        return response.items;
+      }
+      const sorted = sortTimeEntriesByTime([...response.items]);
+      return params.sort_order === "desc" ? sorted.reverse() : sorted;
     },
     onError: (error) => {
       const message =
@@ -70,7 +78,8 @@ export function useAdvancedSearchWithPagination(
   const clearSearch = useCallback(() => {
     baseClearSearch();
     setMetadata(null);
-    metadataMapRef.current = {};
+    // Keep the metadata cache: a repeated search can be served from the query
+    // cache without re-running queryFn, and the banner would otherwise vanish.
   }, [baseClearSearch]);
 
   useEffect(() => {

@@ -29,8 +29,7 @@ vi.mock("@/contexts/ThemeContext", () => ({
   useTheme: () => ({
     theme: "system",
     setTheme: vi.fn(),
-    resolveTheme: () => "light",
-    themes: [],
+    availableThemes: ["system", "fresh"],
   }),
 }));
 
@@ -60,9 +59,15 @@ vi.mock("@/components/ActionButton", () => ({
 
 vi.mock("@/hooks/queries/useVisibleModules", () => ({
   useVisibleModules: () => ({
-    visibleModules: [],
+    visibleKeys: [],
     allConfigurableModules: [],
-    setVisibleModules: vi.fn(),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    updateVisibleKeys: vi.fn(),
+    saveVisibleKeys: vi.fn(async () => true),
+    resetToDefault: vi.fn(),
   }),
 }));
 
@@ -70,15 +75,26 @@ vi.mock("@/hooks/queries/useDefaultInboxVision", () => ({
   useDefaultInboxVision: () => ({
     availableVisions: [],
     defaultInboxVision: null,
-    setDefaultInboxVision: vi.fn(),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    saveDefaultInboxVision: vi.fn(async () => true),
+    updateDefaultInboxVision: vi.fn(),
   }),
 }));
 
 vi.mock("@/hooks/useLanguage", () => ({
   useLanguage: () => ({
-    language: "en",
-    setLanguage: vi.fn(),
+    currentLanguage: "en",
     languageOptions: [{ value: "en", label: "English" }],
+    changeLanguage: vi.fn(async () => true),
+    saveLanguage: vi.fn(async () => true),
+    loading: false,
+    saving: false,
+    error: null,
+    bootstrapped: true,
+    supportedLanguages: [],
   }),
 }));
 
@@ -176,6 +192,15 @@ describe("SettingsPage calendar preferences", () => {
       return key ? (enumSelectProps[key] as { value: string }) : null;
     })) as { value: string };
     expect(anchorSelect.value).toBe("2025");
+
+    await waitFor(() => {
+      const key = Object.keys(enumSelectProps).find((id) =>
+        id.includes("sevenYearAnchorYear"),
+      ) as string;
+      expect(
+        (enumSelectProps[key] as { disabled?: boolean }).disabled,
+      ).toBe(false);
+    });
 
     (
       enumSelectProps[

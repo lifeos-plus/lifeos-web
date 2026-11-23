@@ -1,136 +1,118 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { MODULES } from "@/config/modulesConfig";
+import { preferencesKeys } from "@/services/api/queryKeys";
 import { useModuleConfig } from "@/hooks/useModuleConfig";
 import { usePreferenceWithBootstrap } from "./usePreferenceWithBootstrap";
-import { preferencesApi } from "@/services/api/preferences";
+import type { PreferenceMeta } from "@/services/api/preferences";
 
 const VISIBLE_MODULES_KEY = "navigation.visible_modules";
 const VISIBLE_MODULES_SYNC_KEY = "navigation.visible_modules.sync";
 
+function sanitizeVisibleKeys(
+  keys: string[],
+  allowed: Set<string>,
+): string[] {
+  return Array.from(new Set(keys.filter((key) => allowed.has(key))));
+}
+
+function resolveAllowedModuleKeys(
+  meta?: PreferenceMeta,
+): string[] {
+  const allowed = meta?.allowed_values;
+  if (Array.isArray(allowed)) {
+    return allowed.map((value) => String(value));
+  }
+  return MODULES.map((module) => module.key);
+}
+
 export function useVisibleModules() {
   const { modules } = useModuleConfig();
+  const queryClient = useQueryClient();
 
   const defaultVisible: string[] = useMemo(
     () => MODULES.filter((m) => m.showInNav).map((m) => m.key),
     [],
   );
 
-  // local allowed keys set to guard bad values
-  // Allowed keys are driven by backend meta; fallback to MODULES keys when meta missing.
-  const [allowedKeys, setAllowedKeys] = useState<Set<string>>(
-    () => new Set(MODULES.map((m) => m.key)),
-  );
-
   const {
-    value: visibleKeys,
+    value,
     loading,
     saving,
     error,
     bootstrapped,
+    meta,
     saveValue,
     updateValue,
   } = usePreferenceWithBootstrap<string[]>({
     key: VISIBLE_MODULES_KEY,
     defaultValue: defaultVisible,
     module: "navigation",
-    validator: (value) => {
-      if (!Array.isArray(value)) return false;
-      return value.every((k) => allowedKeys.has(k));
-    },
+    // Accept any string list here: an unknown key (a module that was removed,
+    // or a key the contract no longer lists) must not reset the whole
+    // preference. Rendering and saving still filter against the allowlist.
+    validator: (value) =>
+      Array.isArray(value) && value.every((key) => typeof key === "string"),
   });
 
-  useEffect(() => {
-    const updateAllowedKeys = async () => {
-      try {
-        const res =
-          await preferencesApi.getWithMeta<string[]>(VISIBLE_MODULES_KEY);
-        const metaAllowed = Array.isArray(res.meta?.allowed_values)
-          ? (res.meta!.allowed_values as unknown[])
-          : null;
-        const localAllowed = new Set<string>(
-          (metaAllowed
-            ? metaAllowed.map((v) => String(v))
-            : MODULES.map((m) => m.key)) as string[],
-        );
-        setAllowedKeys(localAllowed);
-      } catch (_e) {
-        setAllowedKeys(new Set(MODULES.map((m) => m.key)));
-      }
-    };
+  // Allowed keys come from the same response that carries the value, so no
+  // second request is needed.
+  const allowedKeys = useMemo(
+    () => new Set(resolveAllowedModuleKeys(meta)),
+    [meta],
+  );
 
-    if (bootstrapped) {
-      updateAllowedKeys();
-    }
-  }, [bootstrapped]);
+  // Values saved before a module was removed (or keys this contract no longer
+  // allows) stay out of the UI even though they remain stored.
+  const visibleKeys = useMemo(
+    () => sanitizeVisibleKeys(value, allowedKeys),
+    [value, allowedKeys],
+  );
 
   const updateVisibleKeys = (keys: string[]) => {
-    const sanitized = Array.from(
-      new Set(keys.filter((k) => allowedKeys.has(k))),
-    );
-    updateValue(sanitized);
+    updateValue(sanitizeVisibleKeys(keys, allowedKeys));
   };
 
-  const broadcastVisibleModules = useCallback((keys: string[]) => {
+  const broadcastVisibleModules = useCallback(() => {
     if (typeof window === "undefined" || !window.localStorage) return;
     try {
-      window.localStorage.setItem(
-        VISIBLE_MODULES_SYNC_KEY,
-        JSON.stringify({
-          visibleKeys: keys,
-          timestamp: Date.now(),
-        }),
-      );
+      // Only a signal: the other tab refetches the preference itself.
+      window.localStorage.setItem(VISIBLE_MODULES_SYNC_KEY, String(Date.now()));
     } catch {
       // ignore storage failures (e.g., private mode)
     }
   }, []);
 
   const saveVisibleKeys = async (keys: string[] = visibleKeys) => {
-    const sanitized = Array.from(
-      new Set(keys.filter((k) => allowedKeys.has(k))),
-    );
+    const sanitized = sanitizeVisibleKeys(keys, allowedKeys);
     const success = await saveValue(sanitized);
 
     if (success) {
-      broadcastVisibleModules(sanitized);
+      broadcastVisibleModules();
     }
 
     return success;
   };
 
-  const resetToDefault = () => {
-    updateValue(defaultVisible);
-    broadcastVisibleModules(defaultVisible);
-  };
-
-  // Cross-instance sync: listen for storage events dispatched by other tabs
+  // Cross-instance sync: another tab already persisted the value, so refetch
+  // instead of keeping a local-only copy.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handler = (event: StorageEvent) => {
       if (event.key !== VISIBLE_MODULES_SYNC_KEY || !event.newValue) return;
-      try {
-        const parsed = JSON.parse(event.newValue) as {
-          visibleKeys?: string[];
-        };
-        if (Array.isArray(parsed.visibleKeys)) {
-          const sanitized = Array.from(
-            new Set(parsed.visibleKeys.filter((k) => allowedKeys.has(k))),
-          );
-          updateValue(sanitized);
-        }
-      } catch {
-        // ignore malformed payloads
-      }
+      void queryClient.invalidateQueries({
+        queryKey: preferencesKeys.detail(VISIBLE_MODULES_KEY),
+      });
     };
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
-  }, [allowedKeys, updateValue, broadcastVisibleModules]);
+  }, [queryClient]);
 
-  const allConfigurableModules = useMemo(() => {
-    // Map allowed module keys to existing module configs for labels/icons
-    const allowedSet = allowedKeys;
-    return modules.filter((m) => allowedSet.has(m.key) && m.key !== "settings");
-  }, [allowedKeys, modules]);
+  const allConfigurableModules = useMemo(
+    () =>
+      modules.filter((m) => allowedKeys.has(m.key) && m.key !== "settings"),
+    [allowedKeys, modules],
+  );
 
   return {
     visibleKeys,
@@ -140,7 +122,6 @@ export function useVisibleModules() {
     bootstrapped,
     updateVisibleKeys,
     saveVisibleKeys,
-    resetToDefault,
     allConfigurableModules,
   };
 }

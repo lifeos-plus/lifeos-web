@@ -68,7 +68,8 @@ export function useBulkNoteImport() {
 
           const failureMap = new Map<number, string>();
           response.failed_items.forEach((item) => {
-            failureMap.set(item.index - 1, item.error);
+            // `index` is 0-based within this chunk.
+            failureMap.set(item.index, item.error);
           });
 
           chunk.forEach((draft, index) => {

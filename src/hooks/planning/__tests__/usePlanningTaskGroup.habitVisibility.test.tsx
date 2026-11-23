@@ -16,25 +16,20 @@ const { preferenceState, habitActionsMock } = vi.hoisted(() => ({
   habitActionsMock: vi.fn(),
 }));
 
-vi.mock("@/hooks/useCalendarAdapter", () => ({
-  usePlanningCycle: () => ({
-    getDefaultCycleSettings: () => ({ days: 7 }),
-    adapter: {
-      getPeriodRange: () => ({ start: "2026-07-06", end: "2026-07-12" }),
-      getNextPeriod: () => new Date("2026-07-13T00:00:00"),
-    },
+const planningCycle = {
+  getDefaultCycleSettings: () => ({ days: 7, startDate: "2026-07-06" }),
+  getQuickSetOptions: () => ({
+    today: { days: 1, startDate: "2026-07-06" },
+    tomorrow: { days: 1, startDate: "2026-07-07" },
+    thisWeek: { days: 7, startDate: "2026-07-06" },
+    thisMonth: { days: 31, startDate: "2026-07-01" },
+    thisYear: { days: 365, startDate: "2026-01-01" },
   }),
-}));
-
-vi.mock("@/hooks/queries/useDefaultInboxVision", () => ({
-  useDefaultInboxVision: () => ({ defaultInboxVision: "vision-1" }),
-}));
-
-vi.mock("@/hooks/queries/usePreferenceWithBootstrap", () => ({
-  usePreferenceWithBootstrap: () => ({
-    value: preferenceState.showHabitActions,
-  }),
-}));
+  adapter: {
+    getPeriodRange: () => ({ start: "2026-07-06", end: "2026-07-12" }),
+    getNextPeriod: () => new Date("2026-07-13T00:00:00"),
+  },
+} as never;
 
 vi.mock("@/hooks/queries/useTaskTimelogs", () => ({
   useMultipleTaskTimelogs: () => ({ taskTimelogs: new Map() }),
@@ -127,6 +122,9 @@ describe("usePlanningTaskGroup habit visibility", () => {
           group: topLevelWeekGroup,
           visions: [],
           planningCycleType: "week",
+          planningCycle,
+          defaultInboxVision: "vision-1",
+          showHabitActions: preferenceState.showHabitActions,
         }),
       { wrapper: createWrapper() },
     );
@@ -144,6 +142,9 @@ describe("usePlanningTaskGroup habit visibility", () => {
           group: topLevelWeekGroup,
           visions: [],
           planningCycleType: "week",
+          planningCycle,
+          defaultInboxVision: "vision-1",
+          showHabitActions: preferenceState.showHabitActions,
         }),
       { wrapper: createWrapper() },
     );
@@ -158,6 +159,9 @@ describe("usePlanningTaskGroup habit visibility", () => {
           group: nestedDayGroup,
           visions: [],
           planningCycleType: "week",
+          planningCycle,
+          defaultInboxVision: "vision-1",
+          showHabitActions: preferenceState.showHabitActions,
         }),
       { wrapper: createWrapper() },
     );

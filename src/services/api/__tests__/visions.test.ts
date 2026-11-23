@@ -75,4 +75,40 @@ describe("visionsApi", () => {
     const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(localUrl(ENDPOINTS.VISIONS.WITH_TASKS("vision-1")));
   });
+
+  it("reports partial failures when bulk updating experience rates", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation((input) => {
+      const url = String(input);
+      if (url.includes("vision-2")) {
+        return Promise.resolve(
+          new Response(JSON.stringify({ detail: "boom" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            id: "vision-1",
+            name: "Build focus",
+            status: "active",
+            stage: 1,
+            experience_points: 0,
+            experience_rate_per_hour: 60,
+            created_at: "2026-07-07T12:00:00Z",
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        ),
+      );
+    });
+
+    const result = await visionsApi.bulkUpdateExperienceRates([
+      { id: "vision-1", experience_rate_per_hour: 60 },
+      { id: "vision-2", experience_rate_per_hour: 30 },
+    ]);
+
+    expect(result.updated).toHaveLength(1);
+    expect(result.errors).toEqual(["boom"]);
+  });
 });

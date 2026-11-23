@@ -14,6 +14,7 @@ import MayanNewYearStartPreference, {
   type MayanNewYearStartPreferenceProps,
 } from "@/components/settings/MayanNewYearStartPreference";
 import { FONT_CATALOG } from "@/config/fontCatalog";
+import { DEFAULT_AVAILABLE_THEMES, type AppTheme } from "@/theme";
 import { Icon, type IconName } from "@/components/icons";
 import type { UUID } from "@/types/primitive";
 import type { CalendarSystem } from "@/utils/calendar";
@@ -40,6 +41,8 @@ const HealthIcon = createIcon("bolt");
 
 interface SettingsConfigContext {
   calendarSystem?: CalendarSystem;
+  /** Selectable themes resolved from the API contract; falls back to the bundle. */
+  themeOptions?: AppTheme[];
 }
 
 const YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => {
@@ -50,6 +53,7 @@ const YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => {
 export const useSettingsConfig = (
   context: SettingsConfigContext = {},
 ): SettingGroupConfig[] => {
+  const { themeOptions = DEFAULT_AVAILABLE_THEMES } = context;
   const { t } = useTranslation();
   const visibleModulesSettings = useVisibleModules();
   const defaultInboxVisionSettings = useDefaultInboxVision();
@@ -72,36 +76,10 @@ export const useSettingsConfig = (
           label: t("settings.appearance.theme.label"),
           description: t("settings.appearance.theme.description"),
           placeholder: t("settings.appearance.theme.placeholder"),
-          options: [
-            { value: "system", label: t("theme.system") },
-            { value: "fresh", label: t("theme.fresh") },
-            { value: "cupcake", label: t("theme.cupcake") },
-            { value: "bumblebee", label: t("theme.bumblebee") },
-            { value: "emerald", label: t("theme.emerald") },
-            { value: "corporate", label: t("theme.corporate") },
-            { value: "synthwave", label: t("theme.synthwave") },
-            { value: "retro", label: t("theme.retro") },
-            { value: "cyberpunk", label: t("theme.cyberpunk") },
-            { value: "valentine", label: t("theme.valentine") },
-            { value: "halloween", label: t("theme.halloween") },
-            { value: "garden", label: t("theme.garden") },
-            { value: "forest", label: t("theme.forest") },
-            { value: "aqua", label: t("theme.aqua") },
-            { value: "lofi", label: t("theme.lofi") },
-            { value: "pastel", label: t("theme.pastel") },
-            { value: "fantasy", label: t("theme.fantasy") },
-            { value: "wireframe", label: t("theme.wireframe") },
-            { value: "luxury", label: t("theme.luxury") },
-            { value: "dracula", label: t("theme.dracula") },
-            { value: "cmyk", label: t("theme.cmyk") },
-            { value: "autumn", label: t("theme.autumn") },
-            { value: "business", label: t("theme.business") },
-            { value: "acid", label: t("theme.acid") },
-            { value: "lemonade", label: t("theme.lemonade") },
-            { value: "night", label: t("theme.night") },
-            { value: "coffee", label: t("theme.coffee") },
-            { value: "winter", label: t("theme.winter") },
-          ],
+          options: themeOptions.map((theme) => ({
+            value: theme,
+            label: t(`theme.${theme}`),
+          })),
         },
         {
           key: "font",
@@ -294,6 +272,7 @@ export const useSettingsConfig = (
         {
           key: "defaultInboxVision",
           type: "select",
+          includeEmptyOption: true,
           label: t("settings.defaultInboxVision.label"),
           description: t("settings.defaultInboxVision.description"),
           options: [

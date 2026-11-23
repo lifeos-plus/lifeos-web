@@ -25,6 +25,9 @@ npm run api:check
 echo "[validate] validate translation catalogs"
 npm run i18n:check
 
+echo "[validate] check theme catalog matches the CSS bundle"
+npm run theme:check
+
 echo "[validate] build frontend"
 npm run build
 

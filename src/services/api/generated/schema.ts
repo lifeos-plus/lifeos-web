@@ -815,6 +815,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notes/batch-create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch Create Notes
+         * @description Create multiple notes, reporting per-item failures.
+         */
+        post: operations["batch_create_notes_api_v1_notes_batch_create_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notes/batch-delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch Delete Notes
+         * @description Soft-delete multiple notes while reporting per-note failures.
+         */
+        post: operations["batch_delete_notes_api_v1_notes_batch_delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notes/batch-update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Batch Update Notes
+         * @description Apply a content find/replace across multiple notes.
+         */
+        post: operations["batch_update_notes_api_v1_notes_batch_update_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notes/stats/person": {
         parameters: {
             query?: never;
@@ -3187,6 +3247,109 @@ export interface components {
             id: string;
             /** Name */
             name: string;
+        };
+        /**
+         * NoteBatchContentUpdate
+         * @description Find/replace payload for a note batch update.
+         */
+        NoteBatchContentUpdate: {
+            /**
+             * Case Sensitive
+             * @default false
+             */
+            case_sensitive?: boolean;
+            /** Find Text */
+            find_text: string;
+            /**
+             * Replace Text
+             * @default
+             */
+            replace_text?: string;
+        };
+        /**
+         * NoteBatchCreate
+         * @description Payload for creating multiple notes from the Web UI.
+         */
+        NoteBatchCreate: {
+            /** Habit Action Ids */
+            habit_action_ids?: string[] | null;
+            /** Notes */
+            notes: components["schemas"]["NoteBatchCreateItem"][];
+            /** Person Ids */
+            person_ids?: string[] | null;
+            /** Tag Ids */
+            tag_ids?: string[] | null;
+            /** Task Id */
+            task_id?: string | null;
+            /** Timelog Ids */
+            timelog_ids?: string[] | null;
+        };
+        /** NoteBatchCreateFailedItem */
+        NoteBatchCreateFailedItem: {
+            /** Content Preview */
+            content_preview: string;
+            /** Error */
+            error: string;
+            /** Index */
+            index: number;
+        };
+        /**
+         * NoteBatchCreateItem
+         * @description One note inside a batch create request.
+         */
+        NoteBatchCreateItem: {
+            /** Content */
+            content: string;
+        };
+        /** NoteBatchCreateResponse */
+        NoteBatchCreateResponse: {
+            /** Created Count */
+            created_count: number;
+            /** Created Notes */
+            created_notes: components["schemas"]["NoteResponse"][];
+            /** Failed Count */
+            failed_count: number;
+            /** Failed Items */
+            failed_items: components["schemas"]["NoteBatchCreateFailedItem"][];
+        };
+        /**
+         * NoteBatchDelete
+         * @description Payload for soft-deleting multiple notes from the Web UI.
+         */
+        NoteBatchDelete: {
+            /** Note Ids */
+            note_ids: string[];
+        };
+        /** NoteBatchDeleteResponse */
+        NoteBatchDeleteResponse: {
+            /** Deleted Count */
+            deleted_count: number;
+            /** Errors */
+            errors: string[];
+            /** Failed Ids */
+            failed_ids: string[];
+        };
+        /**
+         * NoteBatchUpdate
+         * @description Payload for updating multiple notes from the Web UI.
+         */
+        NoteBatchUpdate: {
+            content: components["schemas"]["NoteBatchContentUpdate"];
+            /** Note Ids */
+            note_ids: string[];
+        };
+        /** NoteBatchUpdateResponse */
+        NoteBatchUpdateResponse: {
+            /** Errors */
+            errors: string[];
+            /** Failed Ids */
+            failed_ids: string[];
+            /** Replacement Count */
+            replacement_count: number;
+            /** Unchanged Ids */
+            unchanged_ids: string[];
+            /** Updated Count */
+            updated_count: number;
         };
         /**
          * NoteCreate
@@ -6647,6 +6810,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NoteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    batch_create_notes_api_v1_notes_batch_create_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteBatchCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteBatchCreateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    batch_delete_notes_api_v1_notes_batch_delete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteBatchDelete"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteBatchDeleteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    batch_update_notes_api_v1_notes_batch_update_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteBatchUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoteBatchUpdateResponse"];
                 };
             };
             /** @description Validation Error */

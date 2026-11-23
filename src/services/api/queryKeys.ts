@@ -97,7 +97,7 @@ export const areasKeys = {
 export const timelogTemplatesKeys = {
   all: ["timelog-templates"] as const,
   lists: () => [...timelogTemplatesKeys.all, "list"] as const,
-  list: (filters: { limit?: number; offset?: number; order_by?: string }) =>
+  list: (filters: { page?: number; size?: number; order_by?: string }) =>
     [...timelogTemplatesKeys.lists(), filters] as const,
   details: () => [...timelogTemplatesKeys.all, "detail"] as const,
   detail: (id: UUID) => [...timelogTemplatesKeys.details(), id] as const,
@@ -165,23 +165,17 @@ export const tagsKeys = {
 
 export const statsKeys = {
   all: ["stats"] as const,
-  dailyAreas: (filters: {
-    start: string;
-    end: string;
-    timezone: string;
-    area_ids?: UUID[];
-  }) => [...statsKeys.all, "daily-areas", filters] as const,
+  // Stats responses depend on the persisted timezone/calendar preferences,
+  // but those are not request parameters; the preference hook invalidates this
+  // branch when such a preference changes.
+  dailyAreas: (filters: { start: string; end: string; area_ids?: UUID[] }) =>
+    [...statsKeys.all, "daily-areas", filters] as const,
   aggregatedAreas: (filters: {
     granularity: AggregationGranularity;
     start: string;
     end: string;
-    timezone: string;
     area_ids?: UUID[];
-    first_day_of_week: number;
-    calendar_system?: string;
   }) => [...statsKeys.all, "aggregated-areas", filters] as const,
-  dayBreakdown: (day: string, timezone: string) =>
-    [...statsKeys.all, "day-breakdown", { day, timezone }] as const,
 };
 
 export const habitsKeys = {

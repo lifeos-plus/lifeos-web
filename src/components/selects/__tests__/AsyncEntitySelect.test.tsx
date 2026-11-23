@@ -146,4 +146,17 @@ describe("AsyncEntitySelect", () => {
     await user.click(screen.getByRole("button", { name: "Alpha" }));
     await waitFor(() => expect(onChange).toHaveBeenCalledWith("alpha"));
   });
+
+  it("shows the explicit empty option label instead of the placeholder", () => {
+    render(
+      <AsyncEntitySelect
+        label="Inbox"
+        options={[{ id: "", label: "No default" }, ...baseOptions]}
+        value=""
+        onChange={() => {}}
+      />,
+    );
+
+    expect(screen.getByDisplayValue("No default")).toBeInTheDocument();
+  });
 });

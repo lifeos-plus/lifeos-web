@@ -6,6 +6,14 @@ import {
   createCalendarAdapter,
 } from "@/utils/calendar";
 import { parseDateKey } from "@/utils/datetime";
+import {
+  DEFAULT_CALENDAR_SYSTEM,
+  DEFAULT_FIRST_DAY_OF_WEEK,
+  isValidCalendarSystem,
+  isValidFirstDayOfWeek,
+  isValidMayanNewYearStart,
+  isValidSevenYearAnchorYear,
+} from "@/config/calendarPreferences";
 import type {
   CalendarAdapter,
   CalendarSystem,
@@ -24,51 +32,49 @@ interface CalendarAdapterState {
 export function useCalendarAdapter(): CalendarAdapterState {
   const calendarSystemPreference = usePreferenceWithBootstrap<CalendarSystem>({
     key: "calendar.system",
-    defaultValue: "gregorian",
+    defaultValue: DEFAULT_CALENDAR_SYSTEM,
     module: "calendar",
-    validator: (value) => value === "gregorian" || value === "mayan_13_moon",
+    validator: isValidCalendarSystem,
   });
 
   const firstDayPreference = usePreferenceWithBootstrap<number>({
     key: "calendar.first_day_of_week",
-    defaultValue: 1,
+    defaultValue: DEFAULT_FIRST_DAY_OF_WEEK,
     module: "calendar",
-    validator: (value) => Number.isFinite(value) && value >= 1 && value <= 7,
+    validator: isValidFirstDayOfWeek,
   });
   const sevenYearAnchorPreference = usePreferenceWithBootstrap<number>({
     key: "calendar.seven_year_anchor_year",
     defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
     module: "calendar",
-    validator: (value) =>
-      typeof value === "number" &&
-      Number.isInteger(value) &&
-      value >= 1 &&
-      value <= 9999,
+    validator: isValidSevenYearAnchorYear,
   });
   const mayanNewYearPreference = usePreferenceWithBootstrap<string>({
     key: "calendar.mayan_new_year_start",
     defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
     module: "calendar",
-    validator: (value) => /^\d{2}-\d{2}$/.test(value),
+    validator: isValidMayanNewYearStart,
   });
 
   const calendarSystem: CalendarSystem =
     calendarSystemPreference.value === "mayan_13_moon"
       ? "mayan_13_moon"
       : "gregorian";
-  const firstDayOfWeek = Number.isFinite(firstDayPreference.value)
+  // Defensive: the preference hook validates, but the adapter must never build
+  // an invalid calendar from an unexpected value.
+  const firstDayOfWeek = isValidFirstDayOfWeek(firstDayPreference.value)
     ? firstDayPreference.value
-    : 1;
-  const sevenYearAnchorYear =
-    typeof sevenYearAnchorPreference.value === "number" &&
-    Number.isInteger(sevenYearAnchorPreference.value)
-      ? sevenYearAnchorPreference.value
-      : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR;
-  const mayanNewYearStart =
-    typeof mayanNewYearPreference.value === "string" &&
-    /^\d{2}-\d{2}$/.test(mayanNewYearPreference.value)
-      ? mayanNewYearPreference.value
-      : DEFAULT_MAYAN_NEW_YEAR_START;
+    : DEFAULT_FIRST_DAY_OF_WEEK;
+  const sevenYearAnchorYear = isValidSevenYearAnchorYear(
+    sevenYearAnchorPreference.value,
+  )
+    ? sevenYearAnchorPreference.value
+    : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR;
+  const mayanNewYearStart = isValidMayanNewYearStart(
+    mayanNewYearPreference.value,
+  )
+    ? mayanNewYearPreference.value
+    : DEFAULT_MAYAN_NEW_YEAR_START;
 
   const adapter = useMemo(() => {
     return createCalendarAdapter(
@@ -93,9 +99,12 @@ export function useCalendarAdapter(): CalendarAdapterState {
   };
 }
 
-export function usePlanningCycle() {
-  const { adapter, calendarSystem } = useCalendarAdapter();
-
+/**
+ * Pure helpers over an existing calendar adapter. Kept separate from
+ * `usePlanningCycle` so a page that already holds an adapter can reuse it
+ * instead of instantiating the calendar preferences a second time.
+ */
+export function createPlanningCycleHelpers(adapter: CalendarAdapter) {
   const getDefaultCycleSettings = (
     cycleType: ExtendedPlanningViewType,
     baseDate: Date = new Date(),
@@ -123,10 +132,21 @@ export function usePlanningCycle() {
     };
   };
 
+  return { getDefaultCycleSettings, getQuickSetOptions };
+}
+
+export type PlanningCycleContext = {
+  adapter: CalendarAdapter;
+} & ReturnType<typeof createPlanningCycleHelpers>;
+
+export function usePlanningCycle(): PlanningCycleContext & {
+  calendarSystem: CalendarSystem;
+} {
+  const { adapter, calendarSystem } = useCalendarAdapter();
+
   return {
     adapter,
     calendarSystem,
-    getDefaultCycleSettings,
-    getQuickSetOptions,
+    ...createPlanningCycleHelpers(adapter),
   };
 }

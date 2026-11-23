@@ -19,6 +19,14 @@ import { useSettingsConfig } from "@/config/settingsConfig";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import type { UUID } from "@/types/primitive";
 import { VISION_EXPERIENCE_RATE_MAX } from "@/utils/constants";
+import {
+  DEFAULT_CALENDAR_SYSTEM,
+  DEFAULT_FIRST_DAY_OF_WEEK,
+  isValidCalendarSystem,
+  isValidFirstDayOfWeek,
+  isValidMayanNewYearStart,
+  isValidSevenYearAnchorYear,
+} from "@/config/calendarPreferences";
 import { useToast } from "@/contexts/ToastContext";
 import { useVisions } from "@/hooks/queries/useVisions";
 import {
@@ -31,6 +39,13 @@ import {
   normalizeMayanNewYearStart,
 } from "@/utils/calendar";
 
+/** The inbox-vision select uses "" for "no default"; the preference stores null. */
+function toInboxVisionId(value: unknown): UUID | null {
+  return value === "" || value === null || value === undefined
+    ? null
+    : (value as UUID);
+}
+
 function SettingsPage() {
   const { t } = useTranslation();
   const toast = useToast();
@@ -42,37 +57,29 @@ function SettingsPage() {
     "gregorian" | "mayan_13_moon"
   >({
     key: "calendar.system",
-    defaultValue: "gregorian",
+    defaultValue: DEFAULT_CALENDAR_SYSTEM,
     module: "calendar",
-    validator: (value) => value === "gregorian" || value === "mayan_13_moon",
+    validator: isValidCalendarSystem,
   });
   const calendarFirstDaySettings = usePreferenceWithBootstrap<number>({
     key: "calendar.first_day_of_week",
-    defaultValue: 1,
+    defaultValue: DEFAULT_FIRST_DAY_OF_WEEK,
     module: "calendar",
-    validator: (value) =>
-      typeof value === "number" &&
-      Number.isInteger(value) &&
-      value >= 1 &&
-      value <= 7,
+    validator: isValidFirstDayOfWeek,
   });
   const calendarSevenYearAnchorYearSettings =
     usePreferenceWithBootstrap<number>({
       key: "calendar.seven_year_anchor_year",
       defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
       module: "calendar",
-      validator: (value) =>
-        typeof value === "number" &&
-        Number.isInteger(value) &&
-        value >= 1 &&
-        value <= 9999,
+      validator: isValidSevenYearAnchorYear,
     });
   const calendarMayanNewYearStartSettings =
     usePreferenceWithBootstrap<string>({
       key: "calendar.mayan_new_year_start",
       defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
       module: "calendar",
-      validator: (value) => /^\d{2}-\d{2}$/.test(value),
+      validator: isValidMayanNewYearStart,
     });
 
   const visionExperienceSettings = usePreferenceWithBootstrap<number>({
@@ -153,8 +160,20 @@ function SettingsPage() {
       setVisionRatesSaving(true);
       setVisionRatesError(null);
       try {
-        await visionsApi.bulkUpdateExperienceRates(updates);
-        await refreshVisions();
+        const { updated, errors } =
+          await visionsApi.bulkUpdateExperienceRates(updates);
+        if (updated.length > 0) {
+          await refreshVisions();
+        }
+        if (errors.length > 0) {
+          const message = errors.join("; ");
+          setVisionRatesError(message);
+          toast.showError(
+            t("settings.visions.experienceTable.toastError"),
+            message,
+          );
+          return false;
+        }
         return true;
       } catch (err) {
         const message =
@@ -196,6 +215,7 @@ function SettingsPage() {
 
   const groupsConfig = useSettingsConfig({
     calendarSystem: calendarSystemSettings.value,
+    themeOptions: themeSettings.availableThemes,
   });
 
   const [showAreaManager, setShowAreaManager] = useState(false);
@@ -329,24 +349,25 @@ function SettingsPage() {
         },
       },
       "data.defaultInboxVision": {
-        value: defaultInboxVisionSettings.defaultInboxVision,
+        // The select uses "" for "no default"; the preference stores null.
+        value: defaultInboxVisionSettings.defaultInboxVision ?? "",
         loading: defaultInboxVisionSettings.loading,
         saving: defaultInboxVisionSettings.saving,
         error: defaultInboxVisionSettings.error,
         bootstrapped: defaultInboxVisionSettings.bootstrapped,
         saveValue: async (value: unknown) =>
           await defaultInboxVisionSettings.saveDefaultInboxVision(
-            value as UUID | null,
+            toInboxVisionId(value),
           ),
         updateValue: (value: unknown) =>
           defaultInboxVisionSettings.updateDefaultInboxVision(
-            value as UUID | null,
+            toInboxVisionId(value),
           ),
       },
       "language.language": {
         value: languageSettings.currentLanguage,
         loading: languageSettings.loading,
-        saving: false, // languageSettings doesn't have saving property
+        saving: languageSettings.saving,
         error: languageSettings.error,
         bootstrapped: languageSettings.bootstrapped,
         saveValue: async (value: unknown) =>

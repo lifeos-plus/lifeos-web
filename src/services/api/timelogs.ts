@@ -168,16 +168,38 @@ export const timelogsApi = {
       DataCleaner.create(toTimelogPayload(timelog)),
     );
 
-    return Promise.all(
+    return Promise.allSettled(
       cleanedTimelogs.map((timelog) =>
         http.post<TimelogTransport>(ENDPOINTS.TIMELOGS.BASE, timelog),
       ),
-    ).then((createdTimelogs) => ({
-      created_count: createdTimelogs.length,
-      failed_count: 0,
-      created_timelogs: createdTimelogs,
-      errors: [],
-    }));
+    ).then((results) => {
+      const createdTimelogs = results
+        .filter(
+          (result): result is PromiseFulfilledResult<TimelogTransport> =>
+            result.status === "fulfilled",
+        )
+        .map((result) => result.value);
+      const failedIndexes: number[] = [];
+      const errors: string[] = [];
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          failedIndexes.push(index);
+          errors.push(
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason),
+          );
+        }
+      });
+
+      return {
+        created_count: createdTimelogs.length,
+        failed_count: failedIndexes.length,
+        failed_indexes: failedIndexes,
+        created_timelogs: createdTimelogs,
+        errors,
+      };
+    });
   },
 
   update: (id: UUID, payload: TimelogUpdate) => {
@@ -198,13 +220,26 @@ export const timelogsApi = {
 
   batchDelete: (eventIds: UUID[]) =>
     Promise.allSettled(
-      eventIds.map((eventId) => http.delete<void>(ENDPOINTS.TIMELOGS.BY_ID(eventId))),
+      eventIds.map((eventId) =>
+        http.delete<void>(ENDPOINTS.TIMELOGS.BY_ID(eventId)),
+      ),
     ).then((results) => {
-      const failedIds = eventIds.filter((_, index) => results[index].status === "rejected");
+      const failedIds: UUID[] = [];
+      const errors: string[] = [];
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          failedIds.push(eventIds[index]);
+          errors.push(
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason),
+          );
+        }
+      });
       return {
         deleted_count: eventIds.length - failedIds.length,
         failed_ids: failedIds,
-        errors: [],
+        errors,
       };
     }),
 

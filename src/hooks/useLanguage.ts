@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { supportedLanguages, defaultLanguage } from "@/i18n";
-import { preferencesApi } from "@/services/api/preferences";
+import { defaultLanguage } from "@/i18n";
+import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import { logger } from "@/utils/core";
 
 export type Language = "zh" | "en" | "auto";
 
@@ -10,13 +11,21 @@ interface LanguageOption {
   label: string;
 }
 
+const PREFERENCE_KEY = "system.language";
+
+function isLanguage(value: unknown): value is Language {
+  return value === "auto" || value === "zh" || value === "en";
+}
+
 export function useLanguage() {
   const { t, i18n } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState<Language>("auto");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [bootstrapped, setBootstrapped] = useState(false);
-  const PREFERENCE_KEY = "system.language";
+
+  const preference = usePreferenceWithBootstrap<Language>({
+    key: PREFERENCE_KEY,
+    defaultValue: "auto",
+    module: "system",
+    validator: isLanguage,
+  });
 
   const languageOptions: LanguageOption[] = [
     { value: "auto", label: t("settings.language.system") },
@@ -24,110 +33,55 @@ export function useLanguage() {
     { value: "en", label: "English" },
   ];
 
-  const getCurrentLanguage = useCallback((): Language => {
-    const detectedLanguage = i18n.language;
-    if (detectedLanguage === "zh" || detectedLanguage === "zh-CN") {
-      return "zh";
-    } else if (detectedLanguage === "en" || detectedLanguage === "en-US") {
-      return "en";
-    }
-    return "auto";
-  }, [i18n.language]);
-
-  useEffect(() => {
-    setCurrentLanguage(getCurrentLanguage());
-  }, [i18n.language, getCurrentLanguage]);
-
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
+  const applyLanguage = useCallback(
+    async (language: Language) => {
+      const detected = i18n.services?.languageDetector?.detect();
+      const target =
+        language === "auto" ? (detected ?? defaultLanguage) : language;
+      await i18n.changeLanguage(target);
       try {
-        setLoading(true);
-        setError(null);
-        const res = await preferencesApi.getWithMeta<Language>(PREFERENCE_KEY);
-        const backendValue = (res.value ??
-          res.meta?.default_value ??
-          "auto") as Language;
-        // Change i18n to match backend preference
-        await changeLanguage(backendValue);
-        if (mounted) {
-          setCurrentLanguage(backendValue);
-        }
-      } catch (_e) {
-        // Ignore and rely on i18n detector/localStorage
-      } finally {
-        if (mounted) {
-          setLoading(false);
-          setBootstrapped(true);
-        }
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-    // run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const changeLanguage = async (language: Language): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (language === "auto") {
-        const detectedLanguage = i18n.services.languageDetector.detect();
-        if (detectedLanguage) {
-          await i18n.changeLanguage(detectedLanguage);
-        } else {
-          await i18n.changeLanguage(defaultLanguage);
-        }
-      } else {
-        await i18n.changeLanguage(language);
-      }
-
-      setCurrentLanguage(language);
-      return true;
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to change language",
-      );
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveLanguage = async (language: Language): Promise<boolean> => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Persist to backend first (validated by USER_PREFERENCE_DEFAULTS)
-      await preferencesApi.set<Language>(PREFERENCE_KEY, language, "system");
-      const success = await changeLanguage(language);
-      if (success) {
         localStorage.setItem(
           "i18nextLng",
-          language === "auto" ? i18n.language : language,
+          language === "auto" ? target : language,
         );
+      } catch {
+        // ignore storage failures (e.g. private mode)
       }
-      setCurrentLanguage(language);
-      return success;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save language");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [i18n],
+  );
+
+  // The stored preference is the single source of truth, including "auto".
+  useEffect(() => {
+    if (!preference.bootstrapped) return;
+    void applyLanguage(preference.value).catch((error: unknown) => {
+      logger.error("Failed to apply language preference:", error);
+    });
+  }, [preference.bootstrapped, preference.value, applyLanguage]);
+
+  // The effect above applies every value change, including local edits and
+  // saves, so these helpers only drive the stored preference.
+  const changeLanguage = useCallback(
+    async (language: Language) => {
+      preference.updateValue(language);
+      return true;
+    },
+    [preference],
+  );
+
+  const saveLanguage = useCallback(
+    (language: Language) => preference.saveValue(language),
+    [preference],
+  );
 
   return {
-    currentLanguage,
+    currentLanguage: preference.value,
     languageOptions,
     changeLanguage,
     saveLanguage,
-    loading,
-    error,
-    supportedLanguages,
-    bootstrapped,
+    loading: preference.loading,
+    saving: preference.saving,
+    error: preference.error,
+    bootstrapped: preference.bootstrapped,
   };
 }

@@ -389,7 +389,29 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
         }
         return eventData;
       });
-      await batchCreateTimelogsAsync(payload);
+      const result = await batchCreateTimelogsAsync(payload);
+
+      if (result.failed_count > 0) {
+        // Keep the rows that failed so the user can retry without re-pasting;
+        // rows that never reached the server stay untouched as well.
+        const failedIndexes = new Set(result.failed_indexes ?? []);
+        const failedRowIds = new Set(
+          validRows
+            .filter((_row, index) => failedIndexes.has(index))
+            .map((row) => row.id),
+        );
+        setRows((current) =>
+          current.filter(
+            (row) => failedRowIds.has(row.id) || row.errors.length > 0,
+          ),
+        );
+        // Parsing the old text again would re-create the rows that already
+        // succeeded, so drop it and keep only the failed rows.
+        setRawInput("");
+        setHasManualEdits(true);
+        return;
+      }
+
       setRows([]);
       setRawInput("");
       setEditingRowId(null);

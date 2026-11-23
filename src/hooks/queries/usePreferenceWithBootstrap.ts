@@ -1,18 +1,41 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { preferencesApi } from "@/services/api/preferences";
-import { preferencesKeys, areasKeys } from "@/services/api/queryKeys";
+import {
+  preferencesApi,
+  type PreferenceMeta,
+} from "@/services/api/preferences";
+import {
+  areasKeys,
+  preferencesKeys,
+  statsKeys,
+} from "@/services/api/queryKeys";
 import { logger } from "@/utils/core";
 import { setPreferredTimezone } from "@/utils/datetime";
 
+/**
+ * Preferences the stats endpoints read server-side. Their values never travel
+ * with the request, so a change has to invalidate the stats branch explicitly.
+ */
+const STATS_AFFECTING_PREFERENCE_KEYS = new Set([
+  "system.timezone",
+  "calendar.system",
+  "calendar.first_day_of_week",
+  "calendar.mayan_new_year_start",
+  "calendar.seven_year_anchor_year",
+]);
+
+function isSamePreferenceValue(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  try {
+    return JSON.stringify(a) === JSON.stringify(b);
+  } catch {
+    return false;
+  }
+}
+
 type PreferenceCacheEntry<T> = {
   value: T;
-  meta?: {
-    allowed_values?: unknown[];
-    default_value?: T;
-    description?: string;
-    module?: string;
-  };
+  meta?: PreferenceMeta;
 };
 
 interface PreferenceWithBootstrapOptions<T> {
@@ -28,6 +51,7 @@ export interface PreferenceWithBootstrapReturn<T> {
   saving: boolean;
   error: string | null;
   bootstrapped: boolean;
+  meta?: PreferenceMeta;
   saveValue: (value: T) => Promise<boolean>;
   updateValue: (value: T) => void;
 }
@@ -43,7 +67,6 @@ export function usePreferenceWithBootstrap<T>({
   validator,
 }: PreferenceWithBootstrapOptions<T>): PreferenceWithBootstrapReturn<T> {
   const queryClient = useQueryClient();
-  const shouldFetchPreferences = true;
 
   const defaultValueRef = useRef(defaultValue);
   defaultValueRef.current = defaultValue;
@@ -51,16 +74,21 @@ export function usePreferenceWithBootstrap<T>({
   const [value, setValue] = useState<T>(defaultValueRef.current);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bootstrapped, setBootstrapped] = useState(!shouldFetchPreferences);
+  const [bootstrapped, setBootstrapped] = useState(false);
   const [hasLocalOverride, setHasLocalOverride] = useState(false);
+  const saveFailedRef = useRef(false);
+  const previousRemoteValueRef = useRef<T | undefined>(undefined);
+  const isValidValue = (candidate: T) => !validator || validator(candidate);
 
   // 当切换到新的偏好键时，重置本地状态
   useEffect(() => {
     setValue(defaultValueRef.current);
     setHasLocalOverride(false);
     setError(null);
-    setBootstrapped(!shouldFetchPreferences);
-  }, [key, shouldFetchPreferences]);
+    setBootstrapped(false);
+    saveFailedRef.current = false;
+    previousRemoteValueRef.current = undefined;
+  }, [key]);
 
   const preferenceQuery = useQuery<PreferenceCacheEntry<T>>({
     queryKey: preferencesKeys.detail(key),
@@ -84,7 +112,7 @@ export function usePreferenceWithBootstrap<T>({
 
         const nextValue = (backendValue as T) ?? defaultValueRef.current;
 
-        if (validator && !validator(nextValue)) {
+        if (!isValidValue(nextValue)) {
           logger.warn(`Invalid value for preference ${key}:`, nextValue);
           return { value: defaultValueRef.current, meta: res.meta };
         }
@@ -101,7 +129,6 @@ export function usePreferenceWithBootstrap<T>({
         throw err;
       }
     },
-    enabled: shouldFetchPreferences,
     staleTime: 60 * 60 * 1000,
     placeholderData: () => ({
       value: defaultValueRef.current,
@@ -109,21 +136,44 @@ export function usePreferenceWithBootstrap<T>({
     }),
   });
 
+  // `placeholderData` reports `isSuccess` immediately, so only treat the query
+  // as loaded once the real response has replaced the placeholder.
+  const hasResolvedRemote =
+    preferenceQuery.isSuccess && !preferenceQuery.isPlaceholderData;
+
   useEffect(() => {
-    if (preferenceQuery.isSuccess) {
+    if (hasResolvedRemote) {
       const remoteValue = preferenceQuery.data.value;
+      const previousRemoteValue = previousRemoteValueRef.current;
+      previousRemoteValueRef.current = remoteValue;
+
+      if (
+        previousRemoteValue !== undefined &&
+        !isSamePreferenceValue(previousRemoteValue, remoteValue) &&
+        STATS_AFFECTING_PREFERENCE_KEYS.has(key)
+      ) {
+        void queryClient.invalidateQueries({ queryKey: statsKeys.all });
+      }
+
       setBootstrapped(true);
-      setError(null);
+      if (!saveFailedRef.current) {
+        setError(null);
+      }
 
       if (!hasLocalOverride) {
         setValue(remoteValue);
-        setHasLocalOverride(false);
       }
       if (key === "system.timezone") {
         setPreferredTimezone(String(remoteValue ?? ""));
       }
     }
-  }, [preferenceQuery.isSuccess, preferenceQuery.data, hasLocalOverride, key]);
+  }, [
+    hasResolvedRemote,
+    preferenceQuery.data,
+    hasLocalOverride,
+    key,
+    queryClient,
+  ]);
 
   useEffect(() => {
     if (preferenceQuery.isError) {
@@ -143,21 +193,7 @@ export function usePreferenceWithBootstrap<T>({
     }
   }, [preferenceQuery.isError, preferenceQuery.error, key, hasLocalOverride]);
 
-  // 当用户未登录时不触发请求，直接视为初始化完成
-  useEffect(() => {
-    if (!shouldFetchPreferences) {
-      setBootstrapped(true);
-      if (!hasLocalOverride) {
-        setValue(defaultValueRef.current);
-      }
-    }
-  }, [shouldFetchPreferences, hasLocalOverride]);
-
-  const loading =
-    shouldFetchPreferences &&
-    preferenceQuery.isLoading &&
-    !preferenceQuery.isSuccess &&
-    !preferenceQuery.isError;
+  const loading = !hasResolvedRemote && !preferenceQuery.isError;
 
   const saveMutation = useMutation({
     mutationFn: async (nextValue: T) => {
@@ -165,6 +201,7 @@ export function usePreferenceWithBootstrap<T>({
       return nextValue;
     },
     onSuccess: (nextValue) => {
+      saveFailedRef.current = false;
       setHasLocalOverride(false);
       setValue(nextValue);
       setError(null);
@@ -190,6 +227,7 @@ export function usePreferenceWithBootstrap<T>({
       }
     },
     onError: (mutationError: unknown) => {
+      saveFailedRef.current = true;
       const message =
         mutationError instanceof Error
           ? mutationError.message
@@ -199,13 +237,17 @@ export function usePreferenceWithBootstrap<T>({
   });
 
   const saveValue = async (nextValue: T): Promise<boolean> => {
-    if (validator && !validator(nextValue)) {
+    if (!isValidValue(nextValue)) {
       setError("Invalid value");
       return false;
     }
 
     setSaving(true);
+    saveFailedRef.current = false;
     setError(null);
+    // Protect the optimistic value only while the write is in flight. A failed
+    // save must not block later backend refreshes forever.
+    setHasLocalOverride(true);
     try {
       await saveMutation.mutateAsync(nextValue);
       return true;
@@ -213,11 +255,16 @@ export function usePreferenceWithBootstrap<T>({
       return false;
     } finally {
       setSaving(false);
+      setHasLocalOverride(false);
     }
   };
 
   const updateValue = (nextValue: T) => {
-    setHasLocalOverride(true);
+    // Only guard values that actually differ from the backend value. Rolling
+    // back after a failed save restores the remote value, so it must not keep
+    // blocking later refreshes.
+    const remoteValue = preferenceQuery.data?.value ?? defaultValueRef.current;
+    setHasLocalOverride(!isSamePreferenceValue(nextValue, remoteValue));
     setValue(nextValue);
     setError(null);
     if (key === "system.timezone") {
@@ -231,6 +278,7 @@ export function usePreferenceWithBootstrap<T>({
     saving,
     error,
     bootstrapped,
+    meta: preferenceQuery.data?.meta,
     saveValue,
     updateValue,
   };

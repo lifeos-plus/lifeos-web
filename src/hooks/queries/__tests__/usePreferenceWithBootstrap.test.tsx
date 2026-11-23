@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import { statsKeys } from "@/services/api/queryKeys";
 
 const getWithMetaMock = vi.fn();
 const setPreferenceMock = vi.fn();
@@ -114,6 +115,95 @@ describe("usePreferenceWithBootstrap", () => {
       "general",
     );
     expect(invalidateSpy).toHaveBeenCalled();
+    invalidateSpy.mockRestore();
+  });
+
+  it("stays loading until the real response replaces the placeholder", async () => {
+    let resolveFetch: ((value: unknown) => void) | undefined;
+    getWithMetaMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "sample.pref",
+          defaultValue: "default",
+        }),
+      { wrapper },
+    );
+
+    expect(result.current.loading).toBe(true);
+    expect(result.current.bootstrapped).toBe(false);
+
+    await act(async () => {
+      resolveFetch?.({ value: "backend", meta: {} });
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.value).toBe("backend");
+  });
+
+  it("keeps a save error after the failed write rolls back", async () => {
+    getWithMetaMock.mockResolvedValue({ value: "backend", meta: {} });
+    setPreferenceMock.mockRejectedValue(new Error("save failed"));
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "sample.pref",
+          defaultValue: "default",
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.bootstrapped).toBe(true));
+
+    act(() => {
+      result.current.updateValue("local-change");
+    });
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.saveValue("local-change");
+    });
+
+    expect(success).toBe(false);
+    await waitFor(() => expect(result.current.error).toBe("save failed"));
+    await waitFor(() => expect(result.current.value).toBe("backend"));
+  });
+
+  it("invalidates stats after a calendar-related preference changes", async () => {
+    getWithMetaMock.mockResolvedValue({ value: "UTC", meta: {} });
+    setPreferenceMock.mockResolvedValue(undefined);
+
+    const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "system.timezone",
+          defaultValue: "UTC",
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.bootstrapped).toBe(true));
+    invalidateSpy.mockClear();
+
+    getWithMetaMock.mockResolvedValue({ value: "Asia/Tokyo", meta: {} });
+
+    await act(async () => {
+      await result.current.saveValue("Asia/Tokyo");
+    });
+
+    await waitFor(() =>
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: statsKeys.all }),
+    );
+
     invalidateSpy.mockRestore();
   });
 });

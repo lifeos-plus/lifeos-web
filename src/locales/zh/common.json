@@ -563,10 +563,13 @@
       "caseSensitiveOff": "不区分大小写",
       "apply": "应用",
       "successTitle": "批量编辑完成",
-      "successMessage": "已更新 {{updated}} 条笔记（失败 {{failed}} 条）",
+      "successMessage": "已更新 {{updated}} 条笔记（失败 {{failed}} 条，未变化 {{unchanged}} 条）",
       "partialTitle": "部分笔记更新失败",
       "partialMessage": "请检查失败的笔记 ID",
-      "errorTitle": "批量编辑失败"
+      "errorTitle": "批量编辑失败",
+      "noMatchesTitle": "没有匹配的文本",
+      "noMatchesMessage": "所选 {{unchanged}} 条笔记中都没有找到要查找的文本",
+      "allFailedMessage": "所选 {{failed}} 条笔记均未更新成功"
     },
     "batchDelete": {
       "confirmTitle": "批量删除笔记",

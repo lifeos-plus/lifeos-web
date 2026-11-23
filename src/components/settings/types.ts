@@ -20,6 +20,8 @@ export interface SettingItemConfig {
   hideLabel?: boolean;
   hideDescription?: boolean;
   options?: Array<{ value: string; label: string }>;
+  /** Render an explicit empty option (for "no default" style choices). */
+  includeEmptyOption?: boolean;
   render?: (props: {
     value: unknown;
     onChange: (value: unknown) => void;

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ToastContext, type ToastMessage } from "@/contexts/ToastContext";
 import ActionButton from "./ActionButton";
@@ -183,8 +183,32 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  const recentFailuresRef = useRef(new Map<string, number>());
+
   const showToast = useCallback((toast: Omit<ToastMessage, "id">) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+    // A failing request can be retried before it gives up and report the same
+    // error several times. Only collapse identical failures that carry a
+    // message (title-only failures come from distinct user actions) and only
+    // for a short window.
+    if (
+      (toast.type === "error" || toast.type === "warning") &&
+      toast.message
+    ) {
+      const key = `${toast.type}|${toast.title}|${toast.message}`;
+      const now = Date.now();
+      const recent = recentFailuresRef.current;
+      const lastShown = recent.get(key);
+      if (lastShown !== undefined && now - lastShown < 5000) {
+        return;
+      }
+      recent.set(key, now);
+      for (const [entryKey, shownAt] of recent) {
+        if (now - shownAt >= 5000) recent.delete(entryKey);
+      }
+    }
+
     setToasts((prev) => [...prev, { ...toast, id }]);
   }, []);
 

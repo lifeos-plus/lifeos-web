@@ -34,7 +34,6 @@ export type NoteUpdate = components["schemas"]["NoteUpdate"];
 export interface NoteStats {
   tag_stats: Array<{
     id: UUID;
-    name: string;
     usage_count: number;
   }>;
   person_stats: Array<{
@@ -54,58 +53,17 @@ export interface NoteAdvancedSearchPayload {
   keyword?: string | null;
 }
 
-interface NoteBatchContentUpdatePayload {
-  find_text: string;
-  replace_text: string;
-  case_sensitive?: boolean;
-}
+export type NoteBatchUpdatePayload = components["schemas"]["NoteBatchUpdate"];
+export type NoteBatchUpdateResult =
+  components["schemas"]["NoteBatchUpdateResponse"];
+export type NoteBatchDeletePayload = components["schemas"]["NoteBatchDelete"];
+export type NoteBatchDeleteResult =
+  components["schemas"]["NoteBatchDeleteResponse"];
 
-export interface NoteBatchUpdatePayload {
-  note_ids: UUID[];
-  notes: Array<{ id: UUID; content: string }>;
-  content: NoteBatchContentUpdatePayload;
-}
-
-export interface NoteBatchUpdateResult {
-  updated_count: number;
-  failed_ids: UUID[];
-  errors: string[];
-}
-
-export interface NoteBatchDeletePayload {
-  note_ids: UUID[];
-}
-
-export interface NoteBatchDeleteResult {
-  deleted_count: number;
-  failed_ids: UUID[];
-  errors: string[];
-}
-
-interface NoteBulkCreateItemPayload {
-  content: string;
-}
-
-export interface NoteBulkCreateRequestPayload {
-  notes: NoteBulkCreateItemPayload[];
-  person_ids?: UUID[];
-  tag_ids?: UUID[];
-  task_id?: UUID | null;
-  timelog_ids?: UUID[];
-}
-
-interface NoteBulkCreateFailedItem {
-  index: number;
-  content_preview: string;
-  error: string;
-}
-
-interface NoteBulkCreateResponsePayload {
-  created_notes: Note[];
-  failed_items: NoteBulkCreateFailedItem[];
-  created_count: number;
-  failed_count: number;
-}
+export type NoteBulkCreateRequestPayload =
+  components["schemas"]["NoteBatchCreate"];
+export type NoteBulkCreateResponsePayload =
+  components["schemas"]["NoteBatchCreateResponse"];
 
 type NoteListTransport = components["schemas"]["ListResponse_NoteResponse_NoteListMeta_"];
 export type NoteListResponse = Omit<NoteListTransport, "items"> & { items: Note[] };
@@ -119,8 +77,6 @@ const toNoteList = (response: NoteListTransport): NoteListResponse => ({
 export const notesApi = {
   create: (noteData: NoteCreate) =>
     http.post<NoteTransport>(ENDPOINTS.NOTES.BASE, noteData).then(toNote),
-
-  fetchAll: () => http.get<NoteListTransport>(ENDPOINTS.NOTES.BASE).then(toNoteList),
 
   fetchPaged: (
     params: {
@@ -167,7 +123,6 @@ export const notesApi = {
     return {
       tag_stats: tagUsage.tag_stats.map((tagStat) => ({
         id: tagStat.id,
-        name: "",
         usage_count: tagStat.usage_count,
       })),
       person_stats: personUsage.person_stats,
@@ -177,25 +132,8 @@ export const notesApi = {
   update: (noteId: UUID, noteData: NoteUpdate) =>
     http.patch<NoteTransport>(ENDPOINTS.NOTES.BY_ID(noteId), noteData).then(toNote),
 
-  delete: async (noteId: UUID): Promise<void> => {
-    try {
-      await http.delete<void>(ENDPOINTS.NOTES.BY_ID(noteId));
-    } catch (err) {
-      // Preserve enhanced error semantics similar to old api.ts implementation
-      const anyErr = err as unknown as { status?: number; message?: string };
-      if (anyErr && typeof anyErr === "object" && "status" in anyErr) {
-        const status = anyErr.status ?? 0;
-        const message =
-          status === 404
-            ? "Note not found (may have been already deleted)"
-            : (anyErr.message ?? "Request failed");
-        const e: Error & { status?: number } = new Error(message);
-        e.status = status;
-        throw err as Error;
-      }
-      throw err as Error;
-    }
-  },
+  delete: (noteId: UUID): Promise<void> =>
+    http.delete<void>(ENDPOINTS.NOTES.BY_ID(noteId)),
 
   advancedSearch: async (payload: NoteAdvancedSearchPayload) => {
     let page = 1;
@@ -232,95 +170,26 @@ export const notesApi = {
     };
   },
 
-  batchUpdate: async (payload: NoteBatchUpdatePayload) => {
+  batchUpdate: async (
+    payload: NoteBatchUpdatePayload,
+  ): Promise<NoteBatchUpdateResult> => {
     if (!payload.content.find_text.trim()) {
       throw new Error("Find text must not be empty.");
     }
-    const notesById = new Map(payload.notes.map((note) => [note.id, note]));
-    const failedIds: UUID[] = [];
-    const errors: string[] = [];
-    let updatedCount = 0;
-
-    const results = await Promise.allSettled(
-      payload.note_ids.map(async (noteId) => {
-        const note = notesById.get(noteId);
-        if (!note) {
-          throw new Error(`Note ${noteId} is not available in the current result set.`);
-        }
-        const pattern = payload.content.case_sensitive
-          ? new RegExp(payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")
-          : new RegExp(
-              payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-              "gi",
-            );
-        let replacements = 0;
-        const content = note.content.replace(pattern, () => {
-          replacements += 1;
-          return payload.content.replace_text;
-        });
-        if (replacements === 0) {
-          return;
-        }
-        await notesApi.update(noteId, { content });
-        updatedCount += 1;
-      }),
+    return http.post<NoteBatchUpdateResult>(
+      ENDPOINTS.NOTES.BATCH_UPDATE,
+      payload,
     );
-
-    results.forEach((result, index) => {
-      if (result.status === "rejected") {
-        failedIds.push(payload.note_ids[index]);
-        errors.push(
-          result.reason instanceof Error ? result.reason.message : String(result.reason),
-        );
-      }
-    });
-    return {
-      updated_count: updatedCount,
-      failed_ids: failedIds,
-      errors,
-    } satisfies NoteBatchUpdateResult;
   },
 
   batchDelete: (payload: NoteBatchDeletePayload) =>
-    Promise.allSettled(payload.note_ids.map((noteId) => notesApi.delete(noteId))).then(
-      (results) => {
-        const failedIds = payload.note_ids.filter(
-          (_, index) => results[index].status === "rejected",
-        );
-        return {
-          deleted_count: payload.note_ids.length - failedIds.length,
-          failed_ids: failedIds,
-          errors: [],
-        } satisfies NoteBatchDeleteResult;
-      },
-    ),
+    http.post<NoteBatchDeleteResult>(ENDPOINTS.NOTES.BATCH_DELETE, payload),
 
-  batchCreate: (payload: NoteBulkCreateRequestPayload) =>
-    Promise.allSettled(
-      payload.notes.map((note) => notesApi.create({ content: note.content })),
-    ).then((results) => {
-      const createdNotes = results
-        .filter((result): result is PromiseFulfilledResult<Note> => result.status === "fulfilled")
-        .map((result) => result.value);
-      const failedItems = results.flatMap((result, index) =>
-        result.status === "rejected"
-          ? [
-              {
-                index,
-                content_preview: payload.notes[index].content.slice(0, 80),
-                error:
-                  result.reason instanceof Error
-                    ? result.reason.message
-                    : String(result.reason),
-              },
-            ]
-          : [],
-      );
-      return {
-        created_notes: createdNotes,
-        failed_items: failedItems,
-        created_count: createdNotes.length,
-        failed_count: failedItems.length,
-      } satisfies NoteBulkCreateResponsePayload;
-  }),
+  batchCreate: (
+    payload: NoteBulkCreateRequestPayload,
+  ): Promise<NoteBulkCreateResponsePayload> =>
+    http.post<NoteBulkCreateResponsePayload>(
+      ENDPOINTS.NOTES.BATCH_CREATE,
+      payload,
+    ),
 };
