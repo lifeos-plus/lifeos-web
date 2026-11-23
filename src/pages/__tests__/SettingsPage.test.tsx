@@ -1,4 +1,5 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import type { ComponentProps } from "react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import SettingsPage from "@/pages/SettingsPage";
@@ -12,6 +13,31 @@ const preferencesApiMock = vi.hoisted(() => ({
 }));
 
 const enumSelectProps = vi.hoisted(() => ({} as Record<string, unknown>));
+
+interface CapturedSettingsLayoutProps {
+  groups: Array<{ id: string; items: Array<{ key: string }> }>;
+  preferences: Record<string, unknown>;
+  disabled?: boolean;
+}
+
+const settingsLayoutProps = vi.hoisted(() => ({
+  current: null as CapturedSettingsLayoutProps | null,
+}));
+
+vi.mock("@/components/settings", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/components/settings")>();
+  const ActualSettingsLayout = actual.SettingsLayout;
+  return {
+    ...actual,
+    SettingsLayout: (
+      props: ComponentProps<typeof ActualSettingsLayout>,
+    ) => {
+      settingsLayoutProps.current =
+        props as unknown as CapturedSettingsLayoutProps;
+      return <ActualSettingsLayout {...props} />;
+    },
+  };
+});
 
 vi.mock("@/components/selects/EnumSelect", () => ({
   default: (props: unknown) => {
@@ -162,6 +188,83 @@ vi.mock("@/components/settings/VisionExperienceDefaultPreference", () => ({
 vi.mock("@/components/settings/AreaSorter", () => ({
   default: () => null,
 }));
+
+describe("SettingsPage tab structure", () => {
+  beforeEach(() => {
+    preferencesApiMock.getWithMeta.mockImplementation(
+      async (key: string) => ({
+        key,
+        value: null,
+        meta: {
+          default_value: null,
+          description: "",
+          module: "general",
+          allowed_values: null,
+        },
+      }),
+    );
+    preferencesApiMock.set.mockResolvedValue({ key: "", value: null });
+  });
+
+  it("keeps other settings interactive while one preference is saving", async () => {
+    let resolveSet: ((value: unknown) => void) | undefined;
+    preferencesApiMock.set.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveSet = resolve;
+        }),
+    );
+
+    renderWithProviders(<SettingsPage />);
+    fireEvent.click(screen.getByText("settings.health.title"));
+
+    const height = await screen.findByLabelText(
+      "settings.health.bodyHeight.label",
+    );
+    await waitFor(() => expect(height).toBeEnabled());
+
+    fireEvent.change(height, { target: { value: "170" } });
+    fireEvent.blur(height);
+    await waitFor(() =>
+      expect(preferencesApiMock.set).toHaveBeenCalledWith(
+        "health.body_height_cm",
+        170,
+        "health",
+      ),
+    );
+
+    // A single in-flight preference must not disable the whole settings page;
+    // each control owns its own saving state.
+    expect(settingsLayoutProps.current?.disabled).toBeFalsy();
+
+    await act(async () => {
+      resolveSet?.({ key: "health.body_height_cm", value: 170 });
+    });
+  });
+
+  it("hosts area ordering and the default vision in their own tabs", () => {
+    renderWithProviders(<SettingsPage />);
+
+    expect(settingsLayoutProps.current?.groups.map((group) => group.id)).toEqual(
+      [
+        "appearance",
+        "navigation",
+        "calendar",
+        "health",
+        "visions",
+        "areas",
+        "notes",
+        "language",
+      ],
+    );
+
+    const preferences = settingsLayoutProps.current?.preferences ?? {};
+    expect(preferences).toHaveProperty("areas.areaOrder");
+    expect(preferences).toHaveProperty("visions.defaultInboxVision");
+    expect(preferences).not.toHaveProperty("data.areaOrder");
+    expect(preferences).not.toHaveProperty("data.defaultInboxVision");
+  });
+});
 
 describe("SettingsPage calendar preferences", () => {
   beforeEach(() => {

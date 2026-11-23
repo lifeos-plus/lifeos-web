@@ -111,6 +111,33 @@ describe("useSettingsConfig", () => {
     expect(rendered).toBeTruthy();
   });
 
+  it("keeps area ordering and the default vision in dedicated tabs", () => {
+    const { result } = renderHook(() => useSettingsConfig());
+
+    expect(result.current.map((group) => group.id)).toEqual([
+      "appearance",
+      "navigation",
+      "calendar",
+      "health",
+      "visions",
+      "areas",
+      "notes",
+      "language",
+    ]);
+
+    const visionsGroup = result.current.find((group) => group.id === "visions");
+    expect(visionsGroup?.items.map((item) => item.key)).toEqual([
+      "defaultInboxVision",
+      "experienceRatePerHour",
+      "experienceRateOverrides",
+    ]);
+
+    const areasGroup = result.current.find((group) => group.id === "areas");
+    expect(areasGroup?.items.map((item) => item.key)).toEqual(["areaOrder"]);
+
+    expect(result.current.find((group) => group.id === "data")).toBeUndefined();
+  });
+
   it("exposes a health group with weight unit and body height preferences", () => {
     const { result } = renderHook(() => useSettingsConfig());
 

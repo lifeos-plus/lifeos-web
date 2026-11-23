@@ -13,6 +13,7 @@ The following rules apply to coding agent collaboration in this repository.
 - Create a new worktree based on the latest `main` for development work: first `git fetch origin` and fast-forward local `main` to `origin/main`, then create the worktree from `main`.
 - Use `gh` CLI for all issue and PR operations. Do not edit through the web UI.
 - Never use the Codex GitHub connector or any connector-backed GitHub mutation workflow. Issue and PR operations must go through `gh` CLI only.
+- Never merge, close, reopen, or enable auto-merge for a pull request. Agents may open and update PRs via `gh`, but merging or closing a PR is a human decision; do not run `gh pr merge`, `gh pr close`, or `gh pr reopen`.
 - Create a tracking issue only for substantive development work that does not already have one, and link it in the PR description with `Closes #xx` or `Related #xx`. Trivial or mechanical changes — dependency bumps, CI/workflow tweaks, documentation fixes, small refactors, or other low-risk adjustments — do not require an issue; opening one for every small change adds noise. When in doubt, a PR alone is sufficient.
 - If GitHub permissions, authentication, policy, or environment constraints block a required `gh` operation, stop and ask the human collaborator.
 
