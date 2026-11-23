@@ -3,6 +3,7 @@ import { ENDPOINTS } from "./endpoints";
 import type { components } from "./generated/schema";
 
 export type PreferenceValue = components["schemas"]["JsonValue"];
+export type PreferenceMeta = components["schemas"]["PreferenceMetaResponse"];
 type PreferenceResponse = components["schemas"]["PreferenceResponse"];
 type PreferenceUpdate = components["schemas"]["PreferenceUpdate"];
 
@@ -12,26 +13,16 @@ export const preferencesApi = {
   ): Promise<{
     key: string;
     value: T | null;
-    meta?: {
-      allowed_values?: unknown[];
-      default_value?: T;
-      description?: string;
-      module?: string;
-    };
+    meta?: PreferenceMeta;
   }> {
     // The contract always returns `meta`; no query flag is required.
     const response = await http.get<PreferenceResponse>(
       ENDPOINTS.PREFERENCES.BY_KEY(key),
     );
     return {
-      ...response,
+      key: response.key,
       value: response.value as T | null,
-      meta: {
-        ...response.meta,
-        allowed_values: response.meta.allowed_values ?? undefined,
-        default_value: response.meta.default_value as T,
-        description: response.meta.description ?? undefined,
-      },
+      meta: response.meta,
     };
   },
 

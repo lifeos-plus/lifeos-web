@@ -4,6 +4,7 @@ import { MODULES } from "@/config/modulesConfig";
 import { preferencesKeys } from "@/services/api/queryKeys";
 import { useModuleConfig } from "@/hooks/useModuleConfig";
 import { usePreferenceWithBootstrap } from "./usePreferenceWithBootstrap";
+import type { PreferenceMeta } from "@/services/api/preferences";
 
 const VISIBLE_MODULES_KEY = "navigation.visible_modules";
 const VISIBLE_MODULES_SYNC_KEY = "navigation.visible_modules.sync";
@@ -15,9 +16,9 @@ function sanitizeVisibleKeys(
   return Array.from(new Set(keys.filter((key) => allowed.has(key))));
 }
 
-function resolveAllowedModuleKeys(meta?: {
-  allowed_values?: unknown[];
-}): string[] {
+function resolveAllowedModuleKeys(
+  meta?: PreferenceMeta,
+): string[] {
   const allowed = meta?.allowed_values;
   if (Array.isArray(allowed)) {
     return allowed.map((value) => String(value));
@@ -107,11 +108,11 @@ export function useVisibleModules() {
     return () => window.removeEventListener("storage", handler);
   }, [queryClient]);
 
-  const allConfigurableModules = useMemo(() => {
-    // Map allowed module keys to existing module configs for labels/icons
-    const allowedSet = allowedKeys;
-    return modules.filter((m) => allowedSet.has(m.key) && m.key !== "settings");
-  }, [allowedKeys, modules]);
+  const allConfigurableModules = useMemo(
+    () =>
+      modules.filter((m) => allowedKeys.has(m.key) && m.key !== "settings"),
+    [allowedKeys, modules],
+  );
 
   return {
     visibleKeys,

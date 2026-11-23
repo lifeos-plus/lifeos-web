@@ -57,7 +57,7 @@ export const statsApi = {
     end: string,
   ) {
     return http.post<components["schemas"]["RecomputeDailyAreasResponse"]>(
-      ENDPOINTS.STATS.RECOMPUTE_DAILY_AREAS,
+      ENDPOINTS.STATS.DAILY_AREAS_RECOMPUTE,
       undefined,
       { start, end },
     );

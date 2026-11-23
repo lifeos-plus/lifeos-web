@@ -41,7 +41,7 @@ describe("statsApi", () => {
       localUrl(ENDPOINTS.STATS.DAILY_AREAS),
       localUrl(ENDPOINTS.STATS.DAY_BREAKDOWN),
       localUrl(ENDPOINTS.STATS.AGGREGATED_AREAS),
-      localUrl(ENDPOINTS.STATS.RECOMPUTE_DAILY_AREAS),
+      localUrl(ENDPOINTS.STATS.DAILY_AREAS_RECOMPUTE),
     ]);
   });
 });

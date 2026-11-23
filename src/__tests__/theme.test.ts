@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/locales/en/common.json";
 import zh from "@/locales/zh/common.json";
 import {
+  DEFAULT_AVAILABLE_THEMES,
   RENDERABLE_THEMES,
   includeCurrentTheme,
   isAppTheme,
@@ -26,8 +27,8 @@ describe("theme catalog", () => {
 
 describe("resolveAvailableThemes", () => {
   it("returns every renderable theme when the contract is absent", () => {
-    expect(resolveAvailableThemes()).toEqual(["system", ...RENDERABLE_THEMES]);
-    expect(resolveAvailableThemes([])).toEqual(["system", ...RENDERABLE_THEMES]);
+    expect(resolveAvailableThemes()).toEqual(DEFAULT_AVAILABLE_THEMES);
+    expect(resolveAvailableThemes([])).toEqual(DEFAULT_AVAILABLE_THEMES);
   });
 
   it("follows the bundle order and drops unknown values", () => {
@@ -47,10 +48,9 @@ describe("resolveAvailableThemes", () => {
   });
 
   it("falls back when the contract only contains unusable values", () => {
-    expect(resolveAvailableThemes(["not-a-theme", 42, null])).toEqual([
-      "system",
-      ...RENDERABLE_THEMES,
-    ]);
+    expect(resolveAvailableThemes(["not-a-theme", 42, null])).toEqual(
+      DEFAULT_AVAILABLE_THEMES,
+    );
   });
 });
 

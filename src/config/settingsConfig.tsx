@@ -14,7 +14,7 @@ import MayanNewYearStartPreference, {
   type MayanNewYearStartPreferenceProps,
 } from "@/components/settings/MayanNewYearStartPreference";
 import { FONT_CATALOG } from "@/config/fontCatalog";
-import { RENDERABLE_THEMES, type AppTheme } from "@/theme";
+import { DEFAULT_AVAILABLE_THEMES, type AppTheme } from "@/theme";
 import { Icon, type IconName } from "@/components/icons";
 import type { UUID } from "@/types/primitive";
 import type { CalendarSystem } from "@/utils/calendar";
@@ -53,7 +53,7 @@ const YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => {
 export const useSettingsConfig = (
   context: SettingsConfigContext = {},
 ): SettingGroupConfig[] => {
-  const { themeOptions = ["system", ...RENDERABLE_THEMES] } = context;
+  const { themeOptions = DEFAULT_AVAILABLE_THEMES } = context;
   const { t } = useTranslation();
   const visibleModulesSettings = useVisibleModules();
   const defaultInboxVisionSettings = useDefaultInboxVision();

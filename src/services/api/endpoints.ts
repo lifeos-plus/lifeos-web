@@ -118,7 +118,7 @@ export const ENDPOINTS = {
     DAILY_AREAS: `${API_V1}/stats/daily-areas`,
     DAY_BREAKDOWN: `${API_V1}/stats/day-breakdown`,
     AGGREGATED_AREAS: `${API_V1}/stats/aggregated-areas`,
-    RECOMPUTE_DAILY_AREAS: `${API_V1}/stats/daily-areas/recompute`,
+    DAILY_AREAS_RECOMPUTE: `${API_V1}/stats/daily-areas/recompute`,
     TAGS_USAGE: (entityType: string) =>
       `${API_V1}/stats/tags/usage/${entityType}`,
   },

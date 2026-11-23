@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { preferencesApi } from "@/services/api/preferences";
+import {
+  preferencesApi,
+  type PreferenceMeta,
+} from "@/services/api/preferences";
 import { preferencesKeys, areasKeys } from "@/services/api/queryKeys";
 import { logger } from "@/utils/core";
 import { setPreferredTimezone } from "@/utils/datetime";
-
 
 function isSamePreferenceValue(a: unknown, b: unknown): boolean {
   if (a === b) return true;
@@ -17,12 +19,7 @@ function isSamePreferenceValue(a: unknown, b: unknown): boolean {
 
 type PreferenceCacheEntry<T> = {
   value: T;
-  meta?: {
-    allowed_values?: unknown[];
-    default_value?: T;
-    description?: string;
-    module?: string;
-  };
+  meta?: PreferenceMeta;
 };
 
 interface PreferenceWithBootstrapOptions<T> {
@@ -38,7 +35,7 @@ export interface PreferenceWithBootstrapReturn<T> {
   saving: boolean;
   error: string | null;
   bootstrapped: boolean;
-  meta?: PreferenceCacheEntry<T>["meta"];
+  meta?: PreferenceMeta;
   saveValue: (value: T) => Promise<boolean>;
   updateValue: (value: T) => void;
 }
@@ -136,7 +133,6 @@ export function usePreferenceWithBootstrap<T>({
 
       if (!hasLocalOverride) {
         setValue(remoteValue);
-        setHasLocalOverride(false);
       }
       if (key === "system.timezone") {
         setPreferredTimezone(String(remoteValue ?? ""));

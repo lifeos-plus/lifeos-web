@@ -48,6 +48,12 @@ export type RenderableTheme = (typeof RENDERABLE_THEMES)[number];
 
 export type AppTheme = "system" | RenderableTheme;
 
+/** Fallback selectable list when the contract does not provide `allowed_values`. */
+export const DEFAULT_AVAILABLE_THEMES: AppTheme[] = [
+  "system",
+  ...RENDERABLE_THEMES,
+];
+
 const RENDERABLE_THEME_SET: ReadonlySet<string> = new Set(RENDERABLE_THEMES);
 
 export function isRenderableTheme(value: unknown): value is RenderableTheme {
@@ -66,13 +72,13 @@ export function isAppTheme(value: unknown): value is AppTheme {
  * picker is never empty.
  */
 export function resolveAvailableThemes(
-  allowed?: readonly unknown[],
+  allowed?: readonly unknown[] | null,
 ): AppTheme[] {
   const allowedSet = new Set((allowed ?? []).filter(isRenderableTheme));
   const ordered = RENDERABLE_THEMES.filter((theme) => allowedSet.has(theme));
 
   if (ordered.length === 0) {
-    return ["system", ...RENDERABLE_THEMES];
+    return [...DEFAULT_AVAILABLE_THEMES];
   }
 
   return ["system", ...ordered];

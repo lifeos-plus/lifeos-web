@@ -60,6 +60,8 @@ export function useCalendarAdapter(): CalendarAdapterState {
     calendarSystemPreference.value === "mayan_13_moon"
       ? "mayan_13_moon"
       : "gregorian";
+  // Defensive: the preference hook validates, but the adapter must never build
+  // an invalid calendar from an unexpected value.
   const firstDayOfWeek = isValidFirstDayOfWeek(firstDayPreference.value)
     ? firstDayPreference.value
     : DEFAULT_FIRST_DAY_OF_WEEK;

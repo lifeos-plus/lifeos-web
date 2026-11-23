@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { supportedLanguages, defaultLanguage } from "@/i18n";
+import { defaultLanguage } from "@/i18n";
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
 import { logger } from "@/utils/core";
 
@@ -83,6 +83,5 @@ export function useLanguage() {
     saving: preference.saving,
     error: preference.error,
     bootstrapped: preference.bootstrapped,
-    supportedLanguages,
   };
 }
