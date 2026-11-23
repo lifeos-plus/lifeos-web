@@ -32,6 +32,9 @@ interface VisionExperienceRatesTableProps {
   "aria-labelledby"?: string;
 }
 
+// The table owns a batch draft map: edits across rows are debounced into one
+// save, and an empty draft explicitly clears an override. NumericInput's
+// single-field commit-on-blur contract does not fit that model.
 type DraftMap = Record<UUID, string>;
 
 const sanitizeRateInput = (raw: string): string => raw.replace(/[^\d]/g, "");

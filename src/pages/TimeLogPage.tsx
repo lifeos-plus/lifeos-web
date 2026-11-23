@@ -26,7 +26,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { formatDate, formatDateInTimezone } from "@/utils/datetime";
 import { deriveNoteAssociationDefaults } from "@/utils/notes";
 import Container from "@/layouts/Container";
-import NumericInput from "@/components/forms/NumericInput";
+import { NumericInput } from "@/components/forms";
 import type { UUID } from "@/types/primitive";
 import type { ProcessedEntry } from "@/utils/datetime";
 import { useTimeLogPageData } from "@/features/timeLog/controller/useTimeLogPageData";

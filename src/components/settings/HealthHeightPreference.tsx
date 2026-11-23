@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import NumericInput from "@/components/forms/NumericInput";
+import { NumericInput } from "@/components/forms";
 
 export const HEALTH_HEIGHT_MIN_CM = 50;
 export const HEALTH_HEIGHT_MAX_CM = 300;

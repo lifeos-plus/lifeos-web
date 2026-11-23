@@ -4,7 +4,7 @@ import EnumSelect from "@/components/selects/EnumSelect";
 import Checkbox from "@/components/forms/Checkbox";
 import CheckboxGroup from "@/components/forms/CheckboxGroup";
 import TextInput from "@/components/forms/TextInput";
-import NumericInput from "@/components/forms/NumericInput";
+import { NumericInput } from "@/components/forms";
 import { FORM_LABEL_CLASS } from "@/components/forms/styles";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import type { SettingItemConfig } from "./types";

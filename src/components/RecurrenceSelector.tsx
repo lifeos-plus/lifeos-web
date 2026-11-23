@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import EnumSelect from "./selects/EnumSelect";
-import { Checkbox } from "./forms";
-import NumericInput from "./forms/NumericInput";
+import { Checkbox, NumericInput } from "./forms";
 import { FORM_LABEL_COMPACT_CLASS, FORM_LABEL_CLASS } from "./forms/styles";
 
 interface CustomRecurrenceConfig {
