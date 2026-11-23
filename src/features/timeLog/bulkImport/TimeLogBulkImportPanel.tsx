@@ -405,6 +405,9 @@ const TimeLogBulkImportPanel: React.FC<TimeLogBulkImportPanelProps> = ({
             (row) => failedRowIds.has(row.id) || row.errors.length > 0,
           ),
         );
+        // Parsing the old text again would re-create the rows that already
+        // succeeded, so drop it and keep only the failed rows.
+        setRawInput("");
         setHasManualEdits(true);
         return;
       }
