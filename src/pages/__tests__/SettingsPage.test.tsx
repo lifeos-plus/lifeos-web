@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -12,6 +13,30 @@ const preferencesApiMock = vi.hoisted(() => ({
 }));
 
 const enumSelectProps = vi.hoisted(() => ({} as Record<string, unknown>));
+
+interface CapturedSettingsLayoutProps {
+  groups: Array<{ id: string; items: Array<{ key: string }> }>;
+  preferences: Record<string, unknown>;
+}
+
+const settingsLayoutProps = vi.hoisted(() => ({
+  current: null as CapturedSettingsLayoutProps | null,
+}));
+
+vi.mock("@/components/settings", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/components/settings")>();
+  const ActualSettingsLayout = actual.SettingsLayout;
+  return {
+    ...actual,
+    SettingsLayout: (
+      props: ComponentProps<typeof ActualSettingsLayout>,
+    ) => {
+      settingsLayoutProps.current =
+        props as unknown as CapturedSettingsLayoutProps;
+      return <ActualSettingsLayout {...props} />;
+    },
+  };
+});
 
 vi.mock("@/components/selects/EnumSelect", () => ({
   default: (props: unknown) => {
@@ -162,6 +187,47 @@ vi.mock("@/components/settings/VisionExperienceDefaultPreference", () => ({
 vi.mock("@/components/settings/AreaSorter", () => ({
   default: () => null,
 }));
+
+describe("SettingsPage tab structure", () => {
+  beforeEach(() => {
+    preferencesApiMock.getWithMeta.mockImplementation(
+      async (key: string) => ({
+        key,
+        value: null,
+        meta: {
+          default_value: null,
+          description: "",
+          module: "general",
+          allowed_values: null,
+        },
+      }),
+    );
+    preferencesApiMock.set.mockResolvedValue({ key: "", value: null });
+  });
+
+  it("hosts area ordering and the default vision in their own tabs", () => {
+    renderWithProviders(<SettingsPage />);
+
+    expect(settingsLayoutProps.current?.groups.map((group) => group.id)).toEqual(
+      [
+        "appearance",
+        "navigation",
+        "calendar",
+        "health",
+        "visions",
+        "areas",
+        "notes",
+        "language",
+      ],
+    );
+
+    const preferences = settingsLayoutProps.current?.preferences ?? {};
+    expect(preferences).toHaveProperty("areas.areaOrder");
+    expect(preferences).toHaveProperty("visions.defaultInboxVision");
+    expect(preferences).not.toHaveProperty("data.areaOrder");
+    expect(preferences).not.toHaveProperty("data.defaultInboxVision");
+  });
+});
 
 describe("SettingsPage calendar preferences", () => {
   beforeEach(() => {

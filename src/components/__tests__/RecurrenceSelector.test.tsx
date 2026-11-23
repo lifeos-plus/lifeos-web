@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { setupTranslationMock } from "@test/utils";
@@ -63,6 +64,28 @@ describe("RecurrenceSelector", () => {
     );
 
     expect(screen.getByText("预览：每月第二个周一")).toBeInTheDocument();
+  });
+
+  it("commits a multi-digit interval on blur instead of rewriting each keystroke", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <RecurrenceSelector
+        value="FREQ=DAILY;INTERVAL=2"
+        onChange={onChange}
+        startDate={new Date("2026-04-13T09:00:00Z")}
+      />,
+    );
+
+    const interval = screen.getByLabelText("target.interval");
+    await user.clear(interval);
+    await user.type(interval, "12");
+
+    expect(interval).toHaveValue("12");
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.tab();
+    expect(onChange).toHaveBeenCalledWith("FREQ=DAILY;INTERVAL=12");
   });
 
   it("parses month-day and yearly month rules for edit forms", () => {

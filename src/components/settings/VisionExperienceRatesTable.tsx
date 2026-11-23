@@ -34,7 +34,13 @@ interface VisionExperienceRatesTableProps {
 
 type DraftMap = Record<UUID, string>;
 
-const normalizeRateInput = (raw: string): string => {
+const sanitizeRateInput = (raw: string): string => raw.replace(/[^\d]/g, "");
+
+/**
+ * Clamp once the field loses focus. Normalizing on every keystroke used to
+ * rewrite partial input, so a value like "05" or "400" could never be typed.
+ */
+const clampRateInput = (raw: string): string => {
   if (raw.trim() === "") {
     return "";
   }
@@ -242,10 +248,16 @@ const VisionExperienceRatesTable = ({
                           onChange={(event) =>
                             handleRateChange(
                               vision.id,
-                              normalizeRateInput(event.target.value),
+                              sanitizeRateInput(event.target.value),
                             )
                           }
-                          disabled={disabled || saving}
+                          onBlur={() =>
+                            handleRateChange(
+                              vision.id,
+                              clampRateInput(drafts[vision.id] ?? ""),
+                            )
+                          }
+                          disabled={disabled}
                           aria-label={t(
                             "settings.visions.experienceTable.rateInputLabel",
                             { name: vision.name },

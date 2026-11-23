@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import ActionButton from "@/components/ActionButton";
-import TextInput from "@/components/forms/TextInput";
+import NumericInput from "@/components/forms/NumericInput";
 
 export const HEALTH_HEIGHT_MIN_CM = 50;
 export const HEALTH_HEIGHT_MAX_CM = 300;
@@ -15,6 +14,7 @@ interface HealthHeightPreferenceProps {
   loading: boolean;
   disabled: boolean;
   id: string;
+  "aria-labelledby"?: string;
   "aria-describedby"?: string;
 }
 
@@ -34,6 +34,7 @@ const HealthHeightPreference = ({
   loading,
   disabled,
   id,
+  "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
 }: HealthHeightPreferenceProps) => {
   const { t } = useTranslation();
@@ -51,55 +52,26 @@ const HealthHeightPreference = ({
     return null;
   }, [value]);
 
-  const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = event.target.value;
-      if (raw.trim() === "") {
-        return;
-      }
-      const parsed = Number(raw);
-      if (Number.isNaN(parsed)) {
-        return;
-      }
-      const normalized = clampHeight(parsed);
-      if (normalized !== null) {
-        void onCommit(normalized);
-      }
-    },
+  const handleCommit = useCallback(
+    (nextValue: number | null) => onCommit(nextValue),
     [onCommit],
   );
 
-  const handleClear = useCallback(() => {
-    void onCommit(null);
-  }, [onCommit]);
-
   return (
-    <div className="flex items-center gap-2">
-      <TextInput
-        id={id}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        placeholder={t("settings.health.bodyHeight.placeholder")}
-        value={numericValue === null ? "" : String(numericValue)}
-        onChange={handleInputChange}
-        disabled={loading || saving || disabled}
-        aria-describedby={ariaDescribedBy}
-      />
-      {numericValue !== null ? (
-        <ActionButton
-          label=""
-          ariaLabel={t("settings.health.bodyHeight.clear")}
-          iconName="x-mark"
-          iconOnly
-          shape="square"
-          size="sm"
-          variant="ghost"
-          onClick={handleClear}
-          disabled={loading || saving || disabled}
-        />
-      ) : null}
-    </div>
+    <NumericInput
+      id={id}
+      value={numericValue}
+      min={HEALTH_HEIGHT_MIN_CM}
+      max={HEALTH_HEIGHT_MAX_CM}
+      allowEmpty
+      allowClear
+      clearLabel={t("settings.health.bodyHeight.clear")}
+      placeholder={t("settings.health.bodyHeight.placeholder")}
+      onCommit={handleCommit}
+      disabled={loading || saving || disabled}
+      ariaLabelledBy={ariaLabelledBy}
+      ariaDescribedBy={ariaDescribedBy}
+    />
   );
 };
 

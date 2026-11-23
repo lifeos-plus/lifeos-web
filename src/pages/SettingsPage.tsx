@@ -325,7 +325,7 @@ function SettingsPage() {
         updateValue: (value: unknown) =>
           noteCollapseSettings.updateValue(coerceNoteCollapseValue(value)),
       },
-      "data.areaOrder": {
+      "areas.areaOrder": {
         value: areaOrderSettings.value,
         loading: areaOrderSettings.loading,
         saving: areaOrderSettings.saving,
@@ -348,7 +348,7 @@ function SettingsPage() {
           areaOrderSettings.updateValue(value as UUID[]);
         },
       },
-      "data.defaultInboxVision": {
+      "visions.defaultInboxVision": {
         // The select uses "" for "no default"; the preference stores null.
         value: defaultInboxVisionSettings.defaultInboxVision ?? "",
         loading: defaultInboxVisionSettings.loading,

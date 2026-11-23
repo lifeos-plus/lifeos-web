@@ -649,6 +649,10 @@
         "description": "Calendar year that anchors seven-year periods. Gregorian periods start January 1 of the anchor year; Mayan periods start on the configured Mayan New Year day of that year."
       }
     },
+    "areas": {
+      "title": "Areas",
+      "description": "Manage the display order of your life areas."
+    },
     "areaOrder": {
       "title": "Area Order",
       "description": "Customize the display order of your areas, allowing you to prioritize the most important areas of your life."
@@ -671,8 +675,8 @@
     },
     "noGroupSelected": "No settings group selected",
     "visions": {
-      "title": "Vision Experience",
-      "description": "Configure how invested time converts into vision experience points.",
+      "title": "Visions",
+      "description": "Choose the default vision and configure how invested time converts into vision experience points.",
       "experienceRate": {
         "label": "Experience per Hour",
         "description": "Set experience points gained for every hour of effort (1-3600). Per-vision overrides can be set when editing a vision."
@@ -692,10 +696,6 @@
         "rateInputLabel": "{{name}} experience rate",
         "toastError": "Failed to update vision experience rates."
       }
-    },
-    "data": {
-      "title": "Data Settings",
-      "description": "Manage data related settings"
     },
     "notes": {
       "title": "Notes",

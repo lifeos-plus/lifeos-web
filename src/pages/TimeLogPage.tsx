@@ -26,7 +26,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { formatDate, formatDateInTimezone } from "@/utils/datetime";
 import { deriveNoteAssociationDefaults } from "@/utils/notes";
 import Container from "@/layouts/Container";
-import { TextInput } from "@/components/forms";
+import NumericInput from "@/components/forms/NumericInput";
 import type { UUID } from "@/types/primitive";
 import type { ProcessedEntry } from "@/utils/datetime";
 import { useTimeLogPageData } from "@/features/timeLog/controller/useTimeLogPageData";
@@ -468,25 +468,21 @@ const TimeLogPage = () => {
                       <span className="text-sm">
                         {t("timeLog.pagination.jumpTo")}
                       </span>
-                      <TextInput
+                      <NumericInput
                         id="advanced-search-page-jump"
                         name="advanced-search-page-jump"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        value={String(advancedSearch.currentPage)}
-                        onChange={(e) => {
-                          const raw = e.target.value.trim();
-                          if (raw === "") return;
-                          const page = parseInt(raw, 10);
-                          if (
-                            Number.isFinite(page) &&
-                            page >= 1 &&
-                            page <= advancedSearch.totalPages
-                          ) {
+                        value={advancedSearch.currentPage}
+                        min={1}
+                        max={Math.max(advancedSearch.totalPages, 1)}
+                        allowEmpty={false}
+                        size="sm"
+                        className="w-16 text-center"
+                        ariaLabel={t("timeLog.pagination.jumpTo")}
+                        onCommit={(page) => {
+                          if (page !== null) {
                             advancedSearch.goToPage(page);
                           }
                         }}
-                        className="input-xs w-16 text-center"
                       />
                       <span className="text-sm">
                         {t("timeLog.pagination.pageSuffix")}

@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import TextInput from "@/components/forms/TextInput";
+import NumericInput from "@/components/forms/NumericInput";
 import { VISION_EXPERIENCE_RATE_MAX } from "@/utils/constants";
 
 interface VisionExperienceDefaultPreferenceProps {
@@ -12,6 +12,7 @@ interface VisionExperienceDefaultPreferenceProps {
   loading: boolean;
   disabled: boolean;
   id: string;
+  "aria-labelledby"?: string;
   "aria-describedby"?: string;
 }
 
@@ -31,6 +32,7 @@ const VisionExperienceDefaultPreference = ({
   loading,
   disabled,
   id,
+  "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
 }: VisionExperienceDefaultPreferenceProps) => {
   const { t } = useTranslation();
@@ -48,35 +50,23 @@ const VisionExperienceDefaultPreference = ({
     return null;
   }, [value]);
 
-  const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = event.target.value;
-      if (raw.trim() === "") {
-        return;
-      }
-      const parsed = Number(raw);
-      if (Number.isNaN(parsed)) {
-        return;
-      }
-      const normalized = clampRate(parsed);
-      if (normalized !== null) {
-        void onCommit(normalized);
-      }
-    },
+  const handleCommit = useCallback(
+    (nextValue: number | null) => onCommit(nextValue),
     [onCommit],
   );
 
   return (
     <div className="space-y-3">
-      <TextInput
+      <NumericInput
         id={id}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        value={numericValue === null ? "" : String(numericValue)}
-        onChange={handleInputChange}
+        value={numericValue}
+        min={1}
+        max={VISION_EXPERIENCE_RATE_MAX}
+        allowEmpty={false}
+        onCommit={handleCommit}
         disabled={loading || saving || disabled}
-        aria-describedby={ariaDescribedBy}
+        ariaLabelledBy={ariaLabelledBy}
+      ariaDescribedBy={ariaDescribedBy}
       />
       <p className="text-xs text-base-content/60">
         {saving ? t("common.saving") : t("settings.autoSaveHint")}
