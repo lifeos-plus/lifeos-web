@@ -31,6 +31,13 @@ import {
   normalizeMayanNewYearStart,
 } from "@/utils/calendar";
 
+/** The inbox-vision select uses "" for "no default"; the preference stores null. */
+function toInboxVisionId(value: unknown): UUID | null {
+  return value === "" || value === null || value === undefined
+    ? null
+    : (value as UUID);
+}
+
 function SettingsPage() {
   const { t } = useTranslation();
   const toast = useToast();
@@ -330,18 +337,19 @@ function SettingsPage() {
         },
       },
       "data.defaultInboxVision": {
-        value: defaultInboxVisionSettings.defaultInboxVision,
+        // The select uses "" for "no default"; the preference stores null.
+        value: defaultInboxVisionSettings.defaultInboxVision ?? "",
         loading: defaultInboxVisionSettings.loading,
         saving: defaultInboxVisionSettings.saving,
         error: defaultInboxVisionSettings.error,
         bootstrapped: defaultInboxVisionSettings.bootstrapped,
         saveValue: async (value: unknown) =>
           await defaultInboxVisionSettings.saveDefaultInboxVision(
-            value as UUID | null,
+            toInboxVisionId(value),
           ),
         updateValue: (value: unknown) =>
           defaultInboxVisionSettings.updateDefaultInboxVision(
-            value as UUID | null,
+            toInboxVisionId(value),
           ),
       },
       "language.language": {

@@ -76,7 +76,6 @@ describe("notesApi", () => {
     expect(stats.tag_stats).toEqual([
       {
         id: "11111111-1111-1111-1111-111111111111",
-        name: "",
         usage_count: 2,
       },
     ]);
@@ -247,5 +246,67 @@ describe("notesApi", () => {
     ).rejects.toThrow("Find text must not be empty.");
 
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("forwards note associations on bulk create and reports 0-based failures", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((_input, init) => {
+        const body = JSON.parse(String((init as RequestInit).body)) as {
+          content: string;
+        };
+        if (body.content === "ok") {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                id: "note-ok",
+                content: "ok",
+                created_at: "2026-01-01T00:00:00Z",
+                updated_at: "2026-01-01T00:00:00Z",
+                deleted_at: null,
+                tags: [],
+                person: [],
+                tasks: [],
+                task: null,
+                visions: [],
+                events: [],
+                timelogs: [],
+                habit_actions: [],
+              }),
+              { status: 200, headers: { "Content-Type": "application/json" } },
+            ),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify({ detail: "boom" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      });
+
+    const result = await notesApi.batchCreate({
+      notes: [{ content: "ok" }, { content: "bad" }],
+      person_ids: ["11111111-1111-1111-1111-111111111111"],
+      tag_ids: ["22222222-2222-2222-2222-222222222222"],
+      task_id: "33333333-3333-3333-3333-333333333333",
+    });
+
+    expect(result.created_count).toBe(1);
+    expect(result.failed_items).toHaveLength(1);
+    expect(result.failed_items[0]).toMatchObject({
+      index: 1,
+      content_preview: "bad",
+    });
+
+    const bodies = fetchMock.mock.calls.map(([, init]) =>
+      JSON.parse(String((init as RequestInit).body)),
+    );
+    expect(bodies[0]).toMatchObject({
+      content: "ok",
+      person_ids: ["11111111-1111-1111-1111-111111111111"],
+      tag_ids: ["22222222-2222-2222-2222-222222222222"],
+      task_id: "33333333-3333-3333-3333-333333333333",
+    });
   });
 });

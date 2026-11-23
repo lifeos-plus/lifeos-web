@@ -272,6 +272,7 @@ export const useSettingsConfig = (
         {
           key: "defaultInboxVision",
           type: "select",
+          includeEmptyOption: true,
           label: t("settings.defaultInboxVision.label"),
           description: t("settings.defaultInboxVision.description"),
           options: [

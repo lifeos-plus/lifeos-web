@@ -1,6 +1,7 @@
 import type { UUID } from "@/types/primitive";
 import { http } from "./client";
 import type { components } from "./generated/schema";
+import { ENDPOINTS } from "./endpoints";
 
 export type DailyAreaRow = components["schemas"]["DailyAreaResponse"];
 export type AggregationGranularity = components["schemas"]["AggregatedAreaResponse"]["granularity"];
@@ -16,14 +17,14 @@ export const statsApi = {
     end: string,
     areaIds?: UUID[],
   ) {
-    return http.get<DailyAreaListResponse>("/api/v1/stats/daily-areas", {
+    return http.get<DailyAreaListResponse>(ENDPOINTS.STATS.DAILY_AREAS, {
       start,
       end,
       area_ids: areaIds,
     });
   },
   async getLocalDayBreakdown(day: string) {
-    return http.get<DayBreakdownListResponse>("/api/v1/stats/day-breakdown", {
+    return http.get<DayBreakdownListResponse>(ENDPOINTS.STATS.DAY_BREAKDOWN, {
       day,
     });
   },
@@ -38,7 +39,7 @@ export const statsApi = {
     },
   ) {
     return http.get<AggregatedAreaListResponse>(
-      "/api/v1/stats/aggregated-areas",
+      ENDPOINTS.STATS.AGGREGATED_AREAS,
       {
         granularity,
         start,
@@ -54,7 +55,7 @@ export const statsApi = {
     end: string,
   ) {
     return http.post<components["schemas"]["RecomputeDailyAreasResponse"]>(
-      "/api/v1/stats/daily-areas/recompute",
+      ENDPOINTS.STATS.RECOMPUTE_DAILY_AREAS,
       undefined,
       { start, end },
     );

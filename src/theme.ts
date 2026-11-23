@@ -164,7 +164,7 @@ export function setTheme(next: AppTheme) {
 export function watchSystemThemeChange(
   callback: (theme: "pastel" | "night") => void,
 ) {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === "undefined" || !window.matchMedia) return () => {};
 
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const handleChange = () => {

@@ -79,6 +79,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             id={config.key}
             label={config.label}
             options={config.options || []}
+            includeEmptyOption={config.includeEmptyOption}
             placeholder={config.placeholder}
             aria-describedby={
               config.description ? `${getControlId()}-description` : undefined

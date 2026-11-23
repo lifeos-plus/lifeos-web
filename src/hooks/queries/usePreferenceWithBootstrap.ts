@@ -44,7 +44,6 @@ export function usePreferenceWithBootstrap<T>({
   validator,
 }: PreferenceWithBootstrapOptions<T>): PreferenceWithBootstrapReturn<T> {
   const queryClient = useQueryClient();
-  const shouldFetchPreferences = true;
 
   const defaultValueRef = useRef(defaultValue);
   defaultValueRef.current = defaultValue;
@@ -52,7 +51,7 @@ export function usePreferenceWithBootstrap<T>({
   const [value, setValue] = useState<T>(defaultValueRef.current);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bootstrapped, setBootstrapped] = useState(!shouldFetchPreferences);
+  const [bootstrapped, setBootstrapped] = useState(false);
   const [hasLocalOverride, setHasLocalOverride] = useState(false);
 
   // 当切换到新的偏好键时，重置本地状态
@@ -60,8 +59,8 @@ export function usePreferenceWithBootstrap<T>({
     setValue(defaultValueRef.current);
     setHasLocalOverride(false);
     setError(null);
-    setBootstrapped(!shouldFetchPreferences);
-  }, [key, shouldFetchPreferences]);
+    setBootstrapped(false);
+  }, [key]);
 
   const preferenceQuery = useQuery<PreferenceCacheEntry<T>>({
     queryKey: preferencesKeys.detail(key),
@@ -102,7 +101,6 @@ export function usePreferenceWithBootstrap<T>({
         throw err;
       }
     },
-    enabled: shouldFetchPreferences,
     staleTime: 60 * 60 * 1000,
     placeholderData: () => ({
       value: defaultValueRef.current,
@@ -110,8 +108,13 @@ export function usePreferenceWithBootstrap<T>({
     }),
   });
 
+  // `placeholderData` reports `isSuccess` immediately, so only treat the query
+  // as loaded once the real response has replaced the placeholder.
+  const hasResolvedRemote =
+    preferenceQuery.isSuccess && !preferenceQuery.isPlaceholderData;
+
   useEffect(() => {
-    if (preferenceQuery.isSuccess) {
+    if (hasResolvedRemote) {
       const remoteValue = preferenceQuery.data.value;
       setBootstrapped(true);
       setError(null);
@@ -124,7 +127,7 @@ export function usePreferenceWithBootstrap<T>({
         setPreferredTimezone(String(remoteValue ?? ""));
       }
     }
-  }, [preferenceQuery.isSuccess, preferenceQuery.data, hasLocalOverride, key]);
+  }, [hasResolvedRemote, preferenceQuery.data, hasLocalOverride, key]);
 
   useEffect(() => {
     if (preferenceQuery.isError) {
@@ -144,21 +147,7 @@ export function usePreferenceWithBootstrap<T>({
     }
   }, [preferenceQuery.isError, preferenceQuery.error, key, hasLocalOverride]);
 
-  // 当用户未登录时不触发请求，直接视为初始化完成
-  useEffect(() => {
-    if (!shouldFetchPreferences) {
-      setBootstrapped(true);
-      if (!hasLocalOverride) {
-        setValue(defaultValueRef.current);
-      }
-    }
-  }, [shouldFetchPreferences, hasLocalOverride]);
-
-  const loading =
-    shouldFetchPreferences &&
-    preferenceQuery.isLoading &&
-    !preferenceQuery.isSuccess &&
-    !preferenceQuery.isError;
+  const loading = !hasResolvedRemote && !preferenceQuery.isError;
 
   const saveMutation = useMutation({
     mutationFn: async (nextValue: T) => {

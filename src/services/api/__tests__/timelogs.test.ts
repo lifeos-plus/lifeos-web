@@ -307,4 +307,68 @@ describe("timelogsApi", () => {
     expect(response.meta.min_duration_minutes).toBeNull();
     expect(response.meta.max_duration_minutes).toBeNull();
   });
+
+  it("reports partial failures when batch creating timelogs", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((_input, init) => {
+        const body = JSON.parse(String((init as RequestInit).body)) as {
+          title: string;
+        };
+        if (body.title === "ok") {
+          return Promise.resolve(
+            new Response(JSON.stringify({ id: "tl-ok", title: "ok" }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify({ detail: "boom" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      });
+
+    const result = await timelogsApi.batchCreate([
+      {
+        title: "ok",
+        start_time: "2026-01-01T00:00:00Z",
+        end_time: "2026-01-01T01:00:00Z",
+      },
+      {
+        title: "bad",
+        start_time: "2026-01-01T02:00:00Z",
+        end_time: "2026-01-01T03:00:00Z",
+      },
+    ]);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(result.created_count).toBe(1);
+    expect(result.failed_count).toBe(1);
+    expect(result.created_timelogs).toEqual([{ id: "tl-ok", title: "ok" }]);
+    expect(result.errors).toEqual(["boom"]);
+  });
+
+  it("reports partial failures when batch deleting timelogs", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation((input) => {
+      const url = String(input);
+      if (url.endsWith("/tl-bad")) {
+        return Promise.resolve(
+          new Response(JSON.stringify({ detail: "gone" }), {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      return Promise.resolve(new Response(null, { status: 204 }));
+    });
+
+    const result = await timelogsApi.batchDelete(["tl-good", "tl-bad"]);
+
+    expect(result.deleted_count).toBe(1);
+    expect(result.failed_ids).toEqual(["tl-bad"]);
+    expect(result.errors).toEqual(["gone"]);
+  });
 });

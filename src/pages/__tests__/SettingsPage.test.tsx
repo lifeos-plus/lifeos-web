@@ -176,6 +176,15 @@ describe("SettingsPage calendar preferences", () => {
     })) as { value: string };
     expect(anchorSelect.value).toBe("2025");
 
+    await waitFor(() => {
+      const key = Object.keys(enumSelectProps).find((id) =>
+        id.includes("sevenYearAnchorYear"),
+      ) as string;
+      expect(
+        (enumSelectProps[key] as { disabled?: boolean }).disabled,
+      ).toBe(false);
+    });
+
     (
       enumSelectProps[
         Object.keys(enumSelectProps).find((id) =>

@@ -34,7 +34,6 @@ export type NoteUpdate = components["schemas"]["NoteUpdate"];
 export interface NoteStats {
   tag_stats: Array<{
     id: UUID;
-    name: string;
     usage_count: number;
   }>;
   person_stats: Array<{
@@ -99,8 +98,6 @@ export const notesApi = {
   create: (noteData: NoteCreate) =>
     http.post<NoteTransport>(ENDPOINTS.NOTES.BASE, noteData).then(toNote),
 
-  fetchAll: () => http.get<NoteListTransport>(ENDPOINTS.NOTES.BASE).then(toNoteList),
-
   fetchPaged: (
     params: {
       page?: number;
@@ -146,7 +143,6 @@ export const notesApi = {
     return {
       tag_stats: tagUsage.tag_stats.map((tagStat) => ({
         id: tagStat.id,
-        name: "",
         usage_count: tagStat.usage_count,
       })),
       person_stats: personUsage.person_stats,
@@ -156,25 +152,8 @@ export const notesApi = {
   update: (noteId: UUID, noteData: NoteUpdate) =>
     http.patch<NoteTransport>(ENDPOINTS.NOTES.BY_ID(noteId), noteData).then(toNote),
 
-  delete: async (noteId: UUID): Promise<void> => {
-    try {
-      await http.delete<void>(ENDPOINTS.NOTES.BY_ID(noteId));
-    } catch (err) {
-      // Preserve enhanced error semantics similar to old api.ts implementation
-      const anyErr = err as unknown as { status?: number; message?: string };
-      if (anyErr && typeof anyErr === "object" && "status" in anyErr) {
-        const status = anyErr.status ?? 0;
-        const message =
-          status === 404
-            ? "Note not found (may have been already deleted)"
-            : (anyErr.message ?? "Request failed");
-        const e: Error & { status?: number } = new Error(message);
-        e.status = status;
-        throw err as Error;
-      }
-      throw err as Error;
-    }
-  },
+  delete: (noteId: UUID): Promise<void> =>
+    http.delete<void>(ENDPOINTS.NOTES.BY_ID(noteId)),
 
   advancedSearch: async (payload: NoteAdvancedSearchPayload) => {
     let page = 1;
@@ -228,11 +207,20 @@ export const notesApi = {
 
   batchCreate: (payload: NoteBulkCreateRequestPayload) =>
     Promise.allSettled(
-      payload.notes.map((note) => notesApi.create({ content: note.content })),
+      payload.notes.map((note) =>
+        notesApi.create({
+          content: note.content,
+          person_ids: payload.person_ids,
+          tag_ids: payload.tag_ids,
+          task_id: payload.task_id,
+          timelog_ids: payload.timelog_ids,
+        }),
+      ),
     ).then((results) => {
       const createdNotes = results
         .filter((result): result is PromiseFulfilledResult<Note> => result.status === "fulfilled")
         .map((result) => result.value);
+      // `index` is the 0-based position inside the submitted chunk.
       const failedItems = results.flatMap((result, index) =>
         result.status === "rejected"
           ? [
