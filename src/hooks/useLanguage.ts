@@ -56,24 +56,19 @@ export function useLanguage() {
     void applyLanguage(preference.value);
   }, [preference.bootstrapped, preference.value, applyLanguage]);
 
+  // The effect above applies every value change, including local edits and
+  // saves, so these helpers only drive the stored preference.
   const changeLanguage = useCallback(
     async (language: Language) => {
       preference.updateValue(language);
-      await applyLanguage(language);
       return true;
     },
-    [preference, applyLanguage],
+    [preference],
   );
 
   const saveLanguage = useCallback(
-    async (language: Language) => {
-      const success = await preference.saveValue(language);
-      if (success) {
-        await applyLanguage(language);
-      }
-      return success;
-    },
-    [preference, applyLanguage],
+    (language: Language) => preference.saveValue(language),
+    [preference],
   );
 
   return {

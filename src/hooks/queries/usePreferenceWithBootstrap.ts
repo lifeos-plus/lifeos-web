@@ -5,6 +5,16 @@ import { preferencesKeys, areasKeys } from "@/services/api/queryKeys";
 import { logger } from "@/utils/core";
 import { setPreferredTimezone } from "@/utils/datetime";
 
+
+function isSamePreferenceValue(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  try {
+    return JSON.stringify(a) === JSON.stringify(b);
+  } catch {
+    return false;
+  }
+}
+
 type PreferenceCacheEntry<T> = {
   value: T;
   meta?: {
@@ -211,6 +221,11 @@ export function usePreferenceWithBootstrap<T>({
   };
 
   const updateValue = (nextValue: T) => {
+    // Only guard values that actually differ from the backend value. Rolling
+    // back after a failed save restores the remote value, so it must not keep
+    // blocking later refreshes.
+    const remoteValue = preferenceQuery.data?.value ?? defaultValueRef.current;
+    setHasLocalOverride(!isSamePreferenceValue(nextValue, remoteValue));
     setValue(nextValue);
     setError(null);
     if (key === "system.timezone") {

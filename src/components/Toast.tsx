@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ToastContext, type ToastMessage } from "@/contexts/ToastContext";
 import ActionButton from "./ActionButton";
@@ -183,20 +183,25 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  const recentFailuresRef = useRef(new Map<string, number>());
+
   const showToast = useCallback((toast: Omit<ToastMessage, "id">) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    setToasts((prev) => {
-      // Query retries can report the same failure several times in a row;
-      // collapse it while an identical toast is still visible.
-      const isDuplicate = prev.some(
-        (existing) =>
-          existing.type === toast.type &&
-          existing.title === toast.title &&
-          existing.message === toast.message,
-      );
-      if (isDuplicate) return prev;
-      return [...prev, { ...toast, id }];
-    });
+
+    // Query retries can report the same failure several times in a row. Only
+    // collapse identical failures, and only for a short window, so repeated
+    // successful actions still produce their own toast.
+    if (toast.type === "error" || toast.type === "warning") {
+      const key = `${toast.type}|${toast.title}|${toast.message ?? ""}`;
+      const now = Date.now();
+      const lastShown = recentFailuresRef.current.get(key);
+      if (lastShown !== undefined && now - lastShown < 5000) {
+        return;
+      }
+      recentFailuresRef.current.set(key, now);
+    }
+
+    setToasts((prev) => [...prev, { ...toast, id }]);
   }, []);
 
   const showSuccess = useCallback(

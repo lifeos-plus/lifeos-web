@@ -48,6 +48,10 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
       setServerMinutes(null);
       return;
     }
+    // Drop the previous day's numbers immediately; otherwise the persistent
+    // instance keeps rendering them until the new response arrives.
+    setServerMinutes(null);
+
     const controller = new AbortController();
     let active = true;
 

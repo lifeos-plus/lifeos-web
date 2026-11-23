@@ -60,19 +60,19 @@ export function useCalendarAdapter(): CalendarAdapterState {
     calendarSystemPreference.value === "mayan_13_moon"
       ? "mayan_13_moon"
       : "gregorian";
-  const firstDayOfWeek = Number.isFinite(firstDayPreference.value)
+  const firstDayOfWeek = isValidFirstDayOfWeek(firstDayPreference.value)
     ? firstDayPreference.value
-    : 1;
-  const sevenYearAnchorYear =
-    typeof sevenYearAnchorPreference.value === "number" &&
-    Number.isInteger(sevenYearAnchorPreference.value)
-      ? sevenYearAnchorPreference.value
-      : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR;
-  const mayanNewYearStart =
-    typeof mayanNewYearPreference.value === "string" &&
-    /^\d{2}-\d{2}$/.test(mayanNewYearPreference.value)
-      ? mayanNewYearPreference.value
-      : DEFAULT_MAYAN_NEW_YEAR_START;
+    : DEFAULT_FIRST_DAY_OF_WEEK;
+  const sevenYearAnchorYear = isValidSevenYearAnchorYear(
+    sevenYearAnchorPreference.value,
+  )
+    ? sevenYearAnchorPreference.value
+    : DEFAULT_SEVEN_YEAR_ANCHOR_YEAR;
+  const mayanNewYearStart = isValidMayanNewYearStart(
+    mayanNewYearPreference.value,
+  )
+    ? mayanNewYearPreference.value
+    : DEFAULT_MAYAN_NEW_YEAR_START;
 
   const adapter = useMemo(() => {
     return createCalendarAdapter(
