@@ -75,7 +75,6 @@ export function useInsightsStatsController({
     queryKey: statsKeys.dailyAreas({
       start: startDate,
       end: endDate,
-      timezone: activeTimezone,
     }),
     queryFn: async () => {
       const response = await statsApi.getDailyAreas(
@@ -98,9 +97,6 @@ export function useInsightsStatsController({
       granularity,
       start: startDate,
       end: endDate,
-      timezone: activeTimezone,
-      first_day_of_week: normalizedFirstDayOfWeek,
-      calendar_system: calendarSystem,
     }),
     queryFn: async () => {
       const firstPage = await statsApi.getAggregatedAreas(
@@ -189,7 +185,6 @@ export function useInsightsStatsController({
           queryKey: statsKeys.dailyAreas({
             start: startDate,
             end: endDate,
-            timezone: activeTimezone,
           }),
         }),
         queryClient.invalidateQueries({
@@ -197,9 +192,6 @@ export function useInsightsStatsController({
             granularity,
             start: startDate,
             end: endDate,
-            timezone: activeTimezone,
-            first_day_of_week: normalizedFirstDayOfWeek,
-            calendar_system: calendarSystem,
           }),
         }),
       ]);
@@ -208,11 +200,8 @@ export function useInsightsStatsController({
       logger.error("Failed to refresh stats", error);
     }
   }, [
-    activeTimezone,
-    calendarSystem,
     endDate,
     granularity,
-    normalizedFirstDayOfWeek,
     queryClient,
     refreshErrorMessage,
     startDate,

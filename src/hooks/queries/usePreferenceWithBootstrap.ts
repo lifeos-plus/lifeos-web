@@ -4,9 +4,25 @@ import {
   preferencesApi,
   type PreferenceMeta,
 } from "@/services/api/preferences";
-import { preferencesKeys, areasKeys } from "@/services/api/queryKeys";
+import {
+  areasKeys,
+  preferencesKeys,
+  statsKeys,
+} from "@/services/api/queryKeys";
 import { logger } from "@/utils/core";
 import { setPreferredTimezone } from "@/utils/datetime";
+
+/**
+ * Preferences the stats endpoints read server-side. Their values never travel
+ * with the request, so a change has to invalidate the stats branch explicitly.
+ */
+const STATS_AFFECTING_PREFERENCE_KEYS = new Set([
+  "system.timezone",
+  "calendar.system",
+  "calendar.first_day_of_week",
+  "calendar.mayan_new_year_start",
+  "calendar.seven_year_anchor_year",
+]);
 
 function isSamePreferenceValue(a: unknown, b: unknown): boolean {
   if (a === b) return true;
@@ -61,6 +77,7 @@ export function usePreferenceWithBootstrap<T>({
   const [bootstrapped, setBootstrapped] = useState(false);
   const [hasLocalOverride, setHasLocalOverride] = useState(false);
   const saveFailedRef = useRef(false);
+  const previousRemoteValueRef = useRef<T | undefined>(undefined);
   const isValidValue = (candidate: T) => !validator || validator(candidate);
 
   // 当切换到新的偏好键时，重置本地状态
@@ -70,6 +87,7 @@ export function usePreferenceWithBootstrap<T>({
     setError(null);
     setBootstrapped(false);
     saveFailedRef.current = false;
+    previousRemoteValueRef.current = undefined;
   }, [key]);
 
   const preferenceQuery = useQuery<PreferenceCacheEntry<T>>({
@@ -126,6 +144,17 @@ export function usePreferenceWithBootstrap<T>({
   useEffect(() => {
     if (hasResolvedRemote) {
       const remoteValue = preferenceQuery.data.value;
+      const previousRemoteValue = previousRemoteValueRef.current;
+      previousRemoteValueRef.current = remoteValue;
+
+      if (
+        previousRemoteValue !== undefined &&
+        !isSamePreferenceValue(previousRemoteValue, remoteValue) &&
+        STATS_AFFECTING_PREFERENCE_KEYS.has(key)
+      ) {
+        void queryClient.invalidateQueries({ queryKey: statsKeys.all });
+      }
+
       setBootstrapped(true);
       if (!saveFailedRef.current) {
         setError(null);
@@ -138,7 +167,13 @@ export function usePreferenceWithBootstrap<T>({
         setPreferredTimezone(String(remoteValue ?? ""));
       }
     }
-  }, [hasResolvedRemote, preferenceQuery.data, hasLocalOverride, key]);
+  }, [
+    hasResolvedRemote,
+    preferenceQuery.data,
+    hasLocalOverride,
+    key,
+    queryClient,
+  ]);
 
   useEffect(() => {
     if (preferenceQuery.isError) {

@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import { statsKeys } from "@/services/api/queryKeys";
 
 const getWithMetaMock = vi.fn();
 const setPreferenceMock = vi.fn();
@@ -173,5 +174,36 @@ describe("usePreferenceWithBootstrap", () => {
     expect(success).toBe(false);
     await waitFor(() => expect(result.current.error).toBe("save failed"));
     await waitFor(() => expect(result.current.value).toBe("backend"));
+  });
+
+  it("invalidates stats after a calendar-related preference changes", async () => {
+    getWithMetaMock.mockResolvedValue({ value: "UTC", meta: {} });
+    setPreferenceMock.mockResolvedValue(undefined);
+
+    const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+    const { result } = renderHook(
+      () =>
+        usePreferenceWithBootstrap({
+          key: "system.timezone",
+          defaultValue: "UTC",
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.bootstrapped).toBe(true));
+    invalidateSpy.mockClear();
+
+    getWithMetaMock.mockResolvedValue({ value: "Asia/Tokyo", meta: {} });
+
+    await act(async () => {
+      await result.current.saveValue("Asia/Tokyo");
+    });
+
+    await waitFor(() =>
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: statsKeys.all }),
+    );
+
+    invalidateSpy.mockRestore();
   });
 });
