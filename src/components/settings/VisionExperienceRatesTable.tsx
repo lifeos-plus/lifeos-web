@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import StatusBadge from "@/components/StatusBadge";
 import ErrorDisplay from "@/components/ErrorDisplay";
@@ -88,19 +88,40 @@ const VisionExperienceRatesTable = ({
   const [drafts, setDrafts] = useState<DraftMap>({});
   const [original, setOriginal] = useState<DraftMap>({});
   const [localError, setLocalError] = useState<string | null>(null);
+  const originalRef = useRef<DraftMap>({});
 
   useEffect(() => {
-    const nextDrafts: DraftMap = {};
+    const serverDrafts: DraftMap = {};
     visions.forEach((vision) => {
       const rate =
         vision.experience_rate_per_hour === null ||
         vision.experience_rate_per_hour === undefined
           ? ""
           : String(vision.experience_rate_per_hour);
-      nextDrafts[vision.id] = rate;
+      serverDrafts[vision.id] = rate;
     });
-    setDrafts(nextDrafts);
-    setOriginal(nextDrafts);
+
+    // Snapshot the previously accepted values before scheduling the state
+    // update; the updater can run after originalRef has been advanced.
+    const previousOriginalDrafts = originalRef.current;
+
+    // Keep local edits that have not been saved yet when the parent refreshes
+    // visions (for example after saving another preference).
+    setDrafts((previousDrafts) => {
+      const merged: DraftMap = {};
+      visions.forEach((vision) => {
+        const serverDraft = serverDrafts[vision.id] ?? "";
+        const previousDraft = previousDrafts[vision.id];
+        const previousOriginalDraft = previousOriginalDrafts[vision.id];
+        const isDirty =
+          previousDraft !== undefined && previousDraft !== previousOriginalDraft;
+        merged[vision.id] = isDirty ? previousDraft : serverDraft;
+      });
+      return merged;
+    });
+
+    originalRef.current = serverDrafts;
+    setOriginal(serverDrafts);
     setLocalError(null);
   }, [visions]);
 
