@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+test.describe.configure({ mode: "serial" });
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("i18nextLng", "en");
@@ -47,6 +49,12 @@ test("settings keeps height input usable and separates areas from visions", asyn
 });
 
 test("settings persists body height across reload", async ({ page }) => {
+  const reset = await page.request.put(
+    "/api/v1/preferences/health.body_height_cm",
+    { data: { value: null } },
+  );
+  expect(reset.ok()).toBeTruthy();
+
   await page.goto("/settings");
   await page.getByRole("button", { name: "Health", exact: true }).click();
   const height = page.getByLabel("Body height");
@@ -70,6 +78,11 @@ test("settings persists body height across reload", async ({ page }) => {
 });
 
 test("settings persists the interface font across reload", async ({ page }) => {
+  const reset = await page.request.put("/api/v1/preferences/appearance.font", {
+    data: { value: null },
+  });
+  expect(reset.ok()).toBeTruthy();
+
   await page.goto("/settings");
   const font = page.getByLabel("Interface Font");
   await expect(font).toBeVisible();
