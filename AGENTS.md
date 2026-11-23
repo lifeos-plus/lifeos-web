@@ -38,6 +38,8 @@ The following rules apply to coding agent collaboration in this repository.
 ## 5. Security and Documentation
 
 - Never commit secrets, tokens, private keys, or `.env` contents.
+- Local LifeOS instances hold private data. Never publish screenshots, logs, database dumps, or real records from them in the repository, tests, issues, or pull requests.
+- Use synthetic fixtures in tests and crop or mask UI evidence; never include internal hostnames, private IPs, or personal data.
 - Update `SECURITY.md`, `README.md`, and release-related docs when changing dependency, publishing, or security-sensitive behavior.
 
 ## 6. UI Copy and Tests
