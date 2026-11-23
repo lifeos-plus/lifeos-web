@@ -77,14 +77,29 @@ export const visionsApi = {
 
   async bulkUpdateExperienceRates(
     items: VisionExperienceRateUpdatePayload[],
-  ): Promise<Vision[]> {
-    const updated = await Promise.all(
+  ): Promise<{ updated: Vision[]; errors: string[] }> {
+    const results = await Promise.allSettled(
       items.map((item) =>
         visionsApi.update(item.id, {
           experience_rate_per_hour: item.experience_rate_per_hour,
         }),
       ),
     );
-    return updated;
+
+    const updated: Vision[] = [];
+    const errors: string[] = [];
+    results.forEach((result) => {
+      if (result.status === "fulfilled") {
+        updated.push(result.value);
+      } else {
+        errors.push(
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason),
+        );
+      }
+    });
+
+    return { updated, errors };
   },
 };

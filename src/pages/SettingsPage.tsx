@@ -160,8 +160,20 @@ function SettingsPage() {
       setVisionRatesSaving(true);
       setVisionRatesError(null);
       try {
-        await visionsApi.bulkUpdateExperienceRates(updates);
-        await refreshVisions();
+        const { updated, errors } =
+          await visionsApi.bulkUpdateExperienceRates(updates);
+        if (updated.length > 0) {
+          await refreshVisions();
+        }
+        if (errors.length > 0) {
+          const message = errors.join("; ");
+          setVisionRatesError(message);
+          toast.showError(
+            t("settings.visions.experienceTable.toastError"),
+            message,
+          );
+          return false;
+        }
         return true;
       } catch (err) {
         const message =
