@@ -310,10 +310,10 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
   );
 
   const effectiveLabel = label ?? t("target.tasks.label");
-  const effectivePlaceholder = isLoading
-    ? t("common.loading")
-    : (placeholder ?? t("taskSelector.placeholder"));
-  const disabledState = disabled || isLoading;
+  // Loading only affects the option list. Disabling the combobox here would
+  // blur the input that the click just focused, because this component starts
+  // its remote search from that same focus/click interaction.
+  const effectivePlaceholder = placeholder ?? t("taskSelector.placeholder");
 
   return (
     <div className={`relative flex flex-col ${className}`}>
@@ -328,7 +328,7 @@ const TaskSelectorManaged: React.FC<TaskSelectorProps> = ({
         onChange={handleSelectChange}
         options={options}
         placeholder={effectivePlaceholder}
-        disabled={disabledState}
+        disabled={disabled}
         size={size}
         id={idPrefix ? `${idPrefix}-input` : undefined}
         usePortal={usePortal}
