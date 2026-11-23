@@ -185,7 +185,18 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const showToast = useCallback((toast: Omit<ToastMessage, "id">) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    setToasts((prev) => [...prev, { ...toast, id }]);
+    setToasts((prev) => {
+      // Query retries can report the same failure several times in a row;
+      // collapse it while an identical toast is still visible.
+      const isDuplicate = prev.some(
+        (existing) =>
+          existing.type === toast.type &&
+          existing.title === toast.title &&
+          existing.message === toast.message,
+      );
+      if (isDuplicate) return prev;
+      return [...prev, { ...toast, id }];
+    });
   }, []);
 
   const showSuccess = useCallback(

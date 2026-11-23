@@ -48,15 +48,28 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
       setServerMinutes(null);
       return;
     }
+    const controller = new AbortController();
+    let active = true;
+
     statsApi
-      .getLocalDayBreakdown(localDateISO!)
+      .getLocalDayBreakdown(localDateISO!, { signal: controller.signal })
       .then((response) => {
+        if (!active) return;
         const rows = response.items ?? [];
         const map: Record<UUID, number> = {};
         rows.forEach((r) => (map[r.area_id] = r.minutes));
         setServerMinutes(map);
       })
-      .catch(() => setServerMinutes(null));
+      .catch(() => {
+        // Ignore aborted or superseded requests so a late response for a
+        // previous date cannot overwrite the current one.
+        if (active) setServerMinutes(null);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [localDateISO, timezone]);
   const calculateTimeAllocation = useMemo((): AreaTimeData[] => {
     const areaTimeMap = new Map<UUID, number>();

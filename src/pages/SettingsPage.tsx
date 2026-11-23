@@ -19,6 +19,14 @@ import { useSettingsConfig } from "@/config/settingsConfig";
 import { useSystemTimezone } from "@/hooks/useSystemTimezone";
 import type { UUID } from "@/types/primitive";
 import { VISION_EXPERIENCE_RATE_MAX } from "@/utils/constants";
+import {
+  DEFAULT_CALENDAR_SYSTEM,
+  DEFAULT_FIRST_DAY_OF_WEEK,
+  isValidCalendarSystem,
+  isValidFirstDayOfWeek,
+  isValidMayanNewYearStart,
+  isValidSevenYearAnchorYear,
+} from "@/config/calendarPreferences";
 import { useToast } from "@/contexts/ToastContext";
 import { useVisions } from "@/hooks/queries/useVisions";
 import {
@@ -49,37 +57,29 @@ function SettingsPage() {
     "gregorian" | "mayan_13_moon"
   >({
     key: "calendar.system",
-    defaultValue: "gregorian",
+    defaultValue: DEFAULT_CALENDAR_SYSTEM,
     module: "calendar",
-    validator: (value) => value === "gregorian" || value === "mayan_13_moon",
+    validator: isValidCalendarSystem,
   });
   const calendarFirstDaySettings = usePreferenceWithBootstrap<number>({
     key: "calendar.first_day_of_week",
-    defaultValue: 1,
+    defaultValue: DEFAULT_FIRST_DAY_OF_WEEK,
     module: "calendar",
-    validator: (value) =>
-      typeof value === "number" &&
-      Number.isInteger(value) &&
-      value >= 1 &&
-      value <= 7,
+    validator: isValidFirstDayOfWeek,
   });
   const calendarSevenYearAnchorYearSettings =
     usePreferenceWithBootstrap<number>({
       key: "calendar.seven_year_anchor_year",
       defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
       module: "calendar",
-      validator: (value) =>
-        typeof value === "number" &&
-        Number.isInteger(value) &&
-        value >= 1 &&
-        value <= 9999,
+      validator: isValidSevenYearAnchorYear,
     });
   const calendarMayanNewYearStartSettings =
     usePreferenceWithBootstrap<string>({
       key: "calendar.mayan_new_year_start",
       defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
       module: "calendar",
-      validator: (value) => /^\d{2}-\d{2}$/.test(value),
+      validator: isValidMayanNewYearStart,
     });
 
   const visionExperienceSettings = usePreferenceWithBootstrap<number>({
@@ -355,7 +355,7 @@ function SettingsPage() {
       "language.language": {
         value: languageSettings.currentLanguage,
         loading: languageSettings.loading,
-        saving: false, // languageSettings doesn't have saving property
+        saving: languageSettings.saving,
         error: languageSettings.error,
         bootstrapped: languageSettings.bootstrapped,
         saveValue: async (value: unknown) =>

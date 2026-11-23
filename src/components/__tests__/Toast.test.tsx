@@ -80,4 +80,17 @@ describe("ToastProvider", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     vi.useRealTimers();
   });
+
+  it("does not stack identical visible toasts", async () => {
+    renderProvider();
+
+    act(() => {
+      contextRef!.showError("Failed", "Network error");
+      contextRef!.showError("Failed", "Network error");
+    });
+
+    await waitFor(() =>
+      expect(screen.getAllByRole("alert")).toHaveLength(1),
+    );
+  });
 });

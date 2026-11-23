@@ -19,7 +19,7 @@ interface PreferenceWithBootstrapOptions<T> {
   key: string;
   defaultValue: T;
   module?: string;
-  validator?: (value: T) => boolean;
+  validator?: (value: T, meta?: PreferenceCacheEntry<T>["meta"]) => boolean;
 }
 
 export interface PreferenceWithBootstrapReturn<T> {
@@ -84,7 +84,7 @@ export function usePreferenceWithBootstrap<T>({
 
         const nextValue = (backendValue as T) ?? defaultValueRef.current;
 
-        if (validator && !validator(nextValue)) {
+        if (validator && !validator(nextValue, res.meta)) {
           logger.warn(`Invalid value for preference ${key}:`, nextValue);
           return { value: defaultValueRef.current, meta: res.meta };
         }
@@ -189,13 +189,16 @@ export function usePreferenceWithBootstrap<T>({
   });
 
   const saveValue = async (nextValue: T): Promise<boolean> => {
-    if (validator && !validator(nextValue)) {
+    if (validator && !validator(nextValue, preferenceQuery.data?.meta)) {
       setError("Invalid value");
       return false;
     }
 
     setSaving(true);
     setError(null);
+    // Protect the optimistic value only while the write is in flight. A failed
+    // save must not block later backend refreshes forever.
+    setHasLocalOverride(true);
     try {
       await saveMutation.mutateAsync(nextValue);
       return true;
@@ -203,11 +206,11 @@ export function usePreferenceWithBootstrap<T>({
       return false;
     } finally {
       setSaving(false);
+      setHasLocalOverride(false);
     }
   };
 
   const updateValue = (nextValue: T) => {
-    setHasLocalOverride(true);
     setValue(nextValue);
     setError(null);
     if (key === "system.timezone") {

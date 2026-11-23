@@ -52,7 +52,18 @@ export function useAdvancedSearchWithPagination(
       const response = await timelogsApi.advancedSearch(params);
       const signature = buildSignature(params);
       metadataMapRef.current[signature] = response.meta;
-      return response.items;
+
+      // The API has no ordering parameter, so apply the user's sort here the
+      // same way the day view does.
+      if (!params.sort_order) {
+        return response.items;
+      }
+      const direction = params.sort_order === "desc" ? -1 : 1;
+      return [...response.items].sort(
+        (a, b) =>
+          (new Date(a.start_time).getTime() - new Date(b.start_time).getTime()) *
+          direction,
+      );
     },
     onError: (error) => {
       const message =

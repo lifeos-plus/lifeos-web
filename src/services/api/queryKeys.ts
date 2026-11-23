@@ -97,7 +97,7 @@ export const areasKeys = {
 export const timelogTemplatesKeys = {
   all: ["timelog-templates"] as const,
   lists: () => [...timelogTemplatesKeys.all, "list"] as const,
-  list: (filters: { limit?: number; offset?: number; order_by?: string }) =>
+  list: (filters: { page?: number; size?: number; order_by?: string }) =>
     [...timelogTemplatesKeys.lists(), filters] as const,
   details: () => [...timelogTemplatesKeys.all, "detail"] as const,
   detail: (id: UUID) => [...timelogTemplatesKeys.details(), id] as const,

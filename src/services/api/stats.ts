@@ -23,10 +23,12 @@ export const statsApi = {
       area_ids: areaIds,
     });
   },
-  async getLocalDayBreakdown(day: string) {
-    return http.get<DayBreakdownListResponse>(ENDPOINTS.STATS.DAY_BREAKDOWN, {
-      day,
-    });
+  async getLocalDayBreakdown(day: string, options?: { signal?: AbortSignal }) {
+    return http.get<DayBreakdownListResponse>(
+      ENDPOINTS.STATS.DAY_BREAKDOWN,
+      { day },
+      { signal: options?.signal },
+    );
   },
   async getAggregatedAreas(
     granularity: AggregationGranularity,

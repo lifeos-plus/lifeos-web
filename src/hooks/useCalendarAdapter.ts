@@ -6,6 +6,14 @@ import {
   createCalendarAdapter,
 } from "@/utils/calendar";
 import { parseDateKey } from "@/utils/datetime";
+import {
+  DEFAULT_CALENDAR_SYSTEM,
+  DEFAULT_FIRST_DAY_OF_WEEK,
+  isValidCalendarSystem,
+  isValidFirstDayOfWeek,
+  isValidMayanNewYearStart,
+  isValidSevenYearAnchorYear,
+} from "@/config/calendarPreferences";
 import type {
   CalendarAdapter,
   CalendarSystem,
@@ -24,32 +32,28 @@ interface CalendarAdapterState {
 export function useCalendarAdapter(): CalendarAdapterState {
   const calendarSystemPreference = usePreferenceWithBootstrap<CalendarSystem>({
     key: "calendar.system",
-    defaultValue: "gregorian",
+    defaultValue: DEFAULT_CALENDAR_SYSTEM,
     module: "calendar",
-    validator: (value) => value === "gregorian" || value === "mayan_13_moon",
+    validator: isValidCalendarSystem,
   });
 
   const firstDayPreference = usePreferenceWithBootstrap<number>({
     key: "calendar.first_day_of_week",
-    defaultValue: 1,
+    defaultValue: DEFAULT_FIRST_DAY_OF_WEEK,
     module: "calendar",
-    validator: (value) => Number.isFinite(value) && value >= 1 && value <= 7,
+    validator: isValidFirstDayOfWeek,
   });
   const sevenYearAnchorPreference = usePreferenceWithBootstrap<number>({
     key: "calendar.seven_year_anchor_year",
     defaultValue: DEFAULT_SEVEN_YEAR_ANCHOR_YEAR,
     module: "calendar",
-    validator: (value) =>
-      typeof value === "number" &&
-      Number.isInteger(value) &&
-      value >= 1 &&
-      value <= 9999,
+    validator: isValidSevenYearAnchorYear,
   });
   const mayanNewYearPreference = usePreferenceWithBootstrap<string>({
     key: "calendar.mayan_new_year_start",
     defaultValue: DEFAULT_MAYAN_NEW_YEAR_START,
     module: "calendar",
-    validator: (value) => /^\d{2}-\d{2}$/.test(value),
+    validator: isValidMayanNewYearStart,
   });
 
   const calendarSystem: CalendarSystem =

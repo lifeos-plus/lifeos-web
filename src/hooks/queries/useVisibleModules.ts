@@ -1,11 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { MODULES } from "@/config/modulesConfig";
 import { useModuleConfig } from "@/hooks/useModuleConfig";
 import { usePreferenceWithBootstrap } from "./usePreferenceWithBootstrap";
-import { preferencesApi } from "@/services/api/preferences";
 
 const VISIBLE_MODULES_KEY = "navigation.visible_modules";
 const VISIBLE_MODULES_SYNC_KEY = "navigation.visible_modules.sync";
+
+function resolveAllowedModuleKeys(meta?: {
+  allowed_values?: unknown[];
+}): string[] {
+  const allowed = meta?.allowed_values;
+  if (Array.isArray(allowed)) {
+    return allowed.map((value) => String(value));
+  }
+  return MODULES.map((module) => module.key);
+}
 
 export function useVisibleModules() {
   const { modules } = useModuleConfig();
@@ -15,53 +24,32 @@ export function useVisibleModules() {
     [],
   );
 
-  // local allowed keys set to guard bad values
-  // Allowed keys are driven by backend meta; fallback to MODULES keys when meta missing.
-  const [allowedKeys, setAllowedKeys] = useState<Set<string>>(
-    () => new Set(MODULES.map((m) => m.key)),
-  );
-
   const {
     value: visibleKeys,
     loading,
     saving,
     error,
     bootstrapped,
+    meta,
     saveValue,
     updateValue,
   } = usePreferenceWithBootstrap<string[]>({
     key: VISIBLE_MODULES_KEY,
     defaultValue: defaultVisible,
     module: "navigation",
-    validator: (value) => {
+    validator: (value, preferenceMeta) => {
       if (!Array.isArray(value)) return false;
-      return value.every((k) => allowedKeys.has(k));
+      const allowed = new Set(resolveAllowedModuleKeys(preferenceMeta));
+      return value.every((key) => allowed.has(key));
     },
   });
 
-  useEffect(() => {
-    const updateAllowedKeys = async () => {
-      try {
-        const res =
-          await preferencesApi.getWithMeta<string[]>(VISIBLE_MODULES_KEY);
-        const metaAllowed = Array.isArray(res.meta?.allowed_values)
-          ? (res.meta!.allowed_values as unknown[])
-          : null;
-        const localAllowed = new Set<string>(
-          (metaAllowed
-            ? metaAllowed.map((v) => String(v))
-            : MODULES.map((m) => m.key)) as string[],
-        );
-        setAllowedKeys(localAllowed);
-      } catch (_e) {
-        setAllowedKeys(new Set(MODULES.map((m) => m.key)));
-      }
-    };
-
-    if (bootstrapped) {
-      updateAllowedKeys();
-    }
-  }, [bootstrapped]);
+  // Allowed keys come from the same response that carries the value, so no
+  // second request is needed.
+  const allowedKeys = useMemo(
+    () => new Set(resolveAllowedModuleKeys(meta)),
+    [meta],
+  );
 
   const updateVisibleKeys = (keys: string[]) => {
     const sanitized = Array.from(

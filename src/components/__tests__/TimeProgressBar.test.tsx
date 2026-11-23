@@ -14,8 +14,10 @@ setupTranslationMock();
 
 vi.mock("@/services/api/stats", () => ({
   statsApi: {
-    getLocalDayBreakdown: (localDateISO: string) =>
-      getLocalDayBreakdown(localDateISO),
+    getLocalDayBreakdown: (
+      localDateISO: string,
+      options?: { signal?: AbortSignal },
+    ) => getLocalDayBreakdown(localDateISO, options),
   },
 }));
 
@@ -109,7 +111,10 @@ describe("TimeProgressBar", () => {
       />,
     );
 
-    expect(getLocalDayBreakdown).toHaveBeenCalledWith("2025-10-10");
+    expect(getLocalDayBreakdown).toHaveBeenCalledWith(
+      "2025-10-10",
+      expect.anything(),
+    );
 
     await waitFor(() => {
       expect(screen.getByText("Deep Work")).toBeInTheDocument();
@@ -183,7 +188,10 @@ describe("TimeProgressBar", () => {
     );
 
     await waitFor(() => {
-      expect(getLocalDayBreakdown).toHaveBeenCalledWith("2025-10-11");
+      expect(getLocalDayBreakdown).toHaveBeenCalledWith(
+      "2025-10-11",
+      expect.anything(),
+    );
     });
 
     expect(
@@ -191,5 +199,29 @@ describe("TimeProgressBar", () => {
     ).toBeInTheDocument();
     expect(formatDurationMock).toHaveBeenCalledWith(1440);
     expect(screen.getByText("(100.0%)")).toBeInTheDocument();
+  });
+
+  it("aborts the previous request when the local date changes", async () => {
+    const signals: AbortSignal[] = [];
+    getLocalDayBreakdown.mockImplementation(
+      (_day: string, options?: { signal?: AbortSignal }) => {
+        if (options?.signal) signals.push(options.signal);
+        return new Promise(() => {});
+      },
+    );
+
+    const { rerender } = render(
+      <TimeProgressBar entries={[]} areas={[]} localDateISO="2025-10-10" />,
+    );
+
+    await waitFor(() => expect(signals).toHaveLength(1));
+
+    rerender(
+      <TimeProgressBar entries={[]} areas={[]} localDateISO="2025-10-11" />,
+    );
+
+    await waitFor(() => expect(signals).toHaveLength(2));
+    expect(signals[0].aborted).toBe(true);
+    expect(signals[1].aborted).toBe(false);
   });
 });
