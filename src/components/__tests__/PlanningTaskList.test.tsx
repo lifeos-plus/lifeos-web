@@ -14,6 +14,21 @@ vi.mock("@/components/planning/TaskGroupCard", () => ({
   },
 }));
 
+const planningCycle = {
+  getDefaultCycleSettings: () => ({ days: 7, startDate: "2025-01-01" }),
+  getQuickSetOptions: () => ({
+    today: { days: 1, startDate: "2025-01-01" },
+    tomorrow: { days: 1, startDate: "2025-01-02" },
+    thisWeek: { days: 7, startDate: "2025-01-01" },
+    thisMonth: { days: 31, startDate: "2025-01-01" },
+    thisYear: { days: 365, startDate: "2025-01-01" },
+  }),
+  adapter: {
+    getPeriodRange: () => ({ start: "2025-01-01", end: "2025-01-07" }),
+    getNextPeriod: () => new Date("2025-01-08T00:00:00"),
+  },
+} as never;
+
 const hookSpy = vi.fn();
 
 vi.mock("@/hooks/planning/usePlanningTaskGroup", () => ({
@@ -68,6 +83,9 @@ describe("PlanningTaskList", () => {
         visions={visions}
         onTaskUpdate={vi.fn()}
         planningCycleType="week"
+        planningCycle={planningCycle}
+        defaultInboxVision={null}
+        showHabitActions={false}
       />,
     );
 
