@@ -66,7 +66,7 @@ const VisionExperienceDefaultPreference = ({
         onCommit={handleCommit}
         disabled={loading || saving || disabled}
         ariaLabelledBy={ariaLabelledBy}
-      ariaDescribedBy={ariaDescribedBy}
+        ariaDescribedBy={ariaDescribedBy}
       />
       <p className="text-xs text-base-content/60">
         {saving ? t("common.saving") : t("settings.autoSaveHint")}

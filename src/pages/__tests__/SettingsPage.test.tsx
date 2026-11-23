@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import SettingsPage from "@/pages/SettingsPage";
@@ -17,6 +17,7 @@ const enumSelectProps = vi.hoisted(() => ({} as Record<string, unknown>));
 interface CapturedSettingsLayoutProps {
   groups: Array<{ id: string; items: Array<{ key: string }> }>;
   preferences: Record<string, unknown>;
+  disabled?: boolean;
 }
 
 const settingsLayoutProps = vi.hoisted(() => ({
@@ -203,6 +204,42 @@ describe("SettingsPage tab structure", () => {
       }),
     );
     preferencesApiMock.set.mockResolvedValue({ key: "", value: null });
+  });
+
+  it("keeps other settings interactive while one preference is saving", async () => {
+    let resolveSet: ((value: unknown) => void) | undefined;
+    preferencesApiMock.set.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveSet = resolve;
+        }),
+    );
+
+    renderWithProviders(<SettingsPage />);
+    fireEvent.click(screen.getByText("settings.health.title"));
+
+    const height = await screen.findByLabelText(
+      "settings.health.bodyHeight.label",
+    );
+    await waitFor(() => expect(height).toBeEnabled());
+
+    fireEvent.change(height, { target: { value: "170" } });
+    fireEvent.blur(height);
+    await waitFor(() =>
+      expect(preferencesApiMock.set).toHaveBeenCalledWith(
+        "health.body_height_cm",
+        170,
+        "health",
+      ),
+    );
+
+    // A single in-flight preference must not disable the whole settings page;
+    // each control owns its own saving state.
+    expect(settingsLayoutProps.current?.disabled).toBeFalsy();
+
+    await act(async () => {
+      resolveSet?.({ key: "health.body_height_cm", value: 170 });
+    });
   });
 
   it("hosts area ordering and the default vision in their own tabs", () => {

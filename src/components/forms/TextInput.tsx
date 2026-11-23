@@ -4,12 +4,13 @@ type TextInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "size"
 > & {
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
 };
 
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   ({ className = "", size = "md", type = "text", ...rest }, ref) => {
     const sizeClasses = {
+      xs: "input-xs text-xs",
       sm: "input-sm text-sm",
       md: "input-md text-sm",
       lg: "input-lg text-base",

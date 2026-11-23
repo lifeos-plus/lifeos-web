@@ -426,14 +426,6 @@ function SettingsPage() {
     ],
   );
 
-  const isLoading = useMemo(() => {
-    return Object.values(preferences).some((pref) => pref.loading);
-  }, [preferences]);
-
-  const isSaving = useMemo(() => {
-    return Object.values(preferences).some((pref) => pref.saving);
-  }, [preferences]);
-
   const handleAreaManagerClose = () => {
     setShowAreaManager(false);
   };
@@ -443,8 +435,6 @@ function SettingsPage() {
       <SettingsLayout
         groups={groupsConfig}
         preferences={preferences}
-        loading={isLoading}
-        disabled={isSaving}
       />
 
       <AreaManagerModal

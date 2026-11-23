@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -103,12 +103,83 @@ describe("NumericInput", () => {
     expect(onCommit).toHaveBeenCalledWith(90);
   });
 
+  it("does not block the enclosing form's submit on Enter", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<NumericInput value={60} onCommit={vi.fn()} />);
+
+    const input = screen.getByRole("textbox");
+    await user.click(input);
+
+    expect(fireEvent.keyDown(input, { key: "Enter" })).toBe(true);
+  });
+
   it("ignores non-digit characters", () => {
     renderWithProviders(<NumericInput value={null} onCommit={vi.fn()} />);
 
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "1a7.0" } });
     expect(input).toHaveValue("170");
+  });
+
+  it("restores the last accepted value when the parent rejects the commit", async () => {
+    const user = userEvent.setup();
+    const onCommit = vi.fn().mockResolvedValue(false);
+    renderWithProviders(
+      <NumericInput value={60} allowEmpty={false} onCommit={onCommit} />,
+    );
+
+    const input = screen.getByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "120");
+    await user.tab();
+
+    expect(onCommit).toHaveBeenCalledWith(120);
+    expect(input).toHaveValue("60");
+  });
+
+  it("restores the last accepted value when the commit throws", async () => {
+    const user = userEvent.setup();
+    const onCommit = vi.fn().mockRejectedValue(new Error("save failed"));
+    renderWithProviders(
+      <NumericInput value={60} allowEmpty={false} onCommit={onCommit} />,
+    );
+
+    const input = screen.getByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "120");
+    await user.tab();
+
+    expect(input).toHaveValue("60");
+  });
+
+  it("does not clobber characters typed while a failed commit is in flight", async () => {
+    const user = userEvent.setup();
+    let resolveCommit: ((accepted: boolean) => void) | undefined;
+    const onCommit = vi.fn(
+      () =>
+        new Promise<boolean>((resolve) => {
+          resolveCommit = resolve;
+        }),
+    );
+
+    renderWithProviders(
+      <NumericInput value={60} allowEmpty={false} onCommit={onCommit} />,
+    );
+
+    const input = screen.getByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "120");
+    await user.tab();
+
+    await user.click(input);
+    await user.type(input, "9");
+    expect(input).toHaveValue("1209");
+
+    await act(async () => {
+      resolveCommit?.(false);
+    });
+
+    expect(input).toHaveValue("1209");
   });
 
   it("clears the value without racing a blur commit", async () => {

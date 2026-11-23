@@ -112,6 +112,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
               void commitValue(nextValue);
             }}
             disabled={isControlDisabled}
+            ariaLabelledBy={
+              !config.hideLabel ? `${getControlId()}-label` : undefined
+            }
             ariaDescribedBy={
               config.description ? `${getControlId()}-description` : undefined
             }
@@ -193,9 +196,8 @@ const SettingItem: React.FC<SettingItemProps> = ({
               saving,
               loading,
               error,
-              // Keep custom controls interactive while a save is in flight;
-              // they receive `saving` separately and own their focus handling.
-              disabled: disabled || loading,
+              // Per-item saving: disable only this control, not its siblings.
+              disabled: isControlDisabled,
               id: getControlId(),
               "aria-labelledby": !config.hideLabel
                 ? `${getControlId()}-label`

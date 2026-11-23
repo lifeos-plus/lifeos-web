@@ -9,9 +9,9 @@ import {
 import ActionButton from "@/components/ActionButton";
 import TextInput from "./TextInput";
 
-type NumericInputSize = "sm" | "md" | "lg";
+type NumericInputSize = "xs" | "sm" | "md" | "lg";
 
-interface NumericInputProps {
+interface NumericInputBaseProps {
   id?: string;
   name?: string;
   value: number | null;
@@ -19,14 +19,11 @@ interface NumericInputProps {
    * Called once the edit settles (blur or Enter), never on every keystroke.
    * The value is rounded and clamped to `min`/`max` before the commit.
    */
-  onCommit: (value: number | null) => void | Promise<unknown>;
+  onCommit: (value: number | null) => void | boolean | Promise<void | boolean>;
   min?: number;
   max?: number;
   /** Allow an empty field, committing `null`. Defaults to true. */
   allowEmpty?: boolean;
-  /** Render a clear (x) button while a value is present. */
-  allowClear?: boolean;
-  clearLabel?: string;
   placeholder?: string;
   disabled?: boolean;
   size?: NumericInputSize;
@@ -35,6 +32,12 @@ interface NumericInputProps {
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
 }
+
+type NumericInputProps = NumericInputBaseProps &
+  (
+    | { allowClear: true; clearLabel: string }
+    | { allowClear?: false; clearLabel?: string }
+  );
 
 const formatValue = (value: number | null): string =>
   value === null || !Number.isFinite(value) ? "" : String(Math.round(value));
@@ -104,30 +107,52 @@ const NumericInput = ({
   };
 
   const commit = useCallback(async () => {
+    const committedValue = value;
     const raw = textRef.current.trim();
     dirtyRef.current = false;
+    let expectedDraft = textRef.current;
+
+    // Do not clobber characters typed while an async save is in flight.
+    const restoreDraft = () => {
+      if (textRef.current === expectedDraft) {
+        writeText(formatValue(committedValue));
+      }
+    };
+
+    const commitValue = async (nextValue: number | null) => {
+      try {
+        const accepted = await onCommit(nextValue);
+        if (accepted === false) {
+          restoreDraft();
+        }
+      } catch {
+        // The parent owns error reporting; keep the last accepted value here.
+        restoreDraft();
+      }
+    };
 
     if (raw === "") {
       if (allowEmpty) {
-        if (value !== null) {
-          await onCommit(null);
+        if (committedValue !== null) {
+          await commitValue(null);
         }
         return;
       }
-      writeText(formatValue(value));
+      restoreDraft();
       return;
     }
 
     const parsed = Number(raw);
     if (!Number.isFinite(parsed)) {
-      writeText(formatValue(value));
+      restoreDraft();
       return;
     }
 
     const normalized = normalizeValue(parsed, min, max);
-    writeText(String(normalized));
-    if (normalized !== value) {
-      await onCommit(normalized);
+    expectedDraft = String(normalized);
+    writeText(expectedDraft);
+    if (normalized !== committedValue) {
+      await commitValue(normalized);
     }
   }, [allowEmpty, max, min, onCommit, value, writeText]);
 
@@ -137,7 +162,7 @@ const NumericInput = ({
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      event.preventDefault();
+      // Commit, but do not block the enclosing form's default submit.
       event.currentTarget.blur();
       return;
     }
@@ -148,10 +173,24 @@ const NumericInput = ({
     }
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
+    const committedValue = value;
+    const expectedDraft = "";
     dirtyRef.current = false;
-    writeText("");
-    void onCommit(null);
+    writeText(expectedDraft);
+    const restoreDraft = () => {
+      if (textRef.current === expectedDraft) {
+        writeText(formatValue(committedValue));
+      }
+    };
+    try {
+      const accepted = await onCommit(null);
+      if (accepted === false) {
+        restoreDraft();
+      }
+    } catch {
+      restoreDraft();
+    }
   };
 
   const input = (
@@ -192,7 +231,9 @@ const NumericInput = ({
             shape="square"
             size="sm"
             variant="ghost"
-            onClick={handleClear}
+            onClick={() => {
+              void handleClear();
+            }}
             disabled={disabled}
           />
         </span>

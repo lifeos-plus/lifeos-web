@@ -475,7 +475,7 @@ const TimeLogPage = () => {
                         min={1}
                         max={Math.max(advancedSearch.totalPages, 1)}
                         allowEmpty={false}
-                        size="sm"
+                        size="xs"
                         className="w-16 text-center"
                         ariaLabel={t("timeLog.pagination.jumpTo")}
                         onCommit={(page) => {
