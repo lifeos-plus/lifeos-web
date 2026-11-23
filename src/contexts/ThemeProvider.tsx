@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
 import {
-  AVAILABLE_THEMES,
   applyThemeWithTransition,
   getSavedTheme,
+  includeCurrentTheme,
+  isAppTheme,
+  resolveAvailableThemes,
   resolveSystemTheme,
   setTheme as setThemeUtil,
   watchSystemThemeChange,
@@ -26,8 +28,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     key: THEME_PREFERENCE_KEY,
     defaultValue: storedTheme,
     module: "appearance",
-    validator: (value) => AVAILABLE_THEMES.includes(value),
+    validator: (value) => isAppTheme(value),
   });
+
+  const availableThemes = useMemo(
+    () =>
+      includeCurrentTheme(
+        resolveAvailableThemes(preference.meta?.allowed_values),
+        preference.value,
+      ),
+    [preference.meta, preference.value],
+  );
 
   const [effectiveTheme, setEffectiveTheme] = useState<
     Exclude<AppTheme, "system">
@@ -88,11 +99,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       updateValue: updateThemeValue,
       saveValue: saveThemeValue,
       theme: preference.value,
+      availableThemes,
       effectiveTheme,
       setTheme,
       isSystem: preference.value === "system",
     }),
-    [preference, updateThemeValue, saveThemeValue, effectiveTheme, setTheme],
+    [
+      preference,
+      updateThemeValue,
+      saveThemeValue,
+      availableThemes,
+      effectiveTheme,
+      setTheme,
+    ],
   );
 
   return (

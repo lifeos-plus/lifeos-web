@@ -29,8 +29,7 @@ vi.mock("@/contexts/ThemeContext", () => ({
   useTheme: () => ({
     theme: "system",
     setTheme: vi.fn(),
-    resolveTheme: () => "light",
-    themes: [],
+    availableThemes: ["system", "fresh"],
   }),
 }));
 

@@ -196,6 +196,7 @@ function SettingsPage() {
 
   const groupsConfig = useSettingsConfig({
     calendarSystem: calendarSystemSettings.value,
+    themeOptions: themeSettings.availableThemes,
   });
 
   const [showAreaManager, setShowAreaManager] = useState(false);

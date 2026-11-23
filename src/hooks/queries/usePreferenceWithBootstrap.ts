@@ -28,6 +28,7 @@ export interface PreferenceWithBootstrapReturn<T> {
   saving: boolean;
   error: string | null;
   bootstrapped: boolean;
+  meta?: PreferenceCacheEntry<T>["meta"];
   saveValue: (value: T) => Promise<boolean>;
   updateValue: (value: T) => void;
 }
@@ -231,6 +232,7 @@ export function usePreferenceWithBootstrap<T>({
     saving,
     error,
     bootstrapped,
+    meta: preferenceQuery.data?.meta,
     saveValue,
     updateValue,
   };
