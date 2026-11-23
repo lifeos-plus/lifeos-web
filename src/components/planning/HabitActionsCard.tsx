@@ -271,6 +271,7 @@ export const HabitActionsCard: React.FC<HabitActionsCardProps> = ({
             id: viewingHabitNotesForAction.habit_id,
             title: viewingHabitNotesForAction.habit.title,
           }}
+          habitAction={buildHabitActionSummary(viewingHabitNotesForAction)}
           onNotesChanged={onNotesChanged}
         />
       )}

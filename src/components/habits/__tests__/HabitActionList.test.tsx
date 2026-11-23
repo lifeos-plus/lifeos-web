@@ -55,7 +55,7 @@ describe("HabitActionList", () => {
     vi.restoreAllMocks();
   });
 
-  it("does not render note details in the five day view", () => {
+  it("does not render note details in the five day view", async () => {
     const { container } = renderWithProviders(
       <HabitActionList
         actions={[actionWithoutNotes, action]}
@@ -93,11 +93,51 @@ describe("HabitActionList", () => {
       })[0],
     );
     expect(screen.getByText("habitNotes.title")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "createNoteModal.submitText" }),
+    ).toBeEnabled();
     expect(container.querySelector(".space-y-2 > div")).toHaveClass(
       "flex-col",
       "sm:flex-row",
       "min-w-0",
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "common.close" }));
+    expect(screen.queryByText("habitNotes.title")).not.toBeInTheDocument();
+  });
+
+  it("opens the shared notes modal with note creation for a single action", async () => {
+    vi.useRealTimers();
+
+    renderWithProviders(
+      <HabitActionList
+        actions={[action]}
+        habitId={"habit-1" as UUID}
+        habitTitle="Morning Walk"
+        durationDays={5}
+        startDate="2026-07-02"
+        cadenceFrequency="daily"
+        calendarAdapter={new GregorianCalendarAdapter()}
+        calendarSystem="gregorian"
+        centerDate={new Date("2026-07-04T00:00:00")}
+        onCenterDateChange={vi.fn()}
+        onStatusUpdate={vi.fn()}
+      />,
+      { wrapper: WithModalProvider },
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "notes.actions.viewNotes" }),
+    );
+
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("habitActionNotes.title");
+    expect(
+      await screen.findByText("habitActionNotes.emptyState.title"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "createNoteModal.submitText" }),
+    ).toBeEnabled();
   });
 
   it("uses habit action occurrence periods for weekly five period view", () => {

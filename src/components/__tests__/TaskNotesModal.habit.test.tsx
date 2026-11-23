@@ -36,7 +36,7 @@ describe("TaskNotesModal habit aggregation", () => {
     vi.restoreAllMocks();
   });
 
-  it("loads all habit notes without offering direct habit-note creation", async () => {
+  it("hides note creation when the aggregate habit view has no check-in context", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation(() =>
       Promise.resolve(
         new Response(
@@ -79,6 +79,53 @@ describe("TaskNotesModal habit aggregation", () => {
     expect(new URL(requestedUrl).pathname).toBe(
       ENDPOINTS.HABITS.NOTES("habit-1"),
     );
+  });
+
+  it("offers note creation from the aggregate habit view when a check-in is supplied", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            items: [],
+            pagination: { page: 1, size: 50, total: 0, pages: 0 },
+            meta: { habit_id: "habit-1" },
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
+    const habitAction: NoteHabitActionSummary = {
+      id: "action-1",
+      habit_id: "habit-1",
+      habit_title: "Morning Walk",
+      action_date: "2026-07-06",
+      status: "done",
+    };
+
+    renderWithProviders(
+      <TaskNotesModal
+        isOpen
+        onClose={vi.fn()}
+        entityType="habit"
+        habit={{ id: "habit-1" as UUID, title: "Morning Walk" }}
+        habitAction={habitAction}
+      />,
+      { wrapper: WithModalProvider },
+    );
+
+    const createButton = await screen.findByRole("button", {
+      name: "createNoteModal.submitText",
+    });
+    expect(createButton).toBeEnabled();
+    fireEvent.click(createButton);
+
+    expect(
+      await screen.findByText("createNoteModal.habitActionHeader.label"),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
   });
 
   it("keeps single-action note creation available", () => {
