@@ -54,33 +54,12 @@ export interface NoteAdvancedSearchPayload {
   keyword?: string | null;
 }
 
-interface NoteBatchContentUpdatePayload {
-  find_text: string;
-  replace_text: string;
-  case_sensitive?: boolean;
-}
-
-export interface NoteBatchUpdatePayload {
-  note_ids: UUID[];
-  notes: Array<{ id: UUID; content: string }>;
-  content: NoteBatchContentUpdatePayload;
-}
-
-export interface NoteBatchUpdateResult {
-  updated_count: number;
-  failed_ids: UUID[];
-  errors: string[];
-}
-
-export interface NoteBatchDeletePayload {
-  note_ids: UUID[];
-}
-
-export interface NoteBatchDeleteResult {
-  deleted_count: number;
-  failed_ids: UUID[];
-  errors: string[];
-}
+export type NoteBatchUpdatePayload = components["schemas"]["NoteBatchUpdate"];
+export type NoteBatchUpdateResult =
+  components["schemas"]["NoteBatchUpdateResponse"];
+export type NoteBatchDeletePayload = components["schemas"]["NoteBatchDelete"];
+export type NoteBatchDeleteResult =
+  components["schemas"]["NoteBatchDeleteResponse"];
 
 interface NoteBulkCreateItemPayload {
   content: string;
@@ -232,68 +211,20 @@ export const notesApi = {
     };
   },
 
-  batchUpdate: async (payload: NoteBatchUpdatePayload) => {
+  batchUpdate: async (
+    payload: NoteBatchUpdatePayload,
+  ): Promise<NoteBatchUpdateResult> => {
     if (!payload.content.find_text.trim()) {
       throw new Error("Find text must not be empty.");
     }
-    const notesById = new Map(payload.notes.map((note) => [note.id, note]));
-    const failedIds: UUID[] = [];
-    const errors: string[] = [];
-    let updatedCount = 0;
-
-    const results = await Promise.allSettled(
-      payload.note_ids.map(async (noteId) => {
-        const note = notesById.get(noteId);
-        if (!note) {
-          throw new Error(`Note ${noteId} is not available in the current result set.`);
-        }
-        const pattern = payload.content.case_sensitive
-          ? new RegExp(payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")
-          : new RegExp(
-              payload.content.find_text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-              "gi",
-            );
-        let replacements = 0;
-        const content = note.content.replace(pattern, () => {
-          replacements += 1;
-          return payload.content.replace_text;
-        });
-        if (replacements === 0) {
-          return;
-        }
-        await notesApi.update(noteId, { content });
-        updatedCount += 1;
-      }),
+    return http.post<NoteBatchUpdateResult>(
+      ENDPOINTS.NOTES.BATCH_UPDATE,
+      payload,
     );
-
-    results.forEach((result, index) => {
-      if (result.status === "rejected") {
-        failedIds.push(payload.note_ids[index]);
-        errors.push(
-          result.reason instanceof Error ? result.reason.message : String(result.reason),
-        );
-      }
-    });
-    return {
-      updated_count: updatedCount,
-      failed_ids: failedIds,
-      errors,
-    } satisfies NoteBatchUpdateResult;
   },
 
   batchDelete: (payload: NoteBatchDeletePayload) =>
-    Promise.allSettled(payload.note_ids.map((noteId) => notesApi.delete(noteId))).then(
-      (results) => {
-        const failedIds = payload.note_ids.filter(
-          (_, index) => results[index].status === "rejected",
-        );
-        return {
-          deleted_count: payload.note_ids.length - failedIds.length,
-          failed_ids: failedIds,
-          errors: [],
-        } satisfies NoteBatchDeleteResult;
-      },
-    ),
+    http.post<NoteBatchDeleteResult>(ENDPOINTS.NOTES.BATCH_DELETE, payload),
 
   batchCreate: (payload: NoteBulkCreateRequestPayload) =>
     Promise.allSettled(

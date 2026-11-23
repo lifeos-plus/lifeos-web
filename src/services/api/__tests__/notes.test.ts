@@ -173,44 +173,22 @@ describe("notesApi", () => {
     });
   });
 
-  it("applies batch content replacement through per-note updates", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation((input) => {
-        const url = String(input);
-        const id = url.split("/").at(-1);
-        return Promise.resolve(
-          new Response(
-            JSON.stringify({
-              id,
-              content: "final draft",
-              created_at: "2026-01-01T00:00:00Z",
-              updated_at: "2026-01-01T00:00:00Z",
-              deleted_at: null,
-              tags: [],
-              person: [],
-              tasks: [],
-              task: null,
-              visions: [],
-              events: [],
-              timelogs: [],
-              habit_actions: [],
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          ),
-        );
-      });
+  it("sends a single batch update request for content replacement", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          updated_count: 2,
+          replacement_count: 3,
+          unchanged_ids: ["note-3"],
+          failed_ids: [],
+          errors: [],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
 
     const result = await notesApi.batchUpdate({
       note_ids: ["note-1", "note-2", "note-3"],
-      notes: [
-        { id: "note-1", content: "draft one" },
-        { id: "note-2", content: "draft two" },
-        { id: "note-3", content: "unchanged" },
-      ],
       content: {
         find_text: "draft",
         replace_text: "final",
@@ -219,10 +197,39 @@ describe("notesApi", () => {
     });
 
     expect(result.updated_count).toBe(2);
-    expect(result.failed_ids).toEqual([]);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    fetchMock.mock.calls.forEach(([, init]) => {
-      expect((init as RequestInit).method).toBe("PATCH");
+    expect(result.replacement_count).toBe(3);
+    expect(result.unchanged_ids).toEqual(["note-3"]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [input, init] = fetchMock.mock.calls[0];
+    expect(String(input)).toContain("/notes/batch-update");
+    expect((init as RequestInit).method).toBe("POST");
+    expect(JSON.parse(String((init as RequestInit).body))).toEqual({
+      note_ids: ["note-1", "note-2", "note-3"],
+      content: {
+        find_text: "draft",
+        replace_text: "final",
+        case_sensitive: false,
+      },
+    });
+  });
+
+  it("sends a single batch delete request", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({ deleted_count: 2, failed_ids: [], errors: [] }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
+
+    const result = await notesApi.batchDelete({ note_ids: ["note-1", "note-2"] });
+
+    expect(result.deleted_count).toBe(2);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [input, init] = fetchMock.mock.calls[0];
+    expect(String(input)).toContain("/notes/batch-delete");
+    expect((init as RequestInit).method).toBe("POST");
+    expect(JSON.parse(String((init as RequestInit).body))).toEqual({
+      note_ids: ["note-1", "note-2"],
     });
   });
 
@@ -232,7 +239,6 @@ describe("notesApi", () => {
     await expect(
       notesApi.batchUpdate({
         note_ids: ["note-1"],
-        notes: [{ id: "note-1", content: "draft" }],
         content: {
           find_text: "   ",
           replace_text: "final",

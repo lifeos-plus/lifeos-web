@@ -61,7 +61,6 @@ export function useNotesBatchEditController({
       try {
         const result = await mutation.mutateAsync({
           note_ids: notes.map((note) => note.id),
-          notes,
           content: {
             find_text: findText,
             replace_text: replaceText,
