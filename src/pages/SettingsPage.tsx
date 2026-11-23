@@ -432,10 +432,7 @@ function SettingsPage() {
 
   return (
     <>
-      <SettingsLayout
-        groups={groupsConfig}
-        preferences={preferences}
-      />
+      <SettingsLayout groups={groupsConfig} preferences={preferences} />
 
       <AreaManagerModal
         isOpen={showAreaManager}
