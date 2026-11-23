@@ -58,10 +58,10 @@ const normalizeValue = (
  * (e.g. hhmm durations or comma-separated day lists) have different input
  * semantics and should keep their form-local string state instead.
  *
- * Committing on every keystroke (the previous behavior) made these inputs
- * unusable: the parent disabled the field while the save was in flight, which
- * dropped focus after the first digit, and eager clamping rewrote partial
- * input (typing "170" became 50 -> 507 -> 300).
+ * The auto-saved settings this component replaces used to commit on every
+ * keystroke, which made those inputs unusable: the parent disabled the field
+ * while the save was in flight, dropping focus after the first digit, and
+ * eager clamping rewrote partial input (typing "170" became 50 -> 507 -> 300).
  */
 const NumericInput = ({
   id,
