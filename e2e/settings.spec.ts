@@ -1,25 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-import { resolveSchemaVersion } from "../scripts/pinned-cli-version.mjs";
-
-const PREFERENCE_PERSISTENCE_MIN_VERSION = [1, 4, 10] as const;
-
-function supportsPreferencePersistence(version: string): boolean {
-  const [major = 0, minor = 0, patch = 0] = version
-    .replace(/^v/, "")
-    .split(".")
-    .map((part) => Number.parseInt(part, 10));
-  if (![major, minor, patch].every(Number.isFinite)) {
-    return true;
-  }
-  const [minMajor, minMinor, minPatch] = PREFERENCE_PERSISTENCE_MIN_VERSION;
-  return (
-    major > minMajor ||
-    (major === minMajor &&
-      (minor > minMinor || (minor === minMinor && patch >= minPatch)))
-  );
-}
-
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("i18nextLng", "en");
@@ -45,10 +25,7 @@ test("settings keeps height input usable and separates areas from visions", asyn
 
   expect(await height.inputValue()).toBe("175");
 
-  // NOTE: lifeos-cli 1.4.9 drops health.body_height_cm on write
-  // (lifeos-plus/lifeos-cli#372), so asserting persistence across a reload
-  // would fail until the pinned API ships that fix. This asserts that the
-  // client accepts and submits the complete multi-digit value.
+  // The client must submit the complete multi-digit value, not a partial one.
   const saved = page.waitForResponse(
     (response) =>
       response.request().method() === "PUT" &&
@@ -69,15 +46,7 @@ test("settings keeps height input usable and separates areas from visions", asyn
   await expect(page.getByLabel("Select Default Vision")).toBeVisible();
 });
 
-test("settings persists body height when the pinned API supports it", async ({
-  page,
-}) => {
-  const pinnedVersion = resolveSchemaVersion();
-  test.skip(
-    !supportsPreferencePersistence(pinnedVersion),
-    `Pinned lifeos-cli ${pinnedVersion} cannot persist health preferences yet (lifeos-plus/lifeos-cli#372)`,
-  );
-
+test("settings persists body height across reload", async ({ page }) => {
   await page.goto("/settings");
   await page.getByRole("button", { name: "Health", exact: true }).click();
   const height = page.getByLabel("Body height");
@@ -100,15 +69,7 @@ test("settings persists body height when the pinned API supports it", async ({
   await expect(page.getByLabel("Body height")).toHaveValue("175");
 });
 
-test("settings persists the interface font when the pinned API supports it", async ({
-  page,
-}) => {
-  const pinnedVersion = resolveSchemaVersion();
-  test.skip(
-    !supportsPreferencePersistence(pinnedVersion),
-    `Pinned lifeos-cli ${pinnedVersion} cannot persist appearance.font yet (lifeos-plus/lifeos-cli#372)`,
-  );
-
+test("settings persists the interface font across reload", async ({ page }) => {
   await page.goto("/settings");
   const font = page.getByLabel("Interface Font");
   await expect(font).toBeVisible();
