@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import StatusBadge from "@/components/StatusBadge";
 import ErrorDisplay from "@/components/ErrorDisplay";
@@ -32,9 +32,19 @@ interface VisionExperienceRatesTableProps {
   "aria-labelledby"?: string;
 }
 
+// The table owns a batch draft map: edits across rows are debounced into one
+// save, and an empty draft explicitly clears an override. NumericInput's
+// single-field commit-on-blur contract does not fit that model.
 type DraftMap = Record<UUID, string>;
 
-const normalizeRateInput = (raw: string): string => {
+const sanitizeRateInput = (raw: string): string => raw.replace(/[^\d]/g, "");
+
+/**
+ * Clamp once the field loses focus. Normalizing on every keystroke rewrote
+ * partial input, so a leading zero like "05" became "15" before the user
+ * could finish typing.
+ */
+const clampRateInput = (raw: string): string => {
   if (raw.trim() === "") {
     return "";
   }
@@ -78,19 +88,41 @@ const VisionExperienceRatesTable = ({
   const [drafts, setDrafts] = useState<DraftMap>({});
   const [original, setOriginal] = useState<DraftMap>({});
   const [localError, setLocalError] = useState<string | null>(null);
+  const originalRef = useRef<DraftMap>({});
+  const failedSaveSignatureRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const nextDrafts: DraftMap = {};
+    const serverDrafts: DraftMap = {};
     visions.forEach((vision) => {
       const rate =
         vision.experience_rate_per_hour === null ||
         vision.experience_rate_per_hour === undefined
           ? ""
           : String(vision.experience_rate_per_hour);
-      nextDrafts[vision.id] = rate;
+      serverDrafts[vision.id] = rate;
     });
-    setDrafts(nextDrafts);
-    setOriginal(nextDrafts);
+
+    // Snapshot the previously accepted values before scheduling the state
+    // update; the updater can run after originalRef has been advanced.
+    const previousOriginalDrafts = originalRef.current;
+
+    // Keep local edits that have not been saved yet when the parent refreshes
+    // visions (for example after saving another preference).
+    setDrafts((previousDrafts) => {
+      const merged: DraftMap = {};
+      visions.forEach((vision) => {
+        const serverDraft = serverDrafts[vision.id] ?? "";
+        const previousDraft = previousDrafts[vision.id];
+        const previousOriginalDraft = previousOriginalDrafts[vision.id];
+        const isDirty =
+          previousDraft !== undefined && previousDraft !== previousOriginalDraft;
+        merged[vision.id] = isDirty ? previousDraft : serverDraft;
+      });
+      return merged;
+    });
+
+    originalRef.current = serverDrafts;
+    setOriginal(serverDrafts);
     setLocalError(null);
   }, [visions]);
 
@@ -144,6 +176,7 @@ const VisionExperienceRatesTable = ({
   }, [drafts, original, visions]);
 
   const isDirty = updates.length > 0;
+  const updatesSignature = useMemo(() => JSON.stringify(updates), [updates]);
 
   useEffect(() => {
     if (hasInvalid) {
@@ -162,18 +195,39 @@ const VisionExperienceRatesTable = ({
     if (!isDirty || hasInvalid || disabled || saving) {
       return;
     }
+    // Do not hammer the API with the same failing batch every 600 ms; the
+    // user has to change the draft before another automatic attempt.
+    if (failedSaveSignatureRef.current === updatesSignature) {
+      return;
+    }
 
     const timer = window.setTimeout(async () => {
-      const success = await onSave(updates);
-      if (success) {
-        onRefresh();
+      try {
+        const success = await onSave(updates);
+        if (success) {
+          failedSaveSignatureRef.current = null;
+          onRefresh();
+        } else {
+          failedSaveSignatureRef.current = updatesSignature;
+        }
+      } catch {
+        failedSaveSignatureRef.current = updatesSignature;
       }
     }, 600);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [disabled, hasInvalid, isDirty, onRefresh, onSave, saving, updates]);
+  }, [
+    disabled,
+    hasInvalid,
+    isDirty,
+    onRefresh,
+    onSave,
+    saving,
+    updates,
+    updatesSignature,
+  ]);
 
   return (
     <div id={id} aria-describedby={ariaDescribedBy} className="space-y-3">
@@ -242,7 +296,13 @@ const VisionExperienceRatesTable = ({
                           onChange={(event) =>
                             handleRateChange(
                               vision.id,
-                              normalizeRateInput(event.target.value),
+                              sanitizeRateInput(event.target.value),
+                            )
+                          }
+                          onBlur={() =>
+                            handleRateChange(
+                              vision.id,
+                              clampRateInput(drafts[vision.id] ?? ""),
                             )
                           }
                           disabled={disabled || saving}

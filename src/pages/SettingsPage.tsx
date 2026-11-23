@@ -325,7 +325,7 @@ function SettingsPage() {
         updateValue: (value: unknown) =>
           noteCollapseSettings.updateValue(coerceNoteCollapseValue(value)),
       },
-      "data.areaOrder": {
+      "areas.areaOrder": {
         value: areaOrderSettings.value,
         loading: areaOrderSettings.loading,
         saving: areaOrderSettings.saving,
@@ -348,7 +348,7 @@ function SettingsPage() {
           areaOrderSettings.updateValue(value as UUID[]);
         },
       },
-      "data.defaultInboxVision": {
+      "visions.defaultInboxVision": {
         // The select uses "" for "no default"; the preference stores null.
         value: defaultInboxVisionSettings.defaultInboxVision ?? "",
         loading: defaultInboxVisionSettings.loading,
@@ -426,26 +426,13 @@ function SettingsPage() {
     ],
   );
 
-  const isLoading = useMemo(() => {
-    return Object.values(preferences).some((pref) => pref.loading);
-  }, [preferences]);
-
-  const isSaving = useMemo(() => {
-    return Object.values(preferences).some((pref) => pref.saving);
-  }, [preferences]);
-
   const handleAreaManagerClose = () => {
     setShowAreaManager(false);
   };
 
   return (
     <>
-      <SettingsLayout
-        groups={groupsConfig}
-        preferences={preferences}
-        loading={isLoading}
-        disabled={isSaving}
-      />
+      <SettingsLayout groups={groupsConfig} preferences={preferences} />
 
       <AreaManagerModal
         isOpen={showAreaManager}

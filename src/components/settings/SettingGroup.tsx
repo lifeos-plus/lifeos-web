@@ -29,7 +29,6 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
     .filter(Boolean);
 
   const hasErrors = groupPreferences.some((pref) => pref?.error);
-  const isSaving = groupPreferences.some((pref) => pref?.saving);
   const isLoading = groupPreferences.some((pref) => pref?.loading);
 
   const footerActions: CardAction[] = [...(customFooterActions || [])];
@@ -41,7 +40,9 @@ const SettingGroup: React.FC<SettingGroupProps> = ({
       error={hasErrors ? t("settings.saveFailed") : undefined}
       footerActions={footerActions.length > 0 ? footerActions : undefined}
       loading={isLoading || loading}
-      disabled={isSaving || disabled}
+      // Saving is handled per item: disabling the whole card would also freeze
+      // sibling inputs and an in-progress draft while one field saves.
+      disabled={disabled}
     >
       <div className="space-y-3">
         {config.items.map((itemConfig) => {

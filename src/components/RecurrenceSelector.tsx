@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import EnumSelect from "./selects/EnumSelect";
-import { Checkbox, TextInput } from "./forms";
+import { Checkbox, NumericInput } from "./forms";
 import { FORM_LABEL_COMPACT_CLASS, FORM_LABEL_CLASS } from "./forms/styles";
 
 interface CustomRecurrenceConfig {
@@ -317,19 +317,18 @@ export default function RecurrenceSelector({
               >
                 {t("target.interval")}
               </label>
-              <TextInput
+              <NumericInput
                 id="interval"
                 name="interval"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={String(customConfig.interval)}
-                onChange={(e) =>
-                  handleCustomConfigChange({
-                    interval: parseInt(e.target.value, 10) || 1,
-                  })
-                }
+                value={customConfig.interval}
+                min={1}
+                allowEmpty={false}
                 size="sm"
+                onCommit={(nextValue) => {
+                  if (nextValue !== null) {
+                    handleCustomConfigChange({ interval: nextValue });
+                  }
+                }}
               />
             </div>
           </div>
@@ -391,24 +390,24 @@ export default function RecurrenceSelector({
                     className="mr-2"
                   />
                   <span className="text-sm">{t("recurrence.byDate")}</span>
-                  <TextInput
+                  <NumericInput
                     id="monthDay"
                     name="monthDay"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={String(
+                    value={
                       customConfig.monthDay ||
-                        (startDate ? startDate.getDate() : 1),
-                    )}
-                    onChange={(e) =>
-                      handleCustomConfigChange({
-                        monthDay: parseInt(e.target.value, 10) || 1,
-                      })
+                      (startDate ? startDate.getDate() : 1)
                     }
+                    min={1}
+                    max={31}
+                    allowEmpty={false}
                     size="sm"
                     className="mx-1 w-16"
                     disabled={!customConfig.monthDay}
+                    onCommit={(nextValue) => {
+                      if (nextValue !== null) {
+                        handleCustomConfigChange({ monthDay: nextValue });
+                      }
+                    }}
                   />
                   <span className="text-sm">{t("recurrence.dayUnitLabel")}</span>
                 </label>

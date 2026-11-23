@@ -4,6 +4,7 @@ import EnumSelect from "@/components/selects/EnumSelect";
 import Checkbox from "@/components/forms/Checkbox";
 import CheckboxGroup from "@/components/forms/CheckboxGroup";
 import TextInput from "@/components/forms/TextInput";
+import { NumericInput } from "@/components/forms";
 import { FORM_LABEL_CLASS } from "@/components/forms/styles";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import type { SettingItemConfig } from "./types";
@@ -100,39 +101,21 @@ const SettingItem: React.FC<SettingItemProps> = ({
         const numericValue =
           typeof value === "number" && Number.isFinite(value) ? value : null;
 
-        const handleNumberChange = (
-          event: React.ChangeEvent<HTMLInputElement>,
-        ) => {
-          const inputValue = event.target.value;
-          if (inputValue === "") {
-            return;
-          }
-          const parsed = Number(inputValue);
-          if (Number.isNaN(parsed)) {
-            return;
-          }
-          let normalized = Math.round(parsed);
-          if (typeof config.min === "number" && normalized < config.min) {
-            normalized = config.min;
-          }
-          if (typeof config.max === "number" && normalized > config.max) {
-            normalized = config.max;
-          }
-          void commitValue(normalized);
-        };
-
         return (
-          <TextInput
+          <NumericInput
             id={getControlId()}
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={
-              numericValue === null ? "" : String(Math.trunc(numericValue))
-            }
-            onChange={handleNumberChange}
+            value={numericValue}
+            min={config.min}
+            max={config.max}
+            allowEmpty={false}
+            onCommit={(nextValue) => {
+              void commitValue(nextValue);
+            }}
             disabled={isControlDisabled}
-            aria-describedby={
+            ariaLabelledBy={
+              !config.hideLabel ? `${getControlId()}-label` : undefined
+            }
+            ariaDescribedBy={
               config.description ? `${getControlId()}-description` : undefined
             }
           />
@@ -213,6 +196,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
               saving,
               loading,
               error,
+              // Per-item saving: disable only this control, not its siblings.
               disabled: isControlDisabled,
               id: getControlId(),
               "aria-labelledby": !config.hideLabel

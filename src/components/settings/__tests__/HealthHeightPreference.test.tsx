@@ -37,25 +37,42 @@ describe("HealthHeightPreference", () => {
     );
   }
 
-  it("shows the current height and commits a clamped value on input", () => {
-    const renderAndType = (value: string) => {
-      const view = renderWithProviders(<Harness initialValue={null} />);
-      const input = view.getByRole("textbox");
-      fireEvent.change(input, { target: { value } });
-      return { input, ...view };
-    };
+  it("accepts multiple digits without committing on every keystroke", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Harness initialValue={null} />);
 
-    const normal = renderAndType("200");
-    expect(normal.input).toHaveValue("200");
-    normal.unmount();
+    const input = screen.getByRole("textbox");
+    await user.type(input, "170");
 
-    const high = renderAndType("9999");
-    expect(high.input).toHaveValue(String(HEALTH_HEIGHT_MAX_CM));
-    high.unmount();
+    expect(input).toHaveValue("170");
+  });
 
-    const low = renderAndType("10");
-    expect(low.input).toHaveValue(String(HEALTH_HEIGHT_MIN_CM));
-    low.unmount();
+  it("commits the complete clamped value on blur", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Harness initialValue={null} />);
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "9999");
+    expect(input).toHaveValue("9999");
+
+    await user.tab();
+    expect(input).toHaveValue(String(HEALTH_HEIGHT_MAX_CM));
+
+    await user.clear(input);
+    await user.type(input, "10");
+    await user.tab();
+    expect(input).toHaveValue(String(HEALTH_HEIGHT_MIN_CM));
+  });
+
+  it("commits the value on Enter", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Harness initialValue={null} />);
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "172{Enter}");
+
+    expect(input).toHaveValue("172");
+    expect(input).not.toHaveFocus();
   });
 
   it("clears the height back to null via the clear button", async () => {
@@ -76,6 +93,23 @@ describe("HealthHeightPreference", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("commits null when the field is emptied and blurred", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Harness initialValue={170} />);
+
+    const input = screen.getByRole("textbox");
+    await user.clear(input);
+    expect(input).toHaveValue("");
+
+    await user.tab();
+    expect(input).toHaveValue("");
+    expect(
+      screen.queryByRole("button", {
+        name: "settings.health.bodyHeight.clear",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
   it("renders no clear button while the height is unset", () => {
     renderWithProviders(<Harness initialValue={null} />);
 
@@ -85,5 +119,14 @@ describe("HealthHeightPreference", () => {
         name: "settings.health.bodyHeight.clear",
       }),
     ).not.toBeInTheDocument();
+  });
+
+  it("drops non-digit characters", () => {
+    renderWithProviders(<Harness initialValue={null} />);
+
+    fireEvent.change(screen.getByRole("textbox"), {
+      target: { value: "17a0" },
+    });
+    expect(screen.getByRole("textbox")).toHaveValue("170");
   });
 });

@@ -29,7 +29,7 @@ const NavigationIcon = createIcon("map");
 
 const CalendarIcon = createIcon("calendar");
 
-const DataIcon = createIcon("chart");
+const AreasIcon = createIcon("pin");
 
 const LanguageIcon = createIcon("language");
 
@@ -207,6 +207,23 @@ export const useSettingsConfig = (
       icon: <VisionIcon />,
       items: [
         {
+          key: "defaultInboxVision",
+          type: "select",
+          includeEmptyOption: true,
+          label: t("settings.defaultInboxVision.label"),
+          description: t("settings.defaultInboxVision.description"),
+          options: [
+            {
+              value: "",
+              label: t("settings.defaultInboxVision.noDefault"),
+            },
+            ...defaultInboxVisionSettings.availableVisions.map((vision) => ({
+              value: String(vision.id),
+              label: vision.name,
+            })),
+          ],
+        },
+        {
           key: "experienceRatePerHour",
           type: "custom",
           label: t("settings.visions.experienceRate.label"),
@@ -223,28 +240,10 @@ export const useSettingsConfig = (
       ],
     },
     {
-      id: "notes",
-      title: t("settings.notes.title"),
-      description: t("settings.notes.description"),
-      icon: <NotesIcon />,
-      items: [
-        {
-          key: "minCollapsedLines",
-          type: "select",
-          label: t("settings.notes.minCollapsedLines.label"),
-          description: t("settings.notes.minCollapsedLines.description"),
-          options: NOTE_COLLAPSE_ALLOWED_LINES.map((lines) => ({
-            value: String(lines),
-            label: t("notes.collapseDisplayHint", { count: lines }),
-          })),
-        },
-      ],
-    },
-    {
-      id: "data",
-      title: t("settings.data.title"),
-      description: t("settings.data.description"),
-      icon: <DataIcon />,
+      id: "areas",
+      title: t("settings.areas.title"),
+      description: t("settings.areas.description"),
+      icon: <AreasIcon />,
       items: [
         {
           key: "areaOrder",
@@ -269,22 +268,23 @@ export const useSettingsConfig = (
             );
           },
         },
+      ],
+    },
+    {
+      id: "notes",
+      title: t("settings.notes.title"),
+      description: t("settings.notes.description"),
+      icon: <NotesIcon />,
+      items: [
         {
-          key: "defaultInboxVision",
+          key: "minCollapsedLines",
           type: "select",
-          includeEmptyOption: true,
-          label: t("settings.defaultInboxVision.label"),
-          description: t("settings.defaultInboxVision.description"),
-          options: [
-            {
-              value: "",
-              label: t("settings.defaultInboxVision.noDefault"),
-            },
-            ...defaultInboxVisionSettings.availableVisions.map((vision) => ({
-              value: String(vision.id),
-              label: vision.name,
-            })),
-          ],
+          label: t("settings.notes.minCollapsedLines.label"),
+          description: t("settings.notes.minCollapsedLines.description"),
+          options: NOTE_COLLAPSE_ALLOWED_LINES.map((lines) => ({
+            value: String(lines),
+            label: t("notes.collapseDisplayHint", { count: lines }),
+          })),
         },
       ],
     },

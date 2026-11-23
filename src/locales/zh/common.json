@@ -649,6 +649,10 @@
         "description": "锚定七年周期的公历年份。公历七年从该年 1 月 1 日开始；玛雅历七年从该年的玛雅新年开始日算起。"
       }
     },
+    "areas": {
+      "title": "领域",
+      "description": "管理生命领域的展示顺序。"
+    },
     "areaOrder": {
       "title": "领域排序",
       "description": "自定义领域的呈现顺序，让你能优先关注最重要的生命领域。"
@@ -671,8 +675,8 @@
     },
     "noGroupSelected": "未选择设置分组",
     "visions": {
-      "title": "愿景经验",
-      "description": "配置实际投入时间如何转换为愿景经验值。",
+      "title": "愿景",
+      "description": "选择默认愿景，并配置实际投入时间如何转换为愿景经验值。",
       "experienceRate": {
         "label": "每小时经验值",
         "description": "设置每小时投入可获得的经验值（1-3600）。可在愿景编辑中为单个愿景设置独立倍率。"
@@ -692,10 +696,6 @@
         "rateInputLabel": "{{name}} 的经验倍率",
         "toastError": "愿景经验倍率更新失败。"
       }
-    },
-    "data": {
-      "title": "数据设置",
-      "description": "管理数据相关设置"
     },
     "notes": {
       "title": "笔记",
