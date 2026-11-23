@@ -60,31 +60,10 @@ export type NoteBatchDeletePayload = components["schemas"]["NoteBatchDelete"];
 export type NoteBatchDeleteResult =
   components["schemas"]["NoteBatchDeleteResponse"];
 
-interface NoteBulkCreateItemPayload {
-  content: string;
-}
-
-export interface NoteBulkCreateRequestPayload {
-  notes: NoteBulkCreateItemPayload[];
-  person_ids?: UUID[];
-  tag_ids?: UUID[];
-  task_id?: UUID | null;
-  timelog_ids?: UUID[];
-  habit_action_ids?: UUID[];
-}
-
-interface NoteBulkCreateFailedItem {
-  index: number;
-  content_preview: string;
-  error: string;
-}
-
-interface NoteBulkCreateResponsePayload {
-  created_notes: Note[];
-  failed_items: NoteBulkCreateFailedItem[];
-  created_count: number;
-  failed_count: number;
-}
+export type NoteBulkCreateRequestPayload =
+  components["schemas"]["NoteBatchCreate"];
+export type NoteBulkCreateResponsePayload =
+  components["schemas"]["NoteBatchCreateResponse"];
 
 type NoteListTransport = components["schemas"]["ListResponse_NoteResponse_NoteListMeta_"];
 export type NoteListResponse = Omit<NoteListTransport, "items"> & { items: Note[] };
@@ -206,42 +185,11 @@ export const notesApi = {
   batchDelete: (payload: NoteBatchDeletePayload) =>
     http.post<NoteBatchDeleteResult>(ENDPOINTS.NOTES.BATCH_DELETE, payload),
 
-  batchCreate: (payload: NoteBulkCreateRequestPayload) =>
-    Promise.allSettled(
-      payload.notes.map((note) =>
-        notesApi.create({
-          content: note.content,
-          person_ids: payload.person_ids,
-          tag_ids: payload.tag_ids,
-          task_id: payload.task_id,
-          timelog_ids: payload.timelog_ids,
-          habit_action_ids: payload.habit_action_ids,
-        }),
-      ),
-    ).then((results) => {
-      const createdNotes = results
-        .filter((result): result is PromiseFulfilledResult<Note> => result.status === "fulfilled")
-        .map((result) => result.value);
-      // `index` is the 0-based position inside the submitted chunk.
-      const failedItems = results.flatMap((result, index) =>
-        result.status === "rejected"
-          ? [
-              {
-                index,
-                content_preview: payload.notes[index].content.slice(0, 80),
-                error:
-                  result.reason instanceof Error
-                    ? result.reason.message
-                    : String(result.reason),
-              },
-            ]
-          : [],
-      );
-      return {
-        created_notes: createdNotes,
-        failed_items: failedItems,
-        created_count: createdNotes.length,
-        failed_count: failedItems.length,
-      } satisfies NoteBulkCreateResponsePayload;
-  }),
+  batchCreate: (
+    payload: NoteBulkCreateRequestPayload,
+  ): Promise<NoteBulkCreateResponsePayload> =>
+    http.post<NoteBulkCreateResponsePayload>(
+      ENDPOINTS.NOTES.BATCH_CREATE,
+      payload,
+    ),
 };

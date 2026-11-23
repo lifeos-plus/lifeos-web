@@ -51,6 +51,7 @@ export const ENDPOINTS = {
   NOTES: {
     BASE: `${API_V1}/notes/`,
     BY_ID: (id: string) => `${API_V1}/notes/${id}`,
+    BATCH_CREATE: `${API_V1}/notes/batch-create`,
     BATCH_UPDATE: `${API_V1}/notes/batch-update`,
     BATCH_DELETE: `${API_V1}/notes/batch-delete`,
     STATS_PERSON: `${API_V1}/notes/stats/person`,

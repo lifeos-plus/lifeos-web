@@ -248,65 +248,59 @@ describe("notesApi", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("forwards note associations on bulk create and reports 0-based failures", async () => {
+  it("sends one batch-create request with the shared associations", async () => {
+    const responseBody = {
+      created_notes: [
+        {
+          id: "note-ok",
+          content: "ok",
+          created_at: "2026-01-01T00:00:00Z",
+          updated_at: "2026-01-01T00:00:00Z",
+          deleted_at: null,
+          tags: [],
+          person: [],
+          tasks: [],
+          task: null,
+          visions: [],
+          events: [],
+          timelogs: [],
+          habit_actions: [],
+        },
+      ],
+      failed_items: [
+        { index: 1, content_preview: "bad", error: "boom" },
+      ],
+      created_count: 1,
+      failed_count: 1,
+    };
     const fetchMock = vi
       .spyOn(globalThis, "fetch")
-      .mockImplementation((_input, init) => {
-        const body = JSON.parse(String((init as RequestInit).body)) as {
-          content: string;
-        };
-        if (body.content === "ok") {
-          return Promise.resolve(
-            new Response(
-              JSON.stringify({
-                id: "note-ok",
-                content: "ok",
-                created_at: "2026-01-01T00:00:00Z",
-                updated_at: "2026-01-01T00:00:00Z",
-                deleted_at: null,
-                tags: [],
-                person: [],
-                tasks: [],
-                task: null,
-                visions: [],
-                events: [],
-                timelogs: [],
-                habit_actions: [],
-              }),
-              { status: 200, headers: { "Content-Type": "application/json" } },
-            ),
-          );
-        }
-        return Promise.resolve(
-          new Response(JSON.stringify({ detail: "boom" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          }),
-        );
-      });
+      .mockResolvedValue(
+        new Response(JSON.stringify(responseBody), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
 
-    const result = await notesApi.batchCreate({
+    const payload = {
       notes: [{ content: "ok" }, { content: "bad" }],
       person_ids: ["11111111-1111-1111-1111-111111111111"],
       tag_ids: ["22222222-2222-2222-2222-222222222222"],
       task_id: "33333333-3333-3333-3333-333333333333",
-    });
+    };
+
+    const result = await notesApi.batchCreate(payload);
 
     expect(result.created_count).toBe(1);
-    expect(result.failed_items).toHaveLength(1);
     expect(result.failed_items[0]).toMatchObject({
       index: 1,
       content_preview: "bad",
+      error: "boom",
     });
-
-    const bodies = fetchMock.mock.calls.map(([, init]) =>
-      JSON.parse(String((init as RequestInit).body)),
-    );
-    expect(bodies[0]).toMatchObject({
-      content: "ok",
-      person_ids: ["11111111-1111-1111-1111-111111111111"],
-      tag_ids: ["22222222-2222-2222-2222-222222222222"],
-      task_id: "33333333-3333-3333-3333-333333333333",
-    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [input, init] = fetchMock.mock.calls[0];
+    expect(String(input)).toContain("/notes/batch-create");
+    expect((init as RequestInit).method).toBe("POST");
+    expect(JSON.parse(String((init as RequestInit).body))).toEqual(payload);
   });
 });
