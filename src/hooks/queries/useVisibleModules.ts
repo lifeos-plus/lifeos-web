@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { MODULES } from "@/config/modulesConfig";
+import { preferencesKeys } from "@/services/api/queryKeys";
 import { useModuleConfig } from "@/hooks/useModuleConfig";
 import { usePreferenceWithBootstrap } from "./usePreferenceWithBootstrap";
 
@@ -18,6 +20,7 @@ function resolveAllowedModuleKeys(meta?: {
 
 export function useVisibleModules() {
   const { modules } = useModuleConfig();
+  const queryClient = useQueryClient();
 
   const defaultVisible: string[] = useMemo(
     () => MODULES.filter((m) => m.showInNav).map((m) => m.key),
@@ -86,33 +89,19 @@ export function useVisibleModules() {
     return success;
   };
 
-  const resetToDefault = () => {
-    updateValue(defaultVisible);
-    broadcastVisibleModules(defaultVisible);
-  };
-
-  // Cross-instance sync: listen for storage events dispatched by other tabs
+  // Cross-instance sync: another tab already persisted the value, so refetch
+  // instead of keeping a local-only copy.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handler = (event: StorageEvent) => {
       if (event.key !== VISIBLE_MODULES_SYNC_KEY || !event.newValue) return;
-      try {
-        const parsed = JSON.parse(event.newValue) as {
-          visibleKeys?: string[];
-        };
-        if (Array.isArray(parsed.visibleKeys)) {
-          const sanitized = Array.from(
-            new Set(parsed.visibleKeys.filter((k) => allowedKeys.has(k))),
-          );
-          updateValue(sanitized);
-        }
-      } catch {
-        // ignore malformed payloads
-      }
+      void queryClient.invalidateQueries({
+        queryKey: preferencesKeys.detail(VISIBLE_MODULES_KEY),
+      });
     };
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
-  }, [allowedKeys, updateValue, broadcastVisibleModules]);
+  }, [queryClient]);
 
   const allConfigurableModules = useMemo(() => {
     // Map allowed module keys to existing module configs for labels/icons
@@ -128,7 +117,6 @@ export function useVisibleModules() {
     bootstrapped,
     updateVisibleKeys,
     saveVisibleKeys,
-    resetToDefault,
     allConfigurableModules,
   };
 }

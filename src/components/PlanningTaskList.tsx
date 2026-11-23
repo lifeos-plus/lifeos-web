@@ -5,6 +5,8 @@ import type {
   PlanningGroup,
   PlanningViewType,
 } from "@/utils/calendar";
+import type { PlanningCycleContext } from "@/hooks/useCalendarAdapter";
+import type { UUID } from "@/types/primitive";
 import { usePlanningTaskGroup } from "@/hooks/planning/usePlanningTaskGroup";
 import { TaskGroupCard } from "./planning/TaskGroupCard";
 import type { TaskTooltipLookupEntry } from "./tooltips/tooltipData";
@@ -16,6 +18,9 @@ interface PlanningTaskListProps {
   onTaskUpdate?: () => void;
   planningCycleType?: PlanningViewType;
   calendarAdapter?: CalendarAdapter;
+  planningCycle: PlanningCycleContext;
+  defaultInboxVision: UUID | null;
+  showHabitActions: boolean;
 }
 
 const PlanningTaskList: React.FC<PlanningTaskListProps> = (props) => {
@@ -54,6 +59,9 @@ const PlanningTaskList: React.FC<PlanningTaskListProps> = (props) => {
     onTaskUpdate: props.onTaskUpdate,
     planningCycleType: props.planningCycleType,
     calendarAdapter: props.calendarAdapter,
+    planningCycle: props.planningCycle,
+    defaultInboxVision: props.defaultInboxVision,
+    showHabitActions: props.showHabitActions,
   });
 
   return (

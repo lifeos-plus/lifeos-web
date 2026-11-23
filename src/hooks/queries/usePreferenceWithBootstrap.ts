@@ -63,6 +63,10 @@ export function usePreferenceWithBootstrap<T>({
   const [error, setError] = useState<string | null>(null);
   const [bootstrapped, setBootstrapped] = useState(false);
   const [hasLocalOverride, setHasLocalOverride] = useState(false);
+  const isValidValue = (
+    candidate: T,
+    meta?: PreferenceCacheEntry<T>["meta"],
+  ) => !validator || validator(candidate, meta);
 
   // 当切换到新的偏好键时，重置本地状态
   useEffect(() => {
@@ -94,7 +98,7 @@ export function usePreferenceWithBootstrap<T>({
 
         const nextValue = (backendValue as T) ?? defaultValueRef.current;
 
-        if (validator && !validator(nextValue, res.meta)) {
+        if (!isValidValue(nextValue, res.meta)) {
           logger.warn(`Invalid value for preference ${key}:`, nextValue);
           return { value: defaultValueRef.current, meta: res.meta };
         }
@@ -117,6 +121,9 @@ export function usePreferenceWithBootstrap<T>({
       meta: undefined,
     }),
   });
+
+  const latestMetaRef = useRef<PreferenceCacheEntry<T>["meta"]>(undefined);
+  latestMetaRef.current = preferenceQuery.data?.meta;
 
   // `placeholderData` reports `isSuccess` immediately, so only treat the query
   // as loaded once the real response has replaced the placeholder.
@@ -199,7 +206,7 @@ export function usePreferenceWithBootstrap<T>({
   });
 
   const saveValue = async (nextValue: T): Promise<boolean> => {
-    if (validator && !validator(nextValue, preferenceQuery.data?.meta)) {
+    if (!isValidValue(nextValue, latestMetaRef.current)) {
       setError("Invalid value");
       return false;
     }

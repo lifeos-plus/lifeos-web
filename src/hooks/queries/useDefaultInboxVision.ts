@@ -59,10 +59,6 @@ export function useDefaultInboxVision() {
     updateValue(visionId);
   };
 
-  const resetToDefault = () => {
-    updateValue(null);
-  };
-
   const loading = isLoadingVisions || preferenceLoading;
   const error = visionsError?.message || preferenceError || null;
 
@@ -75,6 +71,5 @@ export function useDefaultInboxVision() {
     bootstrapped,
     saveDefaultInboxVision,
     updateDefaultInboxVision,
-    resetToDefault,
   };
 }

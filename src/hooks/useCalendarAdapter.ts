@@ -97,9 +97,12 @@ export function useCalendarAdapter(): CalendarAdapterState {
   };
 }
 
-export function usePlanningCycle() {
-  const { adapter, calendarSystem } = useCalendarAdapter();
-
+/**
+ * Pure helpers over an existing calendar adapter. Kept separate from
+ * `usePlanningCycle` so a page that already holds an adapter can reuse it
+ * instead of instantiating the calendar preferences a second time.
+ */
+export function createPlanningCycleHelpers(adapter: CalendarAdapter) {
   const getDefaultCycleSettings = (
     cycleType: ExtendedPlanningViewType,
     baseDate: Date = new Date(),
@@ -127,10 +130,21 @@ export function usePlanningCycle() {
     };
   };
 
+  return { getDefaultCycleSettings, getQuickSetOptions };
+}
+
+export type PlanningCycleContext = {
+  adapter: CalendarAdapter;
+} & ReturnType<typeof createPlanningCycleHelpers>;
+
+export function usePlanningCycle(): PlanningCycleContext & {
+  calendarSystem: CalendarSystem;
+} {
+  const { adapter, calendarSystem } = useCalendarAdapter();
+
   return {
     adapter,
     calendarSystem,
-    getDefaultCycleSettings,
-    getQuickSetOptions,
+    ...createPlanningCycleHelpers(adapter),
   };
 }

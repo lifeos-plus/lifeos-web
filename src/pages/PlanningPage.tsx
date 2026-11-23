@@ -3,7 +3,11 @@ import { useTranslation } from "react-i18next";
 import { usePageHeader } from "@/contexts/PageHeaderContext";
 import PageLayout from "@/layouts/PageLayout";
 import { useVisions } from "@/hooks/queries/useVisions";
-import { useCalendarAdapter } from "@/hooks/useCalendarAdapter";
+import {
+  createPlanningCycleHelpers,
+  useCalendarAdapter,
+} from "@/hooks/useCalendarAdapter";
+import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
 import type { PlanningViewType } from "@/utils/calendar";
 import { parseDateKey } from "@/utils/datetime";
 import PlanningTaskList from "@/components/PlanningTaskList";
@@ -39,6 +43,16 @@ const PlanningPage: React.FC = () => {
 
   const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>(
     planningHabitActionsPreference,
+  );
+  const { defaultInboxVision } = useDefaultInboxVision();
+
+  // One shared planning-cycle context for every group card.
+  const planningCycle = useMemo(
+    () => ({
+      adapter: calendarAdapter,
+      ...createPlanningCycleHelpers(calendarAdapter),
+    }),
+    [calendarAdapter],
   );
 
   React.useEffect(() => {
@@ -213,6 +227,9 @@ const PlanningPage: React.FC = () => {
                   }}
                   planningCycleType={viewType}
                   calendarAdapter={calendarAdapter}
+                  planningCycle={planningCycle}
+                  defaultInboxVision={defaultInboxVision}
+                  showHabitActions={showHabitActions}
                 />
               ))}
             </div>

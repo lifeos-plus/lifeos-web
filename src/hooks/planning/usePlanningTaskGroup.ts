@@ -6,9 +6,7 @@ import type { HabitActionWithHabit } from "@/services/api/habits";
 import { tasksApi } from "@/services/api/tasks";
 import { habitsApi } from "@/services/api/habits";
 import { useToast } from "@/contexts/ToastContext";
-import { usePlanningCycle } from "@/hooks/useCalendarAdapter";
-import { useDefaultInboxVision } from "@/hooks/queries/useDefaultInboxVision";
-import { usePreferenceWithBootstrap } from "@/hooks/queries/usePreferenceWithBootstrap";
+import type { PlanningCycleContext } from "@/hooks/useCalendarAdapter";
 import { useMultipleTaskTimelogs } from "@/hooks/queries/useTaskTimelogs";
 import { useHabitActionsInRange } from "@/hooks/queries/useHabitActionsInRange";
 import { useTaskExpansionState } from "@/hooks/useTaskExpansionState";
@@ -53,6 +51,10 @@ interface PlanningTaskGroupHookParams {
   onTaskUpdate?: () => void;
   planningCycleType?: PlanningViewType;
   calendarAdapter?: CalendarAdapter;
+  /** Shared at page level so every group does not re-read the same preferences. */
+  planningCycle: PlanningCycleContext;
+  defaultInboxVision: UUID | null;
+  showHabitActions: boolean;
 }
 
 export interface PlanningTaskGroupHandlers {
@@ -189,17 +191,21 @@ export function buildHabitActionRange(
 export function usePlanningTaskGroup(
   params: PlanningTaskGroupHookParams,
 ): PlanningTaskGroupHookResult {
-  const { group, visions, onTaskUpdate, planningCycleType, calendarAdapter } =
-    params;
+  const {
+    group,
+    visions,
+    onTaskUpdate,
+    planningCycleType,
+    calendarAdapter,
+    planningCycle,
+    defaultInboxVision,
+    showHabitActions,
+  } = params;
 
   const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { getDefaultCycleSettings, adapter } = usePlanningCycle();
-  const { defaultInboxVision } = useDefaultInboxVision();
-  const { value: showHabitActions } = usePreferenceWithBootstrap<boolean>(
-    planningHabitActionsPreference,
-  );
+  const { getDefaultCycleSettings, adapter } = planningCycle;
   const planningTaskFilterStatus = useMemo(() => ACTIVE_TASK_STATUSES, []);
 
   const [showTaskSelector, setShowTaskSelector] = useState(false);

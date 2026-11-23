@@ -70,6 +70,7 @@ export interface NoteBulkCreateRequestPayload {
   tag_ids?: UUID[];
   task_id?: UUID | null;
   timelog_ids?: UUID[];
+  habit_action_ids?: UUID[];
 }
 
 interface NoteBulkCreateFailedItem {
@@ -214,6 +215,7 @@ export const notesApi = {
           tag_ids: payload.tag_ids,
           task_id: payload.task_id,
           timelog_ids: payload.timelog_ids,
+          habit_action_ids: payload.habit_action_ids,
         }),
       ),
     ).then((results) => {
