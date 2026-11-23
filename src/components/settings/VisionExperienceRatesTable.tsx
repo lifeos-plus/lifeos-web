@@ -89,6 +89,7 @@ const VisionExperienceRatesTable = ({
   const [original, setOriginal] = useState<DraftMap>({});
   const [localError, setLocalError] = useState<string | null>(null);
   const originalRef = useRef<DraftMap>({});
+  const failedSaveSignatureRef = useRef<string | null>(null);
 
   useEffect(() => {
     const serverDrafts: DraftMap = {};
@@ -175,6 +176,7 @@ const VisionExperienceRatesTable = ({
   }, [drafts, original, visions]);
 
   const isDirty = updates.length > 0;
+  const updatesSignature = useMemo(() => JSON.stringify(updates), [updates]);
 
   useEffect(() => {
     if (hasInvalid) {
@@ -193,18 +195,39 @@ const VisionExperienceRatesTable = ({
     if (!isDirty || hasInvalid || disabled || saving) {
       return;
     }
+    // Do not hammer the API with the same failing batch every 600 ms; the
+    // user has to change the draft before another automatic attempt.
+    if (failedSaveSignatureRef.current === updatesSignature) {
+      return;
+    }
 
     const timer = window.setTimeout(async () => {
-      const success = await onSave(updates);
-      if (success) {
-        onRefresh();
+      try {
+        const success = await onSave(updates);
+        if (success) {
+          failedSaveSignatureRef.current = null;
+          onRefresh();
+        } else {
+          failedSaveSignatureRef.current = updatesSignature;
+        }
+      } catch {
+        failedSaveSignatureRef.current = updatesSignature;
       }
     }, 600);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [disabled, hasInvalid, isDirty, onRefresh, onSave, saving, updates]);
+  }, [
+    disabled,
+    hasInvalid,
+    isDirty,
+    onRefresh,
+    onSave,
+    saving,
+    updates,
+    updatesSignature,
+  ]);
 
   return (
     <div id={id} aria-describedby={ariaDescribedBy} className="space-y-3">

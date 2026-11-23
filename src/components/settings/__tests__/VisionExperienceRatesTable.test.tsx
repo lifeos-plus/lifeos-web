@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -61,6 +61,42 @@ describe("VisionExperienceRatesTable", () => {
     );
 
     expect(input).toHaveValue("120");
+  });
+
+  it("does not retry a failed batch save until the draft changes", async () => {
+    vi.useFakeTimers();
+    try {
+      const onSave = vi.fn(async () => false);
+      renderWithProviders(
+        <VisionExperienceRatesTable
+          {...baseProps}
+          value={{ ...makeTableValue([makeVision(60)]), onSave }}
+        />,
+      );
+
+      const input = screen.getByLabelText(
+        "settings.visions.experienceTable.rateInputLabel",
+      );
+      fireEvent.change(input, { target: { value: "120" } });
+
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+      expect(onSave).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        vi.advanceTimersByTime(1200);
+      });
+      expect(onSave).toHaveBeenCalledTimes(1);
+
+      fireEvent.change(input, { target: { value: "130" } });
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+      expect(onSave).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("preserves an unsaved draft when the parent refreshes visions", async () => {
