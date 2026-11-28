@@ -18,10 +18,9 @@ export type Task = Omit<TaskTransport, TaskOptionalFields> &
   Partial<Pick<TaskTransport, TaskOptionalFields>>;
 export type TaskMoveResponse = components["schemas"]["TaskMoveResponse"];
 export type TaskCreate = Omit<TaskCreateTransport, "vision_id"> & {
-  person_ids?: UUID[];
   vision_id: UUID | null;
 };
-export type TaskUpdate = TaskUpdateTransport & { person_ids?: UUID[] };
+export type TaskUpdate = TaskUpdateTransport;
 type TaskTreeTransport = components["schemas"]["TaskTreeResponse"];
 export type TaskWithSubtasks = Task & {
   subtasks: TaskWithSubtasks[];
@@ -39,18 +38,12 @@ export type TaskListResponse = Omit<TaskListTransport, "items" | "meta"> & {
 };
 
 const toTaskCreateTransport = ({
-  person_ids: _personIds,
   vision_id: visionId,
   ...payload
 }: TaskCreate): TaskCreateTransport => {
   if (!visionId) throw new Error("A vision is required to create a task.");
   return { ...payload, vision_id: visionId };
 };
-
-const toTaskUpdateTransport = ({
-  person_ids: _personIds,
-  ...payload
-}: TaskUpdate): TaskUpdateTransport => payload;
 
 // Shared filters for listing tasks (keep snake_case to match query params)
 export type TaskFieldsMode = "basic" | "full";
@@ -259,10 +252,7 @@ export const tasksApi = {
     if (task.parent_task_id === "") {
       task = { ...task, parent_task_id: null };
     }
-    return http.patch<TaskTransport>(
-      ENDPOINTS.TASKS.BY_ID(id),
-      toTaskUpdateTransport(task),
-    );
+    return http.patch<TaskTransport>(ENDPOINTS.TASKS.BY_ID(id), task);
   },
 
   async updateStatus(

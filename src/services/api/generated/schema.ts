@@ -4053,6 +4053,8 @@ export interface components {
             estimated_effort?: number | null;
             /** Parent Task Id */
             parent_task_id?: string | null;
+            /** Person Ids */
+            person_ids?: string[] | null;
             /** Planning Cycle Days */
             planning_cycle_days?: number | null;
             /** Planning Cycle Start Date */
@@ -4334,6 +4336,8 @@ export interface components {
             estimated_effort?: number | null;
             /** Parent Task Id */
             parent_task_id?: string | null;
+            /** Person Ids */
+            person_ids?: string[] | null;
             /** Planning Cycle Days */
             planning_cycle_days?: number | null;
             /** Planning Cycle Start Date */

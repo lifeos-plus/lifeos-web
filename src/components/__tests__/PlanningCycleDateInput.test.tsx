@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -68,5 +68,110 @@ describe("PlanningCycleDateInput", () => {
     await user.click(await screen.findByRole("button", { name: "Month 6" }));
 
     await waitFor(() => expect(handleChange).toHaveBeenCalledWith("2025-06-01"));
+  });
+
+  it("ignores out-of-range dates produced by native year segments", async () => {
+    // Typing a single digit over the year segment turns 2026-11-28 into
+    // 0007-11-28 in the browser. That must never be committed, otherwise the
+    // planning list crashes while resolving the cycle for year 7.
+    const handleChange = vi.fn();
+
+    render(
+      <PlanningCycleDateInput
+        cycleType="day"
+        startDate="2026-11-28"
+        onStartDateChange={handleChange}
+        id="planning-day"
+      />,
+    );
+
+    const input = screen.getByDisplayValue("2026-11-28");
+    fireEvent.change(input, { target: { value: "0007-11-28" } });
+
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
+  it("still commits supported day changes", async () => {
+    const handleChange = vi.fn();
+
+    render(
+      <PlanningCycleDateInput
+        cycleType="day"
+        startDate="2026-11-28"
+        onStartDateChange={handleChange}
+        id="planning-day"
+      />,
+    );
+
+    fireEvent.change(screen.getByDisplayValue("2026-11-28"), {
+      target: { value: "2026-12-01" },
+    });
+
+    await waitFor(() =>
+      expect(handleChange).toHaveBeenCalledWith("2026-12-01"),
+    );
+  });
+
+  it("snaps supported weekly dates to the week start", async () => {
+    const handleChange = vi.fn();
+
+    render(
+      <PlanningCycleDateInput
+        cycleType="week"
+        startDate="2026-11-23"
+        onStartDateChange={handleChange}
+        id="planning-week"
+      />,
+    );
+
+    const input = screen.getByDisplayValue("2026-11-23");
+    fireEvent.change(input, { target: { value: "0007-11-28" } });
+    expect(handleChange).not.toHaveBeenCalled();
+
+    fireEvent.change(input, { target: { value: "2026-11-26" } });
+    await waitFor(() =>
+      expect(handleChange).toHaveBeenCalledWith("2026-11-23"),
+    );
+  });
+
+  it("falls back to a plain date input for unknown cycle types", async () => {
+    const handleChange = vi.fn();
+
+    render(
+      <PlanningCycleDateInput
+        cycleType="custom"
+        startDate="2026-11-28"
+        onStartDateChange={handleChange}
+        id="planning-custom"
+      />,
+    );
+
+    const input = screen.getByDisplayValue("2026-11-28");
+    fireEvent.change(input, { target: { value: "0007-11-28" } });
+    expect(handleChange).not.toHaveBeenCalled();
+
+    fireEvent.change(input, { target: { value: "" } });
+    await waitFor(() =>
+      expect(handleChange).toHaveBeenCalledWith(undefined),
+    );
+  });
+
+  it("clears the week start when the input is emptied", async () => {
+    const handleChange = vi.fn();
+
+    render(
+      <PlanningCycleDateInput
+        cycleType="week"
+        startDate="2026-11-23"
+        onStartDateChange={handleChange}
+        id="planning-week"
+      />,
+    );
+
+    fireEvent.change(screen.getByDisplayValue("2026-11-23"), {
+      target: { value: "" },
+    });
+
+    await waitFor(() => expect(handleChange).toHaveBeenCalledWith(undefined));
   });
 });
