@@ -1,9 +1,23 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { usePlanningCycle } from "@/hooks/useCalendarAdapter";
-import { formatDateKey, parseDateKey } from "@/utils/datetime";
+import { formatDateKey, isDateKey, parseDateKey } from "@/utils/datetime";
 import EnumSelect from "./selects/EnumSelect";
 import { TextInput } from "./forms";
+
+/**
+ * Planning windows outside this range are never intentional. Native date inputs
+ * let a single keystroke replace the year segment (typing "7" in 2026/11/28
+ * yields 0007/11/28), so out-of-range edits are ignored instead of being saved.
+ */
+const MIN_PLANNING_YEAR = 1900;
+const MAX_PLANNING_YEAR = 2999;
+
+const isSupportedPlanningDate = (value: string): boolean => {
+  if (!isDateKey(value)) return false;
+  const year = Number(value.slice(0, 4));
+  return year >= MIN_PLANNING_YEAR && year <= MAX_PLANNING_YEAR;
+};
 
 interface PlanningCycleDateInputProps {
   cycleType: string;
@@ -163,28 +177,37 @@ export const PlanningCycleDateInput: React.FC<PlanningCycleDateInputProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
     let newStartDate: string | undefined;
 
     switch (cycleType) {
       case "month": {
-        const [year, month] = e.target.value.split("-");
+        const [year, month] = value.split("-");
         if (year && month) {
           newStartDate = `${year}-${month.padStart(2, "0")}-01`;
         }
         break;
       }
       case "week": {
-        const selectedDate = parseDateKey(e.target.value);
+        if (!value) {
+          newStartDate = undefined;
+          break;
+        }
+        if (!isSupportedPlanningDate(value)) return;
+        const selectedDate = parseDateKey(value);
         const weekStart = adapter.getWeekStart(selectedDate);
         newStartDate = formatDateKey(weekStart);
         break;
       }
       case "day": {
-        newStartDate = e.target.value || undefined;
+        if (value && !isSupportedPlanningDate(value)) return;
+        newStartDate = value || undefined;
         break;
       }
-      default:
-        newStartDate = e.target.value || undefined;
+      default: {
+        if (value && !isSupportedPlanningDate(value)) return;
+        newStartDate = value || undefined;
+      }
     }
 
     onStartDateChange(newStartDate);

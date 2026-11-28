@@ -18,6 +18,7 @@ import {
   formatDateKey,
   parseDateKey,
   shiftMonthRange,
+  startOfLocalDay,
 } from "@/utils/datetime";
 
 export class GregorianCalendarAdapter implements CalendarAdapter {
@@ -500,8 +501,7 @@ export class GregorianCalendarAdapter implements CalendarAdapter {
         };
       }
       case "day": {
-        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const iso = formatDateKey(d);
+        const iso = formatDateKey(startOfLocalDay(date));
         return { start: iso, end: iso };
       }
       default: {

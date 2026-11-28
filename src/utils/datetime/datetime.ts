@@ -390,7 +390,13 @@ export function parseDateOnlyToLocalDate(dateString: string): Date | null {
   ) {
     return null;
   }
-  const parsed = new Date(year, month - 1, day);
+  // `new Date(year, ...)` remaps years 0-99 to 1900-1999, so date-only keys
+  // such as "0007-11-28" would fail the round-trip check below and be rejected.
+  // Setting the full year explicitly keeps the literal year, including leap days
+  // in century years like 0000-02-29.
+  const parsed = new Date(0);
+  parsed.setFullYear(year, month - 1, day);
+  parsed.setHours(0, 0, 0, 0);
   if (
     parsed.getFullYear() !== year ||
     parsed.getMonth() !== month - 1 ||
@@ -422,12 +428,19 @@ export function parseDateStringToLocalDate(value: string): Date {
 export function startOfLocalDay(date: Date): Date {
   if (!(date instanceof Date) || Number.isNaN(date.getTime()))
     return new Date(NaN);
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  // `new Date(year, ...)` remaps years 0-99 to 1900-1999; set the year
+  // explicitly so date-only keys below year 100 keep their literal year.
+  const start = new Date(0);
+  start.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+  start.setHours(0, 0, 0, 0);
+  return start;
 }
 
 export function formatDateKey(date: Date): string {
   if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
-  const year = date.getFullYear();
+  // Keep four-digit years so years below 1000 still round-trip through
+  // `parseDateOnlyToLocalDate` (e.g. year 7 -> "0007-11-28").
+  const year = String(date.getFullYear()).padStart(4, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;

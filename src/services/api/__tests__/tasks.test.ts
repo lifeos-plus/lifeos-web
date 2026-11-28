@@ -126,3 +126,69 @@ describe("tasksApi.getByIdsQuiet", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe("tasksApi person payloads", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const mockTaskResponse = () =>
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ id: "task-1" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+  it("forwards person_ids when creating a task", async () => {
+    const fetchMock = mockTaskResponse();
+
+    await tasksApi.create({
+      content: "Plan the week",
+      vision_id: "vision-1",
+      person_ids: ["person-1", "person-2"],
+    });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toMatchObject({
+      content: "Plan the week",
+      vision_id: "vision-1",
+      person_ids: ["person-1", "person-2"],
+    });
+  });
+
+  it("forwards person_ids when updating a task", async () => {
+    const fetchMock = mockTaskResponse();
+
+    await tasksApi.update("task-1", {
+      content: "Plan the week",
+      person_ids: ["person-1"],
+    });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(init.method).toBe("PATCH");
+    expect(JSON.parse(String(init.body))).toMatchObject({
+      content: "Plan the week",
+      person_ids: ["person-1"],
+    });
+  });
+
+  it("keeps an explicit empty list so person links can be cleared", async () => {
+    const fetchMock = mockTaskResponse();
+
+    await tasksApi.update("task-1", { person_ids: [] });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(String(init.body))).toEqual({ person_ids: [] });
+  });
+
+  it("leaves person_ids out when the caller does not send the field", async () => {
+    const fetchMock = mockTaskResponse();
+
+    await tasksApi.update("task-1", { content: "Plan the week" });
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(String(init.body))).toEqual({ content: "Plan the week" });
+  });
+});

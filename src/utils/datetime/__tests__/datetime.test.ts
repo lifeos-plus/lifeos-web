@@ -114,6 +114,24 @@ describe("datetime helpers", () => {
     expect(() => parseDateKey("2026-02-29")).toThrow(RangeError);
   });
 
+  it("keeps four-digit years below 100 instead of remapping them to the 1900s", () => {
+    // Regression: native date inputs let a single keystroke replace the year
+    // segment, so editing 2026-11-28 can emit "0007-11-28". The Date
+    // constructor maps years 0-99 to 1900-1999, which used to reject the value
+    // and crash the planning list through parseDateKey.
+    expect(isDateKey("0007-11-28")).toBe(true);
+    expect(formatDateKey(parseDateKey("0007-11-28"))).toBe("0007-11-28");
+    expect(() => parseDateKey("0007-11-28")).not.toThrow();
+    expect(formatDateKey(parseDateKey("0000-02-29"))).toBe("0000-02-29");
+  });
+
+  it("pads years below 1000 when formatting date keys", () => {
+    const date = new Date(0);
+    date.setFullYear(42, 6, 9);
+    date.setHours(0, 0, 0, 0);
+    expect(formatDateKey(date)).toBe("0042-07-09");
+  });
+
   it("handles DST transitions in named time zones", () => {
     // 2024-03-10 is the spring-forward DST transition in America/Los_Angeles.
     expect(

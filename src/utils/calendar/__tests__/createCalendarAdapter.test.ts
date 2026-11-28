@@ -44,4 +44,17 @@ describe("createCalendarAdapter", () => {
       "2026-07-26",
     );
   });
+
+  it("resolves planning cycles for valid date keys with years below 100", () => {
+    // Regression: the date-only parser used to reject years 0-99 because the
+    // Date constructor remaps them to 1900-1999, crashing the planning list.
+    const adapter = new GregorianCalendarAdapter(1);
+
+    expect(resolvePlanningCycleStart("day", "0007-11-28", adapter)).toBe(
+      "0007-11-28",
+    );
+    expect(resolvePlanningCycleStart("week", "0007-11-28", adapter)).toBe(
+      "0007-11-26",
+    );
+  });
 });

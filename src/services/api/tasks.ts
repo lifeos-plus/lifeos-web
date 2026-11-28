@@ -38,19 +38,21 @@ export type TaskListResponse = Omit<TaskListTransport, "items" | "meta"> & {
   meta: Partial<TaskListTransport["meta"]>;
 };
 
+// `person_ids` is not part of the pinned OpenAPI contract yet, so keep the
+// transport types widened locally until the lifeos-cli release that accepts it
+// is pinned and the generated schema regains the field.
+type TaskCreatePayload = TaskCreateTransport & { person_ids?: UUID[] };
+type TaskUpdatePayload = TaskUpdateTransport & { person_ids?: UUID[] };
+
 const toTaskCreateTransport = ({
-  person_ids: _personIds,
   vision_id: visionId,
   ...payload
-}: TaskCreate): TaskCreateTransport => {
+}: TaskCreate): TaskCreatePayload => {
   if (!visionId) throw new Error("A vision is required to create a task.");
   return { ...payload, vision_id: visionId };
 };
 
-const toTaskUpdateTransport = ({
-  person_ids: _personIds,
-  ...payload
-}: TaskUpdate): TaskUpdateTransport => payload;
+const toTaskUpdateTransport = (task: TaskUpdate): TaskUpdatePayload => task;
 
 // Shared filters for listing tasks (keep snake_case to match query params)
 export type TaskFieldsMode = "basic" | "full";
